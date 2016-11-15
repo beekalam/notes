@@ -1,0 +1,17 @@
+### make an options request
+	
+	curl -i -X OPTIONS http://example.org/path
+
+### make a head request
+
+	curl --head http://example.org
+
+### make an options request
+
+	curl -i -X OPTIONS http://example.org/path
+
+### set a header
+
+	curl --header "X-MyHeader: 123" www.google.com
+
+echo "0217"$(date +%Y-%m-%d-%H-%M-%S-%N) | tr -d "-" | php -r 'echo substr(file("php://stdin")[0],0,20);'

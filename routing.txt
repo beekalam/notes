@@ -1,0 +1,381 @@
+The most popular of the TCP/IP interior routing protocols is the 
+Routing Information Protocol (RIP)
+================================================================================
+
+================================================================================
+RIP is one of the easiest to configure and least demanding of resources
+================================================================================
+
+================================================================================
+RIP was one of the first interior routing protocols used in TCP/IP
+================================================================================
+
+================================================================================
+ RIP falls into the class of protocols that use a distance-vector, or Bellman-Ford, 
+ routing algorithm
+================================================================================
+
+================================================================================
+ but in RIP, distance is measured in hops
+================================================================================
+
+================================================================================
+in TCP/IP vernacular, a datagram makes a hop when it passes through a router
+================================================================================
+
+================================================================================
+Note that RIP is designed so that a routing entry is replaced only if information
+ is received about a shorter route
+================================================================================
+
+================================================================================
+In RIP, information about a default route is communicated by having routers that 
+are intended to handle such traffic send information about a "dummy" network with
+ the address 0.0.0.0
+================================================================================
+
+================================================================================
+ RIP is considered part of layer 3 
+================================================================================
+
+================================================================================
+RIP Request messages are sent under special circumstances when a router requires 
+that it be provided with immediate routing information
+================================================================================
+
+================================================================================
+RIP uses two basic message types: the RIP Request and RIP Response
+================================================================================
+
+================================================================================
+RIP uses two basic message types: the RIP Request and RIP Response. Both are sent 
+using the User Datagram Protocol (UDP)
+================================================================================
+
+================================================================================
+Requests are sent only in special circumstances, such as when a router first joins 
+a network.
+================================================================================
+
+================================================================================
+each RIP router has a special timer that goes off every 30 seconds
+================================================================================
+
+================================================================================
+routes are kept in the routing table for only a limited amount of time
+================================================================================
+
+================================================================================
+ A special Timeout timer is started whenever a route is installed in the routing 
+ table
+================================================================================
+
+================================================================================
+Whenever the router receives another RIP Response message with information about 
+that route, the route is considered refreshed
+================================================================================
+
+================================================================================
+When a route is marked for deletion, a new Garbage-Collection timer is also started
+================================================================================
+
+================================================================================
+ Over time, all routers eventually end up with the same information about the 
+ location of networks and which are the best routes to use to reach them.
+  This is called convergence.
+================================================================================
+
+================================================================================
+the basic RIP algorithm is rather slow to achieve convergence
+================================================================================
+
+================================================================================
+RIP does not include any specific mechanism to detect or prevent routing loops.
+================================================================================
+
+================================================================================
+One of the most important problems with the operation of RIP is slow convergence
+================================================================================
+
+================================================================================
+When a router sends out an RIP Response message on any of the networks to which 
+it is connected, it omits any route information that it originally learned from 
+that network. This feature is called split horizon,
+================================================================================
+
+================================================================================
+ split horizon may not always solve the counting to infinity problem
+================================================================================
+
+================================================================================
+The poisoned reverse refers to the fact that we are poisoning the routes that we 
+want to make sure routers on that interface don't use
+================================================================================
+
+================================================================================
+Instead of omitting routes learned from a particular interface when sending RIP
+ Response messages on that interface, we include those routes but set their 
+ metric to RIP infinity, or 16. 
+================================================================================
+
+================================================================================
+The hold down feature works by having each router start a timer when it first 
+receives information about a network that is unreachable
+================================================================================
+
+================================================================================
+Triggered updates reduce the slow convergence problem by causing the immediate 
+propagation of changed route information.
+================================================================================
+
+================================================================================
+When OSPF basic topology is used, all the routers in the AS function as peers
+================================================================================
+
+================================================================================
+Each router communicates routing information with each other one, and each 
+maintains a copy of the key OSPF data structure: the LSDB
+================================================================================
+
+================================================================================
+The routers that connect the AS to other ASes are often called boundary routers
+================================================================================
+
+================================================================================
+link-state database (LSDB)
+================================================================================
+
+================================================================================
+The AS is divided into constructs called areas, each of which contains a number 
+of contiguous routers and networks
+================================================================================
+
+================================================================================
+To allow for better control and management over larger internetworks, OSPF 
+allows a large AS to be structured into a hierarchical form
+================================================================================
+
+================================================================================
+ Contiguous routers and networks are grouped into areas that connect together
+  using a logical backbone
+================================================================================
+
+================================================================================
+The two-level hierarchy consists of the lower level, which contains individual 
+areas, and the higher level that connects them together, which is called the backbone
+================================================================================
+
+================================================================================
+ backbone and is designated as Area 0
+================================================================================
+
+================================================================================
+Internal Routers These are routers that are connected only to other routers or 
+networks within a single area.
+================================================================================
+
+================================================================================
+Area Border Routers These are routers that connect to routers or networks in 
+more than one area. 
+================================================================================
+
+================================================================================
+Backbone Routers These are routers that are a part of the OSPF backbone
+================================================================================
+
+================================================================================
+ an area border router is also always a backbone router
+================================================================================
+
+================================================================================
+If the source and destination are in different areas, the datagram is routed 
+from the source to an area border router in the source's area
+================================================================================
+
+================================================================================
+The router creates this perspective by taking the information in the LSDB and
+ transforming it into an SPF tree.
+================================================================================
+
+================================================================================
+To determine what routes it should use to reach networks in its AS, a router 
+generates a shortest-path first tree (SPF tree) from its LSDB
+================================================================================
+
+================================================================================
+Unlike RIP, OSPF does not send its information using the User Datagram Protocol (UDP).
+================================================================================
+
+================================================================================
+Hello As the name suggests, these messages are used as a form of greeting to 
+allow a router to discover other adjacent routers on its local links and networks
+================================================================================
+
+================================================================================
+Database Description These messages contain descriptions of the topology of 
+the AS or area
+================================================================================
+
+================================================================================
+Link State Request These messages are used by one router to request updated 
+information about a portion of the LSDB from another router
+================================================================================
+
+================================================================================
+Link State Update These messages contain updated information about the state
+ of certain links on the LSDB
+================================================================================
+
+================================================================================
+When a router first starts up it will send out a Hello message to see if any 
+neighboring routers are around running OSPF
+================================================================================
+
+================================================================================
+BGP uses the Transmission Control Protocol (TCP)
+================================================================================
+
+================================================================================
+BGP maintains backward compatibility with the older exterior routing protocol, EGP.
+================================================================================
+
+================================================================================
+BGP's operation is based on the exchange of messages that perform different functions
+================================================================================
+
+================================================================================
+One of the most important characteristics of BGP is its flexibility
+================================================================================
+
+================================================================================
+Creating a BGP internetwork begins with the designation of certain routers in 
+each AS as ones that will run the protocol. In BGP parlance, these are 
+called BGP speakers
+================================================================================
+
+================================================================================
+When a BGP speaker in one AS is linked to a BGP speaker in another AS, they 
+are deemed neighbors.
+================================================================================
+
+================================================================================
+A neighbor within the AS is called an internal peer
+================================================================================
+
+================================================================================
+a neighbor outside the AS is an external peer. 
+================================================================================
+
+================================================================================
+BGP between internal peers is sometimes called Internal BGP (IBGP)
+================================================================================
+
+================================================================================
+use of the protocol between external peers is External BGP (EBGP).
+================================================================================
+
+================================================================================
+Each router configured to use BGP is called a BGP speaker
+================================================================================
+
+================================================================================
+Local Traffic Traffic carried within an AS that either originated in that 
+same AS or is intended to be delivered within that AS
+================================================================================
+
+================================================================================
+Transit Traffic Traffic that was generated outside that AS and is intended 
+to be delivered outside the AS. 
+================================================================================
+
+================================================================================
+Stub AS This is an AS that is connected to only one other AS.
+================================================================================
+
+================================================================================
+Multihomed AS This is an AS that is connected to two or more other ASes
+================================================================================
+
+================================================================================
+No Transit Policy An AS can have a policy that it will not handle transit 
+traffic at all.
+================================================================================
+
+================================================================================
+Restricted AS Transit Policy An AS may allow for the handling of traffic from
+ certain ASes but not others.
+================================================================================
+
+================================================================================
+Criteria-Based Transit Policy An AS may use a number of different criteria to 
+decide whether to allow transit traffic. 
+================================================================================
+
+================================================================================
+An AS that is willing to carry transit traffic is sometimes called a transit AS.
+================================================================================
+
+================================================================================
+Route Storage Each BGP stores information about how to reach networks in a 
+set of special databases
+================================================================================
+
+================================================================================
+ach BGP speaker regularly tells its peers what it knows about various networks
+ and methods to reach them. This is called route advertisement 
+================================================================================
+
+================================================================================
+Adj-RIBs-In A set of input database parts that holds information about routes
+ received from peer BGP speakers.
+================================================================================
+
+================================================================================
+Loc-RIB The local RIB. This is the core database that stores routes that have 
+been selected by this BGP device and are considered valid to it.
+================================================================================
+
+================================================================================
+Adj-RIBs-Out A set of output database parts that holds information about
+ routes that this BGP device has selected to be disseminated to its peers.
+================================================================================
+
+================================================================================
+Routes are also called paths in BGP
+================================================================================
+
+================================================================================
+BGP Routing Information Base (RIB).
+================================================================================
+
+================================================================================
+BGP uses, instead of a distance-vector algorithm, a path-vector algorithm.
+================================================================================
+
+================================================================================
+The most important path attributes are called well-known attributes;
+================================================================================
+
+================================================================================
+Well-Known Mandatory These are the most important path attributes.
+================================================================================
+
+================================================================================
+Well-Known Discretionary A BGP device, if received, must recognize these path 
+attributes, but they may or may not be included in an Update message.
+================================================================================
+
+================================================================================
+Optional Transitive These path attributes may be recognized by a BGP router 
+and may be included in an Update message
+================================================================================
+
+================================================================================
+The method used by a BGP speaker to determine what new routes to accept from 
+its peers and what routes to advertise back them is called the BGP decision process.
+================================================================================
+
+================================================================================
+when BGP stores information about the path to a network, it stores it as a
+ sequence of ASes, not a sequence of specific routers.
+================================================================================
