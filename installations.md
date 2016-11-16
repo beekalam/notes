@@ -149,3 +149,13 @@ Test installation using
     uv: '1.9.1',
     v8: '5.1.281.81',
     zlib: '1.2.8' }
+
+### nvidia binary driver screen flickering
+
+Install Compiz Config, from a terminal, type:
+
+    sudo apt-get install compizconfig-settings-manager
+
+From the launcher, execute CompizConfig Settings Manager
+Check the checkbox in "Utility -> Workarounds -> Force full screen redraws (buffer swap) on repaint"
+

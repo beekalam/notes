@@ -1,43 +1,27 @@
 Item 1: Handle All Problems through an Issue-Tracking
 System
-================================================================================
 
-================================================================================
 Item 2: Use Focused Queries to Search the Web for
 Insights into Your Problem
-================================================================================
 
-================================================================================
 https://www.sourcelair.com/
-================================================================================
 
-================================================================================
 http://sscce.org/
-================================================================================
 
-================================================================================
 ✦ Perform a web search regarding error messages by enclosing them in
 double quotes.
 ✦ Value the answers from StackExchange sites.
 ✦ If all else fails, post your own question or open an issue.
-================================================================================
 
-================================================================================
 Item 3: Confirm That Preconditions and
 Postconditions Are Satisfied
-================================================================================
 
-================================================================================
 ✦
 Carefully examine a routine’s preconditions and postconditions.
-================================================================================
 
-================================================================================
 Item 4: Drill Up from the Problem to the Bug or Down
 from the Program’s Start to the Bug
-================================================================================
 
-================================================================================
 There are generally two ways to locate a source of a problem. You can
 either start from the problem’s manifestation and work up toward its
 source, or you can start from the top level of your application or system
@@ -45,9 +29,7 @@ and work down until you find the source of the problem. Depending on
 the type of the problem, one approach is usually more effective than the
 other. However, if you reach a dead end going one way, it may be helpful
 to switch directions.
-================================================================================
 
-================================================================================
 Working from the top level of your failing system down toward the loca-
 tion of the fault is the way to go when you can’t clearly identify the code
 associated with the failure. By definition, this is often the case with so-
@@ -57,21 +39,15 @@ formance (your software takes up too much memory or takes too long to
 respond), security (you find your web application’s web page defaced),
 and reliability (your software fails to provide the web service it was sup-
 posed to).
-================================================================================
 
-================================================================================
 ✦ Work bottom up in the case of failures that have a clearly identifiable
 cause, such as crashes, freezes, and error messages.
 ✦ Work top down in the case of failures that are difficult to pin down,
 such as performance, security, and reliability.
-================================================================================
 
-================================================================================
 Item 5: Find the Difference between a Known Good
 System and a Failing One
-================================================================================
 
-================================================================================
 If the system doesn’t offer a sufficiently detailed logging mechanism,
 you have to tease out its runtime behavior with a tracing tool. Besides
 general-purpose tools such as DTrace and SystemTap, some specialized
@@ -79,155 +55,105 @@ tools I’ve found useful are those that trace calls to the operating system
 (strace, truss, Procmon), those that trace calls to the dynamically linked
 libraries (ltrace, Procmon), those that trace network packets (tcpdump,
 Wireshark),
-================================================================================
 
-================================================================================
 When it comes to the environments in which your systems operate,
 your goal is to make the two environments as similar as possible
-================================================================================
 
-================================================================================
 Examine the
 dynamic libraries associated with each executable by using a command
-================================================================================
 
-================================================================================
 such as ldd (on Unix) or dumpbin with the /dependents option (when
 using Visual Studio). See the defined and used symbols using nm (on
 Unix), dumpbin with /exports /imports (Visual Studio), or javap (when
 developing Java code). If you’re sure the problem lies in the code but
 can’t see any difference, be prepared to dig even deeper, comparing the
 assembly code that the compiler generates
-================================================================================
 
-================================================================================
 An underappreciated fac-
 tor is environment variables, which even an unprivileged user can
 set in ways that can wreak havoc on a program’s execution
-================================================================================
 
-================================================================================
 Given that in most cases you’ll be searching for a needle in a haystack,
 it makes sense to trim down the haystack’s size. Therefore, invest the
 time to find the simplest possible test case in which the bug appears
-================================================================================
 
-================================================================================
 Trim down the test case methodically by gradually removing
 either elements from the case itself or configuration options from the
 system until you arrive at the leanest possible setting that still exhibits
 the bug.
-================================================================================
 
-================================================================================
 If the difference between the working and failing system lies in their
 source code, a useful method is to conduct a binary search through all
 the changes performed between the two versions so as to pinpoint the
 culprit.
-================================================================================
 
-================================================================================
 some version con-
 trol systems offer a command that performs this search automatically;
 on Git, it’s the git bisect command
-================================================================================
 
-================================================================================
 Another highly productive option is to compare the two log files
-================================================================================
 
-================================================================================
 with Unix tools to find the
 difference related to the bug
-================================================================================
 
-================================================================================
 As an example, the following command will eliminate the time-
 stamp from the Unix messages log file by displaying the lines starting
 from the fourth field.
 cut -d ' ' -f 4- /var/log/messages
-================================================================================
 
-================================================================================
 Finally, a more advanced technique that I’ve found particularly useful
 if the two files aren’t ordered in a way in which diff can yield useful re-
 sults is to extract the fields that interest you, sort them, and then find
 the elements that aren’t common in the two sets with the comm tool.
-================================================================================
 
-================================================================================
 comm -23 <(awk '/open\(/{print $2}' t1 | sort) \
 <(awk '/open\(/{print $2}' t2 | sort)
-================================================================================
 
-================================================================================
 The two elements in brackets generate an ordered list of filenames that
 were passed to open. The comm (find common elements) command takes
 the two lists as input and outputs the lines appearing only in the first
 one.
-================================================================================
 
-================================================================================
 mx2.petronics.net
-================================================================================
 
-================================================================================
 http://petronics.net/
-================================================================================
 
-================================================================================
 ✦
 Identify what debugging facilities are available in the software you’re
 troubleshooting, and use them to investigate the problem you’re
 examining
-================================================================================
 
-================================================================================
 Item 7: Diversify Your Build and Execution
 Environment
-================================================================================
 
-================================================================================
 Sometimes you can pin down subtle, elusive bugs by changing the play-
 ing field. You can do this by building the software with another compiler,
 or by switching the runtime interpreter, virtual machine, middleware,
 operating system, or CPU architecture. This works because the other en-
 vironment may perform stricter checks on the inputs you supply to some
 routines or because its structure amplifies your mistake
-================================================================================
 
-================================================================================
 There are three main ways to debug your code in another execution
 environment.
 1. You can use virtual machine software on your workstation to in-
 stall and run diverse operating systems. This approach has the
-================================================================================
 
-================================================================================
 added advantage of providing you with an easy way to maintain
 a pristine image of the execution environment: just copy the con-
 figured virtual machine image to the “master” file, which you can
 restore when needed.
-================================================================================
 
-================================================================================
 2. You can use small inexpensive computers. If the architecture
 you’re mainly targeting is x86, an easy way to get your hands on
 an ARM CPU is to keep at hand a Raspberry Pi.
-================================================================================
 
-================================================================================
 3. You can rent cloud-based hosts running the operating systems
 you want to use.
-================================================================================
 
-================================================================================
 ✦ Diverse compilation and execution platforms can offer you valuable
 debugging insights.
 ✦ Fix a tricky algorithm by implementing it in a higher-level language.
-================================================================================
 
-================================================================================
 Item 8: Focus Your Work on the Most Important
 Problems
 ================================================================================

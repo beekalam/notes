@@ -1,65 +1,14 @@
-In UDP and TCP messages two addressing fields appear: a source port and a destination port
-================================================================================
-
-================================================================================
- Valid port numbers can theoretically take on values from 0 to 65,535
-================================================================================
-
-================================================================================
-UDP and TCP use the same range of port numbers, but they are independent.
-================================================================================
-
-================================================================================
-TCP/IP transport layer addressing is accomplished by using TCP and UDP ports. 
-================================================================================
-
-================================================================================
-Well-Known (Privileged) Port Numbers (0 to 1023)
-================================================================================
-
-================================================================================
-Registered (User) Port Numbers (1024 to 49151) 
-================================================================================
-
-================================================================================
-Private/Dynamic Port Numbers (49152 to 65535)
-================================================================================
-
-================================================================================
-Each time a client process initiates a UDP or TCP communication, the TCP/IP software assigns it a temporary, or ephemeral, port number to use for that conversation
-================================================================================
-
-================================================================================
-The overall identifier of a TCP/IP application process on a device is the combination of its IP address and port number, which is called a socket.
-================================================================================
-
-================================================================================
-UDP is basically IP with transport layer port addressing
-================================================================================
-
-================================================================================
-if a UDP message is sent that contains a destination port number that the destination device does not recognize, the destination host will send an ICMP Destination Unreachable message back to the original source.
-================================================================================
-
-================================================================================
 Listing open ports on a remote host
-================================================================================
 
-================================================================================
 The following command checks the state of the most popular ports on the host scanme.nmap.org by launching a TCP port scan:
 
 $ nmap scanme.nmap.org
 
-================================================================================
 
-================================================================================
 Nmap begins by converting the hostname to an IPv4 address using DNS. If you wish to use a different DNS server, use --dns-servers <serv1[,serv2],...>, or use-n if you wish to skip this step, as follows:
 
 $ nmap --dns-servers 8.8.8.8,8.8.4.4 scanme.nmap.org
 
-================================================================================
-
-================================================================================
 Afterwards, it pings the target address to check if the host is alive. To skip this step use –PN as follows:
 
 $ nmap -PN scanme.nmap.org
@@ -72,9 +21,6 @@ Finally, it launches a TCP port scan. To specify a different port range, use -p[
 
 $ nmap -p1-30 scanme.nmap.org
 
-================================================================================
-
-================================================================================
 Privileged versus unprivileged
 
 Running nmap <TARGET> as a privileged user launches the SYN Stealth Scan. For unprivileged accounts that can't create raw packets, the TCP Connect Scan is used.
@@ -102,7 +48,7 @@ The type of packets sent depends on the scanning technique(s) used.
 Fingerprinting services of a remote host
 ================================================================================
 
-================================================================================
+================================================================================`
 $ nmap -sV scanme.nmap.org
 
 The result of this command is a table containing an additional column named VERSION, displaying the specific service version, if identified. Additional information will be enclosed in parenthesis. Refer to the following screenshot:
@@ -7517,3 +7463,132 @@ NSE library stdnse – http://nmap.org/nsedoc/lib/stdnse.html#new_thread
 
 NSE library nmap – http://nmap.org/nsedoc/lib/nmap.html#mutex 
 ================================================================================
+
+Nmap list scan
+
+felix> nmap -sL 6.209.24.0/24 6.207.0.0/22
+
+nmap -sS -p- -PS22,80,11333334 -PA80,113,21000 -PU19000 -PE -A -T4 -oA avatartcpscan-121503
+6.209.24.0/24 6.207.0.0/22
+
+================================================================================
+-sS
+Enables the efficient TCP port scanning technique known as SYN scan. Felix would have added a U at
+the end if he also wanted to do a UDP scan, but he is saving that for later. SYN scan is the default scan
+type, but stating it explicitly does not hurt.
+================================================================================
+
+
+-P-
+Requests that Nmap scan every port from 1-65535. The default is to scan only ports one through 1024,
+plus about 600 others explicitly mentioned in the nmap-services database. This option format is
+simply a short cut for -pl-65535. He could have specified -pO-65535 if he wanted to scan the
+rather illegitimate port zero as well. The -p option has a very flexible syntax, even allowing the
+specification of a differing set of UDP and TCP ports.
+
+
+
+-PS22,80,113,33334 -PA80,113,21000 -PU19000 -PE
+These are all ping types used in combination to determine whether a host is really available and avoid
+wasting a lot of time scanning IP addresses that are not in use. This particular incantation sends a TCP
+SYN packet to ports 22, 80, 113, and 33334; a TCP ACK packet to ports 80, 113, and 21000; a UDP
+packet to port 19000; and a normal ICMP echo request packet. If Nmap receives a response from the
+target host itself to any of these probes, it considers the host to be up and available for scanning. This
+is more extensive than the Nmap default, which simply sends an echo request and an ACK packet to
+port 80. In a pen-testing situation, you often want to scan every host even if they do not seem to be up.
+After all, they could just be heavily filtered in such a way that the probes you selected are ignored but
+some other obscure port may be available. To scan every IP whether it shows an available host or not,
+specify the -PN option instead of all of the above. Felix starts such a scan in the background, though it
+may take a day to complete.
+
+
+
+-A
+This shortcut option turns on Advanced and Aggressive features such as OS and service detection. At
+the time of this writing it is equivalent to -sV -sC -0 —tracer out e (version detection, Nmap
+Scripting Engine, remote OS detection, and traceroute). More features may be added to -A later.
+
+
+
+-T4
+Adjusts timing to the aggressive level (#4 of 5). This is the same as specifying -T aggressive,
+but is easier to type and spell. In general, the -T4 option is recommended if the connection between
+you and the target networks are faster than dialup modems.
+
+
+
+-oA avatartcpscan-121503
+Outputs results in every format (normal, XML, grepable) to files named
+avatartcpscan-121503 . <extension> where the extensions are .nmap, .xml, and .gnmap
+respectively. All of the output formats include the start date and time, but Felix likes to note the date
+explicitly in the filename. Normal output and errors are still sent to stdout5 as well.
+
+
+
+6.209.24.0/24 6.207.0.0/22
+These are the Avatar Online netblocks discussed above. They are given in CIDR notation, but Nmap
+allows them to be specified in many other formats. For example, 6.209.24.0/24 could instead be
+specified as 6 .209 . 24 . 0-255.
+
+
+
+1.3. The Phases of an Nmap Scan
+Now that we've seen some applications of Nmap, let's look at what happens when an Nmap scan runs. Scans
+proceed in phases, with each phase finishing before the next one begins. As you can see from the phase
+descriptions below, there is far more to Nmap than just port scanning.
+Target enumeration. In this phase, Nmap researches the host specifiers provided by the user, which may
+be a combination of host DNS names, IP addresses, CIDR network notations, and more. You can even use
+(-iR) to ask Nmap to choose your targets for you! Nmap resolves these specifiers into a list of IPv4 or IPv6
+addresses for scanning. This phase cannot be skipped since it is essential for further scanning, but you can
+simplify the processing by passing just IP addresses so Nmap doesn't have to do forward resolution. If you
+pass the -sL -n options (list scan with no reverse-DNS resolution), Nmap will print out the targets and
+perform no further scanning. This phase is discussed in Section 3.2, "Specifying Target Hosts and
+Networks" [47] and Section 3.5.1, "List Scan (-sL)" [57].
+Host discovery (ping scanning). Network scans usually begin by discovering which targets on the network
+are online and thus worth deeper investigation. This process is called host discovery ox ping scanning. Nmap
+offers many host discovery techniques, ranging from quick ARP requests to elaborate combinations of TCP,
+ICMP, and other types of probes. This phase is run by default, though you can skip it (simply assume all
+target IPs are online) using the -PN (no ping) option. To quit after host discovery, specify -sP -n. Host
+discovery is the subject of Chapter 3 [47].
+Reverse-DNS resolution. Once Nmap has determined which hosts to scan, it looks up the reverse-DNS
+names of all hosts found online by the ping scan. Sometimes a host's name provides clues to its function,
+and names make reports more readable than providing only IP numbers. This step may be skipped with the
+-n (no resolution) option, or expanded to cover all target IPs (even down ones) with -R (resolve all). Name
+resolution is covered in Section 3.4, "DNS Resolution" [56].
+Port scanning. This is Nmap's fundamental operation. Probes are sent, and the responses (or non-responses)
+to those probes are used to classify remote ports into states such as open, closed, or filtered. That
+
+
+
+brief description doesn't begin to encompass Nmap's many scan types, configurability of scans, and algorithms
+for improving speed and accuracy. An overview of port scanning is in Chapter 4 [73]. Detailed information
+on algorithms and command-line options are in Chapter 5 [95]. Port scanning is performed by default, though
+you can skip it and still perform some of the later traceroute and partial Nmap Scripting Engine phases by
+specifying their particular command-line options (such as —traceroute and —script) along with a
+ping scan (-sP).
+Version detection. If some ports are found to be open, Nmap may be able to determine what server software
+is running on the remote system. It does this by sending a variety of probes and matching the responses
+against a database of thousands of known service signatures. Version detection is enabled by the - s V option.
+It is fully described in Chapter 7 [145].
+OS detection. If requested with the -0 option, Nmap proceeds to OS detection. Different operating systems
+implement network standards in subtly different ways. By measuring these differences it is often possible
+to determine the operating system running on a remote host. Nmap matches responses to a standard set of
+probes against a database of more than a thousand known operating system responses. OS detection is covered
+in Chapter 8 [171].
+Traceroute. Nmap contains an optimized traceroute implementation, enabled by the —traceroute
+option. It can find the network routes to many hosts in parallel, using the best available probe packets as
+determined by Nmap's previous discovery phases. Traceroute usually involves another round of reverse-DNS
+resolution for the intermediate hosts. More information is found in Section 15.4, "Host Discovery" [378].
+Script scanning. The Nmap Scripting Engine (NSE) uses a collection of special-purpose scripts to gain even
+more information about remote systems. NSE is powered by the Lua programming language and a standard
+library designed for network information gathering. Among the facilities offered are advanced version
+detection, notification of service vulnerabilities, and discovery of backdoors and other malware. NSE is a
+large subject, fully discussed in Chapter 9 [205]. NSE is not executed unless you request it with options such
+as —script or -sC.
+Output. Finally, Nmap collects all the information it has gathered and writes it to the screen or to a file.
+Nmap can write output in several formats. Its default, human-readable format (interactive format) is usually
+presented in this book. Nmap also offers an XML-based output format, among others. The ins and outs of
+output are the subject of Chapter 13 [337].
+As already discussed, Nmap offers many options for controlling which of these phases are run. For scans of
+large networks, each phase is repeated many times since Nmap deals with the hosts in smaller groups. It
+scans each group completely and outputs those results, then moves on to the next batch of hosts.
