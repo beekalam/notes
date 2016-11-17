@@ -637,7 +637,7 @@ ARP ping scanning works in a pretty simple way:
     ARP requests are sent to the target
     If the host responds with an ARP reply, it is pretty clear it's online
 
-To send an ARP request, following command is used:
+To send an ARP request,  following command is used:
 
 # nmap -sP -PR --packet-trace 192.168.1.254 
 
@@ -7592,3 +7592,176 @@ output are the subject of Chapter 13 [337].
 As already discussed, Nmap offers many options for controlling which of these phases are run. For scans of
 large networks, each phase is repeated many times since Nmap deals with the hosts in smaller groups. It
 scans each group completely and outputs those results, then moves on to the next batch of hosts.
+
+
+
+Input From List (-iL)
+
+Simply
+generate the list of hosts to scan and pass that filename to Nmap as an argument to the -iL option. Entries
+
+Choose Targets at Random (-iR <numtargets>)
+
+If you find yourself really bored one rainy afternoon, try the command nmap -sS -PS80 -iR 0 -p 80 to
+locate random web servers for browsing.
+
+Excluding Targets (—exclude, —excludefile <filename>)
+
+Simply pass the option a comma-separated list of excluded
+
+targets and netblocks using the normal Nmap syntax. Alternatively, you can create a file of excluded
+hosts/networks and pass that to Nmap with the —excludef ile option.
+
+Practical Examples
+
+Fortunately, Nmap offers a dry
+run using the list scan (-sL option). Simply execute nmap -sL -n <targets> to see which IPs would be
+
+scanned before you actually do it.
+
+nmap scanme.nmap.org, nmap scanme.nmap.org/32, nmap 64.13.134.52
+These commands all do the same thing, assuming that scanme.nmap.org resolves to 64.13.134.52. They
+scan that one IP and then exit.
+
+nmap scanme.nmap.org/24, nmap 64.13.134.52/24, nmap 64.13.134.0-255
+
+These all ask Nmap to scan the 256 IP addresses from 64.13.134.0 through 64.13.134.255. In other
+words, they ask to scan the class C sized address space surrounding scanme.nmap.org.
+nmap 64.13.134.52/24 -exclude scanme.nmap.org,insecure.org
+Tells Nmap to scan the class C around 64.13.134.52, but to skip scanme.nmap.org and insecure.org if
+they are found within that address range.
+
+nmap 10.0.0.0/8 -exclude 10.6.0.0/16,ultra-sensitive-host.company.com
+Tells Nmap to scan the whole private 10 range except that it must skip anything starting with 10.6 as
+well as ultra-sensitive-host.company.com.
+
+egrep ,Alease' /var/lib/dhcp/dhcpd.leases I awk '{print $2}' I nmap -iL -
+Obtain the list of assigned DHCP IP addresses and feed them directly to Nmap for scanning. Note that
+a hyphen is passed to -iL to read from standard input.
+nmap -6 2001:800:40:2a03::3
+Scans the IPv6 host at address 2001:800:40:2a03::3.
+
+Finding an Organization's IP Addresses
+
+DNS Tricks
+
+Using the host command to query common DNS record types
+
+host -t ns target.com
+
+host -t aaaa target.com
+
+>host -t soa target.com
+
+While a substantial hostname list can be generated in this manner, the mother lode of hostnames comes from
+a zone transfer.
+
+host -t mx target.com
+
+Zone transfer failure and success
+
+> dig @ns2-auth.sprintlink.net -t AXFR target.com
+; <<» DiG 9.5.0b3 «» ens2-auth.sprintlink.net -t AXFR target.com
+; Transfer failed.
+
+> dig @ns2.eppi.com -t AXFR cpsr.org
+; «» DiG 9.5. Obi «» @ns2.eppi.com
+-t AXFR cpsr.org
+
+Nmap reverse-DNS and traceroute scan against www.target.com
+
+nmap -PN -T4 —traceroute www.target.com
+
+Starting Nmap ( http://nmap.org )
+Interesting ports on 166-49.amazon.com (207.171.166.49):
+Not shown: 998 filtered ports
+PORT STATE SERVICE
+80/tcp open http
+443/tcp open https
+
+TRACEROUTE (using port 80/tcp)
+HOP RTT ADDRESS
+[cut]
+9 84.94 ae-2.ebr4.NewYorkl.Level3.net (4.69.135.186)
+10 87.91 ae-3.ebr4.Washingtonl.Level3.net (4.69.132.93)
+11 94.80 ae-94-94.csw4.Washingtonl.Level3.net (4.69.134.190)
+12 86.40 ae-21-69.carl.Washington3.Level3.net (4.68.17.7)
+13 185.10 AMAZONCOM.carl.Washington3.Level3.net (4.71.204.18)
+14 84.70 72.21.209.38
+15 85.73 72.21.193.37
+16 85.68 166-49.amazon.com (207.171.166.49)
+Nmap done: 1 IP address (1 host up) scanned in 20.57 seconds
+
+Using whois to find owner of www.target.com IP address
+
+whois 207.171.166.49
+
+DNS Resolution
+
+-n (No DNS resolution)
+Tells Nmap to never do reverse DNS resolution on the active IP addresses it finds. Since DNS can be
+slow even with Nmap's built-in parallel stub resolver, this option reduces scanning times.
+-R (DNS resolution for all targets)
+Tells Nmap to always do reverse DNS resolution on the target IP addresses. Normally reverse DNS is
+only performed against responsive (online) hosts.
+—system-dns (Use system DNS resolver)
+By default, Nmap resolves IP addresses by sending queries directly to the name servers configured on
+your host and then listening for responses. Many requests (often dozens) are performed in parallel to
+improve performance. Specify this option to use your system resolver instead (one IP at a time via the
+
+getnameinf o call). This is slow and rarely useful unless you find a bug in the Nmap parallel resolver
+(please let us know if you do). The system resolver is always used for IPv6 scans.
+--dns-servers <serverl>[, <server2> [,...]] (Servers to use for reverse DNS queries)
+By default, Nmap determines your DNS servers (for rDNS resolution) from your resolv.conf file (Unix)
+or the Registry (Win32). Alternatively, you may use this option to specify alternate servers. This option
+is not honored if you are using --sys tem-dns or an IPv6 scan. Using multiple DNS servers is often
+faster, especially if you choose authoritative servers for your target IP space. This option can also improve
+stealth, as your requests can be bounced off just about any recursive DNS server on the Internet.
+This option also comes in handy when scanning private networks. Sometimes only a few name servers
+provide proper rDNS information, and you may not even know where they are. You can scan the network
+for port 53 (perhaps with version detection), then try Nmap list scans (-sL) specifying each name server
+one at a time with —dns-servers until you find one which works.
+
+Host Discovery Controls
+
+List Scan (-sL)
+
+List scan is a degenerate form of host discovery that simply lists each host on the network(s) specified,
+without sending any packets to the target hosts. By default, Nmap still performs reverse-DNS resolution on
+the hosts to learn their names. Nmap also reports the total number of IP addresses at the end. List scan is a
+good sanity check to ensure that you have proper IP addresses for your targets. If the hosts sport domain
+names you do not recognize, it is worth investigating further to prevent scanning the wrong company's
+network.
+
+attention. A list scan is
+unobtrusive and provides information that may be useful in choosing which individual machines to target.
+
+A list scan is specified with the -sL command-line option.
+
+If you wish to disable ping scanning while still performing such higher level functionality,
+read up on the -PN option.
+
+Enumerating hosts surrounding www.stanford.edu with list scan
+
+felix~> nmap -sL www.stanford.edu/28
+
+Ping Scan (-sP)
+
+This option tells Nmap to only perform a ping scan, then print out the available hosts that responded to the
+scan. No further testing (such as port scanning or OS detection) is performed, except for Nmap Scripting
+Engine (—script) host scripts and traceroute probing (—traceroute) if you specified those options.
+
+Discovering hosts surrounding www. lwn. net with a ping scan
+
+nmap -sP -T4 www.lwn.net/24
+
+The -sP option sends an ICMP echo request and a TCP ACK packet to port 80 by default. Since unprivileged
+Unix users (or Windows users without WinPcap installed) cannot send these raw packets, a SYN packet is
+sent instead in those cases. The SYN packet is sent using a TCP connect system call to port 80 of the
+target host. When a privileged user tries to scan targets on a local ethernet network, ARP requests (-PR) are
+used unless the —send-ip option is specified.
+
+Disable Ping (-pn)
+
+Disabling host discovery with the
+-PN option causes Nmap to attempt the requested scanning functions against every target IP address specified.

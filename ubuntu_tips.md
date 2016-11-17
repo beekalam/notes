@@ -12,4 +12,10 @@ or on the command line (Warning -- this overwrites your existing settings!):
 
 gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:nocaps']"
 
+### how teo tell which version of library you have?
+
+	$ dpkg -l '*ssh*'
+
+
+
 
