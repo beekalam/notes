@@ -159,3 +159,17 @@ Install Compiz Config, from a terminal, type:
 From the launcher, execute CompizConfig Settings Manager
 Check the checkbox in "Utility -> Workarounds -> Force full screen redraws (buffer swap) on repaint"
 
+### How can I get the recoll package to index markdown (.md) files?
+
+    Edit ~/.recoll/mimemap, add the following line:
+
+        .md = text/plain
+
+    This will tell recoll to index markdown as normal text, which it is, mostly, 
+    so I think that things should "just work".
+
+### json pretty print
+
+    cat some.json | python -m json.tool
+
+
