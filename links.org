@@ -1,0 +1,285 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+* speedtest
+http://www.tecmint.com/speedtest-mini-server-to-test-bandwidth-speed/
+http://www.brandonchecketts.com/open-source-speedtest
+https://github.com/adolfintel/speedtest
+https://github.com/satyaakam/speedtest
+http://speedtest.xfinity.com/speedtest.swf
+http://speedtestbeta.xfinity.com/
+
+* linux
+http://doc.norang.ca/
+https://lwn.net/
+http://man7.org/articles/index.html
+http://blog.man7.org/
+http://giantdorks.org/
+** magazine
+ftp://ftp.freiesmagazin.de/
+http://magzdb.org/j/5803
+** tutorials
+https://community.linuxmint.com/index.php/tutorial/search/
+* emacs
+https://www.emacswiki.org/emacs/SiteMap
+https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html
+https://nakkaya.com/
+http://ehneilsen.net/notebook/orgExamples/org-examples.html
+http://sachachua.com/
+
+** org-emacs
+http://orgmode.org/worg/orgcard.html
+http://orgmode.org/worg/org-tutorials/
+http://emacs.stackexchange.com/
+https://news.ycombinator.com/item?id=11386590
+
+*** org-mode protocol
+https://github.com/alphapapa/org-protocol-capture-html
+
+* angular
+http://www.angularjshub.com/
+http://twofuckingdevelopers.com/
+http://www.codelord.net/
+** directive with pattern 
+https://codepen.io/TheLarkInn/pen/GgbrWr
+
+** programming
+
+* blogs
+https://lostechies.com/
+http://www.kelvinwong.ca/
+http://blog.piotrbania.com/
+* magazine
+http://www.codemag.com/Magazine/AllIssues
+ftp://ftp.freiesmagazin.de/
+http://fullcirclemagazine.org/
+https://bsdmag.org/
+https://pragprog.com/magazines
+http://www.perl-magazin.de/
+http://www.gamasutra.com/topic/game-developer
+https://visualstudiomagazine.com/Home.aspx
+http://java.sys-con.com/
+https://accu.org/
+https://www.computer.org/software-magazine/
+http://www.embedded.com/
+
+* individuals
+** https://www.jwz.org/blog/
+** https://www.jwz.org/gruntle/wrists.html
+** http://www.lcdf.org/~eddietwo/xwrits/index.html
+
+* javascript
+** design patterns
+   http://jsdesignpatterns.co
+   https://addyosmani.com/resources/essentialjsdesignpatterns/book/
+
+** template
+   https://github.com/puikinsh/gentelella
+   http://phpflow.com/misc/angular/convert-bootstrap-html-theme-angularjs-template/
+   https://colorlib.com/polygon/gentelella/index.html
+
+** ide
+   http://brackets.io/
+
+** individuals
+   http://yehudakatz.com
+   http://sporto.github.io/
+* web development
+  http://www.jblotus.com/
+* php
+  http://phpflow.com/
+
+* others
+  https://github.com/jnv/lists
+* books
+  http://www.onlineprogrammingbooks.com/linux/
+  https://www.computer-pdf.com/
+  http://www.wowebook.pw/
+  https://1bookcase.com/
+  http://www.itebookshare.com/
+  http://ebookee.org/
+  http://itbookshub.com/
+  http://www.freebookcentre.net/
+  http://freecomputerbooks.com/
+  http://aosabook.org/en/index.html
+  http://www.e-booksdirectory.com/n
+  http://www.getfreeebooks.com/
+  http://www.ebook3000.com/
+  http://ebookbb.com/
+* prog practice
+** algorithmic
+write a stack
+write a queue
+
+** strings
+reverse string (without language utilities)
+write function TitleCase(to capitalize the first letter of every word)
+
+** angular
+*** write a directive that moves an html object with keyboard
+https://plnkr.co/edit/h6BN3BIVYD2HGe7nKaGL?p=preview
+*** write a checkbox directive without using the html checkbox input type
+https://github.com/shusain/angular-sh-checkbox/blob/master/directive.js
+*** write a directive to show the current time
+** javascript 
+*** implement lodash functions
+http://devdocs.io/lodash~4/
+*** implement the built-in prototype functions of Array.prototype.* 
+*** write an O() function like the one in javascript plugins.
+    this  finds and element and changes its properties
+    background = O('menu').style.backgroundColor
+    O('menu').style.color = 'yellow'
+    O(objectname, 'innerHTML', '<h1>Heading Text</h1>’)
+    O(Array('first', 'second'), 'mouseover', 'mousehandler')
+
+* programming problems
+  http://rosettacode.org/
+  http://codekata.pragprog.com/
+  http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html
+  https://wiki.haskell.org/99_Haskell_exercises
+  http://www.codeabbey.com/
+  https://github.com/lnishan/awesome-competitive-programming
+  http://codeforces.com/
+  https://www.hackerrank.com
+  http://www.codeeval.com/
+  http://www.codeabbey.com/
+  https://codecombat.com/
+  https://screeps.com/
+  https://github.com/git-game/git-game
+  http://play.elevatorsaga.com/
+  https://www.codingame.com/start
+  http://www.hacker.org/challenge/about.php
+  http://www.pexforfun.com/
+  http://www.rankk.org/
+  https://code.google.com/codejam/contests.html
+  http://www.pythonchallenge.com/
+  https://groups.google.com/forum/#%21forum/algogeeks
+  http://codekata.com/
+  http://forum.lessthandot.com/viewforum.php?f=102
+  http://thedailywtf.com/series/bring-your-own-code
+  http://poj.org/
+  https://uva.onlinejudge.org/
+  https://programmingpraxis.com/
+  https://projecteuler.net/index.php
+  http://codingbat.com/java
+  http://rosalind.info/problems/locations/
+  https://leetcode.com/
+  http://practiceit.cs.washington.edu/]
+  https://checkio.org/
+  https://codility.com/
+  http://www.geeksforgeeks.org/
+  https://www.testdome.com/Questions
+  https://code.google.com/codejam/
+  https://www.freecodecamp.com
+* network
+  http://packetlife.net/
+  https://wiki.wireshark.org/FrontPage
+* cron
+[project idea]
+http://crontab-generator.org/
+https://crontab.guru
+http://www.crontutorials.com/
+http://crontab-generator.org/
+http://stackoverflow.com/documentation/bash/topics
+* monitor
+  http://www.maadiran.com
+* shiraz
+** electronics
+    http://irasaelec.com/
+    http://aftabrayaneh.com/
+** software
+   http://hamrahnet.com/
+** misc
+   http://www.gli-shiraz.com/
+* MOOCS
+  https://alison.com/learn/programming
+  http://www.howtogeek.com/117674/the-best-websites-for-free-online-courses-certificates-degrees-and-educational-resources/
+  https://channel9.msdn.com/info
+* online IDE
+  http://cpp.sh/
+  http://ideone.com/
+  http://joel.franusic.com/Online-REPs-and-REPLs/
+** regex
+   http://www.phpliveregex.com/
+* glasses
+  http://miraflexglass.com/
+* vocabulary
+https://quizlet.com/2289321/top-10000-common-words-flash-cards/
+http://www.use-in-a-sentence.com/english-words/10000-words/the-most-frequent-10000-words-of-english.html
+https://www.quora.com/Where-can-I-find-a-list-of-the-10-000-most-important-English-words
+http://kevinboone.net/
+* german
+** radio
+   http://tunein.com/radio/Germany-r100346/
+   http://www.listenlive.eu/germany.html
+http://www.learndeutsch.ir/post/1
+
+* dopamine foods supplements
+** saint john wrot
+** curcumin
+** almonds
+** chocolate
+** L-Tyrosine: 
+Many people have success with supplementing 800 mg to 1500
+mg daily of L-Tyrosine, which crosses the blood-brain barrier and
+converts to dopamine.
+
+** L-Phenylalanine:
+This is an amino acid precursor to tyrosine, which
+gets converted into dopamine. Most people supplement between 1000 mg
+to 1500 mg to boost their dopamine.
+
+** Rhodiola Rosea:
+This is an herbal supplement that acts on COMT to
+inhibit the breakdown of neurotransmitters serotonin and
+dopamine. Most people take approximately 500 mg (3% Rosavins) daily to
+increase dopamine levels.
+
+** Omega-3 Fatty Acids:
+Supplementation of DHA and EPA (omega-3 fatty
+acids) is beneficial for most people unless they are eating high
+quality fish twice per week.  The human brain generally operates
+better when is receiving sufficient omega-3 fatty acids from the diet.
+Therefore some have recommended supplementing quality fish oil or
+krill oil to obtain adequate omega-3s, which may increase dopamine
+levels.
+
+** L-Theanine –
+L-theanine is one of the major amino acid components of
+green and black teas and is suggested to have anti-stress and
+anxiolytic effects. The basis of l-theanine’s action is to increase
+inhibitory activity in the brain; because it is a glutamate analog, it
+binds to receptors specific to glutamate, prevents their binding, and
+inhibits its excitatory action. It has also been shown to boost
+dopamine levels (the neurotransmitter involved in feelings of
+happiness associated with reward) and enhance alpha wave activity,
+brain waves indicative of a relaxed state.
+
+** Phosphatidylserine ­­–
+Phosphatidylserine is a phospholipid
+(phosphorylated fatty acid) that serves as a major structural
+component of cell membranes, particularly in neural tissue. It has
+also been shown to increase levels of acetylcholine, one of the
+nervous system’s major neurotransmitters.
+
+Phosphatidylserine has been shown to improve memory and spatial
+recognition in rats. It may have similar effects in humans, although
+the majority of studies have been conducted on elderly subjects (for
+whom phosphatidylserine has shown benefit against the progression of
+Alzheimer’s Disease and dementia).
+
+Phosphatidylserine exists as a supplement, though it tends to fall on
+the more expensive side of the spectrum. Instead, it may be more
+biologically beneficial and money-savvy to get your phophatidylserine
+fill from natural sources, of which fish such as herring and mackerel
+are particularly rich.
+
+http://universityhealthnews.com/daily/depression/8-natural-dopamine-boosters-to-overcome-depression/
+http://universityhealthnews.com/daily/depression/dopamine-supplements-for-improving-mood-and-motivation/
+http://www.balancingbrainchemistry.co.uk/peter-smith/38/Dopamine-Deficient-Depression.html
+http://wakeup-world.com/2015/03/07/how-to-increase-dopamine-the-motivation-molecule/
+http://www.brainprotips.com/dopamine-supplements/
+http://mentalhealthdaily.com/2015/04/17/how-to-increase-dopamine-levels/
+* http
+http://httpbin.org/
+https://www.thesitewizard.com/apache/password-protect-directory.shtml
+
+https://kostasbariotis.com/

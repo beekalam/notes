@@ -1,0 +1,146 @@
+* Name resolution
+The name resolution process is implemented using two basic software elements
+that play the role of server and client: name servers and name resolvers.
+
+** name servers
+The main job of name servers is to receive requests for name resolution and
+respond with either the data requested from the database or with the name of
+another name server that will lead to the requested information. Name servers
+are also responsible for data caching and other administrative tasks to ensure
+efficient operation of the system as a whole.
+
+** name resolvers
+Name resolvers are the usual clients in the name resolution process. When a user
+makes reference to a name in a networking application, the name is passed to the
+resolver, which issues a request to a name server. Depending on the
+configuration, more than one request may be needed, and several different
+resolution processes may be combined to find the needed information. Resolvers
+also may employ caching or implement other features.
+
+** DNS Name Space: Domains 
+  In DNS, a domain is defined as either a single object or a set of objects that
+  have been collected together based on some type of commonality. Usually, in
+  DNS, that commonality is that they are all administered by the same
+  organization or authority, which makes the name hierarchy tightly linked to
+  the notion of the DNS hierarchical authority structure.
+** DNS Tree-Related Terminology
+*Root* This is the conceptual top of the DNS name structure. The root domain in
+DNS contains the entire structure. By definition, it has no name; it is null.
+
+*Branch* A branch is any contiguous portion of DNS hierarchy. It consists of a
+domain and all the domains and objects within it. All branches connect together
+to the root, just as in a real tree. (Yes, it would be better if the root were
+called the trunk, but computer science majors apparently don't take botany
+electives.)
+
+*Leaf* This is an end object in the structure; that is, a domain that doesn't have
+anything underneath it. The analogy to a leaf being at the end of a sequence of
+branches is apt.
+** DNS Domain-Related Terminology
+Root Domain This is the root of the tree.
+
+*Top-Level Domains* (TLDs) These are the highest-level domains directly under the
+root of the tree. They are also sometimes called first-level domains.
+
+*Second-Level* Domains Shockingly enough, these are the domains located directly
+below the top-level domains.
+
+*Subdomains* In some contexts, this term refers only to domains that are located
+directly below the second-level domains.
+** DNS Family-Related Terminology 
+*Parent Domain* This is the domain that is above this one in the hierarchy. For
+example, the root domain is the parent of all top-level domains.
+
+*Child* This is a domain at the next level down from this one in the hierarchy.
+Thus, the top-level domains are children of the root.
+
+*Sibling* This is a peer at the same level as this one in the hierarchy, with the
+same parent. Thus, all top-level domains are siblings with the root as a parent;
+all second-level domains within a particular top-level domain are siblings, and
+so on.
+** Domain Name Construction
+A domain name is a string of text that uniquely identifies a particular node in
+the name space. The domain name for a node is constructed by concatenating in
+right-to-left order all the labels in the branch of the DNS tree, starting from
+the top of the tree down to the particular node, separating each by a dot
+(period).
+** Fully Qualified Domain Names
+Technically, if a top-level domain A contains a subdomain B that contains
+subdomain C, the full domain name for C is C.B.A.. This is called the fully
+qualified domain name (FQDN) for the node. Here, the word qualified is
+synonymous with specified.
+** Partially Qualified Domain Names
+
+There are also some situations in which you may refer to a device using an
+incomplete name specification. This is called a partially qualified domain name
+(PQDN), which means that the name only partially specifies the location of the
+device. By definition, a PQDN is ambiguous, because it doesn't give the full
+path to the domain. Thus, you can use a PQDN only within the context of a
+particular parent domain, whose absolute domain name is known.
+** Authoritative Servers
+All of the information about the subdomains and individual devices in the zone
+is represented using a set of resource records stored on a DNS name server.
+Usually, this name server is associated with the highest-level domain name in
+the zone. *A name server that contains the definitive information for the zone is*
+*said to be authoritative for the zone.*
+
+*The DNS name registration hierarchy is divided into regions called zones of*
+*authority.* Each zone represents an area that is administered independently and
+consists of a contiguous segment of the DNS name tree.
+
+*Every DNS zone has a set of authoritative servers, which are usually a pair*
+*called the primary (or master) and secondary (or slave) servers.* However, it is
+also possible for a single DNS name server to be authoritative for more than one
+zone.
+** DNS Name Server Data Storage 
+Each DNS server is, in essence, a type of database server. The database contains
+many kinds of information about the subdomains and individual devices within the
+domain or zone for which the server is responsible. In DNS, the database entries
+that contain this name information are called resource records (RRs). A specific
+set of RRs is associated with each node within the zone.
+*** Binary and Text Representations of Resource Records
+*RR Field Format (Binary) Representation* Name servers are required to respond to
+queries for name information by sending RRs within DNS messages. Obviously, we
+want to do this in as efficient a way as possible, so each RR is internally
+stored using a special field format that is similar to the many field formats
+used for messages in other protocols. All RRs use a general field format for
+some of their fields and then have a unique portion that is specific to the RR
+type.
+
+*Master File (Text) Representation* Computers are happy to exchange binary-encoded
+field formats and have no problem remembering that, for example, RR type 15
+corresponds to a mail exchange (MX) record. However, human administrators want
+to be able to quickly and easily maintain DNS information without needing to
+remember cryptic codes or work with binary values. For this reason, DNS uses a
+master file format for its user-machine interface, which allows RRs to be
+specified in text form for easier maintenance.
+*** TL;DR 
+DNS name servers store DNS information in the form of resource records (RRs).
+Each RR contains a particular type of information about a node in the DNS tree.
+There are two representations for RRs: Conventional binary field formats are
+used for communication between DNS name servers and resolvers, and text master
+files are edited by administrators to manage DNS zones.
+** DNS Name Server Types and Roles
+*** Master (Primary)/Slave (Secondary) Servers
+Every zone needs to have at least one DNS name server that is responsible for
+it. These DNS name servers are called authoritative servers for the zone,
+because they contain the full set of RRs that describe the zone.
+
+The master name server is obviously the most essential server. It is on this
+name server that the master files for the zone's RRs are maintained, so the
+master name server is the final word on information on the zone
+*** Name Server Roles
+The master and slave roles for a zone are logical and do not always correspond
+to individual physical hardware devices. A single physical name server can play
+multiple roles in the following cases:
+
+ - It can be the master name server for more than one zone. Each zone in this
+   case has a distinct set of RRs maintained in separate master files.
+ - It can be a slave name server for more than one zone.
+ - It can be a slave name server for certain zones as well as a primary for others.
+
+Note, however, that a single physical name server cannot be a master and a slave server for the same zone.
+*** Caching-Only Name Servers 
+There are DNS servers that do not maintain DNS RRs of their own but solely hold
+recently used information from other zones. These are called caching-only name
+servers and are not authoritative for any zone.

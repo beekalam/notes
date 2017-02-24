@@ -1,0 +1,100 @@
+* Using AngularJS Filter Inside the Controller
+March 27, 2014
+By Matt Bonneau
+
+The filter functionality of AngularJS is often used inside the view when you need to filter a set of items in a collection. I had overlooked the usefulness this might have as a tool inside the controller as well. It can be very useful in “querying” information.
+
+When I say “using filter” I am referring to the filter named “filter” not just the $filter service.
+
+Suppose you have the following:
+
+// sample collection of objects
+var myObjects = [
+    { name: "Object1", shape: "circle", color: "red" },
+    { name: "Object2", shape: "square", color: "orange" },
+    { name: "Object3", shape: "triangle", color: "yellow" },
+    { name: "Object4", shape: "circle", color: "green" },
+    { name: "Object5", shape: "sphere", color: "blue" },
+    { name: "Object6", shape: "hexagon", color: "indigo" },
+    { name: "Object7", shape: "square", color: "violet" },
+    { name: "Object8", shape: "triangle", color: "red" }
+];
+You can easily get an array of just the objects matching a specific criteria:
+
+// return an array with only red objects
+var myRedObjects = $filter('filter')(myObjects, { color: "red" });
+This also works if you need to match on multiple properties:
+
+var myRedObjects = $filter('filter')(myObjects, { shape: "circle", color: "red" });
+The filter always returns an array whether there is many, one or zero matching objects:
+
+// return an array with only green objects (in this case - an array of one
+var myGreenObject = $filter('filter')(myObjects, { color: "green" });
+
+// When you don't get anything back (returns an empty array)
+var niceTry = $filter('filter')(myObjects, { color: "white" });
+If you are feeling lucky, you can even try to grab the first element for immediate use. (Although it would probably be good form to actually check to see if you got a result back first.)
+
+// If you are feeling really lucky that you are going to find one
+// and want to just grab the first one
+var luckyGrab = $filter('filter')(myObjects, { color: "green" })[0];
+
+
+* inline template using ng-template
+
+#+begin_src javascript
+	angular.module('myApp', [])
+	.directive('playerBox', function() {
+	return {
+		templateUrl: 'player-box.html',
+			link: function(scope) {
+				scope.player = {
+				name: 'Jimmy Butler',
+				number: 21
+			};
+		}
+	  };
+	});
+
+	<div ng-app="myApp">
+
+	<player-box></player-box>
+	<script type="text/ng-template" id="player-box.html">
+		<div>
+		#{{ player.number }} {{ player.name }}
+		</div>
+	</script>
+	</div>
+#+end_src
+
+
+* Pre-defined templates in the cache
+
+	angular.module('myApp', [])
+	.run(function($templateCache) {
+		$templateCache.put(
+			// the template key
+			'player-box.html',
+			// the template markup
+			'<div>' +
+			' #{{ player.number }} {{ player.name }}' +
+			'</div>'
+		);
+	})
+	.directive('playerBox', function() {
+		return {
+		templateUrl: 'player-box.html',
+		link: function(scope) {
+			scope.player = {
+			name: 'Jimmy Butler',
+			number: 21
+			};
+		  }
+		};
+	});
+
+* resources
+
+http://learnkode.com/Examples/Angular
+
+xzhxzww7

@@ -1,0 +1,35 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+* website footprinting
+ - operating system used.
+ - subdirectories and parameters
+ - Filename, path, database field name, or query:You should analyze anything after the
+   a  query that looks like a filename, path, database field name, or query carefully
+   to check whether it offers opportunities for SQL injection
+ - Scripting platform
+ - Contact details and CMS details: The contact pages usually offer details such as names
+   phone numbers, email addresses, and locations of admin or support people.
+
+** view headers
+ - Connection status and content-type
+ - Accept-ranges
+ - Last-Modified information
+ - X-Powered-By information
+ - Web server in use and its version
+
+** examine cookies set by the server to determine the software
+running and its behavior.
+
+* Email footprinting
+By using email tracking tools you can gather the following information about
+the victim:
+
+ - Geolocation
+ - read duration
+ - proxy detection
+ - links : allows you to check whether the links sent to the recipient through email
+   have been checked or not.
+ - Operating System
+ - Forward email : whether or not the email sent to you is forwarded to another person
+   can be determined easily by using this tool.
+* google search operators
+http://www.googleguide.com

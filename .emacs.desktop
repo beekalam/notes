@@ -1,0 +1,74 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Sat Feb 18 10:47:44 2017
+;; Desktop file format version 206
+;; Emacs version 24.5.1
+
+;; Global section:
+(setq desktop-saved-frameset [frameset 1 (22695 62744 827233 16000) (desktop . "206") "moh@moh-lin-pc" nil nil ((((font-backend xft x) (font . "-DAMA-Ubuntu Mono-normal-normal-normal-*-17-*-*-*-m-0-iso10646-1") (font-parameter . "Ubuntu Mono 13") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars . right) (foreground-color . "black") (background-color . "white") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 9) (right-fringe . 9) (scroll-bar-foreground) (scroll-bar-background) (menu-bar-lines . 1) (tool-bar-lines . 1) (title) (wait-for-wm . t) (fullscreen . maximized) (tool-bar-position . top) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 10) (alpha) (horizontal-scroll-bars . t) (display-type . color) (background-mode . light) (cursor-color . "black") (sticky) (environment) (frameset--id . "B523-C877-DBF9-C4E2") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (icon-name) (display . ":0") (explicit-name) (visibility . t) (height . 54) (width . 206) (left . 1399) (top . 24)) ((min-height . 8) (min-width . 20) (min-height-ignore . 4) (min-width-ignore . 12) (min-height-safe . 2) (min-width-safe . 4) (min-pixel-height . 144) (min-pixel-width . 180) (min-pixel-height-ignore . 72) (min-pixel-width-ignore . 108) (min-pixel-height-safe . 36) (min-pixel-width-safe . 36)) vc (pixel-width . 1887) (pixel-height . 967) (total-width . 210) (total-height . 54) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (hc (pixel-width . 1887) (pixel-height . 481) (total-width . 210) (total-height . 27) (normal-height . 0.5) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 942) (pixel-height . 481) (total-width . 105) (total-height . 27) (normal-height . 1.0) (normal-width . 0.5) (buffer "php.org" (selected) (hscroll . 0) (fringes 9 9 nil) (margins nil) (scroll-bars 10 2 t nil) (vscroll . 0) (dedicated) (point . 51931) (start . 50187))) (leaf (last . t) (pixel-width . 945) (pixel-height . 481) (total-width . 105) (total-height . 27) (normal-height . 1.0) (normal-width . 0.5) (buffer "emacs-notes.org" (selected . t) (hscroll . 0) (fringes 9 9 nil) (margins nil) (scroll-bars 10 2 t nil) (vscroll . 0) (dedicated) (point . 13629) (start . 1426)))) (hc (last . t) (pixel-width . 1887) (pixel-height . 486) (total-width . 210) (total-height . 27) (normal-height . 0.5) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 942) (pixel-height . 486) (total-width . 105) (total-height . 27) (normal-height . 1.0) (normal-width . 0.5) (buffer "ubuntu.org" (selected) (hscroll . 0) (fringes 9 9 nil) (margins nil) (scroll-bars 10 2 t nil) (vscroll . 0) (dedicated) (point . 52892) (start . 42204))) (leaf (last . t) (pixel-width . 945) (pixel-height . 486) (total-width . 105) (total-height . 27) (normal-height . 1.0) (normal-width . 0.5) (buffer "javascript.org" (selected) (hscroll . 0) (fringes 9 9 nil) (margins nil) (scroll-bars 10 2 t nil) (vscroll . 0) (dedicated) (point . 62112) (start . 1))))))])
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("php"))
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq file-name-history '("~/Documents/notes/emacs-notes.org" "~/Documents/notes/" "~/Documents/notes/javascript.org" "~/Documents/notes/ubuntu.org" "~/Documents/notes" "~/src/fatfree/fatfree/" "/tmp/test.c" "~/Documents/notes/c.org" "~/Documents/notes/problem-solving.org" "~/Documents/notes/index.org" "~/Documents/notes/embedded.org" "~/Documents/notes/c.org" "~/Documents/notes/" "~/lfs/version-check.sh" "~/Documents/notes/dumps.org" "~/Documents/notes/problem-sloving.org" "~/Documents/notes/"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/moh/Documents/notes/emacs-notes.org"
+  "emacs-notes.org"
+  'org-mode
+  '(abbrev-mode)
+  13629
+  '(36 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines . t)))
+
+(desktop-create-buffer 206
+  "/home/moh/Documents/notes/php.org"
+  "php.org"
+  'org-mode
+  '(abbrev-mode)
+  51931
+  '(51931 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines . t)))
+
+(desktop-create-buffer 206
+  "/home/moh/Documents/notes/javascript.org"
+  "javascript.org"
+  'org-mode
+  '(abbrev-mode)
+  62112
+  '(62112 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines . t)))
+
+(desktop-create-buffer 206
+  "/home/moh/Documents/notes/ubuntu.org"
+  "ubuntu.org"
+  'org-mode
+  '(abbrev-mode)
+  52892
+  '(52892 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines . t)))
+
+(desktop-create-buffer 206
+  nil
+  "notes"
+  'dired-mode
+  '(abbrev-mode)
+  2996
+  '(275 nil)
+  t
+  '("/home/moh/Documents/notes/")
+  nil)
+

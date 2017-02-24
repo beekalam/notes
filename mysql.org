@@ -1,0 +1,18 @@
+* allow root remote connections to mysql?
+
+root remote access is disabled by default.
+
+#+begin_src
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
+ FLUSH PRIVILEGES;
+#+end_src
+
+and then find my.cnf(linux /etc/mysql/my.cnf) or my.ini(windows C:\Program Files\MySQL\MySQL Server 5.5\).
+
+Change line
+
+ bind-address = 127.0.0.1
+
+to
+
+ #bind-address = 127.0.0.1

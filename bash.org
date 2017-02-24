@@ -1,0 +1,355 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+* Bash Keyboard Shortcuts
+
+Moving the cursor:
+  Ctrl + a   Go to the beginning of the line (Home)
+  Ctrl + e   Go to the End of the line (End)
+  Ctrl + p   Previous command (Up arrow)
+  Ctrl + n   Next command (Down arrow)
+   Alt + b   Back (left) one word
+   Alt + f   Forward (right) one word
+  Ctrl + f   Forward one character
+  Ctrl + b   Backward one character
+  Ctrl + xx  Toggle between the start of line and current cursor position
+Editing:
+ Ctrl + L   Clear the Screen, similar to the clear command
+
+  Alt + Del Delete the Word before the cursor.
+  Alt + d   Delete the Word after the cursor.
+ Ctrl + d   Delete character under the cursor
+ Ctrl + h   Delete character before the cursor (Backspace)
+
+ Ctrl + w   Cut the Word before the cursor to the clipboard.
+ Ctrl + k   Cut the Line after the cursor to the clipboard.
+ Ctrl + u   Cut/delete the Line before the cursor to the clipboard.
+
+  Alt + t   Swap current word with previous
+ Ctrl + t   Swap the last two characters before the cursor (typo).
+ Esc  + t   Swap the last two words before the cursor.
+
+ ctrl + y   Paste the last thing to be cut (yank)
+  Alt + u   UPPER capitalize every character from the cursor to the end of the current word.
+  Alt + l   Lower the case of every character from the cursor to the end of the current word.
+  Alt + c   Capitalize the character under the cursor and move to the end of the word.
+  Alt + r   Cancel the changes and put back the line as it was in the history (revert).
+ ctrl + _   Undo
+ 
+ TAB        Tab completion for file/directory names
+For example, to move to a directory 'sample1'; Type cd sam ; then press TAB and ENTER. 
+type just enough characters to uniquely identify the directory you wish to open.
+
+Special keys: Tab, Backspace, Enter, Esc
+Text Terminals send characters (bytes), not key strokes. 
+Special keys such as Tab, Backspace, Enter and Esc are encoded as control characters. 
+Control characters are not printable, they display in the terminal as ^ and are intended to have an effect on applications.
+
+Ctrl+I = Tab
+Ctrl+J = Newline
+Ctrl+M = Enter
+Ctrl+[ = Escape
+
+Many terminals will also send control characters for keys in the digit row: 
+Ctrl+2 → ^@
+Ctrl+3 → ^[ Escape
+Ctrl+4 → ^\
+Ctrl+5 → ^]
+Ctrl+6 → ^^
+Ctrl+7 → ^_ Undo
+Ctrl+8 → ^? Backward-delete-char
+
+Ctrl+v tells the terminal to not interpret the following character, so Ctrl+v Ctrl-I will display a tab character, 
+similarly Ctrl+v ENTER will display the escape sequence for the Enter key: ^M
+
+History:
+  Ctrl + r   Recall the last command including the specified character(s)
+             searches the command history as you type.
+             Equivalent to : vim ~/.bash_history. 
+  Ctrl + p   Previous command in history (i.e. walk back through the command history)
+  Ctrl + n   Next command in history (i.e. walk forward through the command history)
+
+  Ctrl + s   Go back to the next most recent command.
+             (beware to not execute it from a terminal because this will also launch its XOFF).
+  Ctrl + o   Execute the command found via Ctrl+r or Ctrl+s
+  Ctrl + g   Escape from history searching mode
+        !!   Repeat last command
+      !abc   Run last command starting with abc
+    !abc:p   Print last command starting with abc
+        !$   Last argument of previous command
+   ALT + .   Last argument of previous command
+        !*   All arguments of previous command
+^abc­^­def   Run previous command, replacing abc with def
+Process control:
+ Ctrl + C   Interrupt/Kill whatever you are running (SIGINT)
+ Ctrl + l   Clear the screen
+ Ctrl + s   Stop output to the screen (for long running verbose commands)
+            Then use PgUp/PgDn for navigation
+ Ctrl + q   Allow output to the screen (if previously stopped using command above)
+ Ctrl + D   Send an EOF marker, unless disabled by an option, this will close the current shell (EXIT)
+ Ctrl + Z   Send the signal SIGTSTP to the current task, which suspends it.
+            To return to it later enter fg 'process name' (foreground).
+Emacs mode vs Vi Mode
+All the above assume that bash is running in the default Emacs setting, if you prefer this can be switched to Vi shortcuts instead.
+
+Set Vi Mode in bash:
+
+$ set -o vi 
+Set Emacs Mode in bash:
+
+$ set -o emacs 
+
+* increment variable in bash
+
+There are more than one way to increment a variable in bash, but what you tried is not correct.
+
+You can use for example arithmetic expansion:
+
+var=$((var+1))
+or only:
+
+((var=var+1))
+or:
+
+((var+=1))
+or even:
+
+((var++))
+Or you can use let:
+
+let "var=var+1"
+or only:
+
+let "var+=1"
+or even:
+
+let "var++"
+
+* testing with *if*
+* for loops to display only odd natural numbers from  to 99.
+
+#+begin_src shell
+for i in `seq 1 2 99`
+do
+    echo $i
+done
+#+end_src
+
+* Single Quotes versus double quotes
+
+Basically,variable names are exapnded within double quotes, but not
+single quotes. If you do not need to refer to variables, single
+quotes are good to use as the results are more predictable.  An
+example
+
+#+begin_src shell
+#!/bin/bash
+echo -n '$USER='     # -n option stops echo from breaking the line
+echo "$USER"
+echo "\$USER=$USER"  # this does the same thing as the first two lines
+#+end_src
+
+The output looks like this (assuming your username is elflord)
+
+$USER=elflord
+
+$USER=elflord
+
+so the double quotes still have a work around. Double quotes are more
+flexible, but less predictable. Given the choice between single quotes
+and double quotes, use single quotes.
+
+Sometimes, it is a good idea to protect variable names in double
+quotes. This is usually the most important if your variables value
+either (a) contains spaces or (b) is the empty string. An example is
+as follows:
+
+#+begin_src shell
+#!/bin/bash
+X=""
+if [ -n $X ]; then 	# -n tests to see if the argument is non empty
+	echo "the variable X is not the empty string"
+fi
+#+end_src
+
+This script will give the following output:
+
+the variable X is not the empty string
+
+Why ? because the shell expands $X to the empty string. The expression
+[ -n ] returns true (since it is not provided with an argument). A
+better script would have been:
+
+#+begin_src shell
+#!/bin/bash
+X=""
+if [ -n "$X" ]; then 	# -n tests to see if the argument is non empty
+	echo "the variable X is not the empty string"
+fi
+#+end_src
+
+In this example, the expression expands to [ -n "" ] which returns
+false, since the string enclosed in inverted commas is clearly empty.
+* Using Braces to Protect Your Variables
+
+OK. Here's a potential problem situation. Suppose you want to echo the
+value of the variable X, followed immediately by the letters
+"abc". Question: how do you do this ? Let's have a try :
+
+#+begin_src shell
+#!/bin/bash
+X=ABC
+echo "$Xabc"
+#+end_src
+
+THis gives no output. What went wrong ? The answer is that the shell
+thought that we were asking for the variable Xabc, which is
+uninitialised. The way to deal with this is to put braces around X to
+seperate it from the other characters. The following gives the desired
+result:
+
+#+begin_src shell
+#!/bin/bash
+X=ABC
+echo "${X}abc"
+#+end_src
+
+* While Loops
+** intro
+While loops iterate "while" a given condition is true. An example of this:
+
+#+begin_src shell
+#!/bin/bash
+X=0
+while [ $X -le 20 ]
+do
+	echo $X
+	X=$((X+1))
+done
+#+end_src
+
+** break
+#+begin_src shell
+
+#!/bin/sh
+
+a=0
+
+while [ $a -lt 10 ]
+do
+   echo $a
+   if [ $a -eq 5 ]
+   then
+      break
+   fi
+   a=`expr $a + 1`
+done
+#+end_src
+
+* comparing numbers
+In bash, you should do your check in arithmetic context:
+#+begin_src shell
+if (( a > b )); then
+    ...
+fi
+#+end_src
+
+For POSIX shells that don't support (()), you can use -lt and -gt.
+#+begin_src shell
+if [ "$a" -gt "$b" ]; then
+    ...
+fi
+#+end_src
+
+| operator | comparison            |
+|----------+-----------------------|
+| -lt      | Less than             |
+| -le      | Less than or equal    |
+| -eq      | Equal                 |
+| -ge      | Greater than or equal |
+| -gt      | Greater than          |
+| -ne      | Not equal             |
+
+** example
+
+#+begin_src c
+#!/bin/bash
+count=100
+if [ $count -eq 100 ]
+then
+  echo "Count is 100"
+fi
+#+end_src
+
+* string comparison
+
+| operator       | true if                                 |
+|----------------+-----------------------------------------|
+| str1 = str2[4] | str1 matches str2                       |
+| str1 != str2   | str1 does not match str2                |
+| str1 < str2    | str1 is less than str2                  |
+| str1 > str2    | str1 is greater than str2               |
+| -n str1 str1   | is not null (has length greater than 0) |
+| -z str1 str1   | is null (has length 0)                  |
+
+* airthmetic with *bc*
+** example
+#+begin_src
+~$ echo "5+5.2"| bc -l
+10.2
+#+end_src
+
+** rounding the result
+use "scale" (number of decimal points).
+
+#+begin_src
+~$ echo "scale = 2; 10 * 100 / 30" | bc
+33.33
+~$ echo "scale = 2; 10 / 30 * 100" | bc
+33.00
+~$ echo "scale = 2; (10 / 30) * 100" | bc
+33.00
+#+end_src
+* airthmetic with *expr*
+
+#+begin_src
+~$ echo $(expr 5 + 5)
+10
+~$ echo $(expr 5 - 5 + 2 )
+2
+~$ echo $(expr 5 - 5 + 2 / 3 )
+0
+~$ echo $(expr 5 - 5 + 2 / 1 )
+2
+#+end_src
+
+Be careful with spacing in such expressions! Bash is very sensitive to them.
+* reading lines from file
+#+begin_src shell
+while read line file; do
+    
+done 
+#+end_src
+
+* get file size using =stat=
+#+begin_src shell
+$ echo stat phpunit.xml -t | awk '{print $2}'
+#+end_src
+
+* example
+** write ~head -n 20~ with shell script
+
+#+begin_src shell
+counter=0
+while read line
+do
+    echo $line
+    counter=$((counter + 1))
+    if [ $counter -eq  20 ]
+    then
+        break
+    fi
+done
+#+end_src
+
+* references
+http://www.panix.com/~elflord/unix/bash-tute.html
+

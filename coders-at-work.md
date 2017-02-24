@@ -4,7 +4,7 @@
 So basically anytime I do
 something clever, I make sure I have a test in there to break really loudly
 
-It’s one thing to go
+It’s one thing to go2
 learn a language for fun, but until you write some big, complex system in it,
 you don’t really learn it.
 
@@ -16,11 +16,13 @@ are the data going to be laid out on disk? Then I write dummy mocks for
 different parts and flesh it out over time.
 Seibel: Do you write mocks in the test-first sense so you can test it as you
 go?
+
 Fitzpatrick: More and more. I always designed software this way, even
 before testing. I would just design interfaces and storage first, and then
 work up to an actual implementation later.
 Seibel: What form would the design take? Pseudocode? Actual code?
 Whiteboard scribbles?
+
 Fitzpatrick: Generally I would bring up an editor and just write notes with
 pseudocode for the schema. After it got good, I would make up a real
 schema and then I would copy-paste it in just to make sure that “create
@@ -79,3 +81,90 @@ it all. Stop. Try to figure out what’s going on. Learn how to write things
 incrementally so that at each stage you could verify it.
 
 ===============================================================================
+Douglas Crockford
+
+Seibel: What makes code readable for you?
+Crockford: It happens at a number of levels. The simplest is just being
+consistent in the presentation so you always indent everything properly; you
+have white space in all the right places. One habit that I still struggle with,
+something I learned back in the Fortran days, is I tend to use too many one-
+letter variable names, which I believe is a bad thing. And I’m trying really
+hard to break it, but it’s difficult—it’s still something I struggle with.
+
+
+
+Seibel: What are the concrete things that programmers should focus on to
+make their code readable?
+Crockford: The subset idea is really important, especially for JavaScript
+because it contains so many bad features. But it’s true for all languages.
+When I was a journeyman, I would read the language manual and I would
+understand every feature. And I would figure out how to use them all. And
+I’d use them all all the time. It turns out a lot of them were not well thought
+through.
+I’m thinking back to Fortran now, but it was true in all languages. Sometimes
+language designers get it wrong. C has a whole bunch of errors in it, from
+my perspective now.
+
+Seibel: For instance?
+Crockford: Like the switch statement having fall-through be the default
+was wrong—they shouldn’t have done that. ++ has huge security
+problems—it encourages you to be way too tricky, to try to do too much in
+
+one line. In that compulsion to do it in one line, you make code which is
+hard to understand and which is likely to lead to things like buffer overrun
+errors. So most of the security problems that we’ve seen in operating
+systems over the last few years are a consequence of ++ .
+In my programming style now I don’t use ++ anymore, ever. I can make the
+case that it’s good to use it here and it’s bad to use it there but it’s hard for
+me to find the good pieces and the bad pieces in my code.
+Seibel: Couldn’t one argue that the security problem with ++ really has
+nothing to do with ++ but with unchecked array bounds or raw pointers? It
+isn’t a security risk in Java because if you ++ off the end of the array you just
+get an exception.
+
+Crockford: Yeah, it’s certainly less dangerous in Java. And that danger
+doesn’t exist at all in JavaScript because it doesn’t have arrays. But even so, I
+found that the quality of my code got better when I stopped doing it, just
+because it invited me to write one-liners and that’s usually a bad idea.
+Another example of that is the continue statement. I have never seen a
+piece of code that I could not improved by taking the continue out. It
+makes certain kinds of complicated structures easier to write. But I found
+that I can always improve the structure if I can find a way to factor it out. So
+as part of my personal discipline, I don’t use continue ever. If I see a
+continue in my code, then I assume I haven’t thought it through carefully.
+
+Seibel: How do you read code you didn’t write?
+Crockford: By cleaning it. I’ll throw it in a text editor and I’ll start fixing it.
+First thing I’ll do is make the punctuation conform; get the indentation right;
+do all that stuff. I have programs that can do that for me, but I find doing
+that myself is more efficient in the long run because it gets me more
+acquainted with the code. Morningstar taught me to do this. He’s brilliant at
+refactoring other people’s code and that’s the approach he takes and I find it
+works.
+
+Crockford: I’ve never actually seen that. I think it’s really difficult to write
+good code in a sloppy manner. By good code, I mean it’s going to be
+readable. At one level, it doesn’t matter what it does to a machine if I can’t
+figure out what it does, so it might turn out that the code is amazing in
+terms of its efficiency, or its compactness, or some other metric which I
+don’t care about.
+
+Readability of code is now my first priority. It’s more important than being
+fast, almost as important as being correct, but I think being readable is
+actually the most likely way of making it correct.So I think it’s probably not
+good code and they probably made the wrong trade-offs if the code turned
+out to be in the state that it’s not easily readable.
+
+Seibel: Do you have any advice for self-taught programmers?
+
+Crockford: Yeah, read a lot. There are good books out there. Find the
+good ones and read those. And if you’re doing web development, find the
+best sites and look at their code. Although I’m a little reluctant to give that
+advice yet. Most web developers learned to do web development by doing
+“view source,” and until fairly recently, most of the source that was out
+there was very bad. So you had a generation of programmers who were
+raised on really bad examples, thinking bad code was the way to write.
+That’s getting better now, but there’s still so much bad stuff out there that
+I’m reluctant to give that advice yet.
+===========================================================================
+

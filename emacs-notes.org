@@ -1,0 +1,382 @@
+#+TITLE:   Emacs org-mode examples
+#+AUTHOR:  Mohammad Reza Mansouri
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+STARTUP: overview
+
+* Introduction
+
+Org-mode is a personal, information management and outlining tool for
+Emacs. This document is intended to give the reader a "feel" for 
+org-mode and to teach basic operations.
+
+** Obtaining org-mode
+
+you can download org-mode from the
+[[http://staff.science.uva.nl/~dowinik/Tools/org/][
+org-mode home page.]]
+
+** Cofiguration
+* Header
+** General metadata
+
+An initial group sets the metadata used in any title pages, headers,
+footers, etc. used by the various exporters:
+#+begin_src lisp
+#+TITLE:     Emacs org-mode examples
+#+AUTHOR:    Eric H. Neilsen, Jr.
+#+EMAIL:     neilsen@fnal.gov
+#+end_src
+** Common export parameters
+
+Configue the org-mode tags for forcing inclusion of exclusion of
+sections in exported documents
+
+#+begin_src lisp
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+end_src
+ 
+Additional options handle interpretation of special characters in the
+buffer, numbering of headings, etc.
+
+#+begin_src lisp
+#+OPTIONS: H:2 num:nil toc:nil \n:nil @:t ::t |:t ^:{} _:{} *:t TeX:t LaTeX:t
+#+end_src
+
+** emacs options
+
+THE STARTUP keyword sets how the buffer is displayed when the file is opened in emacs:
+#+begin_src lisp
+#+STARTUP: overview
+#+STARTUP: content
+#+STARTUP: showall
+#+STARTUP: showeverything
+#+end_src
+
+* Using org-mode as spreadsheet
+** Define one column using a formula in terms of others
+| airmass | zenith_seeing | delivered_seeing |
+|---------+---------------+------------------|
+|     1.3 |          0.95 |        1.1119612 |
+|     1.3 |           1.0 |        1.1704854 |
+|     1.3 |           1.1 |        1.2875340 |
+|     1.3 |           1.2 |        1.4045825 |
+|     1.3 |          1.25 |        1.4631068 |
+|     1.3 |           1.3 |        1.5216311 |
+|     1.3 |           1.5 |        1.7557281 |
+|     1.3 |           1.8 |        2.1068738 |
+|     1.2 |           1.8 |        2.0080811 |
+|     1.4 |           2.0 |        2.4474105 |
+#+TBLFM: $3=$2*($1**0.6)
+
+To recalculate the column, put the cursor on the #+TBLFM column and
+hit ctrl-c twice.
+
+| a | b | sum |       div |
+|---+---+-----+-----------|
+| 1 | 2 |   3 |         2 |
+| 2 | 3 |   5 |       1.5 |
+| 3 | 4 |   7 | 1.3333333 |
+| 4 | 5 |   9 |      1.25 |
+| 5 | 6 |  11 |       1.2 |
+| 6 | 7 |  13 | 1.1666667 |
+| 7 | 8 |  15 | 1.1428571 |
+| 8 | 9 |  17 |     1.125 |
+#+TBLFM: $3=$1+$2
+#+TBLFM: $4=$2/$1
+* tasks
+** DONE todo start new org file for tutorial
+   CLOSED: [2016-12-06 Tue 20:39]
+** DONE outline document
+   CLOSED: [2016-12-06 Tue 20:41]
+** DONE Write Introduction
+   CLOSED: [2016-12-06 Tue 20:46]
+** TODO write documentation
+
+* The basics
+** Creating a new file
+** Simple task list
+** Usign headlines to structure a document
+** Links to other places
+** Adding notes to a task
+** Scheduling an appointment.
+** Using the agenda
+   
+* org-mode structure
+Text in org is structured  by headings, denoted by lines starting
+with one or more * so we can currently in a section.
+
+** a subheading
+
+*** navigation
+Headings can be expanded or collapsed by moving to the (sub)heading
+and pressing TAB. S-TAB cycles all headings. You can jump to next
+and previous headings with C-c C-n. and C-c C-p respectively.
+
+You can move headings up and down to reorder them with the arrow keys,
+using M-p and M-down.
+
+** lists
+*** bullet lists
+
+ - bullet lists can be created like this(start a line with one or more
+space and a -
+
+ - pressing M-RET gives you a new bullet.
+ - we might also like nested bullets
+   - like this one ( I pressed M-RET to indent it)
+   - and another  (M-RET now indents to the new level)
+ - the nice thing is that for long lines of text. emacs wraps them so that
+   the line up with the bullet.
+
+*** numbered lists
+ 1) numbered lists are also possible
+ 2) M-RET gives me a new number
+
+*** checklists [0/4]
+ - [ ] we can even have check lists
+ - [ ] M-S-RET gives a new item with a check 
+ - [ ] C-c C-c check/unchecks  a box.
+ - [ ] you can have sub items
+   + [ ] like this
+   + [ ] that can be checked off individually
+ - [ ] and you can track the number of items by adding [/] to the 
+     end of a line above a checklist - this updates whenyou check items off.
+
+*** definition lists
+ - definition lists :: these are useful sometimes
+ - item 2 :: M-RET again gives another item, and long lines wrap in a tidy way
+	     underneath.
+
+* Tables
+Hopefully you can see straight away that the simple structure provided
+by org-mode gives a nice way to keep an electronic note book.
+
+Often it is nice to include tables in our notes. Org handles this by
+using | to separate columns, a line of --- (inserted with C-c -)
+to add horizontal lines.
+
+Exercise: start by typing in this table below; type the first line in
+verbatim.
+
+ 1) when you get the "s" of comments, press TAB to go to the next
+    line
+ 2) go up to the previous line and use C-c - to add the row of dashes
+ 3) next enter a few lines of data, using TAB to go through the
+    cells - you should notice the columns changing width as needed.
+
+* Org-Mode Reference Card
+
+** Getting started
+   
+** Tables
+*** creating a table
+ - C-c | : convert region to table
+ - C-3 C-c | :separator at least 3 spaces
+
+*** commands available inside tables
+
+The following commands work when the cursor is inside a table. Outside
+of tables,the same keys may have other functionality.
+
+Re-aligning and field motion
+
+* searching
+** incremental search
+C-s
+C-r like C-s but in reverse order.
+*** search a word under cursor
+C-s C-w
+*** move to back/forth between search strings
+M-p M-n
+
+* Query-replace
+To use query-replace, go to the beginning of the buffer using M-< and
+then type M-%.  The prompt Query replace: appears in the
+minibuffer. Type the search string and press Enter. Now this appears:
+Query replace searchstring with:
+
+Type the replacement string and press Enter. So far, this procedure is
+ almost identical to a replace-string operation; only the prompts are
+ different.  Emacs now searches for the first occurrence of the search
+ string. When it finds one, a new prompt appears: Query replacing
+ searchstring with newstring.
+
+
+Space or y 
+Replace searchstring with newstring and go to the next instance of the string. 
+Del or n 
+Don't replace; move to next instance. 
+. 
+Replace the current instance and quit. 
+, 
+Replace and let me see the result before moving on. (Press Space or y to move on.) 
+! 
+Replace all the rest and don't ask. 
+^ 
+Back up to the previous instance. 
+Enter or q 
+Exit query-replace. 
+E 
+Modify the replacement string. 
+C-r 
+Enter a recursive edit (discussed in detail later). 
+C-w 
+Delete this instance and enter a recursive edit (so you can make a custom replacement). 
+C-M-c 
+Exit recursive edit and resume query-replace. 
+C-] 
+Exit recursive edit and exit query-replace. 
+* Repeating Query-Replaces (and Other Complex Commands)
+  Simply go the beginning of the file and press C-x Esc Esc. 
+* Recursive Editing
+To start a recursive edit while in query-replace, press C-r.
+When you want to resume the query-replace, press C-M-c.
+If you decide to exit the recursive edit and cancel the query-replace in one fell swoop,
+you can type C-] (for abort-recursive-edit) or M-x top-level Enter rather than C-M-c. 
+* regular expressions
+C-M-s EnterEdit
+C-M-r EnterEdit
+C-M-%Edit
+* word abbreviations
+** dynamic abbreviations
+ M-/ 
+** word abbreviations
+*** Trying word abbreviations for one session
+Usually, if you go to the trouble of defining a word abbreviation, you will use it in more than one Emacs session. 
+But if you'd like to try out abbreviation mode to see if you want to incorporate it into your startup, use the following procedure. 
+To define word abbreviations for this buffer and session: 
+
+1. Enter word abbreviation mode by typing M-x abbrev-mode Enter. Abbrev appears on the mode line. 
+For a global abbreviation, type the abbreviation you want to use and type C-x a i g or C-x a - (for add-inverse-global). 
+(For a local abbreviation, type C-x a i l for add-inverse-local instead.) Emacs then asks you for the expansion.
+
+2. Type the definition for the abbreviation and press Enter. 
+Emacs then expands the abbreviation and will do so each time you type it followed by a space or punctuation mark.
+
+3. When you exit Emacs. it asks if you want to save the abbreviations in .abbrev_defs. Type y if you want to save them.
+
+4. The abbreviations you've defined will work only in buffers where you enter abbrev mode.
+If you find that you like using word abbreviation mode,
+ may want to make it part of your startup, as described in the following section.
+
+* moving
+
+  C-f      character-forward
+  M-f      word-forward
+  C-n      next-line
+  C-p      previous-line
+ 
+  C-x 0    get rid of the current window.
+
+* correcting
+  
+| command | description                                                           |
+|---------+-----------------------------------------------------------------------|
+| BS      | Delete one character to the left of the cursor                        |
+| DEL     | Delete one character at the position of cursor.                       |
+| C-d     | same as DEL                                                           |
+| C-o     | Open a new line.                                                      |
+| C-x u   | Undo the last change to the buffer.                                   |
+| C-_     | same as C-x u                                                         |
+| C--     | same as C-x u                                                         |
+| C-/     | same as C-x u                                                         |
+| C-q     | insert the next character                                             |
+| C-x u   | repeat                                                                |
+| C-x BS  | delete from the current cursor position to the beginning of the line. |
+| C-k     | delete from the current cursor position to the end of line.           |
+
+** repeat and redo
+
+* screens
+
+  | command           | description                               |
+  |-------------------+-------------------------------------------|
+  | c-x 0             | delete the selected window                |
+  | c-x 1             | delete all windows except selected window |
+  | c-x 2             | split selected window verticially         |
+  | c-x 3             | split selected window horizontally        |
+  | c-x 0             | Move cursor to the next(other) window.    |
+  | c-x }             | Make selected widnow wider                |
+  | c-x {             | Make selected window narrower.            |
+  | c-x ^             | Make selected window larger.              |
+  | M-x shrink-window | Make selected window smaller.             |
+
+* buffers
+
+| command   | Description                                         |
+|-----------+-----------------------------------------------------|
+| C-x b     | Displays a  different buffer in the selected window |
+| C-x b     | create a new buffer in selected window.             |
+| C-x C-b   | Display a list of all buffers.                      |
+| C-x k     | kill(delete) a buffer                               |
+| C-x 4 b   | Display a different buffer in next window           |
+| C-x 4 C-o | Same as C-x 4 b, but don't change selected window   |
+
+* Files
+
+| Command   | Description                                 |
+|-----------+---------------------------------------------|
+| C-x C-f   | Switch to buffer containing specified file  |
+| C-x C-v   | Replace buffer contents with specified file |
+| C-x C-s   | save a buffer to file                       |
+| C-x C-w   | save a buffer to specified file             |
+| C-x i     | Insert contents of a file into buffer       |
+| C-x 4 C-f | Read contents of files into next window     |
+| C-x 4 f   | Same as C-x 4 C-f                           |
+| *C-x 4 r* | same as C-x 4 C-f, read-only                |
+
+* Using Buffers, Windows, and Frames
+Emacs calls GUI windows frames.
+
+
+C-x C-b   list buffers
+C-x C-q   turn readonly mdoe on/off.
+C-x C-f   read a  file into buffer.
+
+** mode line
+ --   Buffer has not been modified.
+ **   buffer has been modified(not yet saved)
+ %%   Read-only mode: buffer has not been modified.
+ %*   Read-only mode: buffer has not been modified.
+
+** mini-buffer
+The bottom line of your screen has two purposes.Emacs uses this line to echo your
+regular keystrokes and to display messages(ECHO area).Second emacs uses the same line to 
+ask you for information.(MINIBUFFER)
+
+** completion
+
+command | Action
+--------------------
+TAB     |  complete text in the minibuffer as much as possible
+C-i     |  same as TAB
+SPC     |  Complete text in minibuffer up to end of word.
+RET     |  Same as TAB, then enter the command.
+?       |  Create new window, display list of possible completions
+
+* wrap text
+M-x auto-fill-mode + M-q allow you to wordwrap for real a pre-existing paragraph.
+* org-mode
+** org-capture
+ - remember to require ~(require 'org)~.
+ - set the org-directory variable location(~(setq org-directory "~/Documents/notes/")~).
+ - define a keymap for capturing.(~(define-key global-map "\C-cc" 'org-capture)~).
+ - setup a location to save the org-captures.(~(setq org-default-notes-file (concat org-directory "dumps.org"))~)
+** run desktop-change-dir at startup
+
+#+begin_src elisp
+(setq desktop-path (list "~/emacs-server"))
+#+end_src
+
+** save abbrev-mode globally
+#+begin_src elisp
+(setq-default abbrev-mode t)
+#+end_src
+
+* indent paragraph
+select the text to indent
+C-u C-x C-i
+
+* References
+http://ehneilsen.net/notebook/orgExamples/org-examples.htm

@@ -1,0 +1,138 @@
+	"gender"=>array(
+			"type"=>"select",
+			"jqtype"=>"select",
+			"label"=>"جنسیت",
+			"suggestions"=>"Male@آقا|Female@خانم"
+			),
+	"radio_type"=>array(
+			"type"=>"select",
+			"jqtype"=>"select",
+			"label"=>"وضعیت رادیو",
+			"suggestions"=>"اختصاصی@اختصاصی|اشتراکی@اشتراکی"
+			),
+	"connection_type"=>array(
+			"type"=>"select",
+			"jqtype"=>"select",
+			"label"=>"نحوه اتصال",
+			"suggestions"=>"pppoe@pppoe|pptp@pptp"
+			),
+	"birth_date"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"تاریخ تولد",
+			"mask_type"=>"birth_date"
+			),
+	"full_name"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"نام و نام خانوادگی"
+			),
+	"user_address"=>array(
+			"type"=>"textarea",
+			"jqtype"=>"textarea",
+			"label"=>"آدرس",
+			"mask_type"=>"address"
+			),
+	"postal_code"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"کد پستی"
+			),
+	"mobile_number"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"تلفن همراه",
+			"mask_type"=>"mobile"
+			),
+	"phone_number"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"تلفن ثابت",
+			"mask_type"=>"phone"
+			),
+	"comments"=>array(
+			"type"=>"textarea",
+			"jqtype"=>"textarea",
+			"label"=>"توضیحات"
+			),
+	"semat"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"سمت"
+			),
+	"fname"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"نام"
+			),
+	"lname"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"نام خانوادگی"
+			),
+	"email"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"ایمیل",
+			"mask_type"=>"email"
+			),
+	"id_card_path"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"تصویر کارت شناسایی"
+			),
+	"installer_name"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"نام نصاب"
+			),
+	"reciver_info"=>array(
+			"type"=>"select",
+			"jqtype"=>"select",
+			"suggestions"=>"پیش فرض نماینده@پیش فرض نماینده|اختصاصی مشترک@اختصاصی مشترک",
+			"label"=>"اطلاعات ورودی رادیو"
+			),
+	"reciver_username"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"نام کاربری دستگاه"
+			),
+	"reciver_password"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"گذرواژه دستگاه"
+			),
+	"reciver_model"=>array(
+			"type"=>"select",
+			"jqtype"=>"select",
+			"suggestions"=>"Nano Station M 5@Nano Station M 5|Nano Loco M 5@Nano Loco M 5|Power Beam M5@Power Beam M5|Lite Beam M5@Lite Beam M5|Nano Bridge M5@Nano Bridge M5|SXT@SXT|Mikrotik@Mikrotik|Tplink@Tplink|Dlink@Dlink|Hotspot User@Hotspot User|Other Devices@Other Devices",
+			"label"=>"مدل دستگاه"
+			),
+	"person_type"=>array(
+			"type"=>"select",
+			"jqtype"=>"select",
+			"suggestions"=>"حقیقی@حقیقی|حقوقی@حقوقی",
+			"label"=>"نوع کاربر"
+			),
+	"company_prefix"=>array(
+			"type"=>"select",
+			"jqtype"=>"select",
+			"suggestions"=>"شرکت خصوصی@شرکت خصوصی|شرکت دولتی@شرکت دولتی|موسسه@موسسه|مجموعه@مجموعه|سازمان@سازمان|هتل@هتل",
+			"label"=>"نوع شخصیت حقوقی"
+			),
+	"company_name"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"نام شخصیت حقوقی"
+			),
+	"nationality"=>array(
+			"type"=>"select",
+			"jqtype"=>"select",
+			"suggestions"=>"ایرانی@ایرانی|غیر ایرانی@غیر ایرانی",
+			"label"=>"ملیت"
+			),
+	"id_card_number"=>array(
+			"type"=>"text",
+			"jqtype"=>"text",
+			"label"=>"کد شناسایی"
+			),

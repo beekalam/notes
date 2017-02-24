@@ -1,0 +1,2515 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+* regular expression
+** Finding the nth Occurrence of a Match
+
+#+begin_src php
+<?php
+$todo = "1. Get Dressed 2. Eat Jelly 3. Squash every week into a day";
+
+preg_match_all("/\d\. ([^\d]+)/", $todo, $matches);
+
+print "The second item on the todo list is: ";
+// $matches[1] is an array of each substring captured by ([^\d]+)
+print $matches[1][1];
+
+print "The entire todo list is: ";
+foreach($matches[1] as $match) {
+    print "$match\n";
+}
+?>
+#+end_src
+
+Because the preg_match() function stops after it finds one match, you
+need to use preg_match_all() instead if you’re looking for additional
+matches. The preg_match_all() function returns the number of full
+pattern matches it finds. If it finds no matches, it returns 0. If it
+encounters an error, such as a syntax problem in the pattern, it
+returns false.
+
+The third argument to preg_match_all() is populated with an array
+holding information about the various substrings that the pattern has
+matched. The first element holds an array of matches of the complete
+pattern. For Example 22-4, this means that $matches[0] holds the parts
+of $todo that match /\d\. ([^\d]+)/: 1. Get Dressed, 2. Eat Jelly,
+and 3. Squash every week into a day.
+
+Subsequent elements of the $matches array hold arrays of text matched
+by each parenthesized subpattern. The pattern in Example 22-4 has just
+one subpattern ([^\d]+). So $matches[1] is an array of strings that
+match that subpattern: Get Dressed, Eat Jelly, and Squash every week
+into a day.
+
+If there were a second subpattern, the substrings that it matched
+would be in $matches[2], a third subpattern’s matches would be in
+$matches[3], and so on.
+
+Instead of returning an array divided into full matches and then
+submatches, preg_match_all() can return an array divided by matches,
+with each submatch inside. To trigger this, pass PREG_SET_ORDER in as
+the fourth argument. This is particularly useful when you’ve got
+multiple captured subpatterns and you want to iterate through the
+subpattern groups one group at a time, as shown in Example 22-5.
+
+#+begin_src php
+<?php
+$todo = "
+first=Get Dressed
+next=Eat Jelly
+last=Squash every week into a day
+";
+
+preg_match_all("/([a-zA-Z]+)=(.*)/", $todo, $matches, PREG_SET_ORDER);
+
+foreach ($matches as $match) {
+    print "The {$match[1]} action is {$match[2]} \n";
+}
+?>
+#+end_src
+
+** replace n counts of a pattern
+
+#+begin_src php
+preg_replace($pattern,$replacement,$string,$limit);
+#+end_src
+
+$limit is by the default is -1 which means no limit.
+* strings
+** defining heredoc document
+
+#+begin_src php
+print <<< END
+It's funny when signs say things like:
+   Original "Root" Beer
+   "Free" Gift
+   Shoes cleaned while "you" wait
+or have other misquoted words.
+END;
+#+end_src
+
+** Accessing Substrings
+
+#+begin_src php
+<?php
+
+if (strpos($_POST['email'], '@') === false) {
+    print 'There was no @ in the e-mail address!';
+ }
+
+?>
+#+end_src
+
+** Extracting Substrings
+
+#+begin_src php
+<?php
+$substring = substr($string,$start,$length);
+$username = substr($_GET['username'],0,8);
+?>
+#+end_src
+
+** substring from beginning of the line except the last char
+#+begin_src php
+substr("abcd",0,-1);       // abc
+#+end_src
+
+** Replacing substrings
+
+#+begin_src php
+// Everything from position $start to the end of $old_string
+// becomes $new_substring
+$new_string = substr_replace($old_string,$new_substring,$start);
+
+// $length characters, starting at position $start, become $new_substring
+$new_string = substr_replace($old_string,$new_substring,$start,$length);
+#+end_src
+
+** Processing a String One Byte at a Time
+
+#+begin_src php
+<?php
+$string = "This weekend, I'm going shopping for a pet chicken.";
+$vowels = 0;
+for ($i = 0, $j = strlen($string); $i < $j; $i++) {
+    if (strstr('aeiouAEIOU',$string[$i])) {
+        $vowels++;
+    }
+}
+?>
+#+end_src
+
+** Reversing a String by Byte
+
+#+begin_src php
+<?php
+print strrev('This is not a palindrome.');
+?>
+#+end_src
+
+** Reversing a string by word
+
+#+begin_src php
+<?php
+$s = "Once upon a time there was a turtle.";
+// break the string up into words
+$words = explode(' ',$s);
+// reverse the array of words
+$words = array_reverse($words);
+// rebuild the string
+$s = implode(' ',$words);
+print $s;
+?>
+#+end_src
+
+#+begin_src php
+<?php
+$reversed_s = implode(' ',array_reverse(explode(' ',$s)));
+?>
+#+end_src
+
+** Switching tabs and spaces
+
+#+begin_src php
+<?php
+$r = mysql_query("SELECT message FROM messages WHERE id = 1") or die();
+$ob = mysql_fetch_object($r);
+$tabbed = str_replace(' ',"\t",$ob->message);
+$spaced = str_replace("\t",' ',$ob->message);
+
+print "With Tabs: <pre>$tabbed</pre>";
+print "With Spaces: <pre>$spaced</pre>";
+?>
+#+end_src
+
+** trimming space
+Use ltrim(), rtrim(), or trim(). ltrim() removes whitespace from the
+beginning of a string, rtrim() from the end of a string, and trim()
+from both the beginning and end of a string:
+
+** controlling case
+*** capitalizing letters
+
+#+begin_src php
+<?php
+print ucfirst("how do you do today?");  //capitalized the first word in string
+print ucwords("the prince of wales");  //capitalizes the first character of each word in a string
+?>
+#+end_src
+
+*** whole string case control
+
+The functions strtolower() and strtoupper() work on entire strings,
+not just individual characters. All alphabetic characters are changed
+to lowercase by strtolower() and strtoupper() changes all alphabetic
+characters to uppercase:
+
+#+begin_src php
+<?php
+print strtolower("I programmed the WOPR and the TRS-80.");
+print strtoupper('"since feeling is first" is a poem by e. e. cummings.');
+?>
+#+end_src
+
+** ordinal value of character
+use ~ord("h")~
+** character value of integer
+use ~chr(ascii)~
+** replace multiple
+#+begin_src php
+str_ireplace(['a', 'e', 'i', 'o', 'u'], '!', $str);
+#+end_src
+
+** convert string to array
+#+begin_src php
+// split a string without delimiter
+str_split($str);
+// split a string with delimiter
+str_split(' ',$str);
+explode(' ', $str);
+#+end_src
+ 
+** split a string by char
+
+#+begin_src php
+preg_split('/,/',$str);   // split by ','
+preg_split('//',$str);    // split characters
+explode(',', $str);
+#+end_src
+
+** split a string to chunks of length n
+#+begin_src php
+$str="abcdefghijklm";
+echo print_r(str_split($str, 3),true);
+
+// result
+Array
+(
+    [0] => abc
+    [1] => def
+    [2] => ghi
+    [3] => jkl
+    [4] => m
+)
+
+#+end_src
+
+** remove alphabet values from string
+#+begin_src php
+$res = preg_replace('/^[0-9].,/',$str);
+#+end_src
+* numbers
+** Checking Whether a Variable Contains a Valid Number
+
+#+begin_src php
+<?php
+if (is_numeric(5))          { /* true  */ }
+if (is_numeric('5'))        { /* true  */ }
+if (is_numeric("05"))       { /* true  */ }
+if (is_numeric('five'))     { /* false */ }
+
+if (is_numeric(0xDECAFBAD)) { /* true  */ }
+if (is_numeric("10e200"))   { /* true  */ }
+?>
+#+end_src
+
+** comparing floating point numbers
+
+Use a small delta value, and check if the numbers have a difference smaller than that delta:
+
+#+begin_src php
+<?php
+$delta = 0.00001;
+
+$a = 1.00000001;
+$b = 1.00000000;
+
+if (abs($a - $b) < $delta) { /* $a and $b are equal */ }
+?>
+#+end_src
+
+
+Floating-point numbers are represented in binary form with only a
+finite number of bits for the mantissa and the exponent. You get
+overflows when you exceed those bits. As a result, sometimes PHP (just
+like some other languages) doesn’t believe that two equal numbers are
+actually equal because they may differ toward the very end.
+
+To avoid this problem, instead of checking if $a == $b, make sure the
+first number is within a very small amount ($delta) of the second
+one. The size of your delta should be the smallest amount of
+difference you care about between two numbers. Then use abs() to get
+the absolute value of the difference.
+** Rounding Floating-Point Numbers
+
+To round a number to the closest integer, use round() :
+
+$number = round(2.4);   // $number = 2
+
+To round up, use ceil() :
+
+$number = ceil(2.4);    // $number = 3
+
+To round down, use floor() :
+
+$number = floor(2.4);   // $number = 2
+
+To keep a set number of digits after the decimal point, round()
+accepts an optional precision argument. For example, perhaps you are
+calculating thetotal price for the items in a user’s shopping cart:
+
+#+begin_src php
+<?php
+$cart = 54.23;
+$tax = $cart * .05;
+$total = $cart + $tax;       // $total = 56.9415
+
+$final = round($total, 2);   // $final = 56.94
+?>
+#+end_src
+
+** Converting between bases
+Use the base_convert() function:
+
+$hex = 'a1';                           // hexadecimal number (base 16)
+
+// convert from base 16 to base 10
+$decimal = base_convert($hex, 16, 10); // $decimal is now 161
+
+The base_convert() function changes a string in one base to the
+correct string in another. It works for all bases from 2 to 36
+inclusive, using the letters a through z as additional symbols for
+bases above 10. The first argument is the number to be converted,
+followed by the base it is in and the base you want it to become.
+
+There are also a few specialized functions for conversions to and from
+base 10 and the most commonly used other bases of 2, 8,
+and 16. They’re bindec() and decbin(), octdec() and decoct(), and
+hexdec() and dechex() :
+
+// convert to base 10
+print bindec(11011); // 27
+print octdec(33);    // 27
+print hexdec('1b');  // 27
+
+// convert from base 10
+print decbin(27);    // 11011
+print decoct(27);    // 33
+print dechex(27);    // 1b
+
+Another alternative is to use printf(), which allows you to convert
+decimal numbers to binary, octal, and hexadecimal numbers with a wide
+range of formatting, such as leading zeros and a choice between upper-
+and lowercase letters for hexadecimal numbers.
+
+For instance, say you want to print out HTML color values:
+
+printf('#%02X%02X%02X', 0, 102, 204); // #0066CC
+
+* arrays
+** check for empty array
+#+begin_src php
+empty([]) // true
+#+end_src
+
+** sum of items in an array
+
+#+begin_src php
+  $scores  = array(98, 76, 56, 80);
+  $total   = array_sum($scores);    // $total = 310
+#+end_src
+
+** Specifying an Array Not Beginning at Element 0
+Instruct array() to use a different index using the => syntax:
+#+begin_src php
+$residents = array(1 => 'Washington', 'Adams', 'Jefferson', 'Madison');
+
+foreach ($presidents as $number => $president) {
+    print "$number: $president\n";
+}
+#+end_src
+
+** Storing Multiple Elements Per Key in an Array
+
+Store the multiple elements in an array:
+
+#+begin_src php
+$fruits = array('red' => array('strawberry','apple'),
+                'yellow' => array('banana'));
+#+end_src
+ 
+Or use an object:
+
+#+begin_src php
+while ($obj = mysql_fetch_object($r)) {
+    $fruits[] = $obj;
+}
+#+end_src
+
+In PHP, keys are unique per array, so you can’t associate more than
+one entry in a key without overwriting the old value. Instead, store
+your values in an anonymous array:
+#+begin_src php
+$fruits['red'][] = 'strawberry';
+$fruits['red'][] = 'apple';
+$fruits['yellow'][] = 'banana';
+#+end_src
+ 
+Or, if you’re processing items in a loop:
+
+#+begin_src php
+
+while (list($color,$fruit) = mysql_fetch_array($r)) {
+    $fruits[$color][] = $fruit;
+}
+
+#+end_src
+
+To print the entries, loop through the array:
+
+#+begin_src php
+foreach ($fruits as $color=>$color_fruit) {
+    // $color_fruit is an array
+    foreach ($color_fruit as $fruit) {
+        print "$fruit is colored $color.<br>";
+    }
+}
+#+end_src
+
+** Initializing an Array to a Range of Integers
+Use range($start, $stop):
+
+$cards = range(1, 52);
+** Iterating through an array
+Use foreach:
+
+foreach ($array as $value) {
+    // Act on $value
+}
+
+Or to get an array’s keys and values:
+
+foreach ($array as $key => $value) {
+    // Act II
+}
+
+Another technique is to use for:
+
+for ($key = 0, $size = count($array); $key < $size; $key++) {
+   // Act III
+}
+
+Finally, you can use each() in combination with list() and while:
+
+reset($array) // reset internal pointer to beginning of array
+while (list($key, $value) = each ($array)) {
+    // Final Act
+}
+
+** Deleting elements from an array
+To delete one element, use unset():
+
+unset($array[3]);
+unset($array['foo']);
+
+To delete multiple noncontiguous elements, also use unset():
+
+unset($array[3], $array[5]);
+unset($array['foo'], $array['bar']);
+
+To delete multiple contiguous elements, use array_splice():
+
+array_splice($array, $offset, $length);
+** Changing array size
+Use array_pad() to make an array grow:
+
+// start at three
+$array = array('apple', 'banana', 'coconut');
+
+// grow to five
+$array = array_pad($array, 5, '');
+
+Now, count($array) is 5, and the last two elements, $array[3] and $array[4], contain the empty string.
+
+To reduce an array, you can use array_splice():
+
+// no assignment to $array
+array_splice($array, 2);
+
+This removes all but the first two elements from $array.
+** Appending one array to another
+The array_merge() function works with both predefined arrays and arrays defined in place using array() :
+
+$p_languages = array('Perl', 'PHP');
+$p_languages = array_merge($p_languages, array('Python'));
+print_r($p_languages);
+Array
+(
+    [0] => PHP
+    [1] => Perl
+    [2] => Python
+)
+
+Merging arrays with only numerical keys causes the arrays to get
+renumbered, so values aren’t lost. Merging arrays with string keys
+causes the second array to overwrite the value of any duplicated
+keys. Arrays with both types of keys exhibit both types of
+behavior. For example:
+
+$lc = array('a', 'b' => 'b'); // lower-case letters as values
+$uc = array('A', 'b' => 'B'); // upper-case letters as values
+$ac = array_merge($lc, $uc);  // all-cases?
+print_r($ac);
+Array
+(
+    [0] => a
+    [b] => B
+    [1] => A
+)
+
+The uppercase A has been renumbered from index 0 to index 1, to avoid
+a collision, and merged onto the end. The uppercase B has overwritten
+the lowercase b and replaced it in the original place within the
+array.
+
+The + operator can also merge arrays. The array on the right
+overwrites any identically named keys found on the left. It doesn’t do
+any reordering to prevent collisions. Using the previous example:
+
+print_r($uc + $lc);
+print_r($lc + $uc);
+Array
+(
+    [0] => a
+    [b] => b
+)
+Array
+(
+    [0] => A
+    [b] => B
+)
+
+** Turning an Array into a String
+
+You have an array, and you want to convert it into a nicely formatted string.
+
+Use join():
+
+// make a comma delimited list
+$string = join(',', $array);
+
+Or loop yourself:
+
+$string = '';
+
+foreach ($array as $key => $value) {
+    $string .= ",$value";
+}
+
+$string = substr($string, 1); // remove leading ","
+** Checking if a Key Is in an Array
+
+Use array_key_exists() to check for a key no matter what the associated value is:
+
+if (array_key_exists('key', $array)) {
+    /* there is a value for $array['key'] */
+}
+
+Use isset() to find a key whose associated value is anything but null:
+
+if (isset($array['key'])) { /* there is a non-null value for 'key' in $array */ }
+
+Discussion
+
+The array_key_exists() function completely ignores array values—it
+just reports whether there is an element in the array with a
+particular key. isset(), however, behaves the same way on array keys
+as it does with other variables. A null value causes isset() to return
+false.
+
+** Checking if an Element Is in an Array
+Use in_array():
+
+if (in_array($value, $array)) {
+    // an element has $value as its value in array $array
+}
+
+The default behavior of in_array() is to compare items using the ==
+operator. To use the strict equality check, ===, pass true as the
+third parameter to in_array():
+
+$array = array(1, '2', 'three');
+
+in_array(0, $array);        // true!
+in_array(0, $array, true);  // false
+in_array(1, $array);        // true
+in_array(1, $array, true);  // true
+in_array(2, $array);        // true
+in_array(2, $array, true);  // false
+** Finding the Position of a Value in an Array
+   
+Use array_search() . It returns the key of the found value. If the
+value is not in the array, it returns false:
+
+$position = array_search($value, $array);
+if ($position !== false) {
+    // the element in position $position has $value as its value in array $array
+}
+** Finding Elements That Pass a Certain Test
+Use a foreach loop:
+
+$movies = array(...);
+
+foreach ($movies as $movie) {
+    if ($movie['box_office_gross'] < 5000000) { $flops[] = $movie; }
+}
+
+Or array_filter():
+
+$movies = array(...);
+
+function flops($movie) {
+    return ($movie['box_office_gross'] < 5000000) ? 1 : 0;
+}
+
+$flops = array_filter($movies, 'flops');
+** Finding the Largest or Smallest Valued Element in an Array
+
+To find the largest element, use max():
+
+$largest = max($array);
+
+To find the smallest element, use min():
+
+$smallest = min($array);
+** Sorting an Array
+To sort an array using the traditional definition of sort, use sort():
+
+$states = array('Delaware', 'Pennsylvania', 'New Jersey');
+sort($states);
+
+To sort numerically, pass SORT_NUMERIC as the second argument to sort():
+
+$scores = array(1, 10, 2, 20);
+sort($scores, SORT_NUMERIC);
+
+This resorts the numbers in ascending order (1, 2, 10, 20) instead of
+lexicographical order (1, 10, 2, 20).
+
+The sort() function doesn’t preserve the key/value association between
+elements; instead, entries are reindexed starting at 0 and going
+upward. (The one exception to this rule is a one-element array; its
+lone element doesn’t have its index reset to 0. This is fixed as of
+PHP 4.2.3.)
+
+To preserve the key/value links, use asort(). The asort() function is
+normally used for associative arrays, but it can also be useful when
+the indexes of the entries are meaningful:
+
+$states = array(1 => 'Delaware', 'Pennsylvania', 'New Jersey');
+asort($states);
+
+while (list($rank, $state) = each($states)) {
+    print "$state was the #$rank state to join the United States\n";
+
+}
+
+Use natsort() to sort the array using a natural sorting
+algorithm. Under natural sorting, you can mix strings and numbers
+inside your elements and still get the right answer:
+
+$tests = array('test1.php', 'test10.php', 'test11.php', 'test2.php');
+natsort($tests);
+
+The elements are now ordered 'test1.php', 'test2.php', 'test10.php',
+and 'test11.php'. With natural sorting, the number 10 comes after the
+number 2; the opposite occurs under traditional sorting. For
+case-insensitive natural sorting, use natcasesort().
+
+To sort the array in reverse order, use rsort() or arsort(), which is
+like rsort() but also preserves keys. There is no natrsort() or
+natcasersort(). You can also pass SORT_NUMERIC into these functions.
+** Randomizing an Array
+Use shuffle():
+
+shuffle($array);
+
+** Removing Duplicate Elements from an Array
+
+If the array is already complete, use array_unique(), which returns a
+new array that contains no duplicate values:
+
+$unique = array_unique($array);
+
+If you create the array while processing results, here is a technique for numerical arrays:
+
+foreach ($_REQUEST['fruits'] as $fruit) {
+    if (!in_array($array, $fruit)) { $array[] = $fruit; }
+}
+
+Here’s one for associative arrays:
+
+foreach ($_REQUEST['fruits'] as $fruit) {
+    $array[$fruit] = $fruit;
+}
+** Applying a Function to Each Element in an Array
+Use array_walk():
+
+function escape_data(&$value, $key) {
+	$value = htmlentities($value, ENT_QUOTES);
+}
+
+$names = array('firstname' => "Baba",
+               'lastname'  => "O'Riley");
+               
+array_walk($names, 'escape_data');
+
+foreach ($names as $name) {
+	print "$name\n";
+}
+
+Baba
+O&#039;Riley
+
+For nested data, use array_walk_recursive():
+
+function escape_data(&$value, $key) {
+	$value = htmlentities($value, ENT_QUOTES);
+}
+
+$names = array('firstnames' => array("Baba", "Bill"),
+               'lastnames'  => array("O'Riley", "O'Reilly"));
+
+array_walk_recursive($names, 'escape_data');
+               
+foreach ($names as $nametypes) {
+	foreach ($nametypes as $name) {
+		print "$name\n";
+	}
+}
+
+Baba
+Bill
+O&#039;Riley
+O&#039;Reilly
+** Finding the Union, Intersection, or Difference of Two Arrays
+To compute the union:
+
+$union = array_unique(array_merge($a, $b));
+
+To compute the intersection:
+
+$intersection = array_intersect($a, $b);
+
+To find the simple difference:
+
+$difference = array_diff($a, $b);
+
+And for the symmetric difference:
+
+$difference = array_merge(array_diff($a, $b), array_diff($b, $a));
+** Making an Object Act like an Array
+Implement SPL’s ArrayAccess interface:
+
+class FakeArray implements ArrayAccess {
+
+	private $elements;
+	
+	public function __construct() {
+		$this->elements = array();
+	}
+	
+	public function offsetExists($offset) {
+		return isset($this->elements[$offset]);
+	}
+
+	public function offsetGet($offset) {
+		return $this->elements[$offset];
+	}
+	
+	public function offsetSet($offset, $value) {
+		return $this->elements[$offset] = $value;
+	}
+	
+	public function offsetUnset($offset) {
+		unset($this->elements[$offset]);
+	}
+}
+
+$array = new FakeArray;
+
+// What's Opera, Doc?
+$array['animal'] = 'wabbit';
+
+// Be very quiet I'm hunting wabbits
+if (isset($array['animal']) &&
+	// Wabbit tracks!!!
+    $array['animal'] == 'wabbit') {
+    
+	// Kill the wabbit, kill the wabbit, kill the wabbit
+	unset($array['animal']);
+	// Yo ho to oh! Yo ho to oh! Yo ho...
+}    
+
+// What have I done?? I've killed the wabbit....
+// Poor little bunny, poor little wabbit...
+if (!isset($array['animal'])) {
+	print "Well, what did you expect in an opera? A happy ending?\n";
+}
+Well, what did you expect in an opera? A happy ending?
+
+** array_reduce
+syntax
+   mixed array_reduce ( array $array , callable $callback [, mixed $initial = NULL ] )
+
+#+begin_src php
+<?php
+function sum($carry, $item)
+{
+    $carry += $item;
+    return $carry;
+}
+
+function product($carry, $item)
+{
+    $carry *= $item;
+    return $carry;
+}
+
+$a = array(1, 2, 3, 4, 5);
+$x = array();
+
+var_dump(array_reduce($a, "sum")); // int(15)
+var_dump(array_reduce($a, "product", 10)); // int(1200), because: 10*1*2*3*4*5
+var_dump(array_reduce($x, "sum", "No data to reduce")); // string(17) "No data to reduce"
+?>
+#+end_src
+
+** create and array from variables and their values
+*** intro
+There may also be times when you’ll want to use compact, the inverse
+of extract, to create an array from variables and their
+values. Example 6-14 shows how you might use this function.
+
+Example 6-14. Using the compact function
+#+begin_src php
+<?php
+$fname   = "Elizabeth";
+$sname   = "Windsor";
+$address = "Buckingham Palace";
+$city    = "London";
+$country = "United Kingdom";
+
+$contact = compact('fname', 'sname', 'address', 'city', 'country');
+print_r($contact);
+?>
+#+end_src
+ 
+The result of running Example 6-14 is:
+#+begin_src 
+Array
+(
+    [fname] => Elizabeth
+    [sname] => Windsor
+    [address] => Buckingham Palace
+    [city] => London
+    [country] => United Kingdom
+)
+#+end_src
+ 
+Note that compact requires the variable names to be supplied in quotes
+and not as variables preceded with a $ symbol. This is because compact
+is looking for an array of variable names.
+
+*** using compact for debugging
+Another use of this function is for debugging, when you wish to
+quickly view several variables and their values, as in Example 6-15.
+
+Example 6-15. Using compact to help with debugging
+#+begin_src php
+<?php
+$j       = 23;
+$temp    = "Hello";
+$address = "1 Old Street";
+$age     = 61;
+
+print_r(compact(explode(' ', 'j temp address age')));
+?>
+#+end_src
+ 
+This works by using the explode function to extract all the words from
+the string into an array, which is then passed to the compact
+function. This function in turn returns an array to print_r, which
+shows its contents.
+
+If you copy and paste the print_r line of code, you only need to alter
+the variables named there for a quick printout of a group of
+variables’ values. In this example, the output is:
+#+begin_src 
+Array
+(
+    [j] => 23
+    [temp] => Hello
+    [address] => 1 Old Street
+    [age] => 61
+)
+#+end_src
+
+** flatten php array
+#+begin_src php
+function array_flatten($array, $return = array())
+{
+    foreach ($array as $key => $value)
+    {
+        if (is_array($value) || is_object($value))
+        {
+            $return = array_flatten($value, $return);
+        }
+        else
+        {
+            $return[] = $value;
+        }
+    }
+    return $return;
+}
+#+end_src
+
+* Date and Time
+** Finding the Current Date and Time
+Use strftime() or date() for a formatted time string, as in Example 3-2.
+
+*Example 3-2. Finding the current date and time*
+#+begin_src php
+<?php
+print strftime('%c');
+print "\n";
+print date('r');
+?>
+#+end_src
+ 
+Example 3-2 prints:
+#+begin_src 
+Wed May 10 18:29:59 2006
+Wed, 10 May 2006 18:29:59 -0400
+#+end_src
+ 
+*Use getdate() or localtime() if you want time parts.*
+Example 3-3 shows how these functions work.
+
+Example 3-3. Finding time parts
+#+begin_src php
+<?php
+$now_1 = getdate();
+$now_2 = localtime();
+print "{$now_1['hours']}:{$now_1['minutes']}:{$now_1['seconds']}\n";
+print "$now_2[2]:$now_2[1]:$now_2[0]";
+#+end_src
+ 
+Example 3-3 prints:
+#+begin_src 
+18:23:45
+18:23:45
+#+end_src
+ 
+*Example 3-4 shows how to use getdate() to print out the month, day, and year.*
+
+Example 3-4. Finding the month, day, and year
+#+begin_src php
+<?php
+$a = getdate();
+printf('%s %d, %d',$a['month'],$a['mday'],$a['year']);
+?>
+#+end_src
+ 
+Example 3-4 prints:
+#+begin_src 
+May 5, 2007
+#+end_src
+ 
+Pass getdate() an epoch timestamp as an argument to make the returned
+array the appropriate values for local time at that timestamp. The
+month, day, and year at epoch timestamp 163727100 is shown in Example
+3-5.
+
+Example 3-5. getdate() with a specific timestamp
+#+begin_src php
+<?php
+$a = getdate(163727100);
+printf('%s %d, %d',$a['month'],$a['mday'],$a['year']);
+?>
+#+end_src
+ 
+Example 3-5 prints:
+#+begin_src 
+March 10, 1975
+#+end_src
+ 
+The function localtime() returns an array of time and date parts. It
+also takes an epoch timestamp as an optional first argument, as well
+as a boolean as an optional second argument. If that second argument
+is true, localtime() returns an associative array instead of a
+numerically indexed array. The keys of that array are the same as the
+members of the tm_struct structure that the C function localtime()
+returns, as shown in Table 3-2.
+
+*Example 3-6 shows how to use localtime() to print out today’s date in month/day/year format.*
+
+Example 3-6. Using localtime()
+#+begin_src php
+<?php
+$a = localtime();
+$a[4] += 1;
+$a[5] += 1900;
+print "$a[4]/$a[3]/$a[5]";
+#+end_src
+ 
+Example 3-6 prints:
+#+begin_src 
+6/23/2006
+#+end_src
+ 
+The month is incremented by 1 before printing since localtime() starts
+counting months with 0 for January, but we want to display 1 if the
+current month is January. Similarly, the year is incremented by 1900
+because localtime() starts counting years with 0 for 1900.
+
+** Converting Time and Date Parts to an Epoch Timestamp
+
+Use mktime() if your time and date parts are in the local time zone,
+as shown in Example 3-7.
+
+Example 3-7. Getting a specific epoch timestamp
+#+begin_src php
+<?php
+// 7:45:03 PM on March 10, 1975, local time
+$then = mktime(19,45,3,3,10,1975);
+?>
+#+end_src
+ 
+Use gmmktime() , as in Example 3-8, if your time and date parts are in
+GMT.
+
+Example 3-8. Getting a specific GMT-based epoch timestamp
+#+begin_src php
+<?php
+// 7:45:03 PM on March 10, 1975, in GMT
+$then = gmmktime(19,45,3,3,10,1975);
+?>
+#+end_src
+ 
+** Converting an Epoch Timestamp to Time and Date Parts
+Pass an epoch timestamp to getdate(): $time_parts = getdate(163727100);.
+** Finding the Difference of Two Dates
+Convert both dates to epoch timestamps and subtract one from the
+other. Example 3-13 separates the difference into weeks, days, hours,
+minutes, and seconds.
+
+Example 3-13. Calculating the difference between two dates
+#+begin_src php
+<?php
+// 7:32:56 pm on May 10, 1965
+$epoch_1 = mktime(19,32,56,5,10,1965);
+// 4:29:11 am on November 20, 1962
+$epoch_2 = mktime(4,29,11,11,20,1962);
+
+$diff_seconds  = $epoch_1 - $epoch_2;
+$diff_weeks    = floor($diff_seconds/604800);
+$diff_seconds -= $diff_weeks   * 604800;
+$diff_days     = floor($diff_seconds/86400);
+$diff_seconds -= $diff_days    * 86400;
+$diff_hours    = floor($diff_seconds/3600);
+$diff_seconds -= $diff_hours   * 3600;
+$diff_minutes  = floor($diff_seconds/60);
+$diff_seconds -= $diff_minutes * 60;
+
+print "The two dates have $diff_weeks weeks, $diff_days days, ";
+print "$diff_hours hours, $diff_minutes minutes, and $diff_seconds ";
+print "seconds elapsed between them.";
+?>
+#+end_src
+
+Example 3-13 prints:
+
+The two dates have 128 weeks, 6 days, 14 hours, 3 minutes, 
+and 45 seconds elapsed between them.
+
+Note that the difference isn’t divided into larger chunks than weeks
+(i.e., months or years) because those chunks have variable length and
+wouldn’t give an accurate count of the time difference calculated.
+
+** date difference using ~DateInterval~
+#+begin_src php
+<?php
+$datetime1 = new DateTime('2009-10-11');
+$datetime2 = new DateTime('2009-10-13');
+$interval = $datetime1->diff($datetime2);
+echo $interval->format('%R%a days');
+?>
+#+end_src
+ 
+Procedural style
+#+begin_src php
+<?php
+$datetime1 = date_create('2009-10-11');
+$datetime2 = date_create('2009-10-13');
+$interval = date_diff($datetime1, $datetime2);
+echo $interval->format('%R%a days');
+?>
+#+end_src
+ 
+The above examples will output:
+
++2 days
+
+** number of days between two dates
+#+begin_src php
+$today->diff($yesterday)->days;
+
+date_diff($today, $yesterday)->days;
+
+// using epoch timestamp
+// 86400 is number of seoconds in day
+$today->getTimestamp() - $yesterday->getTimestamp()/86400;
+#+end_src
+
+** convert seconds to time with format HH:MM:SS
+#+begin_src php
+date('H:i:s', $seconds);
+#+end_src
+* variables
+** Establishing a Default Value
+Use isset() to assign a default to a variable that may already have a value:
+#+begin_src php
+if (! isset($cars)) { $cars = $default_cars; }
+#+end_src 
+
+Use the ternary (a ? b : c) operator to give a new variable a (possibly default) value:
+#+begin_src php
+$cars = isset($_REQUEST['cars']) ? $_REQUEST['cars'] : $default_cars;
+#+end_src 
+
+Using isset() is essential when assigning default values. Without it,
+the nondefault value can’t be 0 or anything else that evaluates to
+false. Consider this assignment:
+
+#+begin_src php
+$cars = $_REQUEST['cars'] ? $_REQUEST['cars'] : $default_cars;
+#+end_src 
+
+If $_REQUEST['cars'] is 0, $cars is set to $default_cars even though 0
+may be a valid value for $cars.
+
+An alternative syntax for checking arrays is the array_key_exists() function:
+#+begin_src php
+$cars = array_key_exists('cars', $_REQUEST) ? $_REQUEST['cars'] : $default_cars;
+#+end_src 
+The one difference between isset() and array_key_exists() is that when
+a key exists but its value is null, then array_key_exists() returns
+true, while isset() returns false:
+#+begin_src php
+$vehicles = array('cars' => null);
+array_key_exists('cars', $vehicles); // true
+isset($vehicles['cars']);            // false
+#+end_src 
+** Exchanging Values Without Using Temporary Variables
+To swap $a and $b:
+#+begin_src php
+list($a,$b) = array($b,$a);
+#+end_src 
+** Creating a Dynamic Variable Name
+You want to construct a variable’s name dynamically. For example, you
+want to use variable names that match the field names from a database
+query.
+
+Use PHP’s variable variable syntax by prepending a $ to a variable
+whose value is the variable name you want:
+#+begin_src php
+$animal = 'turtles';
+$turtles = 103;
+print $$animal;    // 103
+#+end_src
+
+Using curly braces , you can construct more complicated expressions that indicate variable names:
+
+$stooges = array('Moe','Larry','Curly');
+$stooge_moe = 'Moses Horwitz';
+$stooge_larry = 'Louis Feinberg';
+$stooge_curly = 'Jerome Horwitz';
+
+foreach ($stooges as $s) {
+  print "$s's real name was ${'stooge_'.strtolower($s)}.\n";
+}
+Moe's real name was Moses Horwitz.
+Larry's real name was Louis Feinberg.
+Curly's real name was Jerome Horwitz.
+
+PHP evaluates the expression between the curly braces and uses it as a
+variable name. That expression can even have function calls in it,
+such as strtolower().
+
+Variable variables are also useful when iterating through similarly
+named variables. Say you are querying a database table that has fields
+named title_1, title_2, etc. If you want to check if a title matches
+any of those values, the easiest way is to loop through them like
+this:
+
+for ($i = 1; $i <= $n; $i++) {
+    $t = "title_$i";
+    if ($title == $$t) { /* match */ }
+}
+
+Of course, it would be more straightforward to store these values in
+an array, but if you are maintaining old code that uses this technique
+(and you can’t change it), variable variables are helpful.
+
+The curly brace syntax is also necessary in resolving ambiguity about
+array elements. The variable variable $$donkeys[12] could have two
+meanings. The first is “take what’s in the 12th element of the
+$donkeys array and use that as a variable name.” Write this as:
+${$donkeys[12]}. The second is “use what’s in the scalar $donkeys as
+an array name and look in the 12th element of that array.” Write this
+as: ${$donkeys}[12].
+
+You are not limited by two dollar signs. You can use three, or more,
+but in practice it’s rare to see greater than two levels of
+indirection.
+
+** Using Static Variables
+Declare the variable as static:
+#+begin_src php
+function track_times_called() {
+    static $i = 0;
+    $i++;
+    return $i;
+}
+#+end_src
+ 
+** Encapsulating Complex Data Types in a String
+
+You want a string representation of an array or object for storage in
+a file or database. This string should be easily reconstitutable into
+the original array or object.  Solution
+
+Use serialize() to encode variables and their values into a textual form:
+
+#+begin_src php
+$pantry = array('sugar' => '2 lbs.','butter' => '3 sticks');
+$fp = fopen('/tmp/pantry','w') or die ("Can't open pantry");
+fputs($fp,serialize($pantry));
+fclose($fp);
+#+end_src 
+
+To recreate the variables, use unserialize():
+
+#+begin_src php
+$new_pantry = unserialize(file_get_contents('/tmp/pantry'));
+#+end_src 
+
+* functions
+** checking for a function's existence
+#+begin_src php
+<?php
+if (function_exists("array_combine"))
+{
+    echo "Function exists";
+}
+else
+{
+    echo "Function does not exist - better write our own";
+}
+?>
+#+end_src
+
+** Creating Functions That Take a Variable Number of Arguments 
+use =func_num_args()= and =func_get_arg()= functions.
+
+#+begin_src php
+// find the "average" of a group of numbers
+function mean() {
+    // initialize to avoid warnings
+    $sum = 0;
+
+    // the number of arguments passed to the function
+    $size = func_num_args();
+
+    // iterate through the arguments and add up the numbers
+    for ($i = 0; $i < $size; $i++) {
+        $sum += func_get_arg($i);
+    }
+
+    // divide by the amount of numbers
+    $average = $sum / $size;
+
+    // return average
+    return $average;
+}
+
+$mean = mean(96, 93, 97); 
+#+end_src
+
+There is a third version of this function that uses func_num_args( ) to return
+an array containing all the values passed to the function.
+
+#+begin_src php
+// find the "average" of a group of numbers
+function mean() {
+    // initialize to avoid warnings
+    $sum = 0;
+
+    // load the arguments into $numbers
+    $numbers = func_get_args();
+
+    // the number of elements in the array
+    $size = count($numbers);
+
+    // iterate through the array and add up the numbers
+    for ($i = 0; $i < $size; $i++) {
+        $sum += $numbers[$i];
+    }
+
+    // divide by the amount of numbers
+    $average = $sum / $size;
+
+    // return average
+    return $average;
+}
+
+$mean = mean(96, 93, 97);
+#+end_src
+
+* Misc
+** get results from eval
+use  ~return~ eg:
+
+#+begin_src php
+$res = eval('return 2 + 3;');      // 5
+#+end_src
+
+** check if a class has a property
+
+#+begin_src php
+bool property_exists ( mixed $class , string $property )
+#+end_src
+
+This function checks if the given property exists in the specified class.
+
+Note:
+As opposed with isset(), property_exists() returns TRUE even if the property has the value NULL.
+
+Returns TRUE if the property exists, FALSE if it doesn't exist or NULL in case of an error.
+
+** redirecting
+   
+When redirecting to some scripts, the redirection also passes on the
+entire QUERY_STRING the query string is stored in the PHP
+environment variable $QUERY_STRING as a GET method parameter. In
+addition, a session variable, referer, is registered in selected cases
+so that in later processing the script can redirect to the original
+calling page.
+
+#+begin_src php
+<?php
+if ($_POST[location] == "") {
+   header("Location: http://127.0.0.1/redirect_form.html");
+   exit;
+} else {
+   header("Location: $_POST[location]");
+   exit;
+}
+?>
+#+end_src
+
+** making the root path
+#+begin_src php
+define("ROOT",realpath(dirname(__FILE__)));
+#+end_src
+
+** integer division
+#+begin_src php
+int intdiv ( int $dividend , int $divisor )
+#+end_src
+
+Returns the integer quotient of the division of dividend by divisor.
+* json
+** json encode raw UTF?
+json_encode( $text, JSON_UNESCAPED_UNICODE );
+* webservice
+** types of webservices
+ - restful
+ - SOAP
+*** SOAP
+
+SOAP is an acronym for Simple Object Access Protocol.
+
+SOAP is a XML-based protocol for accessing web services.
+
+SOAP is a W3C recommendation for communication between applications.
+
+SOAP is XML based, so it is platform independent and language
+independent. In other words, it can be used with Java, .Net or PHP
+language on any platform.
+
+*** WSDL
+
+WSDL is an acronym for Web Services Description Language.
+
+WSDL is a xml document containing information about web services such
+as method name, method parameter and how to access it.
+
+WSDL is a part of UDDI. It acts as a interface between web service applications.
+
+WSDL is pronounced as wiz-dull.
+* classes
+** static attributes or methods.
+A static property is a class variable that is associated with the class, rather than with an
+instance of the class.
+
+Static properties are declared with the static keyword and are
+accessed via the syntax ClassName::$property .The following example illustrates
+how static properties work:
+
+#+begin_src php
+class TestClass {
+   public static $counter;
+}
+$counter = TestClass::$counter;
+#+end_src
+
+If you need to access a static property inside a class, you can also use the magic keywords
+self and parent , which resolve to the current class and the parent of the current class.
+
+#+begin_src php
+class TestClass {
+   public static $counter = 0;
+      public $id;
+   public function _ _construct()
+   {
+      $this->id = self::$counter++;
+    }
+}
+#+end_src
+
+** __clone magic method
+
+To actually copy an object in PHP5, you need to use the built-in _ _ clone()
+method.
+
+#+begin_src php
+$obj = new TestClass;
+$copy = $obj->_ _clone();
+#+end_src
+
+For some classes, the built-in deep-copy _ _clone() method may not be adequate for
+your needs, so PHP allows you to override it. Inside the _ _clone() method, you not
+only have $this , which represents the new object, but also $that , which is the object
+being cloned. For example, in the TestClass class defined previously in this chapter, if
+you use the default _ _clone() method, you will copy its id property. Instead, you
+should rewrite the class as follows:
+
+#+begin_src php
+class TestClass {
+   public static $counter = 0;
+   public $id;
+   public $other;
+   public function _ _construct()
+   {
+      $this->id = self::$counter++;
+   }
+   public function _ _clone()
+   {
+      $this->other = $that->other;
+      $this->id = self::$counter++;
+   }
+}
+#+end_src
+ 
+** passing objects as function parameters.
+objects are always passed by reference. This means that when you pass an object
+into a function, the function operates on that same object, and if it is changed
+inside the function, that change is reflected outside.
+** Using Magic __get and __set Methods
+These are called when you access a property that doesn’t exist.
+
+#+begin_src php
+class Courier
+{
+  protected $data = array();
+  public function __get($property) {
+    return $this->data[$property];
+  }
+  public function __set($property, $value) {
+    $this->data[$property] = $value;
+    return true;
+  }
+}
+
+$courier = new Courier();
+$courier->name = 'Avian Carrier';
+echo $courier->name;
+#+end_src
+
+** counting objects
+By default, if you count() an object in PHP, you’ll receive a count of how many
+properties it has. However, by implementing the Countable interface as shown below
+allows us to hook into this.
+
+#+begin_src php
+class Courier implements Countable
+{
+  protected $count = 0;
+  public function ship(Parcel $parcel) {
+    $this->count++;
+    // ship parcel
+    return true;
+  }
+  public function count() {
+    return $this->count;
+  }
+}
+
+$courier = new Courier();
+$courier->ship(new Parcel());
+$courier->ship(new Parcel());
+$courier->ship(new Parcel());
+echo count($courier); // outputs 3
+#+end_src
+
+** Using __call() and __callStatic()
+When we call a method that isn’t declared in the class, the __call() method is
+called instead.
+#+begin_src php
+class Courier {
+  public $name;
+  public function __construct($name) {
+    $this->name = $name;
+    return true;
+  }
+
+  public function ship($parcel) {
+    // sends the parcel to its destination
+    return true;
+  }
+  
+  public function __call($name, $params) {
+    if($name == 'sendParcel') {
+      // legacy system requirement, pass to newer send() method
+      return $this->send($params[0]);
+    } else {
+      error_log('Failed call to ' . $name . ' in Courier class');
+    return false;
+    }
+  }
+}
+#+end_src 
+** serializing
+To serialize data in PHP means to convert it into a text-based format that we can
+store, for example, in a database.
+#+begin_src php
+$mycourier = new Courier('Avian Services', 'Australia');
+var_dump($mycourier);
+$s = serialize($mycourier);
+#+end_src 
+
+When we serialize an object, we can unserialize it in any system where the class
+definition of the object is available. There are some object properties, however, that
+we don’t want to serialize, because they’d be invalid in any other context. A good
+example of this is a resource; a file pointer would make no sense if unserialized at
+a later point, or on a totally different platform.
+
+To help us deal with this situation, PHP provides the __sleep() and __wakeup()
+methods, which are called when serializing and unserializing, respectively. These
+methods allow us to name which properties to serialize, and fill in any that aren’t
+stored when the object is “woken.”
+
+#+begin_src php
+class Courier {
+  public $name;
+  public $home_country;
+
+  public function __construct($name, $home_country) {
+    $this->name = $name;
+    $this->home_country = $home_country;
+    $this->logfile = $this->getLogFile();
+    return true;
+  }
+  protected function getLogFile() {
+      // error log location would be in a config file
+      return fopen('/tmp/error_log.txt', 'a');
+  }
+  public function log($message) {
+    if($this->logfile) {
+      fputs($this->logfile, 'Log message: ' . $message . "\n");
+    }
+  }
+  public function __sleep() {
+    // only store the "safe" properties
+    return array("name", "home_country");
+  }
+  public function __wakeup() {
+    // properties are restored, now add the logfile
+    $this->logfile = $this->getLogFile();
+    return true;
+  }
+}
+#+end_src 
+
+* reflection
+** retrieving the name of current function?
+
+__FUNCTION__ returns only the name of the function.
+while as __METHOD__ returns the name of the class alongwith the name of the function.
+
+#+begin_src php
+class foo
+{
+  function print_func()
+  {
+            echo __FUNCTION__;
+  }
+  function print_method()
+  {
+            echo __METHOD__;
+  }
+}
+
+$obj = new foo();
+$obj->print_func();      // Returns: print_func
+$obj->print_method();    // Returns: foo::print_method
+#+end_src
+http://www.php.net/manual/en/language.constants.predefined.php
+* Debug
+** dump all variables?
+
+Use get_defined_vars and/or get_defined_constants
+
+#+begin_src php
+$arr = get_defined_vars();
+print_r($arr);
+#+end_src
+
+#+begin_src php
+$a = print_r(var_dump($GLOBALS),1);
+echo htmlspecialchars($a);
+#+end_src
+
+** send an error message to  the web server's error log or to a file.
+
+#+begin_src php
+bool error_log ( string $message [, int $message_type = 0 [, string $destination [, string $extra_headers ]]] )
+#+end_src
+
+#+begin_src php
+<?php
+// Send notification through the server log if we can not
+// connect to the database.
+if (!Ora_Logon($username, $password)) {
+    error_log("Oracle database not available!", 0);
+}
+
+// Notify administrator by email if we run out of FOO
+if (!($foo = allocate_new_foo())) {
+    error_log("Big trouble, we're all out of FOOs!", 1,
+               "operator@example.com");
+}
+
+// another way to call error_log():
+error_log("You messed up!", 3, "/var/tmp/my-errors.log");
+?>
+#+end_src
+
+** enabling error reporting
+#+begin_src php
+error_reporting(E_ALL);
+#+end_src
+
+* exceptions
+** Throwing Exceptions
+#+begin_src php
+// something has gone wrong
+throw new Exception('Meaningful error message string');
+#+end_src 
+
+** Extending Exceptions
+#+begin_src php
+class HeavyParcelException extends Exception {}
+#+end_src 
+We can set any properties or add any methods we desire to this Exception class.
+
+** Setting a Global Exception Handler
+To avoid seeing fatal errors where exceptions have been thrown and our code failed
+to catch them, we can set a default behavior for our application in this situation.
+To do this, we use a function called set_exception_handler() . This accepts a
+callback as its parameter, so we can give the name of a function to use, for example.
+An exception handler will usually present an error screen to the user—much nicer
+than a fatal error message!
+
+#+begin_src php
+A basic exception handler would look similar to this:
+function handleMissedException($e) {
+echo "Sorry, something is wrong. Please try again, or contact us if the problem persists";
+error_log('Unhandled Exception: ' . $e->getMessage()
+. ' in file ' . $e->getFile() . ' on line ' . $e->getLine());
+}
+set_exception_handler('handleMissedException');
+throw new Exception('just testing!');
+#+end_src 
+
+* patterns
+** value object pattern
+
+*The Problem*
+So, how do you implement a lightweight, or easy to construct, descriptive object like Date or Dollar?
+
+*The Solution*
+Lightweight objects should behave like PHP integers: if you assign the same object to two different
+variables and then change one of the variables, the other variable should remain unaffected.
+
+#+begin_src php
+class Dollar {
+   protected $amount;
+   public function __construct($amount=0) {
+     $this->amount = (float)$amount;
+   }
+   public function getAmount() {
+      return $this->amount;
+   }
+   public function add($dollar) {
+      return new Dollar($this->amount + $dollar->getAmount());
+   }
+}
+#+end_src
+
+The fundamentals of the ValueObject pattern in PHP 5 are:
+1. Protect the attributes of a Value Object so direct access is forbidden.
+2. Set the object’s attributes in the constructor.
+3. Provide no “setter” functions, which otherwise allow attributes to be altered.
+** The factory pattern
+*The Problem*
+How can you create such “complex” objects easily and conveniently—without cut-and-paste pro-
+gramming?
+
+*The Solution*
+Create a “factory”—a function or a class method— to “manufacture” new objects.
+
+* files
+** Reading Entire files
+To read the contents of a file into a string, use =file_get_contents()=. Pass it a file‐
+name, and it returns a string containing everything in the file.
+
+** Writing Entire file
+use =file_put_contents()=.
+#+begin_src php
+// Write the results to page.html
+file_put_contents('page.html', $page);
+#+end_src 
+
+** Reading and writing parts of files
+use =file()= function to access each line of file.
+=file()= reads the whole file into an array and it is not good for large files.
+#+begin_src php
+foreach (file('people.txt') as $line) {
+  $line = trim($line);
+  $info = explode('|', $line);
+  print '<li><a href="mailto:' . $info[0] . '">' . $info[1] ."</li>\n";
+}
+#+end_src 
+
+** reading a file one line at a time
+
+#+begin_src php
+$fh = fopen('people.txt','rb');
+while ((! feof($fh)) && ($line = fgets($fh))) {
+  $line = trim($line);  // fgets() includes the trailing newline at the end of line.
+  $info = explode('|', $line);
+  print '<li><a href="mailto:' . $info[0] . '">' . $info[1] ."</li>\n";
+}
+fclose($fh);
+#+end_src 
+
+** Inserting CSV data into a database table
+  
+#+begin_src php
+try {
+  $db = new PDO('sqlite:/tmp/restaurant.db');
+} catch (Exception $e) {
+  print "Couldn't connect to database: " . $e->getMessage();
+  exit();
+}
+$fh = fopen('dishes.csv','rb');
+$stmt = $db->prepare('INSERT INTO dishes (dish_name, price, is_spicy) VALUES (?,?,?)');
+
+while ((! feof($fh)) && ($info = fgetcsv($fh))) {
+  // $info[0] is the dish name (the first field in a line of dishes.csv)
+  // $info[1] is the price (the second field)
+  // $info[2] is the spicy status (the third field)
+  // Insert a row into the database table
+  $stmt->execute($info);
+  print "Inserted $info[0]\n";
+}
+// Close the file
+fclose($fh);
+#+end_src 
+
+** Writing CSV-formatted data to a file
+
+#+begin_src php
+try {
+  $db = new PDO('sqlite:/tmp/restaurant.db');
+} catch (Exception $e) {
+  print "Couldn't connect to database: " . $e->getMessage();
+  exit();
+}
+// Open the CSV file for writing
+$fh = fopen('dish-list.csv','wb');
+$dishes = $db->query('SELECT dish_name, price, is_spicy FROM dishes');
+while ($row = $dishes->fetch(PDO::FETCH_NUM)) {
+    // Write the data in $row as a CSV-formatted string. fputcsv()
+    // adds a newline at the end.
+  fputcsv($fh, $row);
+}
+fclose($fh);
+#+end_src 
+
+** changing the page type of CSV
+#+begin_src php
+// Tell the web client to expect a CSV file
+header('Content-Type: text/csv');
+// Tell the web client to view the CSV file in a separate program
+header('Content-Disposition: attachment; filename="dishes.csv"');
+#+end_src 
+
+* lumen
+** lumen on apache
+install a lumen app in */var/www*
+#+begin_src shell
+$ lumen new cms.app
+#+end_src
+ 
+make your storage folder writable
+#+begin_src shell
+$ sudo chmod -R 777 storage
+#+end_src
+ 
+create a virtual host file
+#+begin_src shell
+$ cp /ect/apache2/sites-available/000-default.conf /etc/apache2/sites-available/cms.conf
+#+end_src
+ 
+here we use a different port for listening incoming requests for this *VirtualHost*:
+
+#+begin_src
+<VirtualHost *:8081>
+#...
+DocunemtRoot /var/www/cms.app/public
+<Directory /var/www/cms.app/public>
+   AllowOverride all
+   # other options
+</Directory>
+#...
+</VirtualHost>
+#+end_src
+
+change *ports.conf* to listen to port 8081 by adding *Listen 8081* 
+to */etc/apache2/ports.conf* file.
+
+now we have to make the *VirtualHost* active by running *a2ensite*.
+#+begin_src shell
+$ sudo a2ensite cms.conf
+#+end_src
+ 
+restart the service for the new settings to take effect.
+#+begin_src shell
+$ sudo service apache2 restart   
+#+end_src
+ 
+https://httpd.apache.org/docs/2.4/vhosts/examples.html
+https://gist.github.com/dbaeck/89d0b52d9d3d2777a96f
+https://www.digitalocean.com/community/tutorials/how-to-set-up-apache-virtual-hosts-on-ubuntu-14-04-lts
+https://www.digitalocean.com/community/questions/what-is-the-correct-folder-to-put-my-website-files-var-www-or-var-www-html
+http://tecadmin.net/install-laravel-framework-on-ubuntu/
+** installing globally
+install the lumen-intaller
+#+begin_src shell
+$ composer global require "laravel/lumen-installer"
+#+end_src
+
+add the lumen binary to path. It can be found at:
+
+ - *~/.composer/vendor/bin*
+ - *~/.config/composer/vendor/bin*
+
+call like this ~$ lumen new blog~ .
+
+** PHP dependencies
+
+#+begin_src shell
+$ sudo apt-get install php7.0-zip 
+#+end_src
+
+** artisan
+*** create a migration
+php artisan make:migration create_books_table --create=books
+
+*** commit migration to db
+php artisan migrate
+
+*** Refreshing the Schema and Seeding the Database
+
+$ composer dump-autoload
+$ php artisan migrate:refresh
+$ php artisan db:seed
+
+** middleware
+Middleware provides a way to filter
+incoming HTTP requests before a defined route handles the request. You can use middleware to do any
+number of things, like authentication, validating a signed request, and CORS support, to name a few.
+Middleware classes are typically created in the app/Http/Middleware path by convention
+
+* elqoquent
+** eloquent postgres json type
+In your migrations you can do something like:
+#+begin_src php
+ $table->json('field_name');
+#+end_src
+ 
+And in you model cast it to JSON by adding the $casts property like so:
+#+begin_src php
+class SomeModel extends Model
+{
+    protected $casts = [
+        'field_name' => 'json'
+    ];
+}
+#+end_src
+
+* installation
+** php packages
+#+begin_src shell
+$ sudo apt-get install libapache2-mod-php    # for running php in apache2
+#+end_src
+
+** phpstorm xdebug
+
+#+begin_src shell
+$ sudo apt-get install php-xdebug
+#+end_src
+
+to enable for php storm add =xdebug.remote_enable=1= to ~php.ini~.
+
+https://confluence.jetbrains.com/display/PhpStorm/Zero-configuration+Web+Application+Debugging+with+Xdebug+and+PhpStorm
+https://www.jetbrains.com/phpstorm/marklets/
+
+* session handling
+** starting a session
+ You may start a session manually with session_start, or you can
+ configure PHP to automatically start sessions with the
+ session.auto_start directive in php.ini.
+ #+begin_src php
+ session_start() !== false or die('could not start session');
+ #+end_src
+
+** session variables example
+
+#+begin_src php
+<?php
+    //start session
+    session_start();
+
+    //initialize a set of session variables
+    if(!isset($_SESSION['a']))
+    {
+        print("Initializing Session<br>");
+
+        $_SESSION['a'] = 'Session Var A';
+        $_SESSION['b'] = 123.45;
+        $_SESSION['c'] = 0;
+    }
+
+    //update session with access count
+    $_SESSION['c']++;
+
+    print("Access count: " . $_SESSION['c'] . "<br>");
+
+    print("Session Dump: " . session_encode() . "<br>");
+?>
+#+end_src
+
+** custom session handler
+
+#+begin_src php
+<?php
+    class mySession
+    {
+        //prefix with which to mark session files
+        var $mark;
+
+        //path for storing session files
+        var $path;
+
+        //name of session cookie
+        var $name;
+
+        function mySession($mark='mySession_')
+        {
+            $this->mark = $mark;
+        }
+
+        function getFilePath($id)
+        {
+            return($this->path . '/' . $this->mark . $id);
+        }
+
+        function open($path, $name)
+        {
+            $this->path = $path;
+            $this->name = $name;
+
+            return(TRUE);
+        }
+
+        function close()
+        {
+            return(TRUE);
+        }
+
+        function read($id)
+        {
+            if($fp = @fopen(getFilePath($id), "r"))
+            {
+                return(fread($fp,
+                       filesize($this->getFilePath($id))));
+            }
+            else
+            {
+                return("");
+            }
+        }
+
+        function write($id, $data)
+        {
+            if($fp = @fopen($this->getFilePath($id), "w"))
+            {
+                return(fwrite($fp, $data));
+            }
+            else
+            {
+                return(FALSE);
+            }
+        }
+
+        function destroy($id)
+        {
+            return(@unlink($this->getFilePath($id)));
+        }
+
+        function garbage($lifetime)
+        {
+            $d = dir($this->path);
+
+            while($f = $d->read())
+            {
+                //file begins with mark and it's too old
+                if((strpos($f, $this->mark) == 0) AND
+                    (time() > (fileatime($f) + $lifetime)))
+                {
+                    unlink("$this->path/$f");
+                }
+
+            }
+            $d->close();
+            return(TRUE);
+        }
+    }
+
+    $s = new mySession();
+
+    session_set_save_handler(
+        array($s, 'open'),
+        array($s, 'close'),
+        array($s, 'read'),
+        array($s, 'write'),
+        array($s, 'destroy'),
+        array($s, 'garbage')
+        );
+
+    //start session
+    session_start();
+
+    //initialize a set of session variables
+    if(!isset($_SESSION['a']))
+    {
+        print("Initializing Session<br>");
+
+        $_SESSION['a'] = 'Session Var A';
+        $_SESSION['b'] = 123.45;
+        $_SESSION['c'] = 0;
+    }
+
+    //update session with access count
+    $_SESSION['c']++;
+
+    print("Access count: " . $_SESSION['c'] . "<br>");
+
+    print("Session Dump: " . session_encode() . "<br>");
+?>
+#+end_src
+
+** ending a session
+use =session_destroy()= function.  
+
+Keep in mind that ending a session
+doesn't make the values from that session unavailable to the rest of
+the currently executing PHP page.
+
+#+begin_src php
+<?php
+session_start();
+// Do some miscellaneous work
+$_SESSION['username'] = 'Michele';
+// Logout of the site
+session_destroy();
+echo "At this point we can still see the value of username as
+".$_SESSION['username']."<br />";
+$_SESSION = array();
+echo "Now the value of username is blank: ".$_SESSION['username'];
+?>
+#+end_src
+
+** Exposed Session Data 
+ #+begin_src php
+ #!/usr/bin/env php
+ <?php
+
+     header('Content-Type: text/plain');
+     session_start();
+
+     $path = ini_get('session.save_path');
+     $handle = dir($path);
+
+     while ($filename = $handle->read())
+     {
+       if (substr($filename, 0, 5) == 'sess_')
+       {
+         $data = file_get_contents("$path/$filename");
+
+         if (!empty($data))
+         {
+           session_decode($data);
+           $session = $_SESSION;
+           $_SESSION = array();
+           echo "Session [" . substr($filename, 5) . "]\n";
+           print_r($session);
+           echo "\n--\n\n";
+         }
+       }
+     }
+
+ ?>  
+ #+end_src
+
+** making sure session data is not lost after redirect
+call =exit()= after redirect.
+use =session_write_close()=
+** check for session status
+#+begin_src php
+function is_session_started()
+{
+    if ( php_sapi_name() !== 'cli' ) {
+        if ( version_compare(phpversion(), '5.4.0', '>=') ) {
+            return session_status() === PHP_SESSION_ACTIVE ? TRUE : FALSE;
+        } else {
+            return session_id() === '' ? FALSE : TRUE;
+        }
+    }
+    return FALSE;
+}
+
+// Example
+if ( is_session_started() === FALSE ) session_start();
+?>
+#+end_src
+
+* SPL
+** Available objects in SPL
+#+begin_src php
+<?php
+foreach(spl_classes() as  $k=>$v){
+    echo nl2br($v."\n");
+}
+?>
+#+end_src
+
+* using =include_path= to manage larget projects
+
+You can add include_path configuration option in the php.ini file. You
+can use include_path to define a list of directories that will be
+searched when include() type functions specify relative
+paths. Directories should be separated by colons (semicolons on
+Windows platforms), as shown here:
+
+#+begin_src
+include_path=".:/home/mary/php_lib:/usr/local/lib/php"
+#+end_src
+ 
+if you don't have access to php.ini file you can set the include_path option in .htaccess file:
+
+#+begin_src
+php_value include_path /home/mary/php_lib
+#+end_src
+
+you could also use the ini_set() function to set the option at runtime:
+#+begin_src php
+ini_set("include_path", "/home/mary/php_lib");
+#+end_src
+ 
+As of PHP 4.3, she can use the set_include_path() function to achieve the same effect, like so:
+
+#+begin_src php
+set_include_path( "/home/mary/php_lib" );
+#+end_src
+ 
+* output buffering
+** intro
+The idea of output buffering is to store all the content that has to
+be outputted in a memory buffer before outputting the whole
+buffer. This has the following advantages: 
+ - I/O operations are reducedto one which is a great performance improvement
+ - Content can be manipulated and parsed before outputting it to the browser
+ - The I/O operation can be done sequentially and quickly
+
+The downside to this is that the client has to wait until the script
+completes. Therefore, depending on the application design and the
+script execution time, the user might come to the conclusion that the
+system crashed and they will close the browser or do something else
+that would not be quite what we want.
+
+** detect if output buffering is turned on?
+#+begin_src php
+if(ob_get_level() > 0){
+   //there are some buffers active.
+}
+
+$ php -d output_buffering=1 -r'var_dump(ob_get_level());'
+int(1)
+$ php -d output_buffering=0 -r'var_dump(ob_get_level());'
+int(0)
+#+end_src
+ 
+It does however check whether there is an output buffer active, not
+what the actual setting of PHP itself is. A manual ob_start() (or more
+then one) will also increase the level.
+
+** example
+
+#+begin_src php
+    <?php
+    ob_start();
+
+    echo("This is a test\n");
+    echo("More content\n");
+
+    ob_end_flush();
+    ?>
+#+end_src
+
+* request
+** check if request is ajax?
+#+begin_src php
+function is_ajax() {
+	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+}
+#+end_src
+
+* page generation time
+** solution1
+#+begin_src php
+<?php
+$time = microtime();
+$time = explode(' ', $time);
+$time = $time[1] + $time[0];
+$start = $time;
+?>
+
+<?php
+$time = microtime();
+$time = explode(' ', $time);
+$time = $time[1] + $time[0];
+$finish = $time;
+$total_time = round(($finish - $start), 4);
+echo 'Page generated in '.$total_time.' seconds.';
+?>
+#+end_src
+
+** solution2
+#+begin_src php
+
+function microtime_float()
+{
+    list($usec, $sec) = explode(" ", microtime());
+    return ((float)$usec + (float)$sec);
+}
+
+$time_start = microtime_float();
+
+// Sleep for a while
+usleep(100);
+
+$time_end = microtime_float();
+$time = $time_end - $time_start;
+
+echo "Did nothing in $time seconds\n";
+#+end_src
+
+** solution3
+microtime() and REQUEST_TIME_FLOAT (as of PHP 5.4.0)
+
+#+begin_src php
+// Randomize sleeping time
+ usleep(mt_rand(100, 10000));
+ 
+// As of PHP 5.4.0, REQUEST_TIME_FLOAT is available in the $_SERVER superglobal array.
+// It contains the timestamp of the start of the request with microsecond precision.
+$time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
+
+echo "Did nothing in $time seconds\n";
+#+end_src
+
+* autoloading
+** intro
+Autoloading is when we tell PHP where to look for our class files when it needs
+a class declaration that it’s yet to see.
+
+* security
+** Cross-site scripting
+For cross-site scripting—commonly abbreviated as XSS—the attack vector targets
+an area where a user-supplied variable is included in application output, but not
+properly escaped. This allows an attacker to inject a client-side script of their choice
+as part of that variable’s value.
+Here’s an example of code vulnerable to this type of attack:
+#+begin_src html
+<form action=”<?php echo $_SERVER['PHP_SELF']; ?>”>
+<input type=”submit” value=”Submit” />
+</form>
+#+end_src 
+
+*fix*
+Compared to the attack itself, the fix is surprisingly simple: escape output from PHP
+code to prevent the attacker from being able to inject their code in the first place.
+This looks like the following:
+#+begin_src html
+<form action=”<?php echo htmlentities($_SERVER['PHP_SELF']); ?>”>
+  <input type=”submit” value=”Submit” />
+</form>
+#+end_src 
+
+** Cross-site Request Forgery(CSRF)
+a Cross-site Request Forgery, often abbreviated to CSRF.
+The purpose of this type of attack is to have a victim send an HTTP request to a
+specific website, taking advantage of the victim’s established identity with that
+website.
+
+*fix*
+ - Don't use GET for creation,modification or deletion.
+
+the specification for the HTTP protocol, which states the following:"the
+convention has been established that the GET and HEAD methods SHOULD NOT have
+the significance of taking an action other than retrieval."
+
+ - use CSRF token
+
+This change(use of POST method) doesn’t preclude the possibility that an
+attacker might duplicate this HTML on another website. When a victim submits the
+form, the request will include their session cookie for the domain in the form
+action.
+
+To address this, you can take advantage that a normal user will view the
+form before submitting it by including a field with a random value, known as a
+nonce or CSRF token. The token will also be stored in the user’s session, and
+compared to the form value when the form is submitted to confirm that the values
+are identical. The modified script to output the form looks as follows:
+
+#+begin_src php
+<?php
+session_start();
+if ($_POST && $_POST['token'] == $_SESSION['token']) {
+  // process form submission
+} else {
+  $token = uniqid(rand(), true);
+  $_SESSION['token'] = $token;
+?>
+<form method=”post” action=”http://example.com/oneclickpurchase.php”>
+<input type=”hidden” name=”token” value=”<?php echo $token; ?>” />
+<input type=”hidden” name=”product_id” value=”12345” />
+<input type=”submit” value=”1-Click Purchase” />
+</form>
+<?php
+}
+#+end_src 
+
+* apache =.htaccess= sample configuration
+
+#+begin_src
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule .* index.php [L,QSA]
+#+end_src
+
+The script tells Apache that whenever an HTTP request arrives and if
+no physical file (!-f) or path (!-d) or symbolic link (!-l) can be
+found, it should transfer control to index.php
+* bootstrap
+** structure of page
+*** settings of the viewing arena
+
+#+begin_src html
+<meta name="viewport"
+      content="width=device-width, initial-scale=1" />
+#+end_src
+
+The zoom behavior can be turned off with no user-scalable=no.
+
+*** Grid system
+*** Container
+Bootstrap utilizes a container element to initiate the page and find a
+basis for the grid.
+*Containers can be used multiple times on the page, but should not be nested.*
+
+
+#+begin_src html
+<div class="container">
+     ...
+</div>
+#+end_src
+
+Alternatively, the class .container-fluid can be used, which always
+uses the full width of the device:
+
+#+begin_src html
+1   <div class="container-fluid">
+2     ...
+3   </div>
+#+end_src
+
+*** Device Specific Definitions
+#+begin_src
+“xs” <= 544 px
+“sm” <= 768 px
+“md” <= 992 px
+“lg” <= 1200 px
+“xl” > 1200 px
+1   @media (min-width: @screen-sm-min) { ... }
+2
+3   @media (min-width: @screen-md-min) { ... }
+4
+5   @media (min-width: @screen-lg-min) { ... }
+#+end_src
+
+
+
+*** Order Column
+
+If individual columns have class styles such as .push-md- or pull-md-, they can be used,
+even if different from their natural order. “Push” means pushing columns to the right,
+while they are pulled to the left with “pull”.
+
+#+begin_src html
+1   <div class="row">
+2     <div class="col-md-9 push-md-3">9 + 3 right</div>
+3     <div class="col-md-3 pull-md-9">3 + 9 left</div>
+4   </div>
+#+end_src
+** typography
+*** Orientation
+The alignment of text is up to your creative nature.
+
+- text-left: Left aligned
+- text-center: Text is centered
+- text-right: Right aligned
+- text-justify: Justified
+- text-nowrap: Obstruction of upheaval
+
+In addition, there are alignment variants that are only valid for certain viewports.
+
+- text-xs-left: Left aligned when the viewport “xs” is used.
+- text-xs-center: Text is centered when the viewport “xs” is used.
+- text-xs-right: Right aligned when the viewport “xs” is used.
+  
+*** transformation
+Transformations convert text from lowercase to uppercase and vice versa.
+
+ - text-lowercase: Converts to lowercase
+ - text-uppercase: Converts to uppercase
+ - text-capitalize: First letter of each word is capitalized.
+ - text-weight-bold: Bold without an explicit tag.
+ - text-weight-normal: Normal weight without an explicit tag
+ - text-italics: Italics without an explicit tag
+
+*** lists
+**** =.list-unstyled=
+If the default style used and there are icons not needed, they can be removed by the
+class =.list-unstyled=.
+This will affect only the immediate members not the deeper nesting
+levels.
+
+
+

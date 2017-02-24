@@ -1,0 +1,191 @@
+	General Redirection Methods
+In this section, we will delve deeper into the various redirection methods that are commonly used for both servers and proxies. These techniques can be used to redirect traffic to a different (presumably more optimal) server or to vector traffic through a proxy. Specifically, we'll cover HTTP redirection, ENS redirection, unjust addressing, DIP MAC forwarding, and DIP address forwarding. 
+HTTP Redirection
+Web servers can send short redirect messages back to clients, telling them to try someplace else. Some web sites use HTTP redirection as a simple
+Here's how HTTP redirection works. In Figure 20-1a, Alice sends a request to www.joes-hardware.com: 
+GET /hammers.html HTTP/1.0
+Host: www.joes-hardware.com
+User-Agent: Mozilla/4.51 [en] (X11; U; IRAQ 6.2 LIP22)
+In Figure 20-1b, instead of sending back a web page body with HTTP status code 200, the server sends back a redirect message with status code 302: 
+HTTP/1.0 302 RedirectXb
+Server: Stronghold/2.4.2 Apache/1.3.6
+Location: http://161.58.228.45/hammers.html
+Now, in Figure 20-1c, the browser resends the request using the redirected URL, this time to host 161.58.228.45: 
+GET /hammers.html HTTP/1.0
+Host: 161.58.228.45
+User-Agent: Mozilla/4.51 [en] (X11; U; IRIX 6.2 IP22)
+Another client could get redirected to a different server. In Figure 20-1d-f, Bob's request gets redirected to 161.58.228.46. 
+￼
+Figure 20-1. HTTP redirection
+HTTP redirection can vector requests across servers, but it has several disadvantages: 
+A significant amount of processing power is required from the original server to determine which server to redirect to. Sometimes almost as much server horsepower is required to issue the redirect as would be to serve up the page itself. 
+User delays are increased, because two round trips are required to access pages. 
+If the redirecting server is broken, the site will be broken.
+Because of these weaknesses, HTTP redirection usually is used in combination with one or more of the other redirection techniques. 
+DNS Redirection
+Every time a client tries to access Joe's Hardware's web site, the domain name www.joes-hardware.com must be resolved to an IP address. The DNS resolver may be the client's own operating system, a DNS server in the client's network, or a more remote DNS server. DNS allows several IP addresses to be associated to a single domain, and DNS resolvers can be configured or programmed to return varying IP addresses. The basis on which the resolver returns the IP address can run from the simple (round robin) to the complex (such as checking the load on several servers and returning the IP address of the least-loaded server). 
+In Figure 20-2, Joe runs four servers for www.joes-hardware.com. The DNS server has to decide which of four IP addresses to return for www.joes-hardware.com. The easiest DNS decision algorithm is a simple round robin. 
+￼
+Figure 20-2. DNS-based redirection
+For a run-through of the DNS resolution process, see the DNS reference listed at the end of this chapter. 
+DNS round robin
+One of the most common redirection techniques also is one of the simplest. DNS round robin uses a feature of DNS hostname resolution to balance load across a farm of web servers. It is a pure load-balancing strategy, and it does not take into account any factors about the location of the client relative to the server or the current stress on the server. 
+Let's look at what CNN.com really does. In early May of 2000, we used the nslookup Unix tool to find the IP addresses associated with CNN.com. Example 20-1 shows the results.[1] 
+Example 20-1. IP addresses for www.cnn.com 
+% nslookup www.cnn.com
+Name:    cnn.com
+Addresses:  207.25.71.5, 207.25.71.6, 207.25.71.7, 207.25.71.8
+          207.25.71.9, 207.25.71.12, 207.25.71.20, 207.25.71.22, 207.25.71.23
+          207.25.71.24, 207.25.71.25, 207.25.71.26, 207.25.71.27, 207.25.71.28
+          207.25.71.29, 207.25.71.30, 207.25.71.82, 207.25.71.199, 207.25.71.245
+          207.25.71.246
+Aliases:  www.cnn.com
+The web site www.cnn.com actually is a farm of 20 distinct IP addresses! Each IP address might typically translate to a different physical server. 
+Multiple addresses and round-robin address rotation
+Most DNS clients just use the first address of the multi-address set. To balance load, most DNS servers rotate the addresses each time a lookup is done. This address rotation often is called DNS round robin. 
+For example, three consecutive DNS lookups of www.cnn.com might return rotated lists of IP addresses like those shown in Example 20-2. 
+Example 20-2. Rotating DNS address lists 
+% nslookup www.cnn.com
+Name:    cnn.com
+Addresses:  207.25.71.5, 207.25.71.6, 207.25.71.7, 207.25.71.8
+          207.25.71.9, 207.25.71.12, 207.25.71.20, 207.25.71.22, 207.25.71.23
+          207.25.71.24, 207.25.71.25, 207.25.71.26, 207.25.71.27, 207.25.71.28
+          207.25.71.29, 207.25.71.30, 207.25.71.82, 207.25.71.199, 207.25.71.245
+          207.25.71.246
+
+% nslookup www.cnn.com
+Name:    cnn.com
+Addresses:  207.25.71.6, 207.25.71.7, 207.25.71.8, 207.25.71.9
+          207.25.71.12, 207.25.71.20, 207.25.71.22, 207.25.71.23, 207.25.71.24
+          207.25.71.25, 207.25.71.26, 207.25.71.27, 207.25.71.28, 207.25.71.29
+          207.25.71.30, 207.25.71.82, 207.25.71.199, 207.25.71.245, 207.25.71.246
+          207.25.71.5
+
+% nslookup www.cnn.com
+Name:    cnn.com
+Addresses:  207.25.71.7, 207.25.71.8, 207.25.71.9, 207.25.71.12
+          207.25.71.20, 207.25.71.22, 207.25.71.23, 207.25.71.24, 207.25.71.25
+          207.25.71.26, 207.25.71.27, 207.25.71.28, 207.25.71.29, 207.25.71.30
+          207.25.71.82, 207.25.71.199, 207.25.71.245, 207.25.71.246, 207.25.71.5
+          207.25.71.6
+In Example 20-2:
+The first address of the first DNS lookup is 207.25.71.5.
+The first address of the second DNS lookup is 207.25.71.6.
+The first address of the third DNS lookup is 207.25.71.7.
+DNS round robin for load balancing
+Because most DNS clients just use the first address, the DNS rotation serves to balance load among servers. If DNS did not rotate the addresses, most clients would always send load to the first client. 
+Figure 20-3 shows how DNS round-robin rotation acts to balance load: 
+When Alice tries to connect to www.cnn.com, she looks up the IP address using DNS and gets back 207.25.71.5 as the first IP address. Alice connects to the web server 207.25.71.5 in Figure 20-3c. 
+When Bob subsequently tries to connect to www.cnn.com, he also looks up the IP address using DNS, but he gets back a different result because the address list has been rotated one position, based on Alice's previous request. Bob gets back 207.25.71.6 as the first IP address, and he connects to this server in Figure 20-3f. 
+￼
+Figure 20-3. DNS round robin load balances across servers in a server farm
+The impact of DNS caching
+DNS address rotation spreads the load around, because each DNS lookup to a server gets a different ordering of server addresses. However, this load balancing isn't perfect, because the results of the DNS lookup may be memorized and reused by applications, operating systems, and some primitive child DNS servers. Many web browsers perform a DNS lookup for a host but then use the same address over and over again, to eliminate the cost of DNS lookups and because some servers prefer to keep talking to the same client. Furthermore, many operating systems perform the DNS lookup automatically, and cache the result, but don't rotate the addresses. Consequently, DNS round robin generally doesn't balance the load of a single client—one client typically will be stuck to one server for a long period of time. 
+But, even though DNS doesn't deal out the transactions of a single client across server replicas, it does a decent job of spreading the aggregate load of multiple clients. As long as there is a modestly large number of clients with similar demand, the load will be relatively well distributed across servers. 
+Other DNS-based redirection algorithms
+We've already discussed how DNS rotates address lists with each request. However, some enhanced DNS servers use other techniques for choosing the order of the addresses: 
+Load-balancing algorithms
+Some DNS servers keep track of the load on the web servers and place the least-loaded web servers at the front of the list. 
+Proximity-routing algorithms
+DNS servers can attempt to direct users to nearby web servers, when the farm of web servers is geographically dispersed. 
+Fault-masking algorithms
+DNS servers can monitor the health of the network and route requests away from service interruptions or other faults. 
+Typically, the DNS server that runs sophisticated server-tracking algorithms is an authoritative server that is under the control of the content provider (see Figure 20-4). 
+￼
+Figure 20-4. DNS request involving authoritative server
+Several distributed hosting services use this DNS redirection model. One drawback of the model for services that look for nearby servers is that the only information that the authoritative DNS server uses to make its decision is the IP address of the local DNS server, not the IP address of the client. 
+Anycast Addressing
+In anycast addressing, several geographically dispersed web servers have the exact same IP address and rely on the "shortest-path" routing capabilities of backbone routers to send client requests to the server nearest to the client. One way this method can work is for each web server to advertise itself as a router to a neighboring backbone router. The web server talks to its neighboring backbone router using a router communication protocol. When the backbone router receives packets aimed at the anycast address, it looks (as it usually would) for the nearest "router" that accepts that IP address. Because the server will have advertised itself as a router for that address, the backbone router will send the server the packet. 
+In Figure 20-5, three servers front the same IP address, 10.10.10.1. The Los Angeles (LA) server advertises this address to the LA router, the New York (NY) server advertises the same address to the NY router, and so on. The servers communicate with the routers using a router protocol. The routers automatically route client requests aimed at 10.10.10.1 to the nearest server that advertises the address. In Figure 20-5, a request for the IP address 10.10.10.1 will be routed to server 3. 
+￼
+Figure 20-5. Distributed anycast addressing
+Anycast addressing is still an experimental technique. For distributed anycast to work, the servers must "speak router language" and the routers must be able to handle possible address conflicts, because Internet addressing basically assumes one server for one address. (If done improperly, this can lead to serious problems known as "route leaks.") Distributed anycast is an emerging technology and might be a solution for content providers who control their own backbone networks. 
+IP MAC Forwarding
+In Ethernet networks, HTTP messages are sent in the form of addressed data packets. Each packet has a layer-4 address, consisting of the source and destination IP address and TCP port numbers; this is the address to which layer 4-aware devices pay attention. Each packet also has a layer-2 address, the Media Access Control (MAC) address, to which layer-2 devices (commonly switches and hubs) pay attention. The job of layer-2 devices is to receive packets with particular incoming MAC addresses and forward them to particular outgoing MAC addresses. 
+In Figure 20-6, for example, the switch is programmed to send all traffic from MAC address "MAC3" to MAC address "MAC4." 
+￼
+Figure 20-6. Layer-2 switch sending client requests to a gateway
+A layer 4-aware switch is able to examine the layer-4 addressing (IP addresses and TCP port numbers) and make routing decisions based on this information. For example, a layer-4 switch could send all port 80-destined web traffic to a proxy. In Figure 20-7, the switch is programmed to send all port 80 traffic from MAC3 to MAC6 (a proxy cache). All other MAC3 traffic goes to MAC5. 
+￼
+Figure 20-7. MAC forwarding using a layer-4 switch
+Typically, if the requested HTTP content is in the cache and is fresh, the proxy cache serves it; otherwise, the proxy cache sends an HTTP request to the origin server for the content, on the client's behalf. The switch sends port 80 requests from the proxy (MAC6) to the Internet gateway (MAC5).
+
+Layer-4 switches that support MAC forwarding usually can forward requests to several proxy caches and balance the load among them. Likewise, HTTP traffic also can be forwarded to alternate HTTP servers. 
+Because MAC address forwarding is point-to-point only, the server or proxy has to be located one hop away from the switch.
+
+/IP Address Forwarding 
+In IP address forwarding, a switch or other layer 4-aware device examines TCP/IP addressing on incoming packets and routes packets accordingly by changing the destination IP address, instead of the destination MAC address. An advantage over MAC forwarding is that the destination server need not be one hop away; it just needs to be located upstream from the switch, and the usual layer-3 end-to-end Internet routing gets the packet to the right place. This type of forwarding also is called Network Address Translation (NAT). 
+There is a catch, however: routing symmetry. The switch that accepts the incoming TCP connection from the client is managing that connection; the switch must send the response back to the client on that TCP connection. Therefore, any response from the destination server or proxy must return to the switch (see Figure 20-8). 
+￼
+Figure 20-8. A switch doing IP forwarding to a caching proxy or mirrored web server
+Two ways to control the return path of the response are: 
+Change the source IP address of the packet to the IP address of the switch. That way, regardless of the network configuration between the switch and server, the response packet goes to the switch. This is called full NAT , where the IP forwarding device translates both destination and sourbce IP addresses. Figure 20-9 shows the effect of full NAT on a TCP/IP datagram. The consequence is that the client IP address is unknown to the web server, which might want it for authentication or billing purposes, for example. 
+If the source IP address remains the client's IP address, make sure (from a hardware perspective) that no routes exist directly from server to client (bypassing the switch). This sometimes is called half NAT . The advantage here is that the server obtains the client IP address, but the disadvantage is the requirement of some control of the entire network between client and server. 
+￼
+Figure 20-9. Full NAT of a TCP/IP datagram
+Network Element Control Protocol
+The Network Element Control Protocol (NECP) allows network elements (NEs)—devices such as routers and switches that forward IP packets—to talk with server elements (SEs)—devices such as web servers and proxy caches that serve application layer requests. NECP does not explicitly support load balancing; it only offers a way for an SE to send an NE load-balancing information so that the NE can load balance as it sees fit. Like WCCP, NECP offers several ways to forward packets: MAC forwarding, GRE encapsulation, and NAT. 
+NECP supports the idea of exceptions. The SE can decide that it cannot service particular source IP addresses, and send those addresses to the NE. The NE can then forward requests from those IP addresses to the origin server. 
+Messages
+The NECP messages are described in Table 20-3. 
+Table 20-3. NECP messages 
+
+Message 
+Who sends it 
+Meaning 
+NECP_NOOP 
+
+No operation—do nothing. 
+NECP_INIT 
+SE 
+SE initiates communication with NE. SE sends this message to NE after opening TCP connection with NE. SE must know which NE port to connect to. 
+NECP_INIT_ACK 
+NE 
+Acknowledges NECP_INIT. 
+NECP_KEEPALIVE 
+NE or SE 
+Asks if peer is alive. 
+NECP_KEEPALIVE_ACK 
+NE or SE 
+Answers keep-alive message. 
+NECP_START 
+SE 
+SE says "I am here and ready to accept network traffic." Can specify a port. 
+NECP_START_ACK 
+NE 
+Acknowledges NECP_START. 
+NECP_STOP 
+SE 
+SE tells NE "stop sending me traffic." 
+NECP_STOP_ACK 
+NE 
+NE acknowledges stop. 
+NECP_EXCEPTION_ADD 
+SE 
+SE says to add one or more exceptions to NE's list. Exceptions can be based on source IP, destination IP, protocol (above IP), or port. 
+NECP_EXCEPTION_ADD_ACK 
+NE 
+Confirms EXCEPTION_ADD. 
+NECP_EXCEPTION_DEL 
+SE 
+Asks NE to delete one or more exceptions from its list. 
+NECP_EXCEPTION_DEL_ACK 
+NE 
+Confirms EXCEPTION_DEL. 
+NECP_EXCEPTION_RESET 
+SE 
+Asks NE to delete entire exception list. 
+NECP_EXCEPTION_RESET_ACK 
+NE 
+Confirms EXCEPTION_RESET. 
+NECP_EXCEPTION_QUERY 
+SE 
+Queries NE's entire exception list. 
+NECP_EXCEPTION_RESP 
+NE 
+Responds to exception query. 
+
+
+
+
+[1] DNS results as of May 7, 2000 and resolved from Northern California. The particular values likely will change over time, and some DNS systems return different values based on client location. 

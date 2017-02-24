@@ -49,3 +49,39 @@ vitamin			x 400
 
 It didn't have the same effects like the last time. Maybe because the piracetam dose was 
 was lower.
+
+
+Intranasal insulin
+====
+
+Bought a regular insulin. it is stated on the product it contains 10ML(each ML contains 100IU).
+Each puff is supposed to deliver 10IU.
+
+I calculated ML/puff. 10ML in the canister gives one hundred puffs. which equals 10IU/puff.
+
+* 3-dec-2016
+	* 2 pufs one in morning and afternood
+	* Had  a little headache in the afternood when used it with a cup of coffee.
+
+* 4-dec-2016
+	* 2 pufs one in morning and afternoon
+
+* 5-dec-2016
+	* 2 pufs
+
+* 6-dec-2016
+	* 1 puf
+
+* Thu Dec  8 17:17:31 IRST 2016
+	* 1 puf
+
+### remarks
+
+This shouldn't be taken with coffee. Coffee should be used 30 to 60 minutes after the initial injection.
+
+
+=======================================
+
+Thu Dec  8 14:03:04 IRST 2016 
+
+* I want to leave Fara at 50%.

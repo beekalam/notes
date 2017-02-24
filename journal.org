@@ -1,0 +1,35 @@
+
+* 2017
+** 2017-01 January
+*** 2017-01-09 Monday
+**** something
+   Entered on [2017-01-09 Mon 21:33]
+**** 
+   Entered on [2017-01-09 Mon 21:41]
+**** 
+   Entered on [2017-01-09 Mon 21:42]
+**** 
+   Entered on [2017-01-09 Mon 21:43]
+** 2017-02 February
+*** 2017-02-01 Wednesday
+**** new jornual
+   Entered on [2017-02-01 Wed 19:52]
+  
+     [[file:~/Documents/notes/dumps.org::*Tasks][Tasks]]
+**** new journal entry
+   Entered on [2017-02-01 Wed 19:55]
+  
+     [[file:~/Documents/notes/emacs-notes.org::*org-capture][org-capture]]
+**** new journal entry
+   Entered on [2017-02-01 Wed 19:56]
+  
+     [[file:~/Documents/notes/emacs-notes.org::*org-capture][org-capture]]
+**** org testljl totod
+   Entered on [2017-02-01 Wed 19:56]
+  
+     [[file:~/Documents/notes/emacs-notes.org::*org-capture][org-capture]]
+*** 2017-02-11 Saturday
+**** new journal
+   Entered on [2017-02-11 Sat 14:02]
+  
+     [[file:~/.emacs.d/init.el::'(("t"%20"Todo"%20entry%20(file+headline%20"todo.org"%20"Tasks")]]

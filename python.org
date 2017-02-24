@@ -1,0 +1,74 @@
+* core types
+** lists
+*** remove duplicates from a list
+#+begin_src python
+set([1,1,2,3])
+#+end_src
+
+*** sort a list
+#+begin_src python
+sorted(list)
+#+end_src
+
+*** return n largest items from a list
+#+begin_src python
+import heapq
+def two_highest(list_):
+    return heapq.nlargest(2, set(list_)) if type(list_) == list else False
+#+end_src
+
+** dictionaries
+* reflection
+** check if a variable is number
+
+#+begin_src python
+type(var) == int
+type(var) == float
+
+type(var) is int
+type(var) is float
+
+isinstance(var,int)
+isinstance(var,(int,long))
+#+end_src
+
+** check if a variable is string
+
+#+begin_src python
+type(var) == str
+
+isinstance(var,str)
+#+end_src
+
+* File
+** check file exist
+
+#+begin_src python
+import os.path
+os.path.isfile(fname)    # checks if fname is afile
+os.path.exists(file_path) # checks if file_path is file or directory
+#+end_src
+
+
+** read all files in a directory
+
+You can use glob:
+
+import glob, os
+os.chdir("/mydir")
+for file in glob.glob("*.txt"):
+    print(file)
+
+or simply os.listdir:
+
+import os
+for file in os.listdir("/mydir"):
+    if file.endswith(".txt"):
+        print(file)
+or if you want to traverse directory, use os.walk:
+
+import os
+for root, dirs, files in os.walk("/mydir"):
+    for file in files:
+        if file.endswith(".txt"):
+             print(os.path.join(root, file))

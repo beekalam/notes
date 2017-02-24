@@ -1,0 +1,63 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+* memory space
+High-performance microprocessors contain complex hardware engines called
+Memory Management Units (MMUs). Their purpose is to enable an operating system
+to exercise a high degree of management and control over its address space and the
+address space it allocates to processes. This control comes in two primary forms: access
+rights and memory translation. Access rights allow an operating system to assign specific
+memory-access privileges to specific tasks. Memory translation allows an operating
+system to virtualize its address space, which has many benefits.
+ The Linux kernel takes advantage of these hardware MMUs to create a virtual
+memory operating system
+* Execution Contexts
+ In Linux, we refer to two distinctly separate operational contexts, based on the
+environment in which a given thread15 is executing. Threads executing entirely within
+the kernel are said to be operating in kernel context. Application programs are said to
+operate in user space context. A user space process can access only memory it owns, and
+it is required to use kernel system calls to access privileged resources such as file and
+device I/O. 
+ When an application program executes a system call that
+results in a context switch and enters the kernel, it is executing kernel code on behalf
+of a process. You will often hear this referred to as process context within the kernel. In
+contrast, the interrupt service routine (ISR) handling the IDE drive (or any other ISR,
+for that matter) is kernel code that is not executing on behalf of any particular process.
+This is typically called interrupt context.
+* Processors
+* Stand-Alone Processors
+Stand-alone processors are processor chips that are dedicated exclusively to the
+processing function. As opposed to integrated processors, stand-alone processors
+require additional support circuitry for their basic operation. In many cases, this
+means a chipset or custom logic surrounding the processor to handle functions such
+as DRAM controller, system bus addressing configuration, and external peripheral
+devices such as keyboard controllers and serial ports. Stand-alone processors often
+offer the highest overall CPU performance.
+
+** Companion Chipsets
+Stand-alone processors require support logic to connect to and enable
+external peripheral devices such as main system memory (DRAM), ROM or
+Flash memory, system buses such as PCI, and other peripherals.  This
+support logic often is accomplished by companion chipsets, which may
+even be purpose-designed specifically for a family of processors.
+
+*** northbridge , southbridge
+northbridge is directly connected to the  processor's high-speed front-side bus (FSB).
+* Linux kernel
+** kernel version
+It is easy to tell what kernel version you are working with. The first few lines of the
+top-level makefile in a kernel source tree detail the exact kernel version represented by
+a given instance. It looks like this for the 2.6.30 kernel release:
+
+VERSION = 2
+PATCHLEVEL = 6
+SUBLEVEL = 30
+EXTRAVERSION =
+NAME=Man-Eating Seals of Antiquity
+
+You can check the kernel release string from a command prompt on a running Linux system
+like this:
+
+$ cat /proc/version
+Linux version 2.6.13 (chris@pluto) (gcc version 4.0.0 (DENX ELDK 4.0
+4.0.0)) #2 Thu Feb 16 19:30:13 EST 2006
+
+

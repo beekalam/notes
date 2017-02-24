@@ -1,0 +1,700 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+* character strings
+** Character String Literals (String Constants)
+A string literal, also termed a string constant, is anything enclosed in double quotation
+marks.
+Character string constants are placed in the static storage class, which means that if you use
+a string constant in a function, the string is stored just once and lasts for the duration of the
+program, even if the function is called several times. 
+** Character String Arrays and Initialization 
+When you define a character string array, you must let the compiler know how much space
+is needed. One way is to specify an array size large enough to hold the string. The following
+declaration initializes the array m1 to the characters of the indicated string:
+
+#+begin_src c
+ const char m1[40] = "Limit yourself to one line's worth.";
+#+end_src
+
+The const indicates the intent to not alter this string.
+This form of initialization is short for the standard array initialization form:
+#+begin_src c
+ const char m1[40] = { 'L',
+ 'i', 'm', 'i', 't', ' ', 'y', 'o', 'u', 'r', 's', 'e', 'l',
+ 'f', ' ', 't', 'o', ' ', 'o', 'n', 'e', ' ',
+ 'l', 'i', 'n', 'e', '\", 's', ' ', 'w', 'o', 'r',
+ 't', 'h', '.', '\0'
+ };
+#+end_src
+
+Letting the compiler compute the size of the array works only if you initialize the array. If you
+create an array you intend to fill later, you need to specify the size when you declare it. When
+you do declare an array size, the array size must evaluate to an integer. Prior to the advent of
+variable length arrays (VLAs) with C99, the size had to be an integer constant, which includes
+the possibility of an expression formed from constant integer values. 
+#+begin_src c
+int n = 8;
+ char cookies[1]; // valid
+ char cakes[2 + 5]; // valid, size is a constant expression
+ char pies[2*sizeof(long double) + 1]; // valid
+ char crumbs[n]; // invalid prior to C99, a VLA after C99
+#+end_src
+
+The name of a character array, like any array name, yields the address of the first element of
+the array. Therefore, the following holds:
+
+#+begin_src c
+ char car[10] = "Tata";
+ car == &car[0] , *car == 'T', and *(car+1) == car[1] == 'a'
+#+end_src
+ 
+Indeed, you can use pointer notation to set up a string. For example, Listing 11.1uses the
+following declaration:
+
+#+begin_src c
+ const char * pt1 = "Something is pointing at me.";
+#+end_src
+ 
+This declaration is very nearly the same as this one:
+
+#+begin_src c
+ const char ar1[] = "Something is pointing at me.";
+#+end_src
+
+The declarations amount to saying that both pt1 and ar1 are addresses of strings. In both
+cases, the quoted string itself determines the amount of storage set aside for the string.
+Nonetheless, the forms are not identical. 
+
+Note the closing null character. Without it, you have a character array, but not a string. 
+
+** Array Versus Pointer 
+What is the difference, then, between an array and a pointer form? The array form ( ar1[] )
+causes an array of 29 elements (one for each character plus one for the terminating '\0') to
+be allocated in the computer memory. Each element is initialized to the corresponding character
+of the string literal. Typically, what happens is that the quoted string is stored in a data
+segment that is part of the executable file; when the program is loaded into memory, so is that
+string. The quoted string is said to be in static memory. *But the memory for the array is allocated
+only after the program begins running.* At that time, the quoted string is copied into the
+array. Note that, at this time, there are two copies of the string. One is the
+string literal in static memory, and one is the string stored in the ar1 array.
+
+Hereafter, the compiler will recognize the name ar1 as a synonym for the address of the first
+array element, &ar1[0]. One important point here is that in the array form, ar1 is an address
+constant. You can’t change ar1, because that would mean changing the location (address)
+where the array is stored. You can use operations such as ar1+1 to identify the next element in
+an array, but ++ar1 is not allowed. The increment operator can be used only with the names of
+variables (or, more generally, modifiable lvalues), not with constants.
+
+The pointer form ( *pt1) also causes 29 elements in static storage to be set aside for the string.
+In addition, once the program begins execution, it sets aside one more storage location for the
+pointer variable pt1 and stores the address of the string in the pointer variable. This variable
+initially points to the first character of the string, but the value can be changed. Therefore, you
+can use the increment operator. For instance, ++pt1 would point to the second character ( o ).
+A string literal is considered to be const data. Because pt1 points to that data, it should be
+declared as pointing to const data. This doesn’t mean you can’t change the value of pt1 (i.e.,
+where it points), but it does mean you can’t use pt1 to change the data itself. If you copy a
+string literal to an array, on the other hand, you are free to change the data unless you choose
+to declare the array as const . 
+In short, initializing the array copies a string from static storage to the array, whereas initializing
+the pointer merely copies the address of the string. Listing 11.3illustrates these points. 
+#+begin_src c
+ // addresses.c -- addresses of strings
+ #define MSG "I'm special."
+ #include <stdio.h>
+ int main()
+ {
+ char ar[] = MSG;
+ const char *pt = MSG;
+ printf("address of \"I'm special\": %p \n", "I'm special");
+ printf(" address ar: %p\n", ar);
+ printf(" address pt: %p\n", pt);
+ printf(" address of MSG: %p\n", MSG);
+ printf("address of \"I'm special\": %p \n", "I'm special");
+ return 0;
+ } 
+#+end_src
+
+Here’s the output from one system:
+ address of "I'm special": 0x100000f0c
+ address ar: 0x7fff5fbff8c7
+ address pt: 0x100000ee0
+ address of MSG: 0x100000ee0
+ address of "I'm special": 0x100000f0c 
+
+What does this show? First, pt and MSG are the same address, while ar is a different address,
+just as promised. Second, although the string literal "I'm special." occurs twice in the
+printf() statements, the compiler chose to use one storage location, but not the same address
+as MSG. The compiler has the freedom to store a literal that’s used more than once in one or
+more locations. Another compiler might choose to represent all three occurrences of "I'm
+special." with a single storage location. Third, the part of memory used for static data is
+different from that used for dynamic memory, the memory used for ar. Not only are the values 
+different, but this particular compiler even uses a different number of bits to represent the two
+kinds of memory.
+Are the differences between array and pointer representations of strings important? Often they
+are not, but it depends on what you try to do. Let’s look further into the matter. 
+
+** Array and pointer differences
+Let’s examine the differences between initializing a character array to hold a string and initializing
+a pointer to point to a string. (By “pointing to a string,” we really mean pointing to the
+first character of a string.) For example, consider these two declarations:
+#+begin_src c
+ char heart[] = "I love Tillie!";
+ const char *head = "I love Millie!";
+#+end_src
+
+The chief difference is that the array name heart is a constant, but the pointer head is a variable.
+What practical difference does this make?
+First, both can use array notation:
+#+begin_src c
+ for (i = 0; i < 6; i++)
+ putchar(heart[i]);
+ putchar('\n');
+ for (i = 0; i < 6; i++)
+ putchar(head[i]));
+ putchar('\n');
+#+end_src
+
+This is the output:
+ I love
+ I love
+
+Next, both can use pointer addition:
+#+begin_src c
+ for (i = 0; i < 6; i++)
+ putchar(*(heart + i));
+ putchar('\n');
+ for (i = 0; i < 6; i++)
+ putchar(*(head + i));
+ putchar('\n');
+#+end_src
+
+Again, the output is as follows:
+ I love
+ I love
+
+Only the pointer version, however, can use the increment operator:
+#+begin_src c
+ while (*(head) != '\0') /* stop at end of string */
+ putchar(*(head++)); /* print character, advance pointer */ 
+#+end_src
+
+This produces the following output:
+ I love Millie!
+
+Suppose you want head to agree with heart. You can say
+
+ head = heart; /* head now points to the array heart */
+
+This makes the head pointer point to the first element of the heart array.
+However, you cannot say
+
+ heart = head; /* illegal construction */
+
+The situation is analogous to x = 3; versus 3 = x;. The left side of the assignment statement
+must be a variable or, more generally, a modifiable lvalue, such as *p_int. Incidentally, head
+= heart; does not make the Millie string vanish; it just changes the address stored in head .
+Unless you’ve saved the address of "I love Millie!" elsewhere, however, you won’t be able
+to access that string when head points to another location.
+
+There is a way to alter the heart message—go to the individual array elements:
+
+ heart[7]= 'M';
+ or
+ *(heart + 7) = 'M';
+
+The elements of an array are variables (unless the array was declared as const), but the name is
+not a variable.
+
+Let’s go back to a pointer initialization that doesn’t use the const modifier:
+
+ char * word = "frame";
+
+Can you use the pointer to change this string?
+
+ word[1] = 'l'; // allowed??
+
+Your compiler may allow this, but, under the current C standard, the behavior for such an
+action is undefined. Such a statement could, for example, lead to memory access errors. The
+reason is that, as mentioned before, a compiler can choose to represent all identical string literals
+with a single copy in memory. For example, the following statements could all refer to a
+single memory location of string "Klingon" :
+
+ char * p1 = "Klingon";
+ p1[0] = 'F'; // ok?
+ printf("Klingon");
+ printf(": Beware the %ss!\n", "Klingon");
+
+That is, the compiler can replace each instance of "Klingon" with the same address. If the
+compiler uses this single-copy representation and allows changing p1[0] to 'F', that would 
+affect all uses of the string, so statements printing the string literal "Klingon" would actually
+display "Flingon" :
+
+ Flingon: Beware the Flingons!
+
+In fact, in the past, several compilers did behave this rather confusing way, whereas others
+produced programs that abort. Therefore, the recommended practice for initializing a pointer to
+a string literal is to use the const modifier:
+
+ const char * pl = "Klingon"; // recommended usage
+
+Initializing a non- const array with a string literal, however, poses no such problems, because
+the array gets a copy of the original string.
+In short, don’t use a pointer to a string literal if you plan to alter the string. 
+** Arrays of character Strings
+#+begin_src c
+// arrchar.c -- array of pointers, array of strings
+#include <stdio.h>
+#define SLEN 40
+#define LIM 5
+int main(void)
+{
+const char *mytalents[LIM] = {
+"Adding numbers swiftly",
+"Multiplying accurately", "Stashing data",
+"Following instructions to the letter",
+"Understanding the C language"
+};
+char yourtalents[LIM][SLEN] = {
+"Walking in a straight line",
+"Sleeping", "Watching television",
+"Mailing letters", "Reading email"
+};
+int i;
+puts("Let's compare talents.");
+printf ("%-36s %-25s\n", "My Talents", "Your Talents");
+for (i = 0; i < LIM; i++)
+printf("%-36s %-25s\n", mytalents[i], yourtalents[i]);
+printf("\nsizeof mytalents: %zd, sizeof yourtalents: %zd\n",
+sizeof(mytalents), sizeof(yourtalents));
+return 0;
+#+end_src
+
+** Pointers and Strings
+#+begin_src c
+/* p_and_s.c -- pointers and strings */
+#include <stdio.h>
+int main(void)
+{
+    const char * mesg = "Don't be a fool!";
+    const char * copy;
+    copy = mesg;
+    printf("%s\n", copy);
+    printf("mesg = %s; &mesg = %p; value = %p\n",
+    mesg, &mesg, mesg);
+    printf("copy = %s; &copy = %p; value = %p\n",
+    copy, &copy, copy);
+    return 0; 
+}
+#+end_src
+Looking at this program, you might think that it makes a copy of the string "Don't be a
+fool!" , and your first glance at the output might seem to confirm this guess:
+Don't be a fool!
+mesg = Don't be a fool!; &mesg = 0x0012ff48; value = 0x0040a000
+copy = Don't be a fool!; &copy = 0x0012ff44; value = 0x0040a000
+** string input
+*** alternatives to gets
+The fgets() Function (and fputs() )
+Here is how fgets() differs from gets() :
+ -  It takes a second argument indicating the maximum number of
+   characters to read. If thisargument has the value n , fgets() reads
+   up to n-1 characters or through the newline character, whichever
+   comes first.
+ -  If fgets() reads the newline, it stores it in the string, unlike
+   gets() , which discards it.
+ - It takes a third argument indicating which file to read. To read
+   from the keyboard, use
+stdin (for standard input ) as the argument; this identifier is defined in stdio.h .
+
+Because the fgets() function includes the newline as part of the
+string (assuming the input line fits), it’s often paired with fputs()
+, which works like puts() , except that it doesn’t auto- matically
+append a newline. It takes a second argument to indicate which file to
+write to. For the computer monitor we can use stdout (for standard
+output) as an argument. Listing 11.7 illustrates how fgets() and
+fputs() behave.
+
+#+begin_src c
+/* fgets1.c -- using fgets() and fputs() */
+#include <stdio.h>
+#define STLEN 14
+int main(void)
+{
+    char words[STLEN];
+    puts("Enter a string, please.");
+    fgets(words, STLEN, stdin);
+    printf("Your string twice (puts(), then fputs()):\n");
+    puts(words);
+    fputs(words, stdout);
+    puts("Enter another string, please.");
+    fgets(words, STLEN, stdin);
+    printf("Your string twice (puts(), then fputs()):\n");
+    puts(words);
+    fputs(words, stdout);
+    puts("Done.");
+    return 0;
+}
+#+end_src
+
+The fgets() function returns a pointer to char . If all goes well, it just returns the same address
+that was passed to it as the first argument. If the function encounters end-of-file, however,
+it returns a special pointer called the null pointer .
+
+#+begin_src c
+/* fgets2.c -- using fgets() and fputs() */
+#include <stdio.h>
+#define STLEN 10
+int main(void)
+{
+    char words[STLEN];
+    puts("Enter strings (empty line to quit):");
+    while (fgets(words, STLEN, stdin) != NULL && words[0] != '\n')
+    fputs(words, stdout);
+    puts("Done.");
+    return 0;
+}
+#+end_src
+
+*** scanf() function
+If you use the %s format, the string runs up to (but not including)
+the next whitespace character (blank, tab, or newline). If you specify
+a field width, as in %10s , the scanf() collects up to 10 characters
+or up to the first whitespace character, whichever comes first.
+
+scanf() function returns an integer value that equals the number of items
+successfully read or returns EOF if it encounters the end of file.
+
+#+begin_src c
+/* scan_str.c -- using scanf() */
+#include <stdio.h>
+int main(void)
+{
+    char name1[11], name2[11];
+    int count;
+    printf("Please enter 2 names.\n");
+    count = scanf("%5s %10s",name1, name2);
+    printf("I read the %d names %s and %s.\n",
+    count, name1, name2);
+    return 0;
+}
+#+end_src
+#+begin_src
+Here are three runs:
+Please enter 2 names.
+Jesse Jukes
+I read the 2 names Jesse and Jukes.
+Please enter 2 names.
+Liza Applebottham
+I read the 2 names Liza and Applebotth.
+Please enter 2 names.
+Portensia Callowit
+I read the 2 names Porte and nsia.
+#+end_src
+
+In the first example, both names fell within the allowed size limits. In the second example,
+only the first 10 characters of Applebottham were read because we used a %10s format. In the
+third example, the last four letters of Portensia went into name2 because the second call to
+scanf() resumed reading input where the first ended; in this case, that was still inside the
+word Portensia.
+
+** string output
+** Null character and Null pointer
+Null character and null pointer both appear in Listing 11.9 . Conceptually, these two nulls are
+different from one another. The null character, or '\0' , is the character used to mark the end
+of a C string. It’s the character whose code is zero.
+The null pointer, or NULL , has a value that doesn’t correspond to a valid address of data.
+So the null character is an integer type, while the null pointer is a pointer type.
+Also, while the null character, being a character, is one
+byte, the null pointer, being an address, typically is four bytes.
+** string length example
+#+begin_src c
+// Function to count the number of characters in a string
+
+#include <stdio.h>
+
+int  stringLength (const char  string[])
+{
+    int  count = 0;
+
+    while ( string[count] != '\0' )
+        ++count;
+
+    return count;
+}
+
+int main (void)
+{
+    int   stringLength (const char  string[]);
+    const char  word1[] = { 'a', 's', 't', 'e', 'r', '\0' };
+    const char  word2[] = { 'a', 't', '\0' };
+    const char  word3[] = { 'a', 'w', 'e', '\0' };
+
+    printf ("%i   %i   %i\n", stringLength (word1),
+             stringLength (word2), stringLength (word3));
+
+    return 0;
+}
+#+end_src
+** concatenation of strings example
+#+begin_src c
+#include <stdio.h>
+
+int main (void)
+{
+    void  concat (char  result[], const char  str1[], const char  str2[]);
+    const char  s1[] = { "Test " };
+    const char  s2[] = { "works." };
+    char  s3[20];
+
+    concat (s3, s1, s2);
+
+    printf ("%s\n", s3);
+
+    return 0;
+}
+
+// Function to concatenate two character strings
+
+void concat (char  result[], const char  str1[], const char  str2[])
+{
+    int  i, j;
+
+    // copy str1 to result
+
+    for ( i = 0;  str1[i] != '\0';  ++i )
+        result[i] = str1[i];
+
+    // copy str2 to result
+
+    for ( j = 0;  str2[j] != '\0';  ++j )
+        result[i + j] = str2[j];
+
+    // Terminate the concatenated string with a null character
+
+    result [i + j] = '\0';
+}
+#+end_src
+
+** startsWith
+#+begin_src c
+int startsWith(const char *string, const char *prefix) {
+  while(*prefix) {
+    if(*prefix++ != *string++) {
+      return 0;
+    }
+  }
+  return 1;
+}
+#+end_src
+
+** equalStrings example
+
+#+begin_src c
+// Function to determine if two strings are equal
+
+#include <stdio.h>
+#include <stdbool.h>
+
+bool equalStrings (const char  s1[], const char  s2[])
+{
+    int  i = 0;
+    bool areEqual;
+
+    while ( s1[i] == s2 [i]  &&
+                 s1[i] != '\0' &&  s2[i] != '\0' )
+        ++i;
+
+    if ( s1[i] == '\0'  &&  s2[i] == '\0' )
+       areEqual = true;
+    else
+       areEqual = false;
+
+    return areEqual;
+}
+
+
+int main (void)
+{
+     bool  equalStrings (const char  s1[], const char  s2[]);
+     const char  stra[] = "string compare test";
+     const char  strb[] = "string";
+
+     printf ("%i\n", equalStrings (stra, strb));
+     printf ("%i\n", equalStrings (stra, stra));
+     printf ("%i\n", equalStrings (strb, "string"));
+
+     return 0;
+}
+#+end_src
+
+** read string with scanf
+
+#+begin_src c
+//  Program to illustrate the %s scanf format characters
+
+#include <stdio.h>
+
+int main (void)
+{
+    char  s1[81], s2[81], s3[81];
+
+    printf ("Enter text:\n");
+
+    scanf ("%s%s%s", s1, s2, s3);
+
+    printf ("\ns1 = %s\ns2 = %s\ns3 = %s\n", s1, s2, s3);
+    return 0;
+}
+#+end_src
+
+** reading lines of code
+
+#+begin_src c
+#include <stdio.h>
+
+int main (void)
+{
+    int   i;
+    char  line[81];
+    void  readLine (char  buffer[]);
+
+    for ( i = 0; i < 3; ++i )
+    {
+        readLine (line);
+        printf ("%s\n\n", line);
+    }
+
+    return 0;
+}
+
+// Function to read a line of text from the terminal
+
+void  readLine (char  buffer[])
+{
+    char  character;
+    int   i = 0;
+
+    do
+    {
+        character = getchar ();
+        buffer[i] = character;
+        ++i;
+    }
+    while ( character != '\n' );
+
+    buffer[i - 1] = '\0';
+}
+#+end_src
+
+** Initializing and Displaying Character Strings
+C permits a character array to be initialized by simply specifying a
+constant character string rather than a list of individual
+characters. So, for example, the statement
+
+char  word[] = { "Hello!" };
+
+can be used to set up an array of characters called word with the
+initial characters ’H’, ’e’, ’l’, ’l’, ’o’, ’!’, and ’\0’,
+respectively. You can also omit the braces when initializing character
+arrays in this manner. So, the statement
+
+char word[] =  "Hello!";
+
+is perfectly valid. Either statement is equivalent to the statement
+
+Click here to view code image
+
+char  word[] = { 'H', 'e', 'l', 'l', 'o', '!', '\0' };
+
+If you’re explicitly specifying the size of the array, make certain
+you leave enough space for the terminating null character. So, in
+
+char  word[7] = { "Hello!" };
+
+the compiler has enough room in the array to place the terminating null character. However, in
+
+char  word[6] = { "Hello!" };
+
+the compiler can’t fit a terminating null character at the end of the
+array, and so it doesn’t put one there (and it doesn’t complain about
+it either).
+** Counting words
+
+#+begin_src c
+//  Function to determine if a character is alphabetic
+
+#include <stdio.h>
+#include <stdbool.h>
+
+bool alphabetic (const char  c)
+{
+    if  ( (c >= 'a'  &&  c <= 'z') || (c >= 'A'  &&  c <= 'Z') )
+       return true;
+    else
+       return false;
+}
+
+/* Function to count the number of words in a string */
+
+int  countWords (const char  string[])
+{
+    int   i, wordCount = 0;
+    bool  lookingForWord = true, alphabetic (const char  c);
+
+    for ( i = 0;  string[i] != '\0';  ++i )
+        if ( alphabetic(string[i]) )
+        {
+            if ( lookingForWord )
+            {
+                ++wordCount;
+                lookingForWord = false;
+            }
+        }
+        else
+            lookingForWord = true;
+
+    return wordCount;
+}
+
+int main (void)
+{
+    const char  text1[] = "Well, here goes.";
+    const char  text2[] = "And here we go... again.";
+    int   countWords (const char  string[]);
+
+    printf ("%s - words = %i\n", text1, countWords (text1));
+    printf ("%s - words = %i\n", text2, countWords (text2));
+
+    return 0;
+}
+#+end_src
+
+** Converting a String to its Integer Equivalent
+  
+#+begin_src c
+// Function to convert a string to an integer
+
+#include <stdio.h>
+
+int  strToInt (const char  string[])
+{
+    int  i, intValue, result = 0;
+
+    for  ( i = 0; string[i] >= '0' && string[i] <= '9'; ++i )
+    {
+        intValue = string[i] - '0';
+        result = result * 10 + intValue;
+    }
+
+    return result;
+}
+
+int main (void)
+{
+    int  strToInt (const char  string[]);
+
+    printf ("%i\n", strToInt("245"));
+    printf ("%i\n", strToInt("100") + 25);
+    printf ("%i\n", strToInt("13x5"));
+
+    return 0;
+}
+#+end_src

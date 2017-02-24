@@ -1,0 +1,282 @@
+* Tasks
+** german anthem
+Einigkeit und Recht und Freiheit
+Für das deutsche Vaterland!
+Danach lasst uns alle streben
+Brüderlich mit Herz und Hand!
+Einigkeit und Recht und Freiheit
+Sind des Glückes Unterpfand;
+ |: Blüh' im Glanze dieses Glückes,
+  Blühe, deutsches Vaterland! :|
+Unity, justice and liberty
+For our German fatherland!
+For all these let us work and strive
+United in hearts and hands!
+Unity, justice and liberty
+Are the pledges of our land;
+ |: Flourish in fortune's blessings,
+  Flourish, German fatherland! :|
+
+** Linux Standard Base
+Probably the single most relevant standard for a Linux distribution maintainer is the
+Linux Standard Base (LSB). The goal of the LSB is to establish a set of standards
+designed to enhance the interoperability of applications among different Linux distributions.
+** Linux Standard Base Project
+http://www.linuxfoundation.org/collaborate/workgroups/lsb
+Linux Foundation
+http://www.linuxfoundation.org/
+** TODO learn some more
+  
+   [[file:~/Documents/notes/emacs-notes.org::*org-capture][org-capture]]
+[[file:~/Documents/notes/problem-solving.org::*Backtracking][Backtracking]]
+** TODO update for groups
+  
+   [[file:~/Documents/notes/ubuntu.org::*Repair%20grub][Repair grub]]
+** TODO log to db when shahkar is disconnected
+** TODO aaaa
+  
+   [[file:~/.emacs.d/init.el::'(("t"%20"Todo"%20entry%20(file+headline%20"todo.org"%20"Tasks")]]
+** TODO asdfd
+  
+   [[file:~/.emacs.d/init.el::(setq%20org-default-notes-file%20(concat%20org-directory%20"todo.org"))]]
+* Embedded
+* memory space
+High-performance microprocessors contain complex hardware engines called
+Memory Management Units (MMUs). Their purpose is to enable an operating system
+to exercise a high degree of management and control over its address space and the
+address space it allocates to processes. This control comes in two primary forms: access
+rights and memory translation. Access rights allow an operating system to assign specific
+memory-access privileges to specific tasks. Memory translation allows an operating
+system to virtualize its address space, which has many benefits.
+ The Linux kernel takes advantage of these hardware MMUs to create a virtual
+memory operating system
+* Execution Contexts
+ In Linux, we refer to two distinctly separate operational contexts, based on the
+environment in which a given thread15 is executing. Threads executing entirely within
+the kernel are said to be operating in kernel context. Application programs are said to
+operate in user space context. A user space process can access only memory it owns, and
+it is required to use kernel system calls to access privileged resources such as file and
+device I/O. 
+ When an application program executes a system call that
+results in a context switch and enters the kernel, it is executing kernel code on behalf
+of a process. You will often hear this referred to as process context within the kernel. In
+contrast, the interrupt service routine (ISR) handling the IDE drive (or any other ISR,
+for that matter) is kernel code that is not executing on behalf of any particular process.
+This is typically called interrupt context.
+* Processors
+* Stand-Alone Processors
+Stand-alone processors are processor chips that are dedicated exclusively to the
+processing function. As opposed to integrated processors, stand-alone processors
+require additional support circuitry for their basic operation. In many cases, this
+means a chipset or custom logic surrounding the processor to handle functions such
+as DRAM controller, system bus addressing configuration, and external peripheral
+devices such as keyboard controllers and serial ports. Stand-alone processors often
+offer the highest overall CPU performance.
+
+** Companion Chipsets
+Stand-alone processors require support logic to connect to and enable
+external peripheral devices such as main system memory (DRAM), ROM or
+Flash memory, system buses such as PCI, and other peripherals.  This
+support logic often is accomplished by companion chipsets, which may
+even be purpose-designed specifically for a family of processors.
+
+*** northbridge , southbridge
+northbridge is directly connected to the  processor's high-speed front-side bus (FSB).
+
+* Ich kann alless lyrics
+[Verse 1]
+Ich nehm' mein Ego, quetsch' es aus
+Alle Tränen müssen raus
+Betrunken von mir selbst, füll' leere Gläser wieder auf
+Leere Gläser wieder aus
+Selbst der Wasserwerfer kann mir nichts
+Strahle so hell, dass alles regenbogenfarben ist
+Wo die Nacht pulsiert, wo jeder was erwartet
+Mich niemand wirklich kennt, wirklich niemand auf mich wartet
+
+[Pre-Hook]
+Weiß niemand, wo mein Herz schlägt?
+Weiß niemand, wo mein Herz schlägt?
+Und die Vögel, sie zwitschern immer noch das alte Lied
+Ein zahmer singt von Freiheit, ein wilder Vogel fliegt
+Und jeder Spruch klingt so wie tausende zuvor
+Nicht mehr wert als nur ein Rauschen im Ohr
+
+[Hook]
+Mir egal, ich kann alles
+Ich kann alles
+Ich kann alles
+Alles glänzt, was ab jetzt vor mir liegt
+Ich kann alles
+Ich kann alles
+Ich kann alles
+Bis ich aufschlag' beweis' ich, dass ich flieg'
+
+[Verse 2]
+Ich hab mir alles geglaubt, mir meine Lügen auch
+Und dass die Lügen Lügen waren, glaub' ich mir jetzt auch
+Wissen ersetzt denken nicht, weiß ich nicht, denke ich
+Ich hab mich an mir verblendet, schrieb Geschichte nur in Blindenschrift
+Wollte nicht so sein wie sie, wusste, was ich werden muss
+Andere Leute werden groß, ich mach' mit dem werden Schluss
+Und wenn mich jemand hasst, hab ich immer noch irgendwas
+Das der jemand gerne hätte - alles richtig gemacht
+
+[Pre-Hook]
+Ich weiß wieder wo mein Herz schlägt
+Ich weiß wieder wo mein Herz schlägt
+Und die Vögel, sie zwitschern immer noch das alte Lied
+Ein zahmer singt von Freiheit, ein wilder Vogel fliegt
+Und jeder Spruch klingt so wie tausende zuvor
+Nicht mehr wert als nur ein Rauschen im Ohr
+
+[Hook]
+Mir egal, ich kann alles
+Ich kann alles
+Ich kann alles
+Alles glänzt, was ab jetzt vor mir liegt
+Ich kann alles
+Ich kann alles
+Ich kann alles
+Bis ich aufschlag' beweis' ich, dass ich flieg'
+
+[Bridge]
+Schau mich an, ich kann alles
+Ich kann nicht viel, nein, alles
+Wie viel ich verdien'? Alles!
+Mein einziges Ziel? Alles!
+Schau mich an, ich kann alles
+Hab' mich entschieden gegen alle
+Mach' meinen Frieden mit allen
+Entschieden zu fliegen, bis ich falle
+
+[Hook] x2
+Ich kann alles
+Ich kann alles
+Ich kann alles
+Alles glänzt, was ab jetzt vor mir liegt
+Ich kann alles
+Ich kann alles
+Ich kann alles
+Bis ich aufschlag' beweis' ich, dass ich flieg'
+* LFS assumes that the root file system (/) is of type ext4. To create an ext4 file system on the LFS partition, run the following:
+
+mkfs -v -t ext4 /dev/<xxx>
+If you are using an existing swap partition, there is no need to format it. If a new swap partition was created, it will need to be initialized with this command:
+
+mkswap /dev/<yyy>
+Replace <yyy> with the name of the swap partition.
+* LFS assumes that the root file system (/) is of type ext4. To create an ext4 file system on the LFS partition, run the following:
+
+mkfs -v -t ext4 /dev/<xxx>
+If you are using an existing swap partition, there is no need to format it. If a new swap partition was created, it will need to be initialized with this command:
+
+mkswap /dev/<yyy>
+Replace <yyy> with the name of the swap partition.
+* LFS assumes that the root file system (/) is of type ext4. To create an ext4 file system on the LFS partition, run the following:
+
+mkfs -v -t ext4 /dev/<xxx>
+If you are using an existing swap partition, there is no need to format it. If a new swap partition was created, it will need to be initialized with this command:
+
+mkswap /dev/<yyy>
+Replace <yyy> with the name of the swap partition.
+* LFS assumes that the root file system (/) is of type ext4. To create an ext4 file system on the LFS partition, run the following:
+
+mkfs -v -t ext4 /dev/<xxx>
+If you are using an existing swap partition, there is no need to format it. If a new swap partition was created, it will need to be initialized with this command:
+
+mkswap /dev/<yyy>
+Replace <yyy> with the name of the swap partition.
+
+============ 
+LFS assumes that the root file system (/) is of type
+ext4. To create an ext4 file system on the LFS partition, run the
+following:
+
+mkfs -v -t ext4 /dev/<xxx> 
+
+If you are using an existing swap
+partition, there is no need to format it. If a new swap partition was
+created, it will need to be initialized with this command:
+
+mkswap /dev/<yyy>
+
+Replace <yyy> with the name of the swap partition.
+export LFS=/mnt/lfs
+
+Create the mount point and mount the LFS file system by running:
+
+mkdir -pv $LFS
+mount -v -t ext4 /dev/<xxx> $LFS
+
+If using multiple partitions for LFS (e.g., one for / and another for /usr), mount them using:
+
+mkdir -pv $LFS
+mount -v -t ext4 /dev/<xxx> $LFS
+mkdir -v $LFS/usr
+mount -v -t ext4 /dev/<yyy> $LFS/usr
+
+If you are using a swap partition, ensure that it is enabled using the swapon command:
+
+/sbin/swapon -v /dev/<zzz>
+Replace <zzz> with the name of the swap partition
+
+mkdir -v $LFS/sources
+Make this directory writable and sticky. “Sticky” means that even if multiple users have write permission on a directory, only the owner of a file can delete the file within a sticky directory. The following command will enable the write and sticky modes:
+
+chmod -v a+wt $LFS/sources
+An easy way to download all of the packages and patches is by using wget-list as an input to wget. For example:
+
+wget --input-file=wget-list --continue --directory-prefix=$LFS/sources
+
+
+mkdir -v $LFS/tools
+ln -sv $LFS/tools /
+groupadd lfs
+useradd -s /bin/bash -g lfs -m -k /dev/null lfs
+passwd lfs
+chown -v lfs $LFS/tools
+chown -v lfs $LFS/sources
+su - lfs
+
+cat > ~/.bash_profile << "EOF"
+exec env -i HOME=$HOME TERM=$TERM PS1='\u:\w\$ ' /bin/bash
+EOF
+
+
+cat > ~/.bashrc << "EOF"
+set +h
+umask 022
+LFS=/mnt/lfs
+LC_ALL=POSIX
+LFS_TGT=$(uname -m)-lfs-linux-gnu
+PATH=/tools/bin:/bin:/usr/bin
+export LFS LC_ALL LFS_TGT PATH
+EOF
+
+source ./.bash_profile
+
+The Binutils documentation recommends building Binutils in a dedicated build directory:
+
+mkdir -v build
+cd       build
+
+../configure --prefix=/tools            \
+             --with-sysroot=$LFS        \
+             --with-lib-path=/tools/lib \
+             --target=$LFS_TGT          \
+             --disable-nls              \
+             --disable-werror
+
+If building on x86_64, create a symlink to ensure the sanity of the toolchain:
+
+case $(uname -m) in
+  x86_64) mkdir -v /tools/lib && ln -sv lib /tools/lib64 ;;
+esac
+Install the package:
+
+make install
+* this is a capture dump
+* this is a new todo?
+what is your name
+route add -net 172.16.11.0/24 172.16.12.141

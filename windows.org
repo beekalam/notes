@@ -1,0 +1,4 @@
+* services
+** Internet connection sharing
+service name is /sharedAccess/
+C:\windows\System32\svchost.exe -k netsvcs
