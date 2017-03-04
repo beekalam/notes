@@ -1,4 +1,8 @@
+#+TITLE:  php recipes
+#+AUTHOR:  Mohammad Reza Mansouri
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+STARTUP: overview
+
 * regular expression
 ** Finding the nth Occurrence of a Match
 
@@ -256,6 +260,7 @@ Array
 #+begin_src php
 $res = preg_replace('/^[0-9].,/',$str);
 #+end_src
+
 * numbers
 ** Checking Whether a Variable Contains a Valid Number
 
@@ -435,9 +440,11 @@ foreach ($fruits as $color=>$color_fruit) {
 #+end_src
 
 ** Initializing an Array to a Range of Integers
-Use range($start, $stop):
-
+#+begin_src php
+range($start, $stop):
 $cards = range(1, 52);
+#+end_src 
+
 ** Iterating through an array
 Use foreach:
 
@@ -466,19 +473,22 @@ while (list($key, $value) = each ($array)) {
 
 ** Deleting elements from an array
 To delete one element, use unset():
-
+#+begin_src php
 unset($array[3]);
 unset($array['foo']);
-
+#+end_src 
 To delete multiple noncontiguous elements, also use unset():
-
+#+begin_src php
 unset($array[3], $array[5]);
 unset($array['foo'], $array['bar']);
-
+#+end_src 
 To delete multiple contiguous elements, use array_splice():
-
+#+begin_src php
 array_splice($array, $offset, $length);
+#+end_src 
+
 ** Changing array size
+
 Use array_pad() to make an array grow:
 
 // start at three
@@ -552,12 +562,13 @@ Array
 You have an array, and you want to convert it into a nicely formatted string.
 
 Use join():
-
+#+begin_src php
 // make a comma delimited list
 $string = join(',', $array);
+#+end_src 
 
 Or loop yourself:
-
+#+begin_src php
 $string = '';
 
 foreach ($array as $key => $value) {
@@ -565,6 +576,8 @@ foreach ($array as $key => $value) {
 }
 
 $string = substr($string, 1); // remove leading ","
+#+end_src
+
 ** Checking if a Key Is in an Array
 
 Use array_key_exists() to check for a key no matter what the associated value is:
@@ -711,8 +724,9 @@ foreach ($_REQUEST['fruits'] as $fruit) {
     $array[$fruit] = $fruit;
 }
 ** Applying a Function to Each Element in an Array
-Use array_walk():
 
+Use array_walk():
+#+begin_src php 
 function escape_data(&$value, $key) {
 	$value = htmlentities($value, ENT_QUOTES);
 }
@@ -725,12 +739,14 @@ array_walk($names, 'escape_data');
 foreach ($names as $name) {
 	print "$name\n";
 }
+#+end_src 
 
 Baba
 O&#039;Riley
 
 For nested data, use array_walk_recursive():
 
+#+begin_src php 
 function escape_data(&$value, $key) {
 	$value = htmlentities($value, ENT_QUOTES);
 }
@@ -745,6 +761,7 @@ foreach ($names as $nametypes) {
 		print "$name\n";
 	}
 }
+#+end_src 
 
 Baba
 Bill
@@ -1134,6 +1151,7 @@ $today->getTimestamp() - $yesterday->getTimestamp()/86400;
 #+begin_src php
 date('H:i:s', $seconds);
 #+end_src
+
 * variables
 ** Establishing a Default Value
 Use isset() to assign a default to a variable that may already have a value:
@@ -1174,6 +1192,7 @@ To swap $a and $b:
 #+begin_src php
 list($a,$b) = array($b,$a);
 #+end_src 
+
 ** Creating a Dynamic Variable Name
 You want to construct a variable’s name dynamically. For example, you
 want to use variable names that match the field names from a database
@@ -1390,11 +1409,12 @@ int intdiv ( int $dividend , int $divisor )
 Returns the integer quotient of the division of dividend by divisor.
 * json
 ** json encode raw UTF?
+#+begin_src php 
 json_encode( $text, JSON_UNESCAPED_UNICODE );
+#+end_src 
+
 * webservice
 ** types of webservices
- - restful
- - SOAP
 *** SOAP
 
 SOAP is an acronym for Simple Object Access Protocol.
@@ -1417,6 +1437,7 @@ as method name, method parameter and how to access it.
 WSDL is a part of UDDI. It acts as a interface between web service applications.
 
 WSDL is pronounced as wiz-dull.
+
 * classes
 ** static attributes or methods.
 A static property is a class variable that is associated with the class, rather than with an
@@ -1535,6 +1556,7 @@ echo count($courier); // outputs 3
 ** Using __call() and __callStatic()
 When we call a method that isn’t declared in the class, the __call() method is
 called instead.
+
 #+begin_src php
 class Courier {
   public $name;
@@ -1559,6 +1581,7 @@ class Courier {
   }
 }
 #+end_src 
+
 ** serializing
 To serialize data in PHP means to convert it into a text-based format that we can
 store, for example, in a database.
@@ -1962,6 +1985,7 @@ https://www.jetbrains.com/phpstorm/marklets/
  You may start a session manually with session_start, or you can
  configure PHP to automatically start sessions with the
  session.auto_start directive in php.ini.
+
  #+begin_src php
  session_start() !== false or die('could not start session');
  #+end_src
@@ -2464,8 +2488,6 @@ uses the full width of the device:
 5   @media (min-width: @screen-lg-min) { ... }
 #+end_src
 
-
-
 *** Order Column
 
 If individual columns have class styles such as .push-md- or pull-md-, they can be used,
@@ -2478,6 +2500,7 @@ while they are pulled to the left with “pull”.
 3     <div class="col-md-3 pull-md-9">3 + 9 left</div>
 4   </div>
 #+end_src
+
 ** typography
 *** Orientation
 The alignment of text is up to your creative nature.
@@ -2511,5 +2534,88 @@ class =.list-unstyled=.
 This will affect only the immediate members not the deeper nesting
 levels.
 
+** form 
 
+* turn off DNS prefetching from individual documents
 
+You can also turn off DNS Prefetching from individual documents, using the
+http-equiv attribute on the <meta> element, like this:
+
+#+begin_src html
+<meta http-equiv="x-dns-prefetch-control" content="off">
+ <!-- turns on dns prefetching -->
+<meta http-equiv="x-dns-prefetch-control" content="off">
+<!-- force the lookup of specific hostnames -->
+<link rel="dns-prefetch" href="http://www.spreadfirefox.com/">
+#+end_src 
+
+* disable caching for a website
+
+#+begin_src html
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+#+end_src 
+
+http://live.datatables.net/sadipaji/132/edit
+* disable ajax browser caching
+
+#+begin_src javascript
+//prevents browser caching
+$.ajaxSetup({ cache: false });
+#+end_src 
+
+* query
+  
+#+BEGIN_SRC sql :engine postgresql  :cmdline -p 5432 -h 127.0.0.1 -U postgres -d test2
+SELECT s,md5 from huge_data_table limit 10;
+#+END_SRC 
+
+#+name: my-query
+#+header: :engine postgresql
+#+header: :dbhost 127.0.0.1
+#+header: :dbuser postgres
+#+header: :dbpassword jjj
+#+header: :database test2
+#+begin_src sql
+SELECT s,md5 FROM huge_data_table limit 10;
+#+end_src
+
+* test
+fljdl
+* error handler
+
+#+begin_src php
+ <?php
+    ini_set('error_reporting', E_ALL | E_STRICT);
+    ini_set('display_errors', 'Off');
+    ini_set('log_errors', 'On');
+    ini_set('error_log', '/usr/local/apache/logs/error_log');
+  ?>
+  
+// PHP also allows you to handle your own errors with the set_error_handler( ) function: 
+    <?php
+    set_error_handler('my_error_handler');
+    ?>
+
+// This allows you to define your own function (my_error_handler( )) to handle errors; the following is an example implementation: 
+    <?php
+    function my_error_handler($number, $string, $file, $line, $context)
+    {
+      $error = "=  ==  ==  ==  ==\nPHP ERROR\n=  ==  ==  ==  ==\n";
+      $error .= "Number: [$number]\n";
+      $error .= "String: [$string]\n";
+      $error .= "File:   [$file]\n";
+      $error .= "Line:   [$line]\n";
+      $error .= "Context:\n" . print_r($context, TRUE) . "\n\n";
+      error_log($error, 3, '/usr/local/apache/logs/error_log');
+    }
+?>
+// This restricts errors to warnings.
+<?php
+    set_error_handler('my_warning_handler', E_WARNING);
+ ?>
+#+end_src 
+
+* security
+** disable =register_globals=

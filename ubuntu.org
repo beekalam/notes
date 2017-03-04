@@ -1,5 +1,11 @@
+#+TITLE:  ubuntu 
 #+Languge: en
 #+STARTUP: overview
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+AUTHOR:  Mohammad Reza Mansouri
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+STARTUP: overview
+
 * network
 ** config
 Ubuntu and all the Debian-based distributions use a unique file to
@@ -114,11 +120,13 @@ up route add -net 192.168.40.0/24 gw 192.168.30.1 dev em1
  
 * ssh
 ** installation
+
 #+begin_src shell
 $ sudo apt-get install openssh-client
 $ sudo apt-get install openssh-server
 $ sudo apt-get install ssh   # installes both the client and the server
 #+end_src
+
 ** ssh escape sequences
 all you’ve to do is press [Enter] key followed by ~.. Please note that
 escapes are only recognized immediately after newline.
@@ -169,6 +177,7 @@ gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:nocaps']"
 #+begin_src shell
 $ dpkg -l '*ssh*'
 #+end_src 
+
 ** time
 *** sync time 
 #+begin_src shell
@@ -208,45 +217,55 @@ Sometimes you might want to switch out the primary group that a user is assigned
 #+begin_src 
 usermod -g <groupname> username
 #+end_src 
-***  View a User’s Group Assignments
+*** View a User’s Group Assignments
 
 If you’re trying to figure out a permissions issue, you’ll want to use the id command to see what groups the user is assigned to:
-
+#+begin_src shell
 id <username>
 
-This will display output something like this:
+# This will display output something like this:
 
 uid=500(howtogeek) gid=500(howtogeek) groups=500(howtogeek), 1093(admins)
+#+end_src 
 
 You can also use the groups command if you prefer, though it is the same as using id -Gn <username>.
-
-groups <username>
+#+begin_src shell
+$ groups <username>
+#+end_src 
 
 *** View a List of All Groups
 
 To view all the groups on the system, you can just use the groups command:
-
-groups
+#+begin_src shell
+$ groups
+#+end_src 
 
 Add a New User and Assign a Group in One Command
 
-Sometimes you might need to add a new user that has access to a particular resource or directory, like adding a new FTP user. You can do so with the useradd command:
-
-useradd -g <groupname> username
+Sometimes you might need to add a new user that has access to a particular
+resource or directory, like adding a new FTP user. You can do so with the
+useradd command:
+#+begin_src shell 
+$ useradd -g <groupname> username
+#+end_src 
 
 For instance, lets say you wanted to add a new user named jsmith to the ftp group:
-
-useradd -G ftp jsmith
+#+begin_src shell 
+$ useradd -G ftp jsmith
+#+end_src 
 
 And then you’ll want to assign a password for that user, of course:
-
-passwd jsmith
+#+begin_src shell 
+$ passwd jsmith
+#+end_src 
 
 Add a User to Multiple Groups
 
-You can easily add a user to more than one group by simply specifying them in a comma-delimited list, as long as you are assigning the secondary groups:
-
-usermod -a -G ftp,admins,othergroup <username>
+You can easily add a user to more than one group by simply specifying them in a
+comma-delimited list, as long as you are assigning the secondary groups:
+#+begin_src shell 
+$ usermod -a -G ftp,admins,othergroup <username>
+#+end_src 
 
 That should cover everything you need to know about adding users to groups on Linux.
 
@@ -256,13 +275,96 @@ Typically a .cue file will be accompanied by a .bin file that contains
 the actual image data.  If you'd like to convert it to the .iso
 format, the Iso9660 Analyzer Tool (-get install iat) should do the
 trick:
+
 #+begin_src shell
-iat my_image.bin my_new_image.iso
+$ iat my_image.bin my_new_image.iso
 #+end_src
 
 ** show recently modified/created files?
+
 #+begin_src shell
 $ find ${1} -type f | xargs stat --format '%Y :%y %n' 2>/dev/null | sort -nr | cut -d: -f2-
+#+end_src
+
+** empty a log file
+
+#+begin_src shell
+$ cat /dev/null > logfile
+$ cp /dev/null largefile.txt
+$ dd if=/dev/null of=logfile    # shows how long it takes
+$ truncate logfile --size 0
+#+end_src 
+
+** searching
+*** Find
+
+Some important options:
+-x (on BSD) -xdev (on Linux)       Stay on the same file system (dev in fstab).
+-exec cmd {} \;       Execute the command and replace {} with the full path
+-iname       Like -name but is case insensitive
+-ls       Display information about the file (like ls -la)
+-size n       n is +-n (k M G T P)
+-cmin n       File's status was last changed n minutes ago.
+
+#+begin_src shell
+
+$ find . -type f ! -perm -444        # Find files not readable by all
+$ find . -type d ! -perm -111        # Find dirs not accessible by all
+$ find /home/user/ -cmin 10 -print   # Files created or modified in the last 10 min.
+$ find . -name '*.[ch]' | xargs grep -E 'expr' # Search 'expr' in this dir and below.
+$ find / -name "*.core" | xargs rm   # Find core dumps and delete them (also try core.*)
+$ find / -name "*.core" -print -exec rm {} \;  # Other syntax
+$ Find images and create an archive, iname is not case sensitive. -r for append
+$ find . \( -iname "*.png" -o -iname "*.jpg" \) -print -exec tar -rf images.tar {} \;
+$ find . -type f -name "*.txt" ! -name README.txt -print  # Exclude README.txt files
+$ find /var/ -size +10M -exec ls -lh {} \;     # Find large files > 10 MB
+$ find /var/ -size +10M -ls           # This is simpler
+$ find . -size +10M -size -50M -print
+$ find /usr/ports/ -name work -type d -print -exec rm -rf {} \;  # Clean the ports
+$ Find files with SUID; those file are vulnerable and must be kept secure
+$ find / -type f -user root -perm -4000 -exec ls -l {} \;
+$ find /home/ -name "*~"   #find tilde files (backup files)
+# Find all the files directly under the /etc/ directory that start with the letter p
+# and end in anything using the following command:
+$ find / -regex '^/etc/p[a-z]*$'
+
+# Find all the files on the filesystem that are called configuration, ignoring case,
+# and accommodating abbreviations such as confg , cnfg , and cnfig using the
+# following command:
+$ find / -regex '^[/a-z_]*[cC]+[Oo]*[nN]+[fF]+[iI]*[gF]+$'
+
+# This command will find and delete anything reachable one level from the
+# root that has a name such as 'virus'—case-insensitive.
+
+$ find / -regex '^/[a-z_\-]*/[Vv][iI][rR][uS]*$' –delete
+
+$ find /etc/ -maxdepth 1 -name passwd -exec stat {} \;
+
+# look for files larger than specified number(1M)
+$ find ~ -type f -name "*.JPG" -size +1M
+
+# We would look for all the files with permissions that are not 0600 
+# and the directories with permissions that are not 0700.
+$ find ~ \( -type f -not -perm 0600 \) -or \( -type d -not -perm 0700 \)
+
+# delete files that have file extension ".BAK"
+$ find ~ -type f -name '*.BAK' -delete
+
+# execute user defined action interactively using -ok
+$ find ~ -type f -name 'foo*' -ok ls -l '{}' ';'
+
+# dealing with filenames with spaces
+# -print0 provides null-separated output
+# xargs has --null option, accepts null separated input.
+# A null character is defined in ASCII as the character repre-sented by the number zero
+$ find ~ -iname '*.jpg' -print0 | xargs --null ls -l
+
+#+end_src
+
+*** locate 
+#+begin_src shell
+# will search its database of pathnames and output any that contain the string "bin/zip"
+$ locate bin/zip
 #+end_src
 
 * php
@@ -274,18 +376,25 @@ sudo apt-get install libapache2-mod-php7.0
  
 * wget
 ** ignore robots.txt 
--e robots=off
+
+~-e robots=off~
 
 ** get the size of file before downloading
-wget --spider <link>
-curl --head <link>
+#+begin_src shell 
+$ wget --spider <link>
+$ curl --head <link>
+#+end_src 
 ** wget download with proxy
 
-Via ~/.wgetrc file:
+Via =~/.wgetrc= file:
 
+#+begin_src 
 use_proxy=yes
 http_proxy=127.0.0.1:8080
+#+end_src 
+
 or via -e options placed after the URL:
+
 #+begin_src shell
 $ wget ... -e use_proxy=yes -e http_proxy=127.0.0.1:8080 ...
 #+end_src
@@ -301,6 +410,7 @@ http://stackoverflow.com/questions/11211705/setting-proxy-in-wget
 
 * System
 ** Running kernel and system information:
+
 #+begin_src shell
 $ uname -a                                  # Get the kernel version (and BSD version)
 $ lsb_release -a                         $ Full release info of any LSB distribution
@@ -312,27 +422,30 @@ $ hostname -i                            # Display the IP address of the host.
 $ man hier                                 # Description of the file system hierarchy
 $ last reboot                              # Show system reboot history
 #+end_src
-** Hardware Informations:
-Kernel detected hardware:
-  $+begin_src shell
-  $ dmesg                               # Detected hardware and boot messages
-  $ lsdev                                  # information about installed hardware
-  $ dd if=/dev/mem bs=1k skip=768 count=256 2>/dev/null | strings -n 8 # Read BIOS
 
-  $ cat /proc/cpuinfo                               # CPU model
-  $ cat /proc/meminfo                             # Hardware memory
-  $ grep MemTotal /proc/meminfo       # Display the physical memory
-  $ watch -n1 'cat /proc/interrupts'        # Watch changeable interrupts continuously
-  $ free -m                                                # Used and free memory (-m for MB)
-  $ cat /proc/devices                              # Configured devices
-  $ lspci -tv                       # Show PCI devices
-  $ lsusb -tv                      # Show USB devices
-  $ lshal                            # Show a list of all devices with their properties
-  $ dmidecode                # Show DMI/SMBIOS: hw info from the BIOS
-  #+end_src
+** Hardware Informations:
+*Kernel detected hardware:*
+#+begin_src shell 
+$+begin_src shell
+$ dmesg                               # Detected hardware and boot messages
+$ lsdev                                  # information about installed hardware
+$ dd if=/dev/mem bs=1k skip=768 count=256 2>/dev/null | strings -n 8 # Read BIOS
+
+$ cat /proc/cpuinfo                               # CPU model
+$ cat /proc/meminfo                             # Hardware memory
+$ grep MemTotal /proc/meminfo       # Display the physical memory
+$ watch -n1 'cat /proc/interrupts'        # Watch changeable interrupts continuously
+$ free -m                                                # Used and free memory (-m for MB)
+$ cat /proc/devices                              # Configured devices
+$ lspci -tv                       # Show PCI devices
+$ lsusb -tv                      # Show USB devices
+$ lshal                            # Show a list of all devices with their properties
+$ dmidecode                # Show DMI/SMBIOS: hw info from the BIOS
+
+#+end_src
  
 ** Load, statistics and messages:
-
+   
 The following commands are useful to find out what is going on on the
 system.
 
@@ -392,40 +505,48 @@ $ tail /var/log/warn                          # System warnings messages see sys
  #+end_src
 
 ** processes
- Listing and PIDs
 
- Each process has a unique number, the PID. A list of all running process is retrieved with ps.
- # ps -auxefw                         # Extensive list of all running process
- However more typical usage is with a pipe or with pgrep:
+listing and pids
 
+each process has a unique number, the pid. a list of all running process is retrieved with ps.
+#+begin_src shell 
+# ps -auxefw                         # extensive list of all running process
+#+end_src 
 
- # ps axww | grep cron
-   586  ??  Is     0:01.48 /usr/sbin/cron -s
- # ps axjf                                     # All processes in a tree format
- # ps aux | grep 'ss[h]'               # Find all ssh pids without the grep pid
- # pgrep -l sshd                         # Find the PIDs of processes by (part of) name
- # echo $$                                  # The PID of your shell
- # fuser -va 22/tcp                     # List processes using port 22 (Linux)
- # pmap PID                               # Memory map of process (hunt memory leaks) (Linux)
- # fuser -va /home                     # List processes accessing the /home partition
- # strace df                                  # Trace system calls and signals
- # truss df                                    # same as above
+however more typical usage is with a pipe or with pgrep:
+
+#+begin_src shell
+$ ps axww | grep cron
+586  ??  is     0:01.48 /usr/sbin/cron -s
+$ ps axjf                                     # all processes in a tree format
+$ ps aux | grep 'ss[h]'               # find all ssh pids without the grep pid
+$ pgrep -l sshd                         # find the pids of processes by (part of) name
+$ echo $$                                  # the pid of your shell
+$ fuser -va 22/tcp                     # list processes using port 22 (linux)
+$ pmap pid                               # memory map of process (hunt memory leaks) (linux)
+$ fuser -va /home                     # list processes accessing the /home partition
+$ strace df                                  # trace system calls and signals
+$ truss df                                    # same as above
+#+end_src 
 
 ** Signals/Kill:
 Terminate or send a signal with kill or killall.
-
-# kill -s TERM 4712                  # same as kill -15 4712
-# killall -1 httpd                          # Kill HUP processes by exact name
-# pkill -9 http                              # Kill TERM processes by (part of) name
-# pkill -TERM -u www              # Kill TERM processes owned by www
-# fuser -k -TERM -m /home     # Kill every process accessing /home (to umount)
+#+begin_src shell
+$ kill -s TERM 4712                  # same as kill -15 4712
+$ killall -1 httpd                          # Kill HUP processes by exact name
+$ pkill -9 http                              # Kill TERM processes by (part of) name
+$ pkill -TERM -u www              # Kill TERM processes owned by www
+$ fuser -k -TERM -m /home     # Kill every process accessing /home (to umount)
+#+end_src 
 
 Important signals are:
+#+begin_src 
 1       HUP (hang up)
 2       INT (interrupt)
 3       QUIT (quit)
 9       KILL (non-catchable, non-ignorable kill)
 15     TERM (software termination signal)
+#+end_src 
 
 ** Permissions:
 Change permission and ownership with chmod and chown.  The default
@@ -437,32 +558,35 @@ umask 022 results in a permission 0f 755.
 2 -w- write                          # For:       |--  Owner  --|   |- Group-|   |Oth|
 4 r-- read
   ugo=a                              u=user, g=group, o=others, a=everyone
-# chmod [OPTION] MODE[,MODE] FILE    # MODE is of the form [ugoa]*([-+=]([rwxXst]))
-# chmod 640 /var/log/maillog                      # Restrict the log -rw-r-----
-# chmod u=rw,g=r,o= /var/log/maillog       # Same as above
-# chmod -R o-r /home/*                                # Recursive remove other readable for all users
-# chmod u+s /path/to/prog                           # Set SUID bit on executable (know what you do!)
-# find / -perm -u+s -print                               # Find all programs with the SUID bit
-# chown user:group /path/to/file                  # Change the user and group ownership of a file
-# chgrp group /path/to/file                             # Change the group ownership of a file
-# chmod 640 `find ./ -type f -print`                # Change permissions to 640 for all files
-# chmod 751 `find ./ -type d -print`               # Change permissions to 751 for all directories
+#+begin_src shell 
+$ chmod [OPTION] MODE[,MODE] FILE    # MODE is of the form [ugoa]*([-+=]([rwxXst]))
+$ chmod 640 /var/log/maillog                      # Restrict the log -rw-r-----
+$ chmod u=rw,g=r,o= /var/log/maillog       # Same as above
+$ chmod -R o-r /home/*                                # Recursive remove other readable for all users
+$ chmod u+s /path/to/prog                           # Set SUID bit on executable (know what you do!)
+$ find / -perm -u+s -print                               # Find all programs with the SUID bit
+$ chown user:group /path/to/file                  # Change the user and group ownership of a file
+$ chgrp group /path/to/file                             # Change the group ownership of a file
+$ chmod 640 `find ./ -type f -print`                # Change permissions to 640 for all files
+$ chmod 751 `find ./ -type d -print`               # Change permissions to 751 for all directories
+#+end_src 
 
 Disk information:
-
-# hdparm -I /dev/sda                 # information about the IDE/ATA disk (Linux)
-# fdisk /dev/ad2                          # Display and manipulate the partition table
-# smartctl -a /dev/ad2                # Display the disk SMART info
+#+begin_src shell 
+$ hdparm -I /dev/sda                 # information about the IDE/ATA disk (Linux)
+$ fdisk /dev/ad2                          # Display and manipulate the partition table
+$ smartctl -a /dev/ad2                # Display the disk SMART info
+#+end_src
 
 System mount points/Disk usage
-
-# mount | column -t                   # Show mounted file-systems on the system
-# df                                              # display free disk space and mounted devices
-# cat /proc/partitions                # Show all registered partitions
-
-# du -sh *                                 # Directory sizes as listing
-# du -csh                                 # Total directory size of the current directory
-# du -ks * | sort -n -r              # Sort everything by size in kilobytes
+#+begin_src shell 
+$ mount | column -t                   # Show mounted file-systems on the system
+$ df                                              # display free disk space and mounted devices
+$ cat /proc/partitions                # Show all registered partitions
+$ du -sh *                                 # Directory sizes as listing
+$ du -csh                                 # Total directory size of the current directory
+$ du -ks * | sort -n -r              # Sort everything by size in kilobytes
+#+end_src 
 
 Who has which files opened:
 This is useful to find out which file is blocking a partition which has to be unmounted and gives a typical error of:
@@ -493,15 +617,20 @@ COMMAND  PID USER   FD   TYPE DEVICE  SIZE  NODE NAME
 Xorg    3324 root    0w   REG    8,6 56296 12492 /var/log/Xorg.0.log
 
 Mount/remount a file system
-For example the cdrom. If listed in /etc/fstab:
 
+For example the cdrom. If listed in /etc/fstab:
+#+begin_src 
 # mount /cdrom
 # mount -t auto /dev/cdrom /mnt/cdrom             # typical cdrom mount command
 # mount /dev/hdc -t iso9660 -r /cdrom               # typical IDE
 # mount /dev/scd0 -t iso9660 -r /cdrom             # typical SCSI cdrom
 # mount /dev/sdc0 -t ntfs-3g /windows              # typical SCSI
+#+end_src 
+
 Entry in /etc/fstab:
+#+begin_src 
 /dev/cdrom   /media/cdrom  subfs noauto,fs=cdfss,ro,procuid,nosuid,nodev,exec 0 0
+#+end_src 
 
 Add swap on-the-fly
 Suppose you need more swap (right now), say a 2GB file /swap2gb .
@@ -514,12 +643,17 @@ Suppose you need more swap (right now), say a 2GB file /swap2gb .
 # rm /swap2gb
 
 Mount an SMB share
-Suppose we want to access the SMB share myshare on the computer smbserver, the address as typed on a Windows PC is \\smbserver\myshare\. We mount on /mnt/smbshare. Warning> cifs wants an IP or DNS name, not a Windows name.
+
+Suppose we want to access the SMB share myshare on the computer smbserver, the
+address as typed on a Windows PC is \\smbserver\myshare\. We mount on
+/mnt/smbshare. Warning> cifs wants an IP or DNS name, not a Windows name.
 
 # smbclient -U user -I 192.168.16.229 -L //smbshare/        # List the shares
 # mount -t smbfs -o username=winuser //smbserver/myshare /mnt/smbshare
 # mount -t cifs -o username=winuser,password=winpwd //192.168.16.229/myshare /mnt/share
+
 Additionally with the package mount.cifs it is possible to store the credentials in a file, for example /home/user/.smb:
+
 username=winuser
 password=winpwd
 And mount as follow:
@@ -534,17 +668,21 @@ Mount an image:
 A memory based file system is very fast for heavy IO application. How
 to create a 64 MB partition mounted on /memdisk:
 
-# mount -t tmpfs -osize=64m tmpfs /memdisk
+#+begin_src shell
+$ mount -t tmpfs -osize=64m tmpfs /memdisk
+#+end_src 
 
 ** Disk performance:
 Read and write a 1 GB file on partition ad4s3c (/home)
-
+#+begin_src shell
 # time dd if=/dev/ad4s3c of=/dev/null bs=1024k count=1000
 # time dd if=/dev/zero bs=1024k count=1000 of=/home/1Gb.file
 # hdparm -tT /dev/hda      # Linux only
+#+end_src 
 
 ** Networking
 
+#+begin_src shell
 # ethtool eth0                                           # Show the ethernet status (replaces mii-diag)
 # ethtool -s eth0 speed 100 duplex full # Force 100Mbit Full duplex
 # ethtool -s eth0 autoneg off # Disable auto negotiation
@@ -552,21 +690,23 @@ Read and write a 1 GB file on partition ad4s3c (/home)
 # ip link show                                           # Display all interfaces on Linux (similar to ifconfig)
 # ip link set eth0 up                                # Bring device up (or down). Same as "ifconfig eth0 up"
 # ip addr show                                        # Display all IP addresses on Linux (similar to ifconfig)
-# ip neigh show                                      # Similar to arp -a
+# ip neighbor show                                      # Similar to arp -a
+#+end_src 
 
 ** Ports in use:
 Listening open ports:
-
+#+begin_src shell 
 # netstat -an | grep LISTEN
 # lsof -i                                         # List all Internet connections
 # socklist                                     # Display list of open sockets
 # netstat -anp --udp --tcp | grep LISTEN      
 # netstat -tup                              # List active connections to/from system
 # netstat -tupl                             # List listening ports from system
+#+end_src 
 
 ** Firewall
 Check if a firewall is running (typical configuration only):
-
+#+begin_src shell 
 # iptables -L -n -v                                 # For status Open the iptables firewall
 # iptables -P INPUT       ACCEPT     # Open everything
 # iptables -P FORWARD     ACCEPT
@@ -574,17 +714,19 @@ Check if a firewall is running (typical configuration only):
 # iptables -Z                                         # Zero the packet and byte counters in all chains
 # iptables -F                                         # Flush all chains
 # iptables -X                                         # Delete all chains
+#+end_src 
 
 ** IP Forward for routing
 Check and then enable IP forward with :
-
+#+begin_src shell 
 # cat /proc/sys/net/ipv4/ip_forward  # Check IP forward 0=off, 1=on
 # echo 1 > /proc/sys/net/ipv4/ip_forward
+#+end_src 
 or edit /etc/sysctl.conf with:
 net.ipv4.ip_forward = 1
 
 Network Address Translation
-
+#+begin_src shell 
 # iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE    # to activate NAT
 # iptables -t nat -A PREROUTING -p tcp -d 78.31.70.238 --dport 20022 -j DNAT \
 --to 192.168.16.44:22           # Port forward 20022 to internal IP port ssh
@@ -592,21 +734,27 @@ Network Address Translation
 --to 192.168.16.254:993-995     # Port forward of range 993-995
 # ip route flush cache
 # iptables -L -t nat            # Check NAT status
+#+end_src 
 
 ** DNS
+
 The DNS entries are valid for all interfaces and are stored in /etc/resolv.conf.
- The domain to which the host belongs is also stored in this file. A minimal configuration is:
+The domain to which the host belongs is also stored in this file. A minimal configuration is:
 
 nameserver 66.63.128.84
 search cipi.net intern.lab
 domain cipi.org
 Check the system domain name with:
+#+begin_src shell
 # hostname -d                # Same as dnsdomainname
+#+end_src 
 
-DHCP
-
+** DHCP
+#+begin_src shell 
 # dhcpcd -n eth0           # Trigger a renew (does not always work)
 # dhcpcd -k eth0           # release and shutdown
+#+end_src 
+
 The lease with the full information is stored in:
 /var/lib/dhcpcd/dhcpcd-eth0.info
 
@@ -639,7 +787,7 @@ unpack it somewhere else. Some typical commands are:
  # tar -xjf home.tbz home/colin/file.txt    # Restore a single file
  #+end_src
  
-** More advanced
+*** More advanced
 #+begin_src shell
 # tar c dir/ | gzip | ssh user@remote 'dd of=dir.tgz' # arch dir/ and store remotely.
 # tar cvf - `find . -print` > backup.tar                 # arch the current directory.
@@ -648,72 +796,45 @@ unpack it somewhere else. Some typical commands are:
 # tar -czf home.tgz --exclude '*.o' --exclude 'tmp/' home/
 #+end_src
  
-** Find
 
-Some important options:
--x (on BSD) -xdev (on Linux)       Stay on the same file system (dev in fstab).
--exec cmd {} \;       Execute the command and replace {} with the full path
--iname       Like -name but is case insensitive
--ls       Display information about the file (like ls -la)
--size n       n is +-n (k M G T P)
--cmin n       File's status was last changed n minutes ago.
-#+begin_src shell
 
-# find . -type f ! -perm -444        # Find files not readable by all
-# find . -type d ! -perm -111        # Find dirs not accessible by all
-# find /home/user/ -cmin 10 -print   # Files created or modified in the last 10 min.
-# find . -name '*.[ch]' | xargs grep -E 'expr' # Search 'expr' in this dir and below.
-# find / -name "*.core" | xargs rm   # Find core dumps and delete them (also try core.*)
-# find / -name "*.core" -print -exec rm {} \;  # Other syntax
-# Find images and create an archive, iname is not case sensitive. -r for append
-# find . \( -iname "*.png" -o -iname "*.jpg" \) -print -exec tar -rf images.tar {} \;
-# find . -type f -name "*.txt" ! -name README.txt -print  # Exclude README.txt files
-# find /var/ -size +10M -exec ls -lh {} \;     # Find large files > 10 MB
-# find /var/ -size +10M -ls           # This is simpler
-# find . -size +10M -size -50M -print
-# find /usr/ports/ -name work -type d -print -exec rm -rf {} \;  # Clean the ports
-# Find files with SUID; those file are vulnerable and must be kept secure
-# find / -type f -user root -perm -4000 -exec ls -l {} \;
-# find /home/ -name "*~"   #find tilde files (backup files)
-#+end_src
- 
 ** Miscellaneous
 
 #+begin_src shell
-# which command                      # Show full path name of command
-# time command                         # See how long a command takes to execute
-# time cat                                     # Use time as stopwatch. Ctrl-c to stop
-# set | grep $USER                    # List the current environment
-# cal -3                                         # Display a three month calendar
-# date [-u|--utc|--universal] [MMDDhhmm[[CC]YY][.ss]]
-# date 10022155                       # Set date and time
-# whatis grep                              # Display a short info on the command or word
-# whereis java                            # Search path and standard directories for word
-# setenv varname value           # Set env. variable varname to value (csh/tcsh)
-# export varname="value"        # set env. variable varname to value (sh/ksh/bash)
-# pwd                                # Print working directory
-# mkdir -p /path/to/dir                 # no error if existing, make parent dirs as needed
-# mkdir -p project/{bin,src,obj,doc/{html,man,pdf},debug/some/more/dirs}
-# rmdir /path/to/dir                     # Remove directory
-# rm -rf /path/to/dir                     # Remove directory and its content (force)
-# rm -- -badchar.txt                    # Remove file whitch starts with a dash (-)
-# cp -la /dir1 /dir2                       # Archive and hard link files instead of copy
-# cp -lpR /dir1 /dir2                    #
-# cp unixtoolbox.xhtml{,.bak}  # Short way to copy the file with a new extension
-# mv /dir1 /dir2                           # Rename a directory
-# ls -1                                           # list one file per line
-# history | tail -50                       # Display the last 50 used commands
-# cd -                                            # cd to previous ($OLDPWD) directory
+$ which command                      # Show full path name of command
+$ time command                         # See how long a command takes to execute
+$ time cat                                     # Use time as stopwatch. Ctrl-c to stop
+$ set | grep $USER                    # List the current environment
+$ cal -3                                         # Display a three month calendar
+$ date [-u|--utc|--universal] [MMDDhhmm[[CC]YY][.ss]]
+$ date 10022155                       # Set date and time
+$ whatis grep                              # Display a short info on the command or word
+$ whereis java                            # Search path and standard directories for word
+$ setenv varname value           # Set env. variable varname to value (csh/tcsh)
+$ export varname="value"        # set env. variable varname to value (sh/ksh/bash)
+$ pwd                                # Print working directory
+$ mkdir -p /path/to/dir                 # no error if existing, make parent dirs as needed
+$ mkdir -p project/{bin,src,obj,doc/{html,man,pdf},debug/some/more/dirs}
+$ rmdir /path/to/dir                     # Remove directory
+$ rm -rf /path/to/dir                     # Remove directory and its content (force)
+$ rm -- -badchar.txt                    # Remove file whitch starts with a dash (-)
+$ cp -la /dir1 /dir2                       # Archive and hard link files instead of copy
+$ cp -lpR /dir1 /dir2                    #
+$ cp unixtoolbox.xhtml{,.bak}  # Short way to copy the file with a new extension
+$ mv /dir1 /dir2                           # Rename a directory
+$ ls -1                                           # list one file per line
+$ history | tail -50                       # Display the last 50 used commands
+$ cd -                                            # cd to previous ($OLDPWD) directory
 #+end_src
  
 ** Add/Remove software
 Debian/Ubuntu/Mint
-
-
-# apt-get update                     # First update the package lists
-# apt-get install emacs          # Install the package emacs
-# dpkg --remove emacs        # Remove the package emacs
-# dpkg -S file                           # find what package a file belongs to
+#+begin_src shell
+$ apt-get update                     # First update the package lists
+$ apt-get install emacs          # Install the package emacs
+$ dpkg --remove emacs        # Remove the package emacs
+$ dpkg -S file                           # find what package a file belongs to
+#+end_src 
 
 * git
 ** add a remote
@@ -836,6 +957,37 @@ Automatic mounts are handled by configuration the */etc/fstab* file.
 
 An entry in an fstab file contains several fields, each
 separated by a space or tab.
+
+** find UUID of a filesystem
+
+Look up data on /dev/sda1:
+#+begin_src shell
+topher@crucible:~$ sudo blkid /dev/sda1
+/dev/sda1: UUID="727cac18-044b-4504-87f1-a5aefa774bda" TYPE="ext3"
+#+end_src 
+
+Show UUID data for all partitions:
+#+begin_src shell 
+topher@crucible:~$ sudo blkid
+/dev/sda1: UUID="727cac18-044b-4504-87f1-a5aefa774bda" TYPE="ext3"
+/dev/sdb: UUID="467c4aa9-963d-4467-8cd0-d58caaacaff4" TYPE="ext3"
+#+end_src 
+
+Show UUID data for all partitions in easier to read format: (Note: in newer
+releases, blkid -L has a different meaning, and blkid -o list should be used
+instead)
+
+#+begin_src shell 
+topher@crucible:~$ sudo blkid -L
+device     fs_type label    mount point    UUID
+-------------------------------------------------------------------------------
+/dev/sda1 ext3             /              727cac18-044b-4504-87f1-a5aefa774bda
+/dev/sdc  ext3             /home          467c4aa9-963d-4467-8cd0-d58caaacaff4
+Show just the UUID for /dev/sda1 and nothing else:
+
+topher@crucible:~$ sudo blkid -s UUID -o value /dev/sda1
+727cac18-044b-4504-87f1-a5aefa774bda
+#+end_src 
 
 * shell
 ** login shell vs non-login shell?
@@ -1048,6 +1200,7 @@ $ tr -s " " < file
 
 * processes
 ** checking the priority of a process?
+
 #+begin_src 
 ps -o pid,comm,nice -p 594
 #+end_src
@@ -1066,6 +1219,7 @@ extra process burden at the given time.
 #+begin_src
 renice 10 -p 21827
 #+end_src
+
 ** Setting Permanent Priority on all Processes for a Specific User
 
 Sometimes it is helpful to give specific users lower priority than
@@ -1148,20 +1302,16 @@ echo "scale=2; 100/3" | bc
 
 * make a ramdisk?
 The tmpfs filesystem is a RAMDISK.
+
 #+begin_src shell
 sudo mkdir -p /media/ramdisk
 sudo mount -t tmpfs -o size=2048M tmpfs /media/ramdisk
 #+end_src
 
 http://askubuntu.com/questions/152868/how-do-i-make-a-ram-disk
-* references
-http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
-http://unix.stackexchange.com/questions/35369/how-to-cut-by-tab-character
-http://unix.stackexchange.com/questions/145978/replace-multiple-spaces-with-one-using-tr-only
-http://askubuntu.com/questions/499995/change-ip-address-which-is-given-by-tor-using-the-terminal
-http://superuser.com/questions/792525/how-to-change-ffmpeg-threads-settings
 * curl
 ** Fetching a Page with cURL
+
 #+begin_src shell
 # basic invocation
 curl -o example.html http://www.example.com/
@@ -1173,6 +1323,7 @@ curl -O ftp://ftp.example.com/pub/download/file.zip
 #+end_src
 
 ** Fetching Many Variations on a URL
+
 #+begin_src shell
 # Fetch all the categories from 00 to 99.
 curl -o 'category-#1#2.html' 'http://www.example.com/category.php?CATID=[0-9][0-9]'
@@ -1182,6 +1333,7 @@ curl -o '#1.html' 'http://www.example.com/{news,blog,careers,contact,sitemap}/'
 #+end_src
 
 ** Following Redirects Automatically
+
 #+begin_src shell
 curl -L -e ';auto' -o 'output.html' 'http://www.example.com/login.jsp'
 #+end_src
@@ -1199,40 +1351,74 @@ curl -v --cookie "USER_TOKEN=Yes" http://127.0.0.1:5000/
 #+end_src
 
 ** make an options request
-	
-	curl -i -X OPTIONS http://example.org/path
+
+#+begin_src shell	
+curl -i -X OPTIONS http://example.org/path
+#+end_src 
 
 ** make a head request
 
-	curl --head http://example.org
+#+begin_src shell
+curl --head http://example.org
+#+end_src 
 
 ** make an options request
 
-	curl -i -X OPTIONS http://example.org/path
+#+begin_src shell
+curl -i -X OPTIONS http://example.org/path
+#+end_src 
 
 ** set a header
-
-	curl --header "X-MyHeader: 123" www.google.com
-
+#+begin_src shell
+curl --header "X-MyHeader: 123" www.google.com
 echo "0217"$(date +%Y-%m-%d-%H-%M-%S-%N) | tr -d "-" | php -r 'echo substr(file("php://stdin")[0],0,20);'
+#+end_src 
 
-* apache
-** virtual hosts
-The basic unit that describes an individual site or domain is called a
-virtual host.
+** post request
+#+begin_src shell
+#With fields:
 
-These designations allow the administrator to use one server to host
-multiple domains or sites off of a single interface or IP by using a
-matching mechanism.
+curl --data "param1=value1&param2=value2" https://example.com/resource.cgi
+
+#Multipart:
+
+curl --form "fileupload=@my-file.txt" https://example.com/resource.cgi
+
+#Multipart with fields and a filename:
+
+curl --form "fileupload=@my-file.txt;filename=desired-filename.txt" --form param1=value1 --form param2=value2 https://example.com/resource.cgi
+
+#Without data:
+
+curl --data '' https://example.com/resource.cgi
+
+curl -X POST https://example.com/resource.cgi
+
+curl --request POST https://example.com/resource.cgi
+
+#For large files, consider adding parameters to show upload progress:
+
+curl --tr-encoding -X POST -v -# -o output -T filename.dat  http://example.com/resource.cgi
+
+#The -o output is required, otherwise no progress bar will appear.
+
+#+end_src 
+
+*** links
+
+https://curl.haxx.se/docs/httpscripting.html
 * grub
 ** grub change timeout
 
-	 $ sudo vim /etc/default/grub 
-	
+#+begin_src shell 
+$ sudo vim /etc/default/grub 
+#+end_src 	
+
  and set the *GRUB_TIMEOUT*. 
  -1 will disable it. And then run
-
-	 $ sudo update-grub
+#+begin_src shell 
+$ sudo update-grub
+#+end_src 
 
 ** Repair grub
 So you broke grub? Boot from a live cd, [find your linux partition
@@ -1249,19 +1435,22 @@ So you broke grub? Boot from a live cd, [find your linux partition
  #+end_src
 
 * listing broken packages?
+
 #+begin_src shell
 $ sudo apt-get check
 #+end_src
  
 * completely remove a package with configurations
-	
-sudo apt-get purge <package_name>
-	
+#+begin_src shell	
+$ sudo apt-get purge <package_name>
+#+end_src 	
+
 * deleting broken packages?
 
 use synaptic package manager.
-
+#+begin_src shell 
 $ sudo dpkg -P package_name			# -P for purge
+#+end_src 
 
 * sudo timeout
 
@@ -1293,45 +1482,49 @@ see more : ~man 5 sudoers~
 
 * How can I get the recoll package to index markdown (.md) files?
 
-    Edit ~/.recoll/mimemap, add the following line:
+Edit =~/.recoll/mimemap=, add the following line:
 
-        .md = text/plain
+~.md = text/plain~
 
-    This will tell recoll to index markdown as normal text, which it is, mostly, 
-    so I think that things should "just work".
+This will tell recoll to index markdown as normal text, which it is, mostly, 
+so I think that things should "just work".
 
 * json pretty print
-
+#+begin_src shell
 $ cat some.json | python -m json.tool
+#+end_src 
 
 * installation
 ** other useful php modules
-
+#+begin_src shell 
  $ sudo apt-get install php-soap
  $ sudo apt-get install php-ssh2
  $ sudo apt-get install php-cli
  $ sudo apt-get install php-mbstring
+#+end_src 
 
 ** starting windows in safe mode from grub
 
- for windows xp or 7 repeatedly press *F8* when you select the windows
- item.
+for windows xp or 7 repeatedly press *F8* when you select the windows
+item.
 	
 ** making windows usb boot in ubuntu
-
+#+begin_src shell
  $ sudo apt-get install unetbootin
+#+end_src 
 
 ** ubuntu installation
 
- for installattion make an *ext4* partition as the primary and a *swap*
- partition as logical drive.
+for installattion make an *ext4* partition as the primary and a *swap*
+partition as logical drive.
 
- when ubuntu is installed run *sudo update-grub* if the windows is not
- shown in the grub boot list.
+when ubuntu is installed run *sudo update-grub* if the windows is not
+shown in the grub boot list.
 
 ** tell which package does a file belong to?
-	
- dpkg -S libgthread-2.0.so.0
+#+begin_src shell 	
+$ dpkg -S libgthread-2.0.so.0
+#+end_src 
 
 ** apt-cacher-ng
 *** installing apt-cacher-ng
@@ -1360,54 +1553,62 @@ $ sudo apt-cacher-ng -c /etc/apt-cacher-ng/ Port=3142 ForeGround=1 VerboseLog=1
 #+end_src
 
 ** installing postgresql in ubuntu 16.0
+#+begin_src shell 
+$ sudo apt-get install postgresql postgresql-contrib
+#+end_src 
 
- $ sudo apt-get install postgresql postgresql-contrib
+Now that we can connect to our PostgreSQL server, the next step is to
+set a password for the postgres user. Run the following command at a
+terminal prompt to connect to the default PostgreSQL template
+database:
+#+begin_src shell 
+$ sudo -u postgres psql template1
+#+end_src 
 
- Now that we can connect to our PostgreSQL server, the next step is to
- set a password for the postgres user. Run the following command at a
- terminal prompt to connect to the default PostgreSQL template
- database:
+The above command connects to PostgreSQL database template1 as user
+postgres. Once you connect to the PostgreSQL server, you will be at a
+SQL prompt. You can run the following SQL command at the psql prompt
+to configure the password for the user postgres.
+#+begin_src sql 
+ALTER USER postgres with encrypted password 'your_password';
+#+end_src 
 
- sudo -u postgres psql template1
+Upon installation Postgres is set up to use ident authentication,
+which means that it associates Postgres roles with a matching
+Unix/Linux system account.
 
- The above command connects to PostgreSQL database template1 as user
- postgres. Once you connect to the PostgreSQL server, you will be at a
- SQL prompt. You can run the following SQL command at the psql prompt
- to configure the password for the user postgres.
+The installation procedure created a user account called postgres that
+is associated with the default Postgres role.  Switch over to the
+postgres account on your server by typing:
 
- ALTER USER postgres with encrypted password 'your_password';
+#+begin_src shell 
+$ sudo -i -u postgres
+#+end_src  
 
-
- Upon installation Postgres is set up to use ident authentication,
- which means that it associates Postgres roles with a matching
- Unix/Linux system account.
-
- The installation procedure created a user account called postgres that
- is associated with the default Postgres role.  Switch over to the
- postgres account on your server by typing:
-
-     sudo -i -u postgres
-
- You can now access a Postgres prompt immediately by typing:
-
-     psql
+You can now access a Postgres prompt immediately by typing:
+#+begin_src shell 
+psql
+#+end_src 
 
 ** php modules for connecting to postgresql
+   
+connecting to *postgresql* with *PDO*
+#+begin_src shell 
+$ sudo apt-get install php-pgsql
+#+end_src 
 
- connecting to *postgresql* with *PDO*
-
- $ sudo apt-get install php-pgsql
-
- Or if the package is installed, you need to enable the module in php.ini
-
- extension=php_pgsql.dll (windows)
- extension=php_pgsql.so (linux)
+Or if the package is installed, you need to enable the module in php.ini
+#+begin_src shell 
+extension=php_pgsql.dll (windows)
+extension=php_pgsql.so (linux)
+#+end_src 
 
 ** phpstorm bad gateway in phpstorm
 
- try installing
-
- $ sudo apt-get install php-cgi
+try installing
+#+begin_src shell 
+$ sudo apt-get install php-cgi
+#+end_src 
 
 ** nodjs
 
@@ -1448,13 +1649,15 @@ $ sudo apt-cacher-ng -c /etc/apt-cacher-ng/ Port=3142 ForeGround=1 VerboseLog=1
 
 ** nvidia binary driver screen flickering
 
- Install Compiz Config, from a terminal, type:
+Install Compiz Config, from a terminal, type:
+#+begin_src shell 
+$ sudo apt-get install compizconfig-settings-manager
+#+end_src 
 
- $ sudo apt-get install compizconfig-settings-manager
+From the launcher, execute CompizConfig Settings Manager Check the
+checkbox in "Utility -> Workarounds -> Force full screen redraws
+(buffer swap) on repaint"
 
- From the launcher, execute CompizConfig Settings Manager Check the
- checkbox in "Utility -> Workarounds -> Force full screen redraws
- (buffer swap) on repaint"
 * postgresql
 ** installation
 #+begin_src shell
@@ -1553,8 +1756,12 @@ CREATE TABLE tablename (
 
 ALTER SEQUENCE tablename_colname_seq OWNED BY tablename.colname;
 #+end_src
-** Accessing a Postgres Prompt Without Switching Accounts
 
+** Accessing a Postgres Prompt Without Switching Accounts
+** backup with pg_dump
+#+begin_src shell
+/usr/local/bin/pg_dump shahkar -U pgsql > /root/farahoosh/shahkar-db-backup/`date +%Y-%m-%d-%H:%M:%S`.sql
+#+end_src 
 You can also run the command you'd like with the postgres account
 directly with sudo.
 
@@ -1591,7 +1798,7 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE ‘pg%’ AND tablename
 #+end_src 
 
 ** generating random timestamps 
-#+begin_src 
+#+begin_src sql
 select timestamp 'epoch' + (
           extract('epoch' from timestamp '2014-10-01 10:00:00')
         + random() * (
@@ -1599,6 +1806,7 @@ select timestamp 'epoch' + (
                    - extract('epoch' from timestamp '2014-10-01 10:00:00')
        )) * interval '1 second'
 #+end_src       
+
 * phppgadmin
 
 *installing phppgadmin and configuring Postgresql user*
@@ -1639,23 +1847,28 @@ systemctl restart apache2
 
 * working with Base64
 ** Decode a string
-
+#+begin_src shell 
 % echo 'Q29uZ3JhdHVsYXRpb25zIQ==' | openssl base64 -d
+#+end_src 
 
 ** Encode the entire contents of a file
-
+#+begin_src shell 
 % openssl base64 -e -in input.txt -out input.b64
+#+end_src 
 
 This puts the Base 64-encoded output in a file called input.b64. 
 
 ** Encode a simple string
-
+#+begin_src shell 
 % echo -n '&a=1&b=2&c=3' | openssl base64 -e
+#+end_src 
+
 * calculating hashes
 ** md5
 #+begin_src shell
 % echo -n "my data" | openssl md5
 #+end_src
+
 ** sha-1
 
 #+begin_src perl
@@ -1671,7 +1884,7 @@ print "$digest\n";
 sudo apt-cacher-ng -c /etc/apt-cacher-ng/ Port=3142 ForeGround=1 VerboseLog=1
 wget "http://localhost:3142/acng-report.html?abortOnErrors=aOe&calcSize=cs&doDownload=dd&doMirror=Start+Mirroring#bottom"
 
-#+begin_src ditaa :file ditaa-simpleboxes.png
+#+begin_src ditaa :file img/ditaa-simpleboxes.png
 +---------+
 |         |
 | Foo     |
@@ -1690,162 +1903,345 @@ $ echo -en "\u0622\u0642\u0627\u06cc"
 #+end_src 
 http://stackoverflow.com/questions/8795702/how-to-convert-uxxxx-unicode-to-utf-8-using-console-tools-in-nix
 
-* concepts
-** wlan frames
-1 *Management frames*: Management frames are responsible for maintaining
-communication between access points and wireless clients. Management frames
-can have the following subtypes:
+* wireless
+** concepts
+*** wlan frames
+ 1 *Management frames*: Management frames are responsible for maintaining
+ communication between access points and wireless clients. Management frames
+ can have the following subtypes:
 
- - Authentication
- - Deauthentication
- - Association request
- - Association response
- - Reassociation request
- - Reassociation response
- - Disassociation
- - Beacon
- - Probe request
- - Probe response
+  - Authentication
+  - Deauthentication
+  - Association request
+  - Association response
+  - Reassociation request
+  - Reassociation response
+  - Disassociation
+  - Beacon
+  - Probe request
+  - Probe response
 
-2. *Control frames*: Control frames are responsible for ensuring a proper exchange
-of data between access points and wireless clients. Control frames can have the
-following subtypes:
+ 2. *Control frames*: Control frames are responsible for ensuring a proper exchange
+ of data between access points and wireless clients. Control frames can have the
+ following subtypes:
 
- - Request to Send (RTS)
- - Clear to Send (CTS)
- - Acknowledgement (ACK)
+  - Request to Send (RTS)
+  - Clear to Send (CTS)
+  - Acknowledgement (ACK)
 
-3. *Data frames*: Data frames carry the actual data that is sent on the wireless network.
-There are no subtypes for data frames.
+ 3. *Data frames*: Data frames carry the actual data that is sent on the wireless network.
+ There are no subtypes for data frames.
 
-** Shared Key Authentication
-Shared Key Authentication uses a shared secret such as the WEP key to authenticate the
-client.
+*** Shared Key Authentication
+ Shared Key Authentication uses a shared secret such as the WEP key to authenticate the
+ client.
 
-#+begin_src ditaa :file img/shared-authentication.png
-+---------+                +---------+
-|cPNK{io} |                |         |
-+         +                +         +
-| client  |--------------> | Access  |
-+         +                + Point   +
-|         |                |         |
-+---------+                +---------+
-    ^                           ^
-    | ------------------------> |
-    | 1)Authentication request  |
-    |                           |
-    | <------------------------ |
-    | 2) AP sends challenge text|
-    |                           |
-    | ------------------------> |
-    | 3) challenge response     |
-    |                           |
-    | <------------------------ |
-    | 4) Authentication success |
-    |    failure                |
-#+end_src
+ #+begin_src ditaa :file img/shared-authentication.png
+ +---------+                +---------+
+ |cPNK{io} |                |         |
+ +         +                +         +
+ | client  |--------------> | Access  |
+ +         +                + Point   +
+ |         |                |         |
+ +---------+                +---------+
+     ^                           ^
+     | ------------------------> |
+     | 1)Authentication request  |
+     |                           |
+     | <------------------------ |
+     | 2) AP sends challenge text|
+     |                           |
+     | ------------------------> |
+     | 3) challenge response     |
+     |                           |
+     | <------------------------ |
+     | 4) Authentication success |
+     |    failure                |
+ #+end_src
 
-The security problem here is that an attacker passively listening to this entire communication
-by sniffing the air has access to both the plain text challenge and the encrypted challenge. He
-can apply the XOR operation to retrieve the keystream. This keystream can be used to encrypt
-any future challenge sent by the access point without needing to know the actual key.
+ The security problem here is that an attacker passively listening to this entire communication
+ by sniffing the air has access to both the plain text challenge and the encrypted challenge. He
+ can apply the XOR operation to retrieve the keystream. This keystream can be used to encrypt
+ any future challenge sent by the access point without needing to know the actual key.
 
-The most common form of shared authentication is known as WEP or Wired Equivalent
-Protocol.
+ The most common form of shared authentication is known as WEP or Wired Equivalent
+ Protocol.
 
-* aircrack-ng
-** put card in monitor mode
+** aircrack-ng
+*** put card in monitor mode
+
+ #+begin_src shell
+ $ sudo airmon-ng start <card_name>
+ # now  you should be able to see mon0 with ifconfig
+ $ ifconfig mon0              
+ # stopping monitor mode
+ $ sudo airmon-ng stop mon0
+ #+end_src 
+
+*** viewing management,control and data frames
+ usig wireshark enter ~wlan.fc.type==0~ to view management frames.
+ enter ~wlan.fc.type==1~ to view control frames.
+ enter ~wlan.fc.type==2~ to view data frames.
+
+ To additionaly select a *subtype* use ~wlan.fc.subtype~ filter.
+ For example to view all the Beacon frame among Manangement Frames,
+ use ~(wlan.fc.type == 0) && (wlan.fc.subtype == 8)~.
+
+*** sniffing data packets of a network.
+
+ *sniffing a specific access point*
+ use ~airodump-ng --bssid <mac> mon0~ where <mac>, is the MAC address of 
+ the access point we are trying to sniff.
+
+ *lock the wireless card on a specific channel*
+ ~iwconfig mon0 channel 11~ locks the wirless card on channel 11. In order
+ to verify it run ~iwconfig mon0~
+
+ *use wireshark to sniff the packets*
+ ~wlan.bssid==<mac>~ where <mac> is the mac of the target access point.
+
+*** bypassing authentication
+**** finding hidden SSID
+ *finding <mac> of hidden SSID*
+ find the <mac> of the target with hidden SSID.We will wait for a
+ legitimate client to connect to the access point with the hidden 
+ SSID. This will generate a probe request and probe response packets
+ that will contain the SSID of the network, thus revealing its presence.
+
+ use ~wlan.addr == <mac>~, where mac is the mac address of the target with
+ hidden SSID.
+
+ *sending deauthentication packets*
+ Alternately, you can use the aireplay-ng utility to send deauthentication packets
+ to all stations on behalf of the Wireless Lab access point by typing.
+
+ #+begin_src shell
+ $ aireplay-ng -0 5 -a <mac> --ignore-negative mon0
+ #+end_src 
+
+ where <mac> is the MAC address of the router. The *-0* option is used to choose a
+ deauthentication attack, and 5 is the number of deauthentication packets to
+ send.Finally, *-a* specifies the MAC address of the access point you are
+ targeting.
+
+ The preceding deauthentication packets will force all legitimate clients to
+ disconnect and reconnect.
+
+ *filtering deauthentication in wireshark*
+ You can use the filter
+
+ ~(wlan.bssid == 00:21:91:d2:8e:25) && !(wlan.fc.type_subtype == 0x08)~
+
+ to monitor all non-Beacon packets to and fro from the access point.
+
+ The && sign stands for the logical AND operator and the ! sign stands for the
+ logical NOT operator
+
+**** beating MAC filters
+
+ *finding connected clients to target*
+ #+begin_src shell
+ $ airodump-ng -c 11 -a --bssid <mac> mon0 
+ #+end_src 
+
+ By specifying the *bssid* command, we will only monitor the access point, which is
+ of interest to us. The *-c 11* command sets the channel to 11 where the access
+ point is. The *-a* command ensures that, in the client section of the airodump-NG
+ output, only clients associated and connected to an access point are shown.
+
+ *spoofing MAC address*
+ #+begin_src shell
+ $ ifconfig wlan0 down
+ $ macchanger -m <mac> wlan0
+ $ ifconfig wlan0 up
+ #+end_src 
+
+*** decrypting WPA packets
 
 #+begin_src shell
-$ sudo airmon-ng start <card_name>
-# now  you should be able to see mon0 with ifconfig
-$ ifconfig mon0              
+# dumping packets with ariodump
+$ airodump-ng –bssid 00:21:91:D2:8E:25 --channel 11 --write WPACrackingDemo mon0
+
+# for decrypting WEP packats
+$ airdecap-ng -w abcdefabcdefabcdefabcdef12 WEPCrackingDemo-02.cap
+
+# for decrypting WPA packets
+$ airdecap-ng –p abdefg WPACrackingDemo-02.cap –e "Wireless Lab"
 #+end_src 
 
-** viewing management,control and data frames
-usig wireshark enter ~wlan.fc.type==0~ to view management frames.
-enter ~wlan.fc.type==1~ to view control frames.
-enter ~wlan.fc.type==2~ to view data frames.
+*** DOS attacks
 
-To additionaly select a *subtype* use ~wlan.fc.subtype~ filter.
-For example to view all the Beacon frame among Manangement Frames,
-use ~(wlan.fc.type == 0) && (wlan.fc.subtype == 8)~.
-
-** sniffing data packets of a network.
-
-*sniffing a specific access point*
-use ~airodump-ng --bssid <mac> mon0~ where <mac>, is the MAC address of 
-the access point we are trying to sniff.
-
-*lock the wireless card on a specific channel*
-~iwconfig mon0 channel 11~ locks the wirless card on channel 11. In order
-to verify it run ~iwconfig mon0~
-
-*use wireshark to sniff the packets*
-~wlan.bssid==<mac>~ where <mac> is the mac of the target access point.
-
-** bypassing authentication
-*** finding hidden SSID
-*finding <mac> of hidden SSID*
-find the <mac> of the target with hidden SSID.We will wait for a
-legitimate client to connect to the access point with the hidden 
-SSID. This will generate a probe request and probe response packets
-that will contain the SSID of the network, thus revealing its presence.
-
-use ~wlan.addr == <mac>~, where mac is the mac address of the target with
-hidden SSID.
-
-*sending deauthentication packets*
-Alternately, you can use the aireplay-ng utility to send deauthentication packets
-to all stations on behalf of the Wireless Lab access point by typing.
-
-#+begin_src shell
-$ aireplay-ng -0 5 -a <mac> --ignore-negative mon0
-#+end_src 
-
-where <mac> is the MAC address of the router. The *-0* option is used to choose a
-deauthentication attack, and 5 is the number of deauthentication packets to
-send.Finally, *-a* specifies the MAC address of the access point you are
-targeting.
-
-The preceding deauthentication packets will force all legitimate clients to
-disconnect and reconnect.
-
-*filtering deauthentication in wireshark*
-You can use the filter
-
-~(wlan.bssid == 00:21:91:d2:8e:25) && !(wlan.fc.type_subtype == 0x08)~
-
-to monitor all non-Beacon packets to and fro from the access point.
-
-The && sign stands for the logical AND operator and the ! sign stands for the
-logical NOT operator
-
-*** beating MAC filters
-
-*finding connected clients to target*
-#+begin_src shell
-$ airodump-ng -c 11 -a --bssid <mac> mon0 
-#+end_src 
-
-By specifying the *bssid* command, we will only monitor the access point, which is
-of interest to us. The *-c 11* command sets the channel to 11 where the access
-point is. The *-a* command ensures that, in the client section of the airodump-NG
-output, only clients associated and connected to an access point are shown.
-
-*spoofing MAC address*
-#+begin_src shell
-$ ifconfig wlan0 down
-$ macchanger -m <mac> wlan0
-$ ifconfig wlan0 up
-#+end_src 
-
-* temp
 ** connecting to access point using =iwconfig=
 
 #+begin_src shell
 $ iwconfig wlan0 <ESSID>  # ESSID of the target
 #+end_src 
 
+* limit CPU usage of a process 
+
+#+begin_src shell 
+$ cpulimit -l 50 -p 1234
+#+end_src 
+
+Where 1234 is the PID of the process.
+* send output from one terminal to another
+
+#+begin_src shell 
+$ route > /dev/pts/16
+#+end_src 
+
+* apache
+** virtual hosts
+The basic unit that describes an individual site or domain is called a
+virtual host.
+
+These designations allow the administrator to use one server to host
+multiple domains or sites off of a single interface or IP by using a
+matching mechanism.
+** =RewriteRule=
+A RewriteRule consists of three arguments separated by spaces. The arguments are
+ - Pattern: which incoming URLs should be affected by the rule;
+ - Substitution: where should the matching requests be sent;
+ - [flags]: options affecting the rewritten request. 
+
+The Substitution can itself be one of three things: 
+ - A full filesystem path to a resource
+~RewriteRule "^/games" "/usr/local/games/web"~
+This maps a request to an arbitrary location on your filesystem, much like the Alias directive. 
+
+ - A web-path to a resource
+~RewriteRule "^/foo$" "/bar"~
+
+If DocumentRoot is set to /usr/local/apache2/htdocs, then this directive would
+map requests for http://example.com/foo to the path
+/usr/local/apache2/htdocs/bar.
+
+ - An absolute URL
+~RewriteRule "^/product/view$" "http://site2.example.com/seeproduct.html" [R]~
+
+This tells the client to make a new request for the specified URL. 
+
+The Substitution can also contain back-references to parts of the incoming URL-path matched by the Pattern. Consider the following:
+~RewriteRule "^/product/(.*)/view$" "/var/web/productdb/$1"~
+
+** =RewriteCondition=
+One or more RewriteCond directives can be used to restrict the types of requests
+that will be subject to the following RewriteRule.
+
+to send all requests from a particular IP range to a different server, you could
+use:
+
+#+begin_src 
+RewriteCond "%{REMOTE_ADDR}" "^10\.2\."
+RewriteRule "(.*)" "http://intranet.example.com$1" 
+#+end_src 
+
+When more than one RewriteCond is specified, they must all match for the
+RewriteRule to be applied. For example, to deny requests that contain the word
+"hack" in their query string, unless they also contain a cookie containing the
+word "go", you could use:
+
+#+begin_src 
+RewriteCond "%{QUERY_STRING}" "hack"
+RewriteCond "%{HTTP_COOKIE}" "!go"
+RewriteRule "." "-" [F] 
+#+end_src 
+
+Notice that the exclamation mark specifies a negative match, so the rule is only
+applied if the cookie does not contain "go".
+
+Matches in the regular expressions contained in the RewriteConds can be used as
+part of the Substitution in the RewriteRule using the variables %1, %2, etc. For
+example, this will direct the request to a different directory depending on the
+hostname used to access the site:
+
+#+begin_src 
+RewriteCond "%{HTTP_HOST}" "(.*)"
+RewriteRule "^/(.*)" "/sites/%1/$1" 
+#+end_src 
+
+If the request was for http://example.com/foo/bar, then %1 would contain example.com and $1 would contain foo/bar. 
+
+** =mod_access=
+#+begin_src
+<Directory "/usr/local/apache2/htdocs">
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+</Directory>
+#+end_src 
+
+ - *Deny,Allow* The Deny directives are evaluated before the Allow directives.
+   Access is allowed by default. Any client which does not match a Deny
+   directive or does match an Allow directive will be allowed access to the
+   server.
+
+ - *Allow,Deny* The Allow directives are evaluated before the Deny directives.
+   Access is denied by default. Any client which does not match an Allow
+   directive or does match a Deny directive will be denied access to the server.
+
+To block any connection from hosts outside the network 192.168.1.0, you can write:
+#+begin_src 
+Order Deny,Allow
+Deny from all
+Allow from 192.168.1.0/24
+#+end_src 
+
+To block a particular IP address you can use something like this:
+
+#+begin_src 
+Order Allow, Deny
+Allow from all
+Deny from bad_ip_address_here
+#+end_src 
+
+** =.htaccess= for development server
+#+begin_src
+Order Deny,Allow
+Deny from all
+Allow from 127.0.0.1
+Allow from ::1
+#+end_src 
+
+** hot linking protection
+
+#+begin_src 
+#Hotlinking Protection
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^http://(www\.)?subdomain.domain.com/.*$ [NC]
+RewriteRule \.(js|css|jpg|gif|png|bmp|mp4|3gp|m4a|m4r|aac|mp3|ogg|wave)$ - [F]
+#+end_src 
+
+** Starting, Stopping, and Restarting Apache
+apachectl start
+
+This will start the server if it isn't already running. If it is running, this
+option has no effect and may produce a warning message.
+
+apachectl graceful
+
+This option causes the server to reload its configuration files and gracefully
+restart its operation. Any current connections in progress are allowed to
+complete. The server will be started if it isn't running.
+
+apachectl restart
+
+Like the graceful option, this one makes the server reload its configuration
+files. However, existing connections are terminated immediately. If the server
+isn't running, this command will try to start it.
+
+apachectl stop
+
+This shuts the server down immediately. Any existing connections are terminated at once.
 
 
+* references
+http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
+
+http://unix.stackexchange.com/questions/35369/how-to-cut-by-tab-character
+
+http://unix.stackexchange.com/questions/145978/replace-multiple-spaces-with-one-using-tr-only
+
+http://askubuntu.com/questions/499995/change-ip-address-which-is-given-by-tor-using-the-terminal
+
+http://superuser.com/questions/792525/how-to-change-ffmpeg-threads-settings

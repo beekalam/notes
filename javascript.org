@@ -1,4 +1,8 @@
+#+TITLE:   javascript recipes  
+#+AUTHOR:  Mohammad Reza Mansouri
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+STATUP: overview
+
 * operators
 ** ~typeof~
 Typeof operator returns the data type of the variable, function or an
@@ -530,15 +534,18 @@ Array.from({length: 5}, (v, k) => k);
 JavaScript does not have arrays of more than one dimension, but like most C lan-
 guages, it can have arrays of arrays:
 
+#+begin_src javascript
 var matrix = [
 [0, 1, 2],
 [3, 4, 5],
 [6, 7, 8]
 ];
 matrix[2][1] // 7
+#+end_src 
 
 To make a two-dimensional array or an array of arrays, you must build the arrays
 yourself:
+
 #+begin_src javascript 
 for (i = 0; i < n; i += 1) {
   my_array[i] = [];
@@ -581,7 +588,8 @@ myMatrix = Array.identity(4);
 document.writeln(myMatrix[3][3]);  // 1
 #+end_src
  
-** make  a deep copy of an array
+** make a deep copy of an array
+
 #+begin_src javascript
 function copy(arr1, arr2) {
    for (var i = 0; i < arr1.length; ++i) {
@@ -594,6 +602,7 @@ function copy(arr1, arr2) {
 There are two functions that return string representations of an array: join() and
 toString() . Both functions return a string containing the elements of the array de‐
 limited by commas. Here are some examples:
+
 #+begin_src javascript
 
 var names = ["David", "Cynthia", "Raymond", "Clayton", "Mike", "Jennifer"];
@@ -604,9 +613,11 @@ print(namestr); // David,Cynthia,Raymond,Clayton,Mike,Jennifer
 #+end_src
 
 ** Creating New Arrays from Existing Arrays
-
+   
 ** shuffle array
+   
 https://bost.ocks.org/mike/shuffle/
+
 #+begin_src javascript 
 function shuffle(array) {
   var copy = [], n = array.length, i;
@@ -630,6 +641,7 @@ function shuffle(array) {
 #+end_src
 
 ** Sort an array based on the length of each element
+
 #+begin_src javascript 
 arr.sort(function(a, b){
   // ASC  -> a.length - b.length
@@ -644,6 +656,7 @@ return ["a", "b", "c"]. According to the specs:
 The sort is not necessarily stable (that is, elements that compare equal do not 
 necessarily remain in their original order).
 If the objective is to sort by length then by dictionary order you must specify additional criteria:
+
 #+begin_src javascript 
 ["c", "a", "b"].sort(function(a, b) {
   return a.length - b.length || // sort by length, if equal then
@@ -652,11 +665,15 @@ If the objective is to sort by length then by dictionary order you must specify 
 #+end_src
 
 ** make an array using Array.from
+
 for example, the following will create and array from 1-n.
+
 #+begin_src javascript
 Array.from({length:n}, (v,k) => k+1);
 #+end_src
+
 ** check for array equality?
+
 #+begin_src javascript
 function arraysEqual(a, b) {
   if (a === b) return true;
@@ -698,8 +715,13 @@ function reverse(s){
 #+end_src
 
 ** convert ascii code to string?
+
+#+begin_src javascript
    String.fromCharCode(97); // returns 
+#+end_src 
+
 ** Checking for an Existing, Nonempty String
+
 #+begin_src javascript
     if (((typeof unknownVariable != 'undefined' && unknownVariable) &&
     unknownVariable.length() > 0) &&
@@ -707,19 +729,30 @@ function reverse(s){
 #+end_src
 
 ** convert a string in base 2 to decimal
+
 #+begin_src javascript
   parseInt("1111", 2);
 #+end_src
+
 ** replace all non-digit characters
+#+begin_src javascript
    str.replace(/\D/g,' ');
+#+end_src 
 
 ** split a string by one or more spaces
+
+#+begin_src javascript
    str.split(/\s+/g)
+#+end_src 
 
 ** split a string by digits of size one or bigger(ignoring negative nums)
+#+begin_src javascript
    str.match(/\d+/g)
-   str.match(/\d+/g) || []).map(Number)
+   str.match((/\d+/g) || []).map(Number)
+#+end_src 
+
 ** rotate string
+
 #+begin_src javascript
 var rotate = function(str){
      return str[str.length -1 ] + str.slice(0,str.length-1);
@@ -737,6 +770,7 @@ var  allRotations = function(str){
     return ret;
 }
 #+end_src
+
 ** name of current function?
 
 You should be able to get it by using arguments.callee.
@@ -780,13 +814,14 @@ For the caller, just use caller.toString().
 #+end_src
 
 The results are:
-
+#+begin_src 
     at 7 we found the
     at 11 we found time
     at 28 we found the
     at 32 we found time
     at 49 we found the
     at 53 we found time
+#+end_src 
 
 ** Traversing the Results from querySelectorAll() with forEach() and call()
 
@@ -795,18 +830,21 @@ You want to use forEach() on the nodeList returned from a call to querySelectorA
 ou can coerce forEach() into working with a NodeList (the collection returned by querySelectorAll()) 
 using the following:
 
+#+begin_src javascript
 // use querySelector to find all second table cells
 var cells = document.querySelectorAll("td + td");
 
 [].forEach.call(cells,function(cell) {
       sum+=parseFloat(cell.firstChild.data);
    });
+#+end_src 
 
 ** Using a Destructuring Assignment to Simplify Code
 
 You want to assign array element values to several variables, but you really don’t want to have assign each, individually.
 
 Use ECMAScript 6’s destructuring assignment to simplify array assignment:
+
 #+begin_src javascript
 var stateValues = [459, 144, 96, 34, 0, 14];
 
@@ -818,6 +856,7 @@ console.log(Missouri); // 144
 Converting Function Arguments into an Array
 
 Use Array.prototype.slice() and then the function call() method to convert the arguments collection into an array:
+
 #+begin_src javascript
 
 function someFunc() {
@@ -848,6 +887,7 @@ console.log(sum); // 45
 #+end_src
 
 ** convert string to set
+
 #+begin_src javascript
 let s1="somestring";
 let s2="anotherstring";
@@ -856,11 +896,13 @@ let v  = new Set([...s1, ...s2]);
 
 * numbers
 ** isNumber
+
 #+begin_src javascript
 function isNumber(obj) {
   return obj!== undefined && typeof(obj) === 'number' && !isNaN(obj);
 }
 #+end_src
+
 ** Max & Min value of a array of number?
 #+begin_src javascript
 Math.max.apply(0, numbers);
@@ -917,6 +959,7 @@ var cnum = +num;
 
 * date time
 ** next month
+
 #+begin_src javascript
 
     var nextmonth = function(x){
@@ -930,6 +973,7 @@ var cnum = +num;
 #+end_src
 
 ** next day
+
 #+begin_src javascript
 
   var nextday = function(x){
@@ -939,6 +983,7 @@ var cnum = +num;
 #+end_src
 
 ** add days
+
 #+begin_src javascript
 
    function addDays(days) {
@@ -949,9 +994,11 @@ var cnum = +num;
 #+end_src
 
 ** How can I compare two time strings in the format HH:MM:SS?
+
 provided your times are based on a 24 hour clock (and they should be
 if there's no AM/PM) and provided they are always in the format
 HH:MM:SS you can do a direct string comparison:
+
 #+begin_src javascript 
 var str1 = "10:20:45",
     str2 = "05:10:10";
@@ -981,6 +1028,7 @@ alert(daydiff(parseDate($('#first').val()), parseDate($('#second').val())));
 http://stackoverflow.com/questions/542938/how-do-i-get-the-number-of-days-between-two-dates-in-javascript
 
 ** check if a date object is today
+
 #+begin_src javascript
 function isToday(date) {
   return new Date().toDateString() === date.toDateString();
@@ -988,9 +1036,11 @@ function isToday(date) {
 #+end_src
 
 ** =Date= object from string
+
 #+begin_src javascript
 var d = Date.parse('2017-02-16 14:15:37'); 
 #+end_src
+
 * Regular expressions
 ** parseurl example
 
@@ -1064,6 +1114,7 @@ We have a final optional group that begins with # . The . will match any charact
 except a line-ending character:
 $
 ** extract first letter of every word 
+
 #+begin_src javascript
 "ab bc de".match(/\b(\w)/g)
 #+end_src
@@ -1076,20 +1127,25 @@ for example remove the exclamation mark from the end of a string(it can be one o
 #+end_src
 
 ** remove the last occurrence except the last one.
+
 for example I want to remove all occurrences of substring = . in a string except the last one.
 The following one-liner is a regular expression that takes advantage of the fact
- that the * character is greedy, and that replace will leave the string alone if no match is found.
- It works by matching [longest string including dots][dot] and leaving [rest of string],
- and if a match is found it strips all '.'s from it:
+that the * character is greedy, and that replace will leave the string alone if no match is found.
+It works by matching [longest string including dots][dot] and leaving [rest of string],
+and if a match is found it strips all '.'s from it:
+
 #+begin_src javascript 
 'a.b.c.d'.replace(/(.*)\./, x => x.replace(/\./g,'')+'.')
 (If your string contains newlines, you will have to use [.\n] rather than naked .s)
 #+end_src
  
 ** remove all none-numbers from a string
+  
 ~str.replace(/[^0-9]/g,'')~
 ~s.replace(/\D/g, "");~
+
 ** parsenumber example
+
 Let’s look at another example: a regular expression that matches numbers. Numbers
 can have an integer part with an optional minus sign, an optional fractional part, and
 an optional exponent part:
@@ -1097,7 +1153,7 @@ an optional exponent part:
 #+begin_src javascript 
 var parse_number = /^-?\d+(?:\.\d*)?(?:e[+\-]?\d+)?$/i;
 var test = function (num) {
-document.writeln(parse_number.test(num));
+  document.writeln(parse_number.test(num));
 };
 test('1');             // true
 test('number');        // false
@@ -1107,10 +1163,10 @@ test('123.45E-67');    // true
 test('123.45D-67');    // false
 #+end_src
  
-parse_number successfully identified the strings that conformed to our specification
+=parse_number= successfully identified the strings that conformed to our specification
 and those that did not, but for those that did not, it gives us no information on why
 or where they failed the number test.
-Let’s break down parse_number :
+Let’s break down =parse_number= :
 
 ~/^ $/i~
 
@@ -1168,6 +1224,7 @@ http://stackoverflow.com/questions/874709/converting-user-input-string-to-regula
 ** Regex to match a word containing all of specified characters
 if the set contains {A,C,T} then the following would be matches: ACT,
 CAT, TACT, ... However, the following would not match: CAB, TAN, CUT.
+
 #+begin_src javascript
 (?=.*A)(?=.*C)(?=.*T).{3}
 #+end_src
@@ -1175,16 +1232,19 @@ http://stackoverflow.com/questions/23644455/regex-to-match-a-word-containing-all
 
 ** regex to match entire words which contains certain characters
 all the words that contains the letter l and a as - car, patrol, left
+
 #+begin_src javascript
 \b(?=\w*[al])\w+\b
 #+end_src
 
 ** replace two or more spaces with one
+
 #+begin_src javascript
 string.replace(/\s{2,}/g,' ')
 #+end_src
 
 ** Replacing Patterns with New Strings
+
 #+begin_src javascript 
 var searchString = "Now is the time, this is the tame";
 var re = /t\w{2}e/g;
@@ -1277,6 +1337,7 @@ at 53 we found time
 #+end_src
 
 ** the following inserts dashes into a hypothetical social security number:
+
 #+begin_src javascript
 var pattern = /(\d{3})(\d{2})(\d{4})/;
 var ssn = "123456789";
@@ -1285,11 +1346,13 @@ ssn = ssn.replace(pattern, "$1-$2-$3");
 
 The result “123-45-6789” is placed in ssn.
 ** Remove all exclamation marks from the end of words. Words are separated by spaces in the sentence.
+
 #+begin_src javascript
 s.replace(/\b!+/g, '');
 #+end_src
 
 ** isLetter
+
 #+begin_src javascript
 String.prototype.isLetter = function() {
   return /^[a-z]$/i.test(this);
@@ -1388,10 +1451,11 @@ http://javascript.crockford.com/code.html
 https://github.com/ryanmcdermott/clean-code-javascript
 * this
 ** understanding 'this'
-Since JavaScript uses function scope, the meaning of this is quite different than what you get in PHP,
- and causes a lot of confusion. Consider the following:
 
-#begin_src javascript
+Since JavaScript uses function scope, the meaning of this is quite different than what you get in PHP,
+and causes a lot of confusion. Consider the following:
+
+#+begin_src javascript 
 console.log(this); // outputs window object
 
 var myFunction = function() {
@@ -1405,17 +1469,19 @@ var newObject = {
 }
 
 newObject.myFunction(); //outputs newObjectthis by default refers to the object a function is contained in. 
-Since myFunction() is a property of the global object, this is a reference to the global object, which is window.
-#+end_src
+#+end_src 
 
+Since myFunction() is a property of the global object, this is a reference to the global object, which is window.
 this by default refers to the object a function is contained in. Since myFunction() is a property of the global object,
 this is a reference to the global object, which is window.
+
 Now when we mix myFunction() into a newObject, this now refers to newObject. In PHP and other similar languages,
 this always refers to the the instance of a class containing the method.
 You could argue that JavaScript is doing something stupid here, but truthfully much of the power of the JavaScript
 language comes from this feature. In fact, we can even replace the value of this when invoking our JavaScript functions
 by using the call() or apply() methods.
 
+#+begin_src javascript
 var myFunction = function(arg1, arg2) {
   console.log(this, arg1, arg2);
 };
@@ -1424,6 +1490,7 @@ var newObject = {};
 
 myFunction.call(newObject, 'foo', 'bar'); //outputs newObject "foo" "bar"
 myFunction.apply(newObject, ['foo', 'bar']); //outputs newObject "foo" "bar"
+#+end_src 
 
 But let's not get ahead of ourselves. All we are doing here is invoking the function myFunction by
 substituting an alternative value for this inside the function by placing the value of the object
@@ -1434,28 +1501,33 @@ the first argument and apply() expects and array of arguments as it's second arg
 ** this invokation
 
 *** The Core Primitive
+
 First, let's look at the core function invocation primitive, a Function's call method[1].
- The call method is relatively straight forward.
+The call method is relatively straight forward.
 Make an argument list (argList) out of parameters 1 through the end
 The first parameter is thisValue
 Invoke the function with this set to thisValue and the argList as its argument list
 For example:
 
+#+begin_src javascript
 function hello(thing) {  
   console.log(this + " says hello " + thing);
 }
+#+end_src 
 
 hello.call("Yehuda", "world") //=> Yehuda says hello world  
 As you can see, we invoked the hello method with this set to "Yehuda" and a single argument "world". 
 This is the core primitive of JavaScript function invocation. You can think of all other function calls as
- desugaring to this primitive. (to "desugar" is to take a convenient syntax and describe it in terms of a more basic core primitive).
+desugaring to this primitive. (to "desugar" is to take a convenient syntax and describe it in terms of a more basic core primitive).
 
 http://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this
 
 *** Simple Function Invocation
 Obviously, invoking functions with call all the time would be pretty annoying.
- JavaScript allows us to invoke functions directly using the parens syntax (hello("world").
- When we do that, the invocation desugars:
+JavaScript allows us to invoke functions directly using the parens syntax (hello("world").
+When we do that, the invocation desugars:
+
+#+begin_src javascript
 
 function hello(thing) {  
   console.log("Hello " + thing);
@@ -1473,15 +1545,18 @@ hello("world")
 
 // desugars to:
 hello.call(undefined, "world");  
+#+end_src 
+
 The short version is: a function invocation like fn(...args) is the
 same as fn.call(window [ES5-strict: undefined], ...args).
 
 Note that this is also true about functions declared inline: (function() {})() is the
- same as (function() {}).call(window [ES5-strict: undefined).
+same as (function() {}).call(window [ES5-strict: undefined).
 
 *** Member Functions
 The next very common way to invoke a method is as a member of an object (person.hello()). In this case, the invocation desugars:
 
+#+begin_src javascript
 var person = {  
   name: "Brendan Eich",
   hello: function(thing) {
@@ -1494,11 +1569,14 @@ person.hello("world")
 
 // desugars to this:
 person.hello.call(person, "world");  
+#+end_src 
+
 Note that it doesn't matter how the hello method becomes attached to the object in this form. 
 Remember that we previously defined hello as a standalone function. Let's see what happens if we attach is to the object dynamically:
 
+#+begin_src javascript
 function hello(thing) {  
-console.log(this + " says hello " + thing);
+  console.log(this + " says hello " + thing);
 }
 
 person = { name: "Brendan Eich" }  
@@ -1507,13 +1585,16 @@ person.hello = hello;
 person.hello("world") // still desugars to person.hello.call(person, "world")
 
 hello("world") // "[object DOMWindow]world"  
+#+end_src 
+
 Notice that the function doesn't have a persistent notion of its 'this'. It is always set at call time based upon
- the way it was invoked by its caller.
+the way it was invoked by its caller.
 
 *** Using Function.prototype.bind
 Because it can sometimes be convenient to have a reference to a function with a persistent this value,
- people have historically used a simple closure trick to convert a function into one with an unchanging this:
+people have historically used a simple closure trick to convert a function into one with an unchanging this:
 
+#+begin_src javascript
 var person = {  
   name: "Brendan Eich",
   hello: function(thing) {
@@ -1524,11 +1605,14 @@ var person = {
 var boundHello = function(thing) { return person.hello.call(person, thing); }
 
 boundHello("world");  
+#+end_src 
+
 Even though our boundHello call still desugars to boundHello.call(window, "world"),
- we turn right around and use our primitive call method to change the this value back to what we want it to be.
+we turn right around and use our primitive call method to change the this value back to what we want it to be.
 
 We can make this trick general-purpose with a few tweaks:
 
+#+begin_src javascript
 var bind = function(func, thisValue) {  
   return function() {
     return func.apply(thisValue, arguments);
@@ -1536,13 +1620,24 @@ var bind = function(func, thisValue) {
 }
 
 var boundHello = bind(person.hello, person);  
+
 boundHello("world") // "Brendan Eich says hello world"  
-In order to understand this, you just need two more pieces of information. First, arguments is an Array-like object that represents all of the arguments passed into a function. Second, the apply method works exactly like the call primitive, except that it takes an Array-like object instead of listing the arguments out one at a time.
+#+end_src 
 
-Our bind method simply returns a new function. When it is invoked, our new function simply invokes the original function that was passed in, setting the original value as this. It also passes through the arguments.
+In order to understand this, you just need two more pieces of information.
+First, arguments is an Array-like object that represents all of the arguments
+passed into a function. Second, the apply method works exactly like the call
+primitive, except that it takes an Array-like object instead of listing the
+arguments out one at a time.
 
-Because this was a somewhat common idiom, ES5 introduced a new method bind on all Function objects that implements this behavior:
+Our bind method simply returns a new function. When it is invoked, our new
+function simply invokes the original function that was passed in, setting the
+original value as this. It also passes through the arguments.
 
+Because this was a somewhat common idiom, ES5 introduced a new method bind on
+all Function objects that implements this behavior:
+
+#+begin_src javascript
 var boundHello = person.hello.bind(person);  
 boundHello("world") // "Brendan Eich says hello world"  
 This is most useful when you need a raw function to pass as a callback:
@@ -1553,6 +1648,7 @@ var person = {
 }
 
 $("#some-div").click(person.hello.bind(person));
+#+end_src 
 
 // when the div is clicked, "Alex Russell says hello world" is printed
 This is, of course, somewhat clunky, and TC39 (the committee that works on the next version(s) of ECMAScript)
@@ -1782,7 +1878,7 @@ With the data-main attribute, we tell the loader what module to load first,
 index.html outputs the exports of the asynchronously loaded modules:
 
 Now we fiddle with more dependencies. So we create the bar.js and baz.js modules:
-
+#+begin_src javascript
 bar.js
 
 define({
@@ -1794,9 +1890,11 @@ baz.js
 define({
   value: "baz"
 });
+#+end_src 
 
 We have to modify foo.js to access these modules:
 
+#+begin_src javascript
 foo.js
 
 define([ "./bar", "./baz" ], function ( bar, baz ) {
@@ -1807,6 +1905,7 @@ define([ "./bar", "./baz" ], function ( bar, baz ) {
     baz: baz.value
   };
 });
+#+end_src 
 
 As you may have noticed, the require/define dependency lists consists of module identifiers.
 In our case, all the modules and the HTML located in the same directory.
@@ -1819,6 +1918,7 @@ This object has special properties such as
 requireType (a string containing error types such timeout, nodefine, scripterror)
 and requireModules (an array of module IDs affected by the error).
 
+#+begin_src javascript
 require([ "unexisting-path/foo" ], function ( foo ) {
   "use strict";
   console.log( foo.bar );
@@ -1827,12 +1927,13 @@ require([ "unexisting-path/foo" ], function ( foo ) {
   console.log( err.requireType );
   console.log( err.requireModules );
 });
+#+end_src 
 
 In a well-grained design, modules are numerous and are allocated to a directory tree. 
 In order to avoid relative path computation every time,
- you can configure the script loader once.
- So the loader will know where to find the dependency file by a specified alias:
-
+you can configure the script loader once.
+So the loader will know where to find the dependency file by a specified alias:
+#+begin_src javascript
 main.js
 
 require.config({
@@ -1845,11 +1946,12 @@ require( [ "foo" ], function( foo ) {
   console.log( foo.bar );
   console.log( foo.baz );
 });
+#+end_src
 
 This gives a bonus. Now if we decided to change a module file name,
- we do not need to modify every other module that requires it.
- We just need to change the configuration:
-
+we do not need to modify every other module that requires it.
+We just need to change the configuration:
+#+begin_src javascript
 main.js
 
 require.config({
@@ -1862,10 +1964,11 @@ require( [ "foo" ], function( foo ) {
   console.log( foo.bar );
   console.log( foo.baz );
 });
+#+end_src 
 
 By configuring, we can also address remote modules. For example, here we refer to jQuery,
- but RequireJS knows the module endpoint from the configuration and, therefore, loads the module from CDN:
-
+but RequireJS knows the module endpoint from the configuration and, therefore, loads the module from CDN:
+#+begin_src javascript
 require.config({
 
   paths: {
@@ -1876,7 +1979,7 @@ require.config({
 require([ "jquery" ], function ( $ ) {
   // use jQuery
 });
-
+#+end_src 
 *** How to – use synchronous modules on the server
 
 The following examples require Node.js. It will take just a few minutes to install Node.js
@@ -2098,17 +2201,22 @@ repeat(3, 'So should IE7...'); // => 3 IE7 alert boxes
  
 * obtaining references to DOM elements.
 ** Grab an element by its ID.
+#+begin_src javascript
 document.getElementById('elementId')  //plain W3C DOM
 $('#elementId')  //jquery
+#+end_src 
 
 ** Grab elements by XPath/CSS selection.
+#+begin_src javascript 
 document.querySelectorAll('selectors')
 $('selectors')
+#+end_src 
 
 ** Move around (DOM traversals).
 
 * Dynamically Styling Content
 ** Style an element.
+#+begin_src javascript
 // jQuery
 $(element).css('prop', 'value')
 $(element).css({ prop: 'value', prop2: 'value2' })
@@ -2116,6 +2224,7 @@ $(element).css({ prop: 'value', prop2: 'value2' })
 Retrieve a style.
 // jQuery
 $(element).css('prop')
+#+end_src 
 
 ** Changing an Element’s Contents
 *** Update the entire contents of an element.
@@ -2126,6 +2235,7 @@ $(element).text('The <div> and <span> elements carry no inherent semantics.')
 #+end_src
  
 *** Inject extra contents into an element.
+
 #+begin_src javascript 
 // jQuery (many more methods available)
 $(element).before('<p>This gets before the element</p>')
@@ -2136,14 +2246,18 @@ $(element).after('<p>This gets after the element</p>')
  
 * Listening for Events (and Stopping)
 ** Listen to an event on one element.
+
 #+begin_src javascript 
 // jQuery
 $(elementOrSelector).bind('event', handlerFx)
 #+end_src
  
 ** Listen to an event on multiple elements.
+#+begin_src javascript 
 // jQuery
 $(elements).bind('event', handlerFx)
+#+end_src 
+
 ** Stop listening.
 
 * Simple Inheritance in JavaScript
@@ -2914,7 +3028,7 @@ AbstractFoo = function(){
 
 * ES6
 ** Block level declarations
-
+   
 use ~let~ keyword instead of ~var~.
 use ~const~ instead of ~var~.
 
@@ -3400,11 +3514,14 @@ Surely you know how to find an element by ID (document.getElementById)
 or by tag name (document.getElementsByTagName). You can also search
 for an element by a CSS selector (document.querySelector):
 
+#+begin_src 
 <article id="bar">
   <h2>Lorem ipsum</h2>
 </article>
+
 var article = document.querySelector( "#bar" ),
       heading = article.querySelector( "h2" );
+#+end_src 
 
 A selector builds from one or many type (tag) selectors, class
 selectors, ID selectors, attribute selectors, or pseudo-class/element
@@ -3414,13 +3531,14 @@ the combinations (to match a group, descendants, or siblings), this
 gives quite a number of possible options. So it can be hard to pick a
 strategy to bind HTML elements from JavaScript. My advice would be to
 always use the data-* attribute selectors:
-
+#+begin_src 
 <article data-bind="bar">
   <h2 data-bind="heading">Lorem ipsum</h2>
 </article>
 
 var article = document.querySelector( "[data-bind=\"bar\"]" ),
       heading = article.querySelector( "[data-bind=\"heading\"]" );
+#+end_src 
 
 This way we are independent from the HTML structure. If we change
 tags, for example for better semantics, nothing breaks on the
@@ -3431,6 +3549,7 @@ is supposed to be unique per document.
 While querySelector takes the first element in the DOM to match the
 selector, querySelectorAll retrieves all of them:
 
+#+begin_src 
 <ul data-bind="bar">
   <li data-bind="item">Lorem ipsum</li>
   <li data-bind="item">Lorem ipsum</li>
@@ -3440,15 +3559,18 @@ selector, querySelectorAll retrieves all of them:
 var ul = document.querySelector( "[data-bind=\"bar\"]" ),
       lis = ul.querySelectorAll( "[data-bind=\"item\"]" );
 console.log( lis.length );
+#+end_src 
 
 The found elements are represented as a NodeList. It looks like an
 array, but it's not. It's a live collection that is being updated with
 every DOM reflow. Consider the following example:
 
+#+begin_src 
 var divs = document.querySelectorAll( "div" ), i; 
 for ( i = 0; i < divs.length; i++ ) { 
   document.appendChild( document.createElement( "div" ) ); 
 }
+#+end_src
 
 The preceding code causes an infinite loop, because whenever we access
 the next element of the collection, one new element is appended to the
@@ -3461,31 +3583,39 @@ resource-expensive. If you don't need it to be live, just convert the
 collection into an array such as [].slice.call( nodeList ), as covered
 in Chapter 1, Diving into JavaScript Core. In ES6, this can be done
 with the [...nodeList]spread operator:
-
+#+begin_src 
 var ul = document.querySelector( "[data-bind=\"bar\"]" ),
       lis = ul.querySelectorAll( "[data-bind=\"item\"]" );
 console.log( [].slice.call( lis ) ); // into array ES5 way
 console.log( [ ...lis ] ); // into array ES6 way
+#+end_src 
 
 In addition to querying, we can test whether a found element matches a given selector:
 
+#+begin_src 
 console.log( el.matches( ".foo > .bar" ) );
 console.log( input.matches( ":checked" ) );
- Changing the DOM
+#+end_src 
+
+Changing the DOM
 
 Well, now we know how to find elements in the DOM. Let's see how we
 can dynamically insert new elements into the DOM tree. There are
 different ways. We can simply set new HTML content with the
 el.innerHTML method:
 
+#+begin_src 
 var target = document.getElementById( "target" );
 target.innerHTML = "<div></div>";
+#+end_src 
 
 Otherwise, we can create a node (document.createElement) and inject it into the DOM (el.appendChild):
 
+#+begin_src 
 var target = document.getElementById( "target" ),
       div = document.createElement( "div" ),
 target.appendChild( div );
+#+end_src 
 
 Here you should remember that every time we change el.innerHTML or
 append a child to an element, we cause DOM reflow. When this happens
@@ -3498,6 +3628,7 @@ batch of similar elements, the flow can be optimized further. Instead
 of creating every element in a loop, we can clone the one created
 originally (el.cloneNode), which is way faster:
 
+#+begin_src 
 var target = document.getElementById( "target" ),
     /**
      * Create a complex element
@@ -3512,10 +3643,9 @@ var target = document.getElementById( "target" ),
     },
     el;
 
-el = createNewElement();
-// loop begins
-target.appendChild( el.cloneNode( true ) );
-// loop ends
+el = createNewElement(); // loop begins
+target.appendChild( el.cloneNode( true ) ); // loop ends
+#+end_src 
 
 On the other hand, we can create a document fragment
 (document.createDocumentFragment) and during the loop append the
@@ -3533,18 +3663,25 @@ inject an element to an exact position (for example, between the foo
 and bar nodes), el.appendChild isn't the right method. We have to go
 with el.insertBefore:
 
+#+begin_src 
 parent.insertBefore(el, parent.firstChild);
+#+end_src 
 
 To remove a particular element from the DOM, we do the following trick:
 
+#+begin_src 
 el.parentNode.removeChild(el);
+#+end_src 
 
 In addition, we can reload an element, for example, to reset all the subscribed listeners:
 
+#+begin_src 
 function reload( el ) {
     var elClone = el.cloneNode( true );
     el.parentNode && el.parentNode.replaceChild( elClone, el );
 }
+#+end_src 
+
 ** styling the DOM
 
 When it comes to styling, we have to go with CSS classes wherever it
@@ -3553,11 +3690,13 @@ composition, and concern separation. You surely know how to assign
 intended classes to an element via the el.className property. However,
 in the real world, the el.classList object is much more useful:
 
+#+begin_src 
 el.classList.add( "is-hidden" );
 el.classList.remove( "is-hidden" );
 var isAvailable = true;
 el.classList.toggle("is-hidden", !isAvailable );
 if ( el.classList.contains( "is-hidden" ) ){}
+#+end_src 
 
 Here, in addition to the obvious add/remove/contains methods, we also
 use toggle. This method either adds or removes the specified class
@@ -3568,13 +3707,17 @@ is called CSS Object Model (CSSOM) provides an interface to manipulate
 the CSS. Thus, we can read or set dynamic styling information on an
 element using the el.style property:
 
+#+begin_src 
 el.style.color = "red";
 el.style.fontFamily = "Arial";
 el.style.fontSize = "1.2rem";
+#+end_src 
 
 A lesser known technique is to change the actual text of the style rule:
 
+#+begin_src 
 el.style.cssText = "color:red;font-family: Arial;font-size: 1.2rem;";
+#+end_src 
 
 As you can see, the second approach is not that flexible. You cannot
 change or access a single declaration, but only the entire
@@ -3584,6 +3727,7 @@ rule. However, styling this way is substantially faster
 While el.style comprises explicit styles of an element,
 window.getComputedStyle returns inherited (computed) styles:
 
+#+begin_src 
 var el = document.querySelector( "h1" ),
     /**
      * window.getComputedStyle
@@ -3592,12 +3736,14 @@ var el = document.querySelector( "h1" ),
      * for regular elements
      * @return {CSSStyleDeclaration}
      */
-    css = window.getComputedStyle( el, null );
+css = window.getComputedStyle( el, null );
 console.log( css.getPropertyValue( "font-family" ) );
+#+end_src 
 
 The cases we've just examined refer to inline styles. In fact, we can
 access external or internal stylesheets as well:
 
+#+begin_src 
 <style type="text/css">
 .foo {
  color: red;
@@ -3610,15 +3756,18 @@ stylesheet.cssRules[ 0 ].style.color = "red";
 // or
 // stylesheet.cssRules[ 0 ].style.cssText = "color: red;";
 </script>
+#+end_src 
 
 Why would we do so? There are special cases. For example, if we want
 to modify, let's say, pseudo-element style, we have to involve
 stylesheets:
 
+#+begin_src 
 var stylesheet = document.styleSheets[ 0 ];
 stylesheet.addRule( ".foo::before", "color: green" );
 // or
 stylesheet.insertRule( ".foo::before { color: green }", 0 );
+#+end_src 
 
 ** Making use of attributes and properties
 
@@ -3812,6 +3961,7 @@ of tasks. We create an instance of XHR, initialize a request via open
 method, subscribe listeners to request-dependent events, set request
 headers (setRequestHeader), and eventually call the send method:
 
+#+begin_src 
 var xhr = new XMLHttpRequest();
 xhr.open( "GET", "http://www.telize.com/jsonip?callback=0", true );
 xhr.onload = function() {
@@ -3823,6 +3973,7 @@ xhr.onload = function() {
 xhr.responseType = "json";
 xhr.setRequestHeader( "Content-Type", "application/x-www-form-urlencoded" );
 xhr.send( null );
+#+end_src 
 
 More options are available. For example, we can leverage the progress
 and abort events to control file uploading
@@ -3834,6 +3985,7 @@ wrappers on the Internet. One of the most popular implementations can
 be found at https://github.com/Raynos/xhr. It makes the usage of XHR
 this simple:
 
+#+begin_src 
 xhr({
   uri: "http://www.telize.com/jsonip",
   headers: {
@@ -3842,6 +3994,7 @@ xhr({
 }, function ( err, resp ) {
   console.log( resp );
 })
+#+end_src 
 
 Besides, the library provides a mock object that can be used to replace real XHR in unit tests.
 
@@ -3853,18 +4006,20 @@ friendly. Luckily, the language has evolved and nowadays we have a new
 built-in method called Fetch API. Just consider how easy it is to make
 a call with it:
 
+#+begin_src 
 fetch( "/rest/foo" ).then(function( response ) {
   // Convert to JSON
   return response.json();
 }).catch(function( err ) {
   console.error( err );
 });
+#+end_src 
 
 In spite of the apparent simplicity, the API is pretty powerful. The
 fetch method expects in the first mandatory argument either a string
 with a remote method URL or a Request object. Request options can be
 passed in the second optional argument:
-
+#+begin_src javascript
 fetch( "/rest/foo", {
   headers: {
     "Accept": "application/json",
@@ -3872,24 +4027,29 @@ fetch( "/rest/foo", {
   }
 });
 
+#+end_src 
+
 Similar to our previous snippet, the fetch method returns
 Promise. Promises are becoming a common practice for asynchronous or
 deferred operations. The function called on the Promise-fulfilled
 event (see then) receives a Response object. This function has a
 number of properties and methods
+
 (https://developer.mozilla.org/en-US/docs/Web/API/Response). So we can
 convert the response into JSON, text, blob, or stream with
 corresponding methods, and we can obtain request-relative information:
 
+#+begin_src javascript
 console.log( response.text() );
 console.log( response.status );
 console.log( response.statusText );
 console.log( response.headers.get( "Content-Type" ) );
+#+end_src 
 
 What about POST requests? Fetch has a mixin called body that
 represents the body of the Response/Request. We can pass the POST data
 through this:
-
+#+begin_src javascript 
 var form = document.querySelector( "form[data-bind=foo]" ),
     inputEmail = form.querySelector( "[name=email]" ),
     inputPassword = form.querySelector( "[name=pwd]" );
@@ -3901,15 +4061,18 @@ fetch( "/feedback/submit", {
     answer: inputPassword.value
   })
 });
+#+end_src 
 
 It accepts not only key-value pairs, but also, for example, FormData,
 so you can submit the whole form including attached files as it is:
 
+#+begin_src javascript 
 var form = document.querySelector( "form[data-bind=foo]" );
 fetch( "/feedback/submit", {
   method: "post",
   body: new FormData( form )
 });
+#+end_src 
 
 At the moment, some of the major browsers (for example, IE/Edge,
 Safari) don't support this API. However, if you intend to use Fetch
@@ -3934,25 +4097,29 @@ sessionStorage. The first is used as persistent data storage and the
 second to keep the data during a session.
 
 Storage API is very simple to use, as shown here:
-
+#+begin_src javascript
 var storage = isPersistent ? localStorage : sessionStorage;
 storage.setItem( "foo", "Foo" );
 console.log( storage.getItem( "foo" ) );
 storage.removeItem( "foo" );
+#+end_src 
 
 Alternatively, we can use getters/setters for convenience, as follows:
-
+#+begin_src javascript
 storage.foo = "Foo";
 console.log( storage.foo );
 delete storage.foo;
+#+end_src 
 
 If we want to iterate through the storage, we can use storage.length and storage.key():
 
+#+begin_src javascript 
 var i = 0, len = storage.length, key;
 for( ; i < len; i++ ) {
   key = storage.key( i );
   storage.getItem( key );
 }
+#+end_src 
 
 As you can see, the Web Storage API is much more developer-friendly
 compared to cookies. It's also more powerful. One of the most common
@@ -3966,7 +4133,7 @@ Fortunately, whenever we update the localStorage, the storage event is
 fired on the window object. So we can subscribe a handler for this
 event to update the shopping cart with the actual data. A simple code
 illustrating this example may look like this:
-
+#+begin_src html
 <html>
   <head>
     <title>Web Storage</title>
@@ -4029,6 +4196,7 @@ illustrating this example may look like this:
     </script>
   </body>
 </html>
+#+end_src 
 
 To see this in action, we have to open the code HTML in two or more
 tabs. Now when we click the Add to cart button, we have a list of the
@@ -4061,6 +4229,7 @@ keys).
 However, the API of IndexedDB is pretty complex. It's also quite hard
 to read because of a large amount of nested callbacks:
 
+#+begin_src javascript
 /**
  * @type {IDBOpenDBRequest}
  * Syntax: indexedDB.open( DB name, DB version );
@@ -4099,6 +4268,7 @@ request.onsuccess = function( e ) {
     console.log( "Employee matching `don@company.com` is `" + req.result.name + "`" );
   };
 };
+#+end_src 
 
 In this sample, we created a request for opening DB. If the DB doesn't
 exist or its version is changed, the upgradeneeded event is fired. In
@@ -4117,6 +4287,7 @@ Pretty tangled, isn't it? This API makes me think of a wrapper. The
 best I know is called Dexie (http://www.dexie.org). Just compare how
 easy it is to solve the same task with the interface it exposes:
 
+#+begin_src 
 <script src="./Dexie.js"></script>
 <script>
 var db = new Dexie( "Cem" );
@@ -4142,6 +4313,7 @@ db.employees
   });
 
 </script>
+#+end_src 
 
 ** FileSystem API
 
@@ -4153,6 +4325,7 @@ capable of running offline. The FileSystem API allows us to create,
 read, and write to a user's local file system in application
 scope. Let's take up an example:
 
+#+begin_src javascript 
 window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
     /**
      * Read file from a given FileSystem
@@ -4211,6 +4384,7 @@ var readFile = function( fs, file ) {
     };
 
 window.requestFileSystem( window.TEMPORARY, 5*1024*1024 /*5MB*/, onInitFs, console.error );
+#+end_src 
 
 First of all, we request for a local file system (requestFileSystem)
 that's sandboxed to the application. With the first argument, we state
@@ -4262,6 +4436,7 @@ register an existing web worker in the main script and communicate to
 the web worker using the PostMessage API
 (https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage):
 
+#+begin_src 
 index.html
 <html>
   <body>
@@ -4306,6 +4481,8 @@ self.addEventListener( "message", function( e ) {
 
 }, false );
 
+#+end_src 
+
 Here in index.html, we requested the web worker (foo-worker.js) to
 subscribe for worker messages and requested it to load the CPU for
 2,000 ms, which represents a resource-consuming process. The worker
@@ -4328,6 +4505,7 @@ worker. Shared workers can be accessed from multiple scripts, even
 those running in different windows. That makes this API a bit
 different:
 
+#+begin_src 
 index.html
 
 <script>
@@ -4351,7 +4529,11 @@ onconnect = function( e ) {
   port.start();
 };
 
-The preceding example worker simply echoes the received message. If the worker does some effective computation, we would be able to command it from different scripts on different pages.
+#+end_src 
+
+The preceding example worker simply echoes the received message. If the worker
+does some effective computation, we would be able to command it from different
+scripts on different pages.
 
 These examples show the use of web workers for concurrent
 computations. What about unloading the main thread from some of the
@@ -4365,6 +4547,7 @@ but I still want to be sure that no BI events are lost because the
 worker was unavailable. What I can do is embed the web worker code
 into HTML and register the web worker by data URI:
 
+#+begin_src 
 <script data-bind="biTracker" type="text/js-worker">
   "use strict";
 
@@ -4419,6 +4602,7 @@ into HTML and register the web worker by data URI:
   // Let's test it
   window.biTracker.postMessage({ page: "#main" });
 </script>
+#+end_src 
 
 By handing over the web I/O to a worker, we can also get additional
 control over it. For example, in reaction to a network status change
@@ -4532,6 +4716,7 @@ bidirectional, full-duplex client-server communications.
 The client side looks similar to SEE. We just register the Web Socket
 server, subscribe to its events, and send to it our events:
 
+#+begin_src javascript
 var rtm = new WebSocket("ws://echo.websocket.org");
 rtm.onopen = function(){
   console.log( "Connection established" );
@@ -4547,13 +4732,16 @@ rtm.onerror = function( e ){
   console.error( "Error: " + e.message );
 };
 
-This demo source at ws://echo.websocket.org simply echoes any messages sent to it:
+#+end_src 
 
+This demo source at ws://echo.websocket.org simply echoes any messages sent to it:
+#+begin_src 
 Connection established
 Received: hello
+#+end_src 
 
 Need something more practical? I believe the most illustrative case would be a chat:
-
+#+begin_src 
 demo.html
 
 <style>
@@ -4614,6 +4802,7 @@ chat.addEventListener( "submit", function( e ){
 });
 
 </script>
+#+end_src 
 
 Here we have a form with two input fields. The first expects a
 person's name and the second, the chat message. When the form is
@@ -4624,6 +4813,7 @@ to get working. To run the example, we will take a simple nodejs-based
 server implementation, nodejs-websocket
 (https://github.com/sitegui/nodejs-websocket):
 
+#+begin_src 
 ws.js
 
     /** @type {module:nodejs-websocket} */
@@ -4644,13 +4834,14 @@ var ws = require( "nodejs-websocket" ),
         conn.sendText( msg );
       });
     };
+#+end_src 
 
 The script creates a server available on the port 8001 that listens to
 the Web Socket messages, and when any message is received, the port
 broadcasts it to all the available connections. We can fire up the
 server like this:
 
-node ws.js
+~node ws.js~
 
 Now we open our demo chat in two different browsers. When we send a
 message from one of them, the message shows up in both
@@ -4659,7 +4850,8 @@ Firefox:
 
 Following screenshot shows the WebSocket-driven chat in Chrome:
 
-Note how fast the clients react to the events. Communication through sockets gives irrefutable advantages.
+Note how fast the clients react to the events. Communication through sockets
+gives irrefutable advantages.
 
 There are a number of Web Socket server implementations for various
 languages, for example, Socket.IO (http://socket.io) for Node.js,
@@ -4672,7 +4864,7 @@ attention to a language-agnostic WebSocket daemon—Websocketd
 but for Web Sockets. so you can write the server login in your
 favorite language and then attach your script to the daemon:
 
-websocketd --port=8001 my-script
+~websocketd --port=8001 my-script~
 
 * geolocation API
 #+begin_src javascript
@@ -4687,18 +4879,25 @@ websocketd --port=8001 my-script
 * nodejs
 ** Node Module System
 *** install node packages from packages.json file?
-
-npm install (in package directory, no arguments)
+#+begin_src shell 
+$ npm install (in package directory, no arguments)
+#+end_src 
 
 https://docs.npmjs.com/cli/instal
 
 *** Using npm search to Locate Modules in the npm Registry
+#+begin_src shell
 $ npm search database 
+#+end_src 
+
 If you’re not interested in installing the latest version of a package, you can specify a version number. Node
 modules follow a major.minor.patch versioning scheme. For example, to install commander version 1.0.0, use the
 command shown in Listing 2-3. The @ character is used to separate the package name from the version.
 Listing 2-3.  Installing Version 1.0.0 of commander
+
+#+begin_src shell
 $ npm install commander@1.0.0
+#+end_src 
 
 Changes to the major version number can indicate that a module has changed in a non-backwards-compatible
 way (known as a breaking change). Even changes to the minor version can accidentally introduce breaking changes.
@@ -4706,29 +4905,41 @@ Therefore, you’ll typically want to install the latest patch of a certain rele
 x wildcard. The command shown in Listing 2-4 installs the latest patch of version 1.0 of commander. (Note that the x
 wildcard can also be used in place of the major and minor revisions.)
 Listing 2-4.  Installing the Latest Patch of commander 1.0
+#+begin_src javascript 
 $ npm install commander@1.0.x
+#+end_src 
 
 *** package locations
+#+begin_src javascript 
 $ npm ls
 to query global packages
 $ npm ls -g     
+#+end_src 
 
 *** Intalling packages
-Installing the Latest Version of the commander Package Using npm
+
+#+begin_src javascript 
+
+# Installing the Latest Version of the commander Package Using npm
 $ npm install commander
 
-Installing Version 1.0.0 of commander
+# Installing Version 1.0.0 of commander
 $ npm install commander@1.0.0
 
-Installing the Latest Patch of commander 1.0
+# Installing the Latest Patch of commander 1.0
 $ npm install commander@1.0.x
+
+#+end_src 
 
 **** Installing from URLs
 Installing a Tarball from a GitHub Repository
 $ npm install https://github.com/user/project/tarball/master
 *** Uninstalling Packages
-Uninstalling commander Using npm rm
+#+begin_src shell
+# Uninstalling commander Using npm rm
 $ npm rm commander
+#+end_src 
+
 *** Core Modules
 Core modules are modules compiled into the Node binary. They are given the highest precedence by require(),
 meaning that in the event of a module-naming conflict, the core module is loaded. For example, Node contains a core
@@ -5005,5 +5216,71 @@ You can also use the val(string) method to set that value:
 #+begin_src javascript 
 $("#txtEmail").val("something")
 #+end_src
+
+** reload an image
+
+#+begin_src javascript
+d = new Date();
+$("#myimg").attr("src", "/myimg.jpg?"+d.getTime());
+#+end_src
+
+** =preventDefault= and ajax calls
+
+submits the form after getting response from ajax call.
+
+#+begin_src javascript 
+$('.recover-form').on('submit', function (e) {
+    var form = $(this),
+        input = $('.check-recover-email'),
+        span = $('.recover-error'),
+        email = input.val();
+    span.text('');
+    //prevent the submit
+    e.preventDefault();
+    $.ajax({
+        url: 'ajax/check-email',
+        async: 'false',
+        cache: 'false',
+        type: 'POST',
+        data: form.serialize(),
+        success: function (response) {
+            if (response == 0) {
+                span.text('email does not exist');
+            } else {
+                //submit if valie
+                form[0].submit()
+            }
+        }
+    });
+});
+#+end_src 
+
+* URL
+** decode/encode URL
+   
+#+begin_src javascript
+var uri = "https://w3schools.com/my test.asp?name=ståle&car=saab";
+var uri_enc = encodeURIComponent(uri);
+var uri_dec = decodeURIComponent(uri_enc);
+var res = uri_enc + "<br>" + uri_dec;
+The result of res will be:
+
+// Encoded URI
+// https%3A%2F%2Fw3schools.com%2Fmy%20test.asp%3Fname%3Dst%C3%A5le%26car%3Dsaab
+
+// Decoded URI
+// https://w3schools.com/my test.asp?name=ståle&car=saab
+#+end_src 
+
+the following  handles the case of space being encoded as +
+
+#+begin_src javascript 
+function urldecode(str) {
+   return decodeURIComponent((str+'').replace(/\+/g, '%20'));
+}
+#+end_src 
+
+
+https://github.com/kvz/locutus/blob/master/src/php/url/urldecode.js
 
 * references

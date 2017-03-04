@@ -1,10 +1,13 @@
-#+INFOJS_OPT: view:showall toc:t ltoc:t mouse:underline path:js/org-info.js
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
 [[file:emacs-notes.org][emacs-ntoes]]
 
 [[file:links.org][links]]
 
 [[file:javascript.org][javascript]]
+
+[[file:php.org][php]]
+
+[[file:python.org][python]]
 
 [[file:ubuntu.org][ubuntu]]
 
@@ -14,8 +17,11 @@
 
 [[file:bash.org][bash]]
 
-[[file:php.org][php]]
-
 [[file:freebsd.org][freebsd]]
 
+[[file:network.org][networking]]
+
+[[file:books-excerpt.org][book excerpts]]
+
+[[file:ceh.org][penetration testing]]
 

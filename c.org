@@ -1,4 +1,9 @@
+#+TITLE:   c recipes 
+#+AUTHOR:  Mohammad Reza Mansouri
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+STARTUP: overview
+
+
 * character strings
 ** Character String Literals (String Constants)
 A string literal, also termed a string constant, is anything enclosed in double quotation
@@ -433,6 +438,7 @@ int main (void)
     return 0;
 }
 #+end_src
+
 ** concatenation of strings example
 #+begin_src c
 #include <stdio.h>

@@ -1,5 +1,6 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
-* website footprinting
+* footpringint
+** website footprinting
  - operating system used.
  - subdirectories and parameters
  - Filename, path, database field name, or query:You should analyze anything after the
@@ -19,7 +20,7 @@
 ** examine cookies set by the server to determine the software
 running and its behavior.
 
-* Email footprinting
+** Email footprinting
 By using email tracking tools you can gather the following information about
 the victim:
 
@@ -31,5 +32,114 @@ the victim:
  - Operating System
  - Forward email : whether or not the email sent to you is forwarded to another person
    can be determined easily by using this tool.
+
+* Kali linux prep
+** install linux headers for kali
+
+#+begin_src shell 
+$ apt-cache search header | grep -i linux
+#  look for the one ending in –kali-all-amd64
+$ apt-get install linux-headers-4.4.0-kalli-all-amd64
+#+end_src 
+
+** install kali guest additions
+
+#+begin_src shell 
+$ cd /media/cdrom0
+$ cp VBoxLinuxAdditions.run /root/Desktop
+$ ./VBoxLinuxAdditions.run
+#+end_src 
+
+** use network managed mode
+
+#+begin_src shell 
+$ vim /etc/NetworkManager.conf
+# change managed=false to managed=true
+#+end_src 
+
 * google search operators
+|            |                                                                                                |
+|------------+------------------------------------------------------------------------------------------------|
+| Operator   | Description intitle Looks for the search terms in the title                                    |
+| allintitle | Looks for the search terms only in the title and nowhere else in the document                  |
+| inurl      | Looks through the URL (the address) for the search terms                                       |
+| allinurl   | Similar to allintitle     looks only in the URL for the search terms                           |
+| filetype   | You provide the filetype and search terms. All results have that filetype.                     |
+| allintext  | The search will not look at the URL and just in the text.                                      |
+| site       | Narrow your search to a particular site. You have to provide the site as well as search terms. |
+| link       | Searches for links to pages                                                                    |
+| inanchor   | This search will look in anchor tags only                                                      |
+| numrange   | Searches for a number                                                                          |
+| daterange  | Results will be within a range of dates            as specified                                |
+| author     | Searches Google Groups for a particular author. This only works in Google Groups.              |
+| group      | Looks for a group name. This only works in Google Groups.                                      |
+| insubject  | Searches subject lines in posts. This only works in Google Groups.                             |
+| msgid      | Searches within a group for a message ID.                                                      |
+
 http://www.googleguide.com
+* whois & DNS
+** query
+#+begin_src shell
+$ whois apress.com
+$ whois -h whois.apnic.net <host>
+# Looking up all the whois records that are maintained by the
+# folks from Yahoo!. The following command shows how you do this:
+$ whois –i mnt-by YAHOO-MNT
+# filter ip addresses
+$ whois –i mnt-by YAHOO-MNT | grep inetnum
+$ whois –i mnt-by YAHOO-MNT | grep inetnum | awk –F\: '{ print $2 }'
+#+end_src 
+
+** whois query query handler
+
+| whois.nic.ir    |
+| whois.apnic.net |
+| whois.arin.net  |
+
+** MX record
+
+Every domain will have at least one MX record. Knowing the hostname from the MX
+record will tell you which system you need to interact with if you want to
+perform penetration testing against the organization's receiving mail server
+using the simple mail transfer protocol (SMTP) .
+
+#+begin_src shell
+# MX records
+$ dig Mx apress.com
+#using nslookup
+$ nslookup
+> set type=mx
+> apress.com
+#+end_src
+
+** reverse DNS lookup
+#+begin_src shell 
+$ dig -x [IP address]
+#+end_src 
+
+* port scan 
+
+#+begin_src shell 
+# -p- scann all 65536 ports
+$ sudo nmap -sS -p- 172.30.42.1
+# udp port scan
+$ sudo namp -sU
+# operating system scan
+$ sudo nmap -sS -O 172.30.42.1
+
+#+end_src 
+
+* banner grabbing
+use telnet for TCP and nc for UPD connections.
+
+#+begin_src shell 
+$ telnet <host> <port>
+$ nc -u <host> <port>
+#+end_src
+
+* host discovery with =arping=
+  
+#+begin_src shell 
+$ arping [ip address]
+#+end_src 
+

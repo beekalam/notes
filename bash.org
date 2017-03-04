@@ -103,6 +103,7 @@ There are more than one way to increment a variable in bash, but what you tried 
 
 You can use for example arithmetic expansion:
 
+#+begin_src shell
 var=$((var+1))
 or only:
 
@@ -122,6 +123,7 @@ let "var+=1"
 or even:
 
 let "var++"
+#+end_src 
 
 * testing with *if*
 * for loops to display only odd natural numbers from  to 99.
@@ -132,6 +134,20 @@ do
     echo $i
 done
 #+end_src
+
+* loop in results of =find=
+#+begin_src shell 
+find . -name '*.txt' | while read line; do
+    echo "Processing file '$line'"
+done
+
+#E.g. make a copy:
+
+find . -name '*.txt' | while read line; do
+    echo "Copying '$line' to /tmp"
+    cp -- "$line" /tmp
+done
+#+end_src 
 
 * Single Quotes versus double quotes
 
@@ -308,6 +324,7 @@ use "scale" (number of decimal points).
 ~$ echo "scale = 2; (10 / 30) * 100" | bc
 33.00
 #+end_src
+
 * airthmetic with *expr*
 
 #+begin_src

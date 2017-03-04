@@ -1,3 +1,9 @@
+#+TITLE:   python recipes 
+#+AUTHOR:  Mohammad Reza Mansouri
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+STARTUP: overview
+
+
 * core types
 ** lists
 *** remove duplicates from a list
@@ -49,10 +55,11 @@ os.path.isfile(fname)    # checks if fname is afile
 os.path.exists(file_path) # checks if file_path is file or directory
 #+end_src
 
-
 ** read all files in a directory
 
 You can use glob:
+
+#+begin_src python
 
 import glob, os
 os.chdir("/mydir")
@@ -72,3 +79,5 @@ for root, dirs, files in os.walk("/mydir"):
     for file in files:
         if file.endswith(".txt"):
              print(os.path.join(root, file))
+#+end_src 
+

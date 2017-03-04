@@ -1,52 +1,60 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
 * setting up DHCP for freebsd in virtual box
 
+#+begin_src 
 	hostname="plato.myhostname.com"
 	ifconfig_xl0="DHCP"
+#+end_src 
 
-where `xl0` is the name of the interface.
+where =xl0= is the name of the interface.
 
 * setting up static ip
 
-	ifconfig_xl0="inet 192.168.0.53 netmask 255.255.255.0"
-	defaultrouter="192.168.0.1"
-	hostname="plato.myhostname.com"
+#+begin_src 
+ifconfig_xl0="inet 192.168.0.53 netmask 255.255.255.0"
+defaultrouter="192.168.0.1"
+hostname="plato.myhostname.com"
+#+end_src 
 
 * Multiple IPs on one network card
-
-	ifconfig_xl0="inet 192.168.0.53 netmask 255.255.255.0"
-	ifconfig_xl0_alias0="inet 192.168.0.54 netmask 255.255.255.0"
-	ifconfig_xl0_alias1="inet 192.168.0.55 netmask 255.255.255.0"
-	defaultrouter="192.168.0.1"
-	hostname="plato.myhostname.com"
+#+begin_src 
+ifconfig_xl0="inet 192.168.0.53 netmask 255.255.255.0"
+ifconfig_xl0_alias0="inet 192.168.0.54 netmask 255.255.255.0"
+ifconfig_xl0_alias1="inet 192.168.0.55 netmask 255.255.255.0"
+defaultrouter="192.168.0.1"
+hostname="plato.myhostname.com"
+#+end_src 
 
 * Set IP address useing ifconfig command:
-
-	ifconfig re0 inet 202.54.1.22
+#+begin_src 
+ifconfig re0 inet 202.54.1.22
+#+end_src 
 
 * installing package manager.
+just type =pkg=
 
-just type `pkg`
-
-* starting `sshd`
+* starting =sshd=
 
 FreeBSD has OpenSSH-server installed by default.
 Enable it with sshd_enable="YES" in rc.conf, and run "sh /etc/rc.d/sshd start"
 
 check for status:
 
+#+begin_src 
 	/etc/rc.d/sshd status
+#+end_src 
 
 * ssh into virtual machine
 
 use bridging instead of NAT.
-and you should enable `PermitRootLogin` in `/etc/ssh/sshd_config`
+and you should enable =PermitRootLogin= in =/etc/ssh/sshd_config=
 	
 	PermitRootLogin yes
 
 * searching packages with pkg
-
-	$ pkg search <packagename>
+#+begin_src 
+$ pkg search <packagename>
+#+end_src 
 
 * installing postgresql
 
@@ -54,7 +62,7 @@ and you should enable `PermitRootLogin` in `/etc/ssh/sshd_config`
 	$ /usr/local/etc/rc.d/postgresql initdb
 	$ /usr/local/etc/rc.d/postgresql start
 
-the default user created when you install `postgresql` in Freebsd is `pgsql`
+the default user created when you install =postgresql= in Freebsd is =pgsql=
 
 	$ su pgsql
 
@@ -72,7 +80,7 @@ __REMOVING role__
 
 * restoring database with pg_restore
 
-	pg_restore -h localhost -p 5432 -U root -C -d mydb ./mydb.custom
+pg_restore -h localhost -p 5432 -U root -C -d mydb ./mydb.custom
 
 -C creates the datbase
 -d connects to the database
@@ -82,28 +90,66 @@ __REMOVING role__
 	\connect DBNAME
 
 * use scp to move files
-
-	scp -r /tmp/backupmanager root@192.168.1.103:/root/
+#+begin_src 
+scp -r /tmp/backupmanager root@192.168.1.103:/root/
+#+end_src 
 
 * install bash on freebsd
-
+#+begin_src 
 	pkg install bash
+#+end_src 
 
 * running bash scripts 
-
+#+begin_src 
 	bash /path/bashfile.sh
+#+end_src 
 
 * cron jobs
 
 cron has its own environment.So make sure to add additional paths to cron
-when you issue `crontab -e` on top of the file.
+when you issue =crontab -e= on top of the file.
 
+#+begin_src 
 	PATH=/sbin:/bin:/usr/sbin:/usr/bin
+#+end_src 
 
 If you need default system wide PATHs and other ENV variables
  (which defined in /etc/profile.d), just put the following:
 
+#+begin_src 
 	* * * * * . /etc/profile; your cmd
+#+end_src 
 
 
+* installing PHP extensions
+   
+Before you start the installation you must select options of php5 port. The
+following commands move you to php5 port directory and start configuring the
+current port options.
 
+#+begin_src 
+cd /usr/ports/lang/php5
+make config
+#+end_src 
+
+After selecting options, the following command will start the installation:
+
+#+begin_src 
+make install clean
+#+end_src
+
+When PHP is installed you will probably need additional extensions for PHP. You
+can install them from port - php5-extensions. The commands below will move you
+to the port directory and start configuring the current port options.
+
+#+begin_src 
+cd /usr/ports/lang/php5-extensions
+make config
+#+end_src 
+
+Now you have to select the needed options and start the installation using
+command:
+
+#+begin_src 
+make install clean
+#+end_src 
