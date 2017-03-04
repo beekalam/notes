@@ -448,28 +448,30 @@ $cards = range(1, 52);
 ** Iterating through an array
 Use foreach:
 
+#+begin_src php 
 foreach ($array as $value) {
     // Act on $value
 }
 
-Or to get an array’s keys and values:
+#Or to get an array’s keys and values:
 
 foreach ($array as $key => $value) {
     // Act II
 }
 
-Another technique is to use for:
+#Another technique is to use for:
 
 for ($key = 0, $size = count($array); $key < $size; $key++) {
    // Act III
 }
 
-Finally, you can use each() in combination with list() and while:
+#Finally, you can use each() in combination with list() and while:
 
 reset($array) // reset internal pointer to beginning of array
 while (list($key, $value) = each ($array)) {
     // Final Act
 }
+#+end_src 
 
 ** Deleting elements from an array
 To delete one element, use unset():
@@ -506,8 +508,10 @@ array_splice($array, 2);
 
 This removes all but the first two elements from $array.
 ** Appending one array to another
-The array_merge() function works with both predefined arrays and arrays defined in place using array() :
+The array_merge() function works with both predefined arrays and arrays defined
+in place using array() :
 
+#+begin_src php
 $p_languages = array('Perl', 'PHP');
 $p_languages = array_merge($p_languages, array('Python'));
 print_r($p_languages);
@@ -517,6 +521,7 @@ Array
     [1] => Perl
     [2] => Python
 )
+#+end_src 
 
 Merging arrays with only numerical keys causes the arrays to get
 renumbered, so values aren’t lost. Merging arrays with string keys
@@ -524,6 +529,7 @@ causes the second array to overwrite the value of any duplicated
 keys. Arrays with both types of keys exhibit both types of
 behavior. For example:
 
+#+begin_src 
 $lc = array('a', 'b' => 'b'); // lower-case letters as values
 $uc = array('A', 'b' => 'B'); // upper-case letters as values
 $ac = array_merge($lc, $uc);  // all-cases?
@@ -534,6 +540,7 @@ Array
     [b] => B
     [1] => A
 )
+#+end_src 
 
 The uppercase A has been renumbered from index 0 to index 1, to avoid
 a collision, and merged onto the end. The uppercase B has overwritten
@@ -544,6 +551,7 @@ The + operator can also merge arrays. The array on the right
 overwrites any identically named keys found on the left. It doesn’t do
 any reordering to prevent collisions. Using the previous example:
 
+#+begin_src 
 print_r($uc + $lc);
 print_r($lc + $uc);
 Array
@@ -556,6 +564,7 @@ Array
     [0] => A
     [b] => B
 )
+#+end_src 
 
 ** Turning an Array into a String
 
@@ -2581,8 +2590,6 @@ SELECT s,md5 from huge_data_table limit 10;
 SELECT s,md5 FROM huge_data_table limit 10;
 #+end_src
 
-* test
-fljdl
 * error handler
 
 #+begin_src php

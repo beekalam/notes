@@ -17,6 +17,7 @@ hostname="plato.myhostname.com"
 #+end_src 
 
 * Multiple IPs on one network card
+
 #+begin_src 
 ifconfig_xl0="inet 192.168.0.53 netmask 255.255.255.0"
 ifconfig_xl0_alias0="inet 192.168.0.54 netmask 255.255.255.0"
@@ -26,6 +27,7 @@ hostname="plato.myhostname.com"
 #+end_src 
 
 * Set IP address useing ifconfig command:
+
 #+begin_src 
 ifconfig re0 inet 202.54.1.22
 #+end_src 
@@ -52,6 +54,7 @@ and you should enable =PermitRootLogin= in =/etc/ssh/sshd_config=
 	PermitRootLogin yes
 
 * searching packages with pkg
+
 #+begin_src 
 $ pkg search <packagename>
 #+end_src 
@@ -90,6 +93,7 @@ pg_restore -h localhost -p 5432 -U root -C -d mydb ./mydb.custom
 	\connect DBNAME
 
 * use scp to move files
+
 #+begin_src 
 scp -r /tmp/backupmanager root@192.168.1.103:/root/
 #+end_src 
