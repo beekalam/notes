@@ -2450,6 +2450,87 @@ RewriteRule .* index.php [L,QSA]
 The script tells Apache that whenever an HTTP request arrives and if
 no physical file (!-f) or path (!-d) or symbolic link (!-l) can be
 found, it should transfer control to index.php
+* turn off DNS prefetching from individual documents
+
+You can also turn off DNS Prefetching from individual documents, using the
+http-equiv attribute on the <meta> element, like this:
+
+#+begin_src html
+<meta http-equiv="x-dns-prefetch-control" content="off">
+ <!-- turns on dns prefetching -->
+<meta http-equiv="x-dns-prefetch-control" content="off">
+<!-- force the lookup of specific hostnames -->
+<link rel="dns-prefetch" href="http://www.spreadfirefox.com/">
+#+end_src 
+
+* disable caching for a website
+
+#+begin_src html
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+#+end_src 
+
+http://live.datatables.net/sadipaji/132/edit
+* disable ajax browser caching
+
+#+begin_src javascript
+//prevents browser caching
+$.ajaxSetup({ cache: false });
+#+end_src 
+
+* query
+  
+#+BEGIN_SRC sql :engine postgresql  :cmdline -p 5432 -h 127.0.0.1 -U postgres -d test2
+SELECT s,md5 from huge_data_table limit 10;
+#+END_SRC 
+
+#+name: my-query
+#+header: :engine postgresql
+#+header: :dbhost 127.0.0.1
+#+header: :dbuser postgres
+#+header: :dbpassword jjj
+#+header: :database test2
+#+begin_src sql
+SELECT s,md5 FROM huge_data_table limit 10;
+#+end_src
+
+* error handler
+
+#+begin_src php
+ <?php
+    ini_set('error_reporting', E_ALL | E_STRICT);
+    ini_set('display_errors', 'Off');
+    ini_set('log_errors', 'On');
+    ini_set('error_log', '/usr/local/apache/logs/error_log');
+  ?>
+  
+// PHP also allows you to handle your own errors with the set_error_handler( ) function: 
+    <?php
+    set_error_handler('my_error_handler');
+    ?>
+
+// This allows you to define your own function (my_error_handler( )) to handle errors; the following is an example implementation: 
+    <?php
+    function my_error_handler($number, $string, $file, $line, $context)
+    {
+      $error = "=  ==  ==  ==  ==\nPHP ERROR\n=  ==  ==  ==  ==\n";
+      $error .= "Number: [$number]\n";
+      $error .= "String: [$string]\n";
+      $error .= "File:   [$file]\n";
+      $error .= "Line:   [$line]\n";
+      $error .= "Context:\n" . print_r($context, TRUE) . "\n\n";
+      error_log($error, 3, '/usr/local/apache/logs/error_log');
+    }
+?>
+// This restricts errors to warnings.
+<?php
+    set_error_handler('my_warning_handler', E_WARNING);
+ ?>
+#+end_src 
+
+* security
+** disable =register_globals=
 * bootstrap
 ** structure of page
 *** settings of the viewing arena
@@ -2544,85 +2625,45 @@ This will affect only the immediate members not the deeper nesting
 levels.
 
 ** form 
-
-* turn off DNS prefetching from individual documents
-
-You can also turn off DNS Prefetching from individual documents, using the
-http-equiv attribute on the <meta> element, like this:
-
-#+begin_src html
-<meta http-equiv="x-dns-prefetch-control" content="off">
- <!-- turns on dns prefetching -->
-<meta http-equiv="x-dns-prefetch-control" content="off">
-<!-- force the lookup of specific hostnames -->
-<link rel="dns-prefetch" href="http://www.spreadfirefox.com/">
-#+end_src 
-
-* disable caching for a website
-
-#+begin_src html
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-#+end_src 
-
-http://live.datatables.net/sadipaji/132/edit
-* disable ajax browser caching
+** show/hide bootstrap modals 
+Bootstrap has a few functions that can be called manually on modals:
 
 #+begin_src javascript
-//prevents browser caching
-$.ajaxSetup({ cache: false });
+$('#myModal').modal('toggle');
+$('#myModal').modal('show');
+$('#myModal').modal('hide');
 #+end_src 
 
-* query
-  
-#+BEGIN_SRC sql :engine postgresql  :cmdline -p 5432 -h 127.0.0.1 -U postgres -d test2
-SELECT s,md5 from huge_data_table limit 10;
-#+END_SRC 
+* HTML
+** How do you disable browser Autocomplete on web form field / input tag?
 
-#+name: my-query
-#+header: :engine postgresql
-#+header: :dbhost 127.0.0.1
-#+header: :dbuser postgres
-#+header: :dbpassword jjj
-#+header: :database test2
-#+begin_src sql
-SELECT s,md5 FROM huge_data_table limit 10;
-#+end_src
+autocomplete prevents form data from being cached in older browsers.
 
-* error handler
-
-#+begin_src php
- <?php
-    ini_set('error_reporting', E_ALL | E_STRICT);
-    ini_set('display_errors', 'Off');
-    ini_set('log_errors', 'On');
-    ini_set('error_log', '/usr/local/apache/logs/error_log');
-  ?>
-  
-// PHP also allows you to handle your own errors with the set_error_handler( ) function: 
-    <?php
-    set_error_handler('my_error_handler');
-    ?>
-
-// This allows you to define your own function (my_error_handler( )) to handle errors; the following is an example implementation: 
-    <?php
-    function my_error_handler($number, $string, $file, $line, $context)
-    {
-      $error = "=  ==  ==  ==  ==\nPHP ERROR\n=  ==  ==  ==  ==\n";
-      $error .= "Number: [$number]\n";
-      $error .= "String: [$string]\n";
-      $error .= "File:   [$file]\n";
-      $error .= "Line:   [$line]\n";
-      $error .= "Context:\n" . print_r($context, TRUE) . "\n\n";
-      error_log($error, 3, '/usr/local/apache/logs/error_log');
-    }
-?>
-// This restricts errors to warnings.
-<?php
-    set_error_handler('my_warning_handler', E_WARNING);
- ?>
+#+begin_src html
+<input type="text" name="foo" autocomplete="off" />
 #+end_src 
 
-* security
-** disable =register_globals=
+
+** How to use the “required” attribute with a “radio” input field
+You just need to set the required-attribute for one input of the radiogroup, but you can set it for all.
+
+For example:
+
+#+begin_src html
+<form>
+  <label for="input1">1:</label>
+  <input type="radio" name="myradiogroup1" id="input1" value="1" required><br>
+
+  <label for="input2">2:</label>
+  <input type="radio" name="myradiogroup1" id="input2" value="2"><br>
+
+  <label for="input3">3:</label>
+  <input type="radio" name="myradiogroup1" id="input3" value="3"><br>
+
+  <input type="submit" value="send">
+</form>
+#+end_src 
+** HTML5 form required attribute. Set custom validation message?
+
+http://jsfiddle.net/nteb4/23/
+
