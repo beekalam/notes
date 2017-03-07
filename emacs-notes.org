@@ -288,17 +288,17 @@ If you find that you like using word abbreviation mode,
 
 * screens
 
-  | command           | description                               |
-  |-------------------+-------------------------------------------|
-  | c-x 0             | delete the selected window                |
-  | c-x 1             | delete all windows except selected window |
-  | c-x 2             | split selected window verticially         |
-  | c-x 3             | split selected window horizontally        |
-  | c-x 0             | Move cursor to the next(other) window.    |
-  | c-x }             | Make selected widnow wider                |
-  | c-x {             | Make selected window narrower.            |
-  | c-x ^             | Make selected window larger.              |
-  | M-x shrink-window | Make selected window smaller.             |
+| command           | description                               |
+|-------------------+-------------------------------------------|
+| c-x 0             | delete the selected window                |
+| c-x 1             | delete all windows except selected window |
+| c-x 2             | split selected window verticially         |
+| c-x 3             | split selected window horizontally        |
+| c-x 0             | Move cursor to the next(other) window.    |
+| c-x }             | Make selected widnow wider                |
+| c-x {             | Make selected window narrower.            |
+| c-x ^             | Make selected window larger.              |
+| M-x shrink-window | Make selected window smaller.             |
 
 * buffers
 
