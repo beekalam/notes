@@ -57,8 +57,8 @@ iwconfig
 #+end_src
  
 ** add bridges to tor
- 1) https://bridges.torproject.org/
- 2) add the bridges at the end of  torrc
+1) https://bridges.torproject.org/
+2) add the bridges at the end of  torrc
 
  #+begin_src
  UseBridges 1
