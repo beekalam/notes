@@ -1868,8 +1868,7 @@ header('Content-Type: text/csv');
 header('Content-Disposition: attachment; filename="dishes.csv"');
 #+end_src 
 
-* lumen
-** lumen on apache
+* lumen** lumen on apache
 install a lumen app in */var/www*
 #+begin_src shell
 $ lumen new cms.app
