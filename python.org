@@ -3,7 +3,6 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
 #+STARTUP: overview
 
-
 * core types
 ** lists
 *** remove duplicates from a list
@@ -79,5 +78,117 @@ for root, dirs, files in os.walk("/mydir"):
     for file in files:
         if file.endswith(".txt"):
              print(os.path.join(root, file))
+#+end_src 
+
+* creating meaningful names 
+  
+ 1. The last part of the name is a very broad summary of the thing. In a few
+    cases, this may be all we need; context will supply the rest. We'll suggest
+    some typical broad summary categories later.
+
+ 2. Use a prefix to narrow this name around your application or problem domain.
+
+ 3. If needed, put more narrow and specialized prefixes on this name to clarify
+    how it's distinct from other classes, modules, packages, functions, and
+    other objects. When in doubt about prefixing, remember how domain names
+    work. Think of mail.google.com —the name flows from particular to general.
+    There's no magic about the three levels of naming, but it often happens to
+    work out that way. Format the name depending on how it's used in Python.
+    There are three broad classes of things we'll put names on, which are shown
+    as follows:
+
+ *Classes* : A class has a name that summarizes the objects that are part of the
+class. These names will (often) use CapitalizedCamelCase . The first letter of a
+class name is capitalized to emphasize that it's a class, not an instance of the
+class. A class is often a generic concept, rarely a description of a tangible
+thing.
+
+ *Objects* : A name for an object usually uses snake_case - all lowercase with
+multiple _ characters between words. In Python, this includes variables,
+functions, modules, packages, parameters, attributes of objects, methods of
+classes, and almost everything else.
+
+ *Script and module files* : These are really the OS resources, as seen by
+Python. Therefore, a filename should follow the conventions for Python objects,
+using letters, the _ characters and ending with the .py extension. It's
+technically possible to have pretty wild and free filenames. Filenames that
+don't follow Python rules can be difficult to use as a module or package.
+
+* Doing currency calculations
+When working with currency, we should always use the decimal module. If we try
+to use Python's built-in float values, we'll have problems with rounding and
+truncation of numbers.
+
+#+begin_src python
+
+>>> from decimal import Decimal
+>>> tax_rate = Decimal('7.25')/Decimal(100)
+>>> purchase_amount = Decimal('2.95')
+>>> tax_rate * purchase_amount
+Decimal('0.213875')
+
+#+end_src 
+
+* string
+** slicing string 
+  
+ #+begin_src python
+ >>> title = "Recipe 5: Rewriting, and the Immutable String"
+ >>> colon_position = title.index(':')
+ >>> discard_text, post_colon_text = title[:colon_position], title[colon_position+1:]
+ >>> discard_text
+ 'Recipe 5'
+ >>> post_colon_text
+ ' Rewriting, and the Immutable String'
+ #+end_src 
+
+** slicing using ~partition()~:
+
+ #+begin_src python
+ >>> pre_colon_text, _, post_colon_text = title.partition(':')
+ >>> pre_colon_text
+ 'Recipe 5'
+ >>> post_colon_text
+ ' Rewriting, and the Immutable String'
+ #+end_src 
+
+** updating a string with a replacement
+
+ #+begin_src python
+ >>> title = "Recipe 5: Rewriting, and the Immutable String"
+ >>> post_colon_text = post_colon_text.replace(' ', '_')
+ >>> post_colon_text = post_colon_text.replace(',', '_')
+ >>> post_colon_text
+ '_Rewriting__and_the_Immutable_String'
+ #+end_src 
+
+** Removing extra punctuation marks
+
+ In many cases, there are some additional steps we might follow. We often want to
+ remove leading and trailing _ characters. We can use strip() for this:
+
+ #+begin_src python
+ >>> post_colon_text = post_colon_text.strip('_')
+ #+end_src 
+
+** tell if a string is numeric
+
+ #+begin_src python
+ >>> 'some word'.isnumeric()
+ False
+ >>> '1298'.isnumeric()
+ True
+ #+end_src 
+
+* numbers
+** tell if float number is finite with integral value
+
+#+begin_src python
+>>> 1.5.is_integer()
+False
+>>> 1.0.is_integer()
+True
+>>> 1.4142135623730951.is_integer()
+False
 #+end_src 
 
