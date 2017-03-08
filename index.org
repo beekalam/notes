@@ -1,4 +1,7 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+[[link:https://script.google.com/macros/s/AKfycbyX5ON8AUdWJoIyI106sPWWdwqvrTk3J07ysN6LMbBWOFWe1H4/exec][tasks]]
+
 [[file:emacs-notes.org][emacs-ntoes]]
 
 [[file:links.org][links]]
