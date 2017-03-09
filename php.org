@@ -2000,7 +2000,7 @@ session.auto_start directive in php.ini.
  #+end_src
 
 ** session variables example
-
+   
 #+begin_src php
 <?php
     //start session
@@ -2299,16 +2299,16 @@ what the actual setting of PHP itself is. A manual ob_start() (or more
 then one) will also increase the level.
 
 ** example
-
+   
 #+begin_src php
-    <?php
-    ob_start();
+<?php
+ob_start();
 
-    echo("This is a test\n");
-    echo("More content\n");
+echo("This is a test\n");
+echo("More content\n");
 
-    ob_end_flush();
-    ?>
+ob_end_flush();
+?>
 #+end_src
 
 * request
@@ -2316,7 +2316,7 @@ then one) will also increase the level.
    
 #+begin_src php
 function is_ajax() {
-	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+  return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 }
 #+end_src
 
@@ -2491,7 +2491,7 @@ http-equiv attribute on the <meta> element, like this:
 
 http://live.datatables.net/sadipaji/132/edit
 * disable ajax browser caching
-
+  
 #+begin_src javascript
 //prevents browser caching
 $.ajaxSetup({ cache: false });
@@ -2512,6 +2512,8 @@ SELECT s,md5 from huge_data_table limit 10;
 #+begin_src sql
 SELECT s,md5 FROM huge_data_table limit 10;
 #+end_src
+
+#+RESULTS: my-query
 
 * error handler
 
@@ -2560,7 +2562,6 @@ SELECT s,md5 FROM huge_data_table limit 10;
 
 The zoom behavior can be turned off with no user-scalable=no.
 
-*** Grid system
 *** Container
     
 Bootstrap utilizes a container element to initiate the page and find a
