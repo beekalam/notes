@@ -1477,7 +1477,7 @@ class TestClass {
 }
 #+end_src
 
-** __clone magic method
+** ~__clone~ magic method
 
 To actually copy an object in PHP5, you need to use the built-in _ _ clone()
 method.
@@ -1515,7 +1515,7 @@ class TestClass {
 objects are always passed by reference. This means that when you pass an object
 into a function, the function operates on that same object, and if it is changed
 inside the function, that change is reflected outside.
-** Using Magic __get and __set Methods
+** Using Magic ~__get~ and ~__set~ Methods
 These are called when you access a property that doesn’t exist.
 
 #+begin_src php
@@ -1562,8 +1562,8 @@ $courier->ship(new Parcel());
 echo count($courier); // outputs 3
 #+end_src
 
-** Using __call() and __callStatic()
-When we call a method that isn’t declared in the class, the __call() method is
+** Using ~__call()~ and ~__callStatic()~
+When we call a method that isn’t declared in the class, the ~__call()~ method is
 called instead.
 
 #+begin_src php
@@ -1646,8 +1646,8 @@ class Courier {
 * reflection
 ** retrieving the name of current function?
 
-__FUNCTION__ returns only the name of the function.
-while as __METHOD__ returns the name of the class alongwith the name of the function.
+~__FUNCTION__~ returns only the name of the function.
+while as ~__METHOD__~ returns the name of the class alongwith the name of the function.
 
 #+begin_src php
 class foo
@@ -1728,7 +1728,7 @@ We can set any properties or add any methods we desire to this Exception class.
 ** Setting a Global Exception Handler
 To avoid seeing fatal errors where exceptions have been thrown and our code failed
 to catch them, we can set a default behavior for our application in this situation.
-To do this, we use a function called set_exception_handler() . This accepts a
+To do this, we use a function called =set_exception_handler()= . This accepts a
 callback as its parameter, so we can give the name of a function to use, for example.
 An exception handler will usually present an error screen to the user—much nicer
 than a fatal error message!
@@ -1868,7 +1868,8 @@ header('Content-Type: text/csv');
 header('Content-Disposition: attachment; filename="dishes.csv"');
 #+end_src 
 
-* lumen** lumen on apache
+* lumen
+** lumen on apache
 install a lumen app in */var/www*
 #+begin_src shell
 $ lumen new cms.app
@@ -1990,9 +1991,9 @@ https://www.jetbrains.com/phpstorm/marklets/
 
 * session handling
 ** starting a session
- You may start a session manually with session_start, or you can
- configure PHP to automatically start sessions with the
- session.auto_start directive in php.ini.
+You may start a session manually with session_start, or you can
+configure PHP to automatically start sessions with the
+session.auto_start directive in php.ini.
 
  #+begin_src php
  session_start() !== false or die('could not start session');
@@ -2145,6 +2146,7 @@ https://www.jetbrains.com/phpstorm/marklets/
 #+end_src
 
 ** ending a session
+   
 use =session_destroy()= function.  
 
 Keep in mind that ending a session
@@ -2166,6 +2168,7 @@ echo "Now the value of username is blank: ".$_SESSION['username'];
 #+end_src
 
 ** Exposed Session Data 
+   
  #+begin_src php
  #!/usr/bin/env php
  <?php
@@ -2198,9 +2201,12 @@ echo "Now the value of username is blank: ".$_SESSION['username'];
  #+end_src
 
 ** making sure session data is not lost after redirect
+
 call =exit()= after redirect.
 use =session_write_close()=
+
 ** check for session status
+   
 #+begin_src php
 function is_session_started()
 {
@@ -2221,6 +2227,7 @@ if ( is_session_started() === FALSE ) session_start();
 
 * SPL
 ** Available objects in SPL
+   
 #+begin_src php
 <?php
 foreach(spl_classes() as  $k=>$v){
@@ -2260,6 +2267,7 @@ set_include_path( "/home/mary/php_lib" );
  
 * output buffering
 ** intro
+   
 The idea of output buffering is to store all the content that has to
 be outputted in a memory buffer before outputting the whole
 buffer. This has the following advantages: 
@@ -2274,6 +2282,7 @@ system crashed and they will close the browser or do something else
 that would not be quite what we want.
 
 ** detect if output buffering is turned on?
+   
 #+begin_src php
 if(ob_get_level() > 0){
    //there are some buffers active.
@@ -2304,6 +2313,7 @@ then one) will also increase the level.
 
 * request
 ** check if request is ajax?
+   
 #+begin_src php
 function is_ajax() {
 	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
@@ -2312,6 +2322,7 @@ function is_ajax() {
 
 * page generation time
 ** solution1
+
 #+begin_src php
 <?php
 $time = microtime();
@@ -2331,6 +2342,7 @@ echo 'Page generated in '.$total_time.' seconds.';
 #+end_src
 
 ** solution2
+   
 #+begin_src php
 
 function microtime_float()
@@ -2351,7 +2363,8 @@ echo "Did nothing in $time seconds\n";
 #+end_src
 
 ** solution3
-microtime() and REQUEST_TIME_FLOAT (as of PHP 5.4.0)
+
+=microtime()= and =REQUEST_TIME_FLOAT= (as of PHP 5.4.0)
 
 #+begin_src php
 // Randomize sleeping time
@@ -2366,16 +2379,19 @@ echo "Did nothing in $time seconds\n";
 
 * autoloading
 ** intro
+   
 Autoloading is when we tell PHP where to look for our class files when it needs
 a class declaration that it’s yet to see.
 
 * security
 ** Cross-site scripting
+   
 For cross-site scripting—commonly abbreviated as XSS—the attack vector targets
 an area where a user-supplied variable is included in application output, but not
 properly escaped. This allows an attacker to inject a client-side script of their choice
 as part of that variable’s value.
 Here’s an example of code vulnerable to this type of attack:
+
 #+begin_src html
 <form action=”<?php echo $_SERVER['PHP_SELF']; ?>”>
 <input type=”submit” value=”Submit” />
@@ -2386,6 +2402,7 @@ Here’s an example of code vulnerable to this type of attack:
 Compared to the attack itself, the fix is surprisingly simple: escape output from PHP
 code to prevent the attacker from being able to inject their code in the first place.
 This looks like the following:
+
 #+begin_src html
 <form action=”<?php echo htmlentities($_SERVER['PHP_SELF']); ?>”>
   <input type=”submit” value=”Submit” />
@@ -2393,6 +2410,7 @@ This looks like the following:
 #+end_src 
 
 ** Cross-site Request Forgery(CSRF)
+   
 a Cross-site Request Forgery, often abbreviated to CSRF.
 The purpose of this type of attack is to have a victim send an HTTP request to a
 specific website, taking advantage of the victim’s established identity with that
@@ -2437,7 +2455,7 @@ if ($_POST && $_POST['token'] == $_SESSION['token']) {
 #+end_src 
 
 * apache =.htaccess= sample configuration
-
+  
 #+begin_src
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -2449,6 +2467,7 @@ RewriteRule .* index.php [L,QSA]
 The script tells Apache that whenever an HTTP request arrives and if
 no physical file (!-f) or path (!-d) or symbolic link (!-l) can be
 found, it should transfer control to index.php
+
 * turn off DNS prefetching from individual documents
 
 You can also turn off DNS Prefetching from individual documents, using the
@@ -2543,6 +2562,7 @@ The zoom behavior can be turned off with no user-scalable=no.
 
 *** Grid system
 *** Container
+    
 Bootstrap utilizes a container element to initiate the page and find a
 basis for the grid.
 *Containers can be used multiple times on the page, but should not be nested.*
@@ -2564,6 +2584,7 @@ uses the full width of the device:
 #+end_src
 
 *** Device Specific Definitions
+    
 #+begin_src
 “xs” <= 544 px
 “sm” <= 768 px
@@ -2592,6 +2613,7 @@ while they are pulled to the left with “pull”.
 
 ** typography
 *** Orientation
+    
 The alignment of text is up to your creative nature.
 
 - text-left: Left aligned
@@ -2607,6 +2629,7 @@ In addition, there are alignment variants that are only valid for certain viewpo
 - text-xs-right: Right aligned when the viewport “xs” is used.
   
 *** transformation
+    
 Transformations convert text from lowercase to uppercase and vice versa.
 
  - text-lowercase: Converts to lowercase
@@ -2618,6 +2641,7 @@ Transformations convert text from lowercase to uppercase and vice versa.
 
 *** lists
 **** =.list-unstyled=
+
 If the default style used and there are icons not needed, they can be removed by the
 class =.list-unstyled=.
 This will affect only the immediate members not the deeper nesting
@@ -2642,8 +2666,8 @@ autocomplete prevents form data from being cached in older browsers.
 <input type="text" name="foo" autocomplete="off" />
 #+end_src 
 
-
 ** How to use the “required” attribute with a “radio” input field
+
 You just need to set the required-attribute for one input of the radiogroup, but you can set it for all.
 
 For example:
@@ -2662,6 +2686,7 @@ For example:
   <input type="submit" value="send">
 </form>
 #+end_src 
+
 ** HTML5 form required attribute. Set custom validation message?
 
 http://jsfiddle.net/nteb4/23/
