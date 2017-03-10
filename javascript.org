@@ -5255,6 +5255,440 @@ $('.recover-form').on('submit', function (e) {
 });
 #+end_src 
 
+** using =Nodejs= to install =JQuery=
+#+begin_src shell
+$ npm install jquery
+#+end_src 
+
+** loading =JQuery= with  fallback
+
+Try to implement a fallback on your locally hosted library of the same version.
+If CDN links become unavailable (and they are not 100 percent infallible), then
+the local version will kick in automatically, until the CDN link becomes
+available again:
+
+#+begin_src 
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.11.1.min.js"><\/script>')</script>
+#+end_src 
+
+** Replacing or modifying existing behaviors
+#+begin_src javascript 
+(function($){
+  // store original reference to the method
+  var _old = $.fn.method;
+  $.fn.method = function(arg1,arg2){
+    if ( ... condition ... ) {
+      return ....
+    } 
+    else { // do the default
+      return _old.apply(this,arguments);
+    }
+  };
+})(jQuery);
+#+end_src 
+
+** validating forms with =JQuery=
+
+#+begin_src javascript
+$(document).ready(function () {
+   var emailField = $("#email");
+    if (emailField.is("input") && emailField.prop("type") === "email") {
+  }
+
+emailField.on("change", function(e) {
+  emailField[0].checkValidity();
+    if (!e.target.validity.valid) {
+      $(this).removeClass("success").addClass("error")
+    } else {
+      $(this).removeClass("error").addClass("success")
+    }
+});
+
+emailField.on("invalid", function(e) {
+  e.target.setCustomValidity("");
+  if (!e.target.validity.valid) {
+  e.target.setCustomValidity("I need to see an email address 
+  here, not what you've typed!");
+}
+else {
+  e.target.setCustomValidity("");
+}
+});
+
+});
+#+end_src 
+
+** selecting elements
+
+#+begin_src javascript
+var content = $("#content");             //Select the content div
+var span = $(".span-element");           //Select the span element
+var listelements = $("li");             //Select all the list elements
+
+// select an anchor element that has a rel attribute of nofollow
+$(function(){
+var nofollow = $('a[rel="nofollow"]');
+});
+#+end_src 
+
+** Finding and selecting sibling elements
+
+#+begin_src html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Finding and selecting sibling elements</title>
+    <script src="jquery.min.js"></script>
+    <script>
+        $(function(){
+            var element1 = $('#content .top .top-left'); //Select the top left division element
+            var element2 = $('.parent').find('a'); //Select the anchor element
+            var element3 = $('.parent').find('.grandchild'); //Select the grandchild element
+        });
+    </script>
+</head>
+<body>
+<div class="division-container">Some text <span>within</span> a div <span>which</span> has a many <span>span</span> elements.</div>
+<div id="content">
+    <div class="top">
+        <div class="top-left">Left</div>
+        <div class="top-right">Right</div>
+    </div>
+</div>
+<ul class="info-list">
+    <li>List Item 1</li>
+    <li>List Item 2</li>
+    <li>List Item 3</li>
+</ul>
+<ul class="second-info-list">
+    <li>Second List Item 1</li>
+    <li>Second List Item 2</li>
+    <li>Second List Item 3</li>
+</ul>
+<div class="parent">
+    <div class="child">
+        <div class="grandchild">
+            <a href="#">A Link</a>
+        </div>
+    </div>
+</div>
+</body>
+</html
+#+end_src 
+
+** creating DOM elements 
+
+To dynamically add DOM elements to any part of the document, we can use the append() ,
+addAfter() , after() , addBefore() , and before() functions of jQuery. The functions
+after() and insertAfter() essentially perform the same action; the difference lies in
+the order in which the expressions are specified. This is the same for insertBefore() and
+before() .
+
+The following JavaScript code will add two buttons to the DOM after the #myList
+element utilizes jQuery's after() and insertAfter() functions.
+
+#+begin_src html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Creating DOM elements</title>
+    <script src="jquery.min.js"></script>
+    <script>
+        $(function(){
+            $('#myList').after("<button>Button 1</button>");
+            $('<button>Button 2</button>').insertAfter("#myList");
+        });
+    </script>
+</head>
+<body>
+<div id="container">
+    <ul id="myList">
+        <li>List Item 1</li>
+        <li>List Item 2</li>
+        <li>List Item 3</li>
+    </ul>
+</div>
+</body>
+</html>
+
+#+end_src 
+
+** add new items  to list
+
+#+begin_src html
+$(function(){
+   $('#myList').append("<li>List Item 4</li>");
+});
+#+end_src 
+
+** Inserting content into an element
+
+#+begin_src html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Insert content into an element</title>
+    <script src="jquery.min.js"></script>
+    <script>
+        $(function(){
+            //Remove the container elements current HTML
+            $('#container').html("<p>I have replaced the all the HTML within the #container element</p>");
+            //Add some more HTML to the beginning of the container element
+            $('#container').prepend("<p>Another paragraph that has been prepended.</p>");
+            //Add a button to the end of the container element after all other HTML content
+            $('#container').append("<button>A Button Appended</button>");
+            //Add some text into the text area element
+            $('#myTextarea').val("Added some text using .text()");
+        });
+    </script>
+</head>
+<body>
+<div id="container">
+    <p>Here is some current HTML content</p>
+</div>
+<textarea id="myTextarea"></textarea>
+</body>
+</html>
+
+#+end_src 
+
+** Modifying the DOM element properties
+
+#+begin_src javascript
+$(function(){
+  //Set the checkbox to be checked
+  $('input[type="checkbox"]').prop('checked', true);
+  //Disable any text inputs
+  $('input[type="text"]').prop('disabled', true);
+  //Change the value of any text inputs
+  $('input[type="text"]').val("This is a new Value!");
+});
+#+end_src
+
+** Adding and removing CSS classes to dynamically change their style  
+
+#+begin_src javascript
+//Remove all classes current on the #sometext paragraph
+$('#sometext').removeClass();
+//Add the .green class to the #sometext paragraph
+$('#sometext').addClass('green');
+#+end_src 
+
+** Enabling and disabling buttons by changing their properties
+
+#+begin_src javascript 
+$('#search-btn').prop("disabled", false);
+$('#search-btn').prop("disabled", true);
+#+end_src 
+
+** Updating an image within a page 
+
+#+begin_src javascript 
+$('#square').prop("src", "images/red.png");
+#+end_src
+
+** Populating list elements 
+
+#+begin_src html
+<html>
+<head>
+    <title>Populate a list element</title>
+    <script src="jquery.min.js"></script>
+    <script>
+        var names = [
+            {
+                id: 1,
+                firstname: 'Leon',
+                lastname: 'Revill'
+            },
+            {
+                id: 2,
+                firstname: 'Allyce',
+                lastname: 'Wolverson'
+            },
+            {
+                id: 3,
+                firstname: 'Harry',
+                lastname: 'Round'
+            },
+            {
+                id: 4,
+                firstname: 'Chris',
+                lastname: 'Wilshaw'
+            }
+        ];
+        $(function(){
+            $.each(names, function(index, obj){
+                $('#namelist').append("<li>#" + obj.id + " " + obj.firstname + " " + obj.lastname + "</li>");
+            });
+        });
+    </script>
+</head>
+<body>
+<ul id="namelist"></ul>
+</body>
+</html>
+#+end_src 
+
+** pagination example
+
+#+begin_src html
+<html>
+<head>
+    <script src="jquery.min.js"></script>
+    <script>
+        var animals = [
+            {
+                id: 1,
+                name: 'Dog',
+                type: 'Mammal'
+            },
+            {
+                id: 2,
+                name: 'Cat',
+                type: 'Mammal'
+            },
+            {
+                id: 3,
+                name: 'Goat',
+                type: 'Mammal'
+            },
+            {
+                id: 4,
+                name: 'Lizard',
+                type: 'Reptile'
+            },
+            {
+                id: 5,
+                name: 'Frog',
+                type: 'Amphibian'
+            },
+            {
+                id: 6,
+                name: 'Spider',
+                type: 'Arachnid'
+            },
+            {
+                id: 7,
+                name: 'Crocodile',
+                type: 'Reptile'
+            },
+            {
+                id: 8,
+                name: 'Tortoise',
+                type: 'Reptile'
+            },{
+                id: 9,
+                name: 'Barracuda',
+                type: 'Fish'
+            },
+            {
+                id: 10,
+                name: 'Sheep',
+                type: 'Mammal'
+            },
+            {
+                id: 11,
+                name: 'Lion',
+                type: 'Mammal'
+            },
+            {
+                id: 12,
+                name: 'Seal',
+                type: 'Mammal'
+            }
+        ];
+        var pageSize = 4;
+        var currentPage = 1;
+        var pagedResults = [];
+        var totalResults = animals.length;
+        $(function(){
+            //Populate the list on load
+            updateList();
+            $('.next').click(function(){
+                //Only increase the current page if there are enough results
+                if ((currentPage * pageSize) <= totalResults) currentPage++;
+                updateList();
+            });
+            $('.previous').click(function(){
+                //Only decrease the current page if it is currently greater than 1
+                if (currentPage > 1) currentPage--;
+                updateList();
+            });
+        });
+        function updateList() {
+            //Grab the required section of results from the animals list
+            var end = (currentPage * pageSize);
+            var start = (end - pageSize);
+            pagedResults = animals.slice(start, end);
+            //Empty the list element before re-population
+            $('#list').empty();
+            //Disable the previous button if we are on the first page
+            if (currentPage <= 1) {
+                $('.previous').prop("disabled", true);
+            }
+            //Enable the previous button if we are not on the first page
+            else {
+                $('.previous').prop("disabled", false);
+            }
+            //Disable the next button if there are no more pages
+            if ((currentPage * pageSize) >= totalResults) {
+                $('.next').prop("disabled", true);
+            }
+            //Enable the next button if there are results left to page
+            else {
+                $('.next').prop("disabled", false);
+            }
+            //Loop through the pages results and add them to the list
+            $.each(pagedResults, function(index, obj){
+                $('#list').append("<li><strong>" + obj.name + "</strong> (" + obj.type + ")</li>");
+            });
+        }
+    </script>
+</head>
+<body>
+<ul id="list"></ul>
+<button class="previous"><< Previous</button>
+<button class="next">Next >></button>
+</body>
+</html>
+
+#+end_src 
+
+** detecting button clicks
+   
+#+begin_src javascript
+$(function() {
+
+  $('.button1').click(function(){
+    alert("Button 1 clicked");
+  });
+
+  $('body').on("click", ".button2", function(){
+    alert("Button 2 clicked");
+  });
+
+});
+#+end_src 
+
+** detecting element clicks 
+
+* =HTML5= validation
+
+#+begin_src html
+<input type="email" name="email" id="email" required= 
+  "required">
+
+ <input id="name" name="username" value="" required="required" 
+  pattern="[A-Za-z]+\s[A-Za-z]+" title="firstnamelastname">
+
+<input type="email" name="email" id="email" 
+  required="required" pattern="[^ @]*@[^ @]*\.[a-zA-Z]{2,}" 
+  title="test@test.com">
+#+end_src  
+
 * URL
 ** decode/encode URL
    
