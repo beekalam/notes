@@ -57,6 +57,14 @@ $ vim /etc/NetworkManager.conf
 # change managed=false to managed=true
 #+end_src 
 
+** permit =Root= login for SSH
+
+#+begin_src shell 
+$ vim /etc/ssh/sshd_config
+#  change line PermitRootLogin without-password
+#  PermitRootLogin yes
+#+end_src 
+
 * google search operators
 |            |                                                                                                |
 |------------+------------------------------------------------------------------------------------------------|
@@ -144,3 +152,4 @@ $ arping [ip address]
 #+end_src 
 
 
+* 

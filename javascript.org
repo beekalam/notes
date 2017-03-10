@@ -5675,6 +5675,35 @@ $(function() {
 
 ** detecting element clicks 
 
+#+begin_src html
+<html>
+<head>
+    <title>Chapter 2 :: jQuery Events</title>
+    <script src="jquery.min.js"></script>
+    <script>
+        $(function() {
+            $('a').click(function(){
+                alert("You have clicked a link!");
+            });
+            $('body').on('click', 'input[type="text"]', function(){
+                alert("You have clicked a text input!");
+            });
+            $('.clickme').click(function(){
+                alert("You have clicked a division element");
+            });
+        });
+    </script>
+</head>
+<body>
+<a href="#">Link 1</a>
+<input type="text" name="input1" />
+<div class="clickme">Click Me!</div>
+</body>
+</html>
+
+#+end_src
+
+
 * =HTML5= validation
 
 #+begin_src html

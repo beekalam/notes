@@ -1993,6 +1993,19 @@ http://stackoverflow.com/questions/8795702/how-to-convert-uxxxx-unicode-to-utf-8
  $ sudo airmon-ng stop mon0
  #+end_src 
 
+*** check for interfering processes
+
+#+begin_src shell 
+$ airmon-ng check        # check for interfering processes
+$ airmon-ng check kill   # kill them if necessary
+#+end_src 
+
+*** capturing packets
+
+#+begin_src shell 
+$ airodump-ng mon0 --channel 6
+#+end_src 
+
 *** viewing management,control and data frames
  usig wireshark enter ~wlan.fc.type==0~ to view management frames.
  enter ~wlan.fc.type==1~ to view control frames.
@@ -2090,6 +2103,34 @@ $ airdecap-ng –p abdefg WPACrackingDemo-02.cap –e "Wireless Lab"
 
 #+begin_src shell
 $ iwconfig wlan0 <ESSID>  # ESSID of the target
+#+end_src 
+
+** viewing available wireless interfaces
+
+#+begin_src shell
+$ iwconfig
+#+end_src 
+
+** scan for Access Points
+
+#+begin_src shell 
+$ iwcofig wlan0 scan
+#+end_src 
+
+* capturing traffic
+** concepts
+*** ARP
+** viewing ARP cache
+
+#+begin_src shell 
+$ arp -a
+#+end_src 
+
+** ARP cache poisoning
+
+#+begin_src shell 
+# enable IP forwarding
+$ echo 1 > /proc/sys/net/ipv4/ip_forward
 #+end_src 
 
 * limit CPU usage of a process 
