@@ -384,6 +384,7 @@ sudo apt-get install libapache2-mod-php7.0
 $ wget --spider <link>
 $ curl --head <link>
 #+end_src 
+
 ** wget download with proxy
 
 Via =~/.wgetrc= file:
@@ -837,6 +838,7 @@ $ dpkg -S file                           # find what package a file belongs to
 
 * git
 ** add a remote
+
 #+begin_src shell
 git remote add origin <repo-url>
 #+end_src
@@ -931,6 +933,7 @@ egal;;the same, all the same
 $ sudo fdisk -l        #shows all partitions
 $ sudo fdisk -l /dev/sda
 #+end_src 
+
 ** make partitions
 entering command mode in fdisk
 #+begin_src shell 
@@ -943,6 +946,7 @@ then type n for new partition.
 #+begin_src shell
 mkfs -v -t ext4 /dev/<xxx>
 #+end_src 
+
 ** make a swap partition
 #+begin_src shell
 mkswap /dev/<yyy>
@@ -1105,15 +1109,22 @@ and noting the output. The authoritative reference
 covering all platforms is in the shlib-versions file in the root of
 the Glibc source tree.
 *** Linker search path
-ld --verbose | grep SEARCH
+    
+#+begin_src shell
+$ ld --verbose | grep SEARCH
+#+end_src 
 will illustrate the current search paths and their order.
 
 *** To find out which standard linker gcc will use, run: 
-gcc -print-prog-name=l
+
+#+begin_src shell
+$ gcc -print-prog-name=l
+#+end_src
 
 * Text processing
 ** cut
 *** example inputs
+
 #+begin_src shell 
 > cat file.txt
 unix or linux os
@@ -1159,6 +1170,7 @@ good os
 #+end_src
 
 *** Write a unix/linux cut command to print the fields using the delimiter?
+    
 #+begin_src shell 
 cut -d' ' -f2 file.txt
 or
@@ -1167,6 +1179,7 @@ linux
 #+end_src
 
 *** prints the second and third field in each line.
+
 #+begin_src shell 
 cut -d' ' -f2,3 file.txt
 or linux
@@ -1177,6 +1190,7 @@ linux good
 *** Write a unix/linux cut command to display range of fields?
 
 You can print a range of fields by specifying the start and end position.
+
 #+begin_src shell 
 cut -d' ' -f1-3 file.txt
 #+end_src
@@ -1205,6 +1219,7 @@ ps -o pid,comm,nice -p 594
 #+end_src
  
 ** Setting priority on new processes
+
 #+begin_src 
 nice -n 10 apt-get upgrade 
 #+end_src
@@ -1215,6 +1230,7 @@ useful for times when you want to upgrade apps but don’t want the
 extra process burden at the given time.
 
 ** Setting Priority on Existing Processes
+
 #+begin_src
 renice 10 -p 21827
 #+end_src
