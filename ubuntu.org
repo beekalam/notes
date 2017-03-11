@@ -1807,20 +1807,17 @@ $ pg_dump -C dbname | bzip2 | ssh  remoteuser@remotehost "bunzip2 | psql dbname"
 $ pg_dump -C dbname | ssh -C remoteuser@remotehost "psql dbname"
 #+end_src
 
-** getting tablenames in a particular database
+** active connections to the database
+
 #+begin_src sql
-SELECT tablename FROM pg_tables WHERE tablename NOT LIKE ‘pg%’ AND tablename NOT LIKE ‘sql%’.
+select * from pg_stat_activity;
 #+end_src 
 
-** generating random timestamps 
+** rename postgresql database
+   
 #+begin_src sql
-select timestamp 'epoch' + (
-          extract('epoch' from timestamp '2014-10-01 10:00:00')
-        + random() * (
-                     extract('epoch' from timestamp '2014-20-01 20:00:00')
-                   - extract('epoch' from timestamp '2014-10-01 10:00:00')
-       )) * interval '1 second'
-#+end_src       
+alter <db_name> rename to <new_db_name>;
+#+end_src 
 
 * phppgadmin
 
