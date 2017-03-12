@@ -101,7 +101,7 @@ $ sudo nethogs <NIC>
 #+end_src 
 
 ** static route
-
+   
 To set up a static route on Ubuntu so that it automatically gets
 created every time the PC starts, you need to modify the
 =/etc/network/interfaces= file.
@@ -220,6 +220,7 @@ Sometimes you might want to switch out the primary group that a user is assigned
 #+begin_src 
 usermod -g <groupname> username
 #+end_src 
+
 *** View a User’s Group Assignments
 
 If you’re trying to figure out a permissions issue, you’ll want to use the id command to see what groups the user is assigned to:
@@ -754,6 +755,7 @@ Check the system domain name with:
 #+end_src 
 
 ** DHCP
+
 #+begin_src shell 
 # dhcpcd -n eth0           # Trigger a renew (does not always work)
 # dhcpcd -k eth0           # release and shutdown
@@ -770,10 +772,11 @@ not use absolute path when creating an archive, you probably want to
 unpack it somewhere else. Some typical commands are:
 
 *** Create
- Only include one (or two) directories from a tree, but keep the
- relative structure. For example archive /usr/local/etc and
- /usr/local/www and the first directory in the archive should be
- local/.
+Only include one (or two) directories from a tree, but keep the
+relative structure. For example archive /usr/local/etc and
+/usr/local/www and the first directory in the archive should be
+local/.
+
  #+begin_src shell
  # tar -C /usr -czf local.tgz local/etc local/www
  # tar -C /usr -xzf local.tgz      # To untar the local dir into /usr
@@ -792,6 +795,7 @@ unpack it somewhere else. Some typical commands are:
  #+end_src
  
 *** More advanced
+
 #+begin_src shell
 # tar c dir/ | gzip | ssh user@remote 'dd of=dir.tgz' # arch dir/ and store remotely.
 # tar cvf - `find . -print` > backup.tar                 # arch the current directory.
@@ -800,7 +804,6 @@ unpack it somewhere else. Some typical commands are:
 # tar -czf home.tgz --exclude '*.o' --exclude 'tmp/' home/
 #+end_src
  
-
 ** Miscellaneous
 
 #+begin_src shell
@@ -831,7 +834,9 @@ $ cd -                                            # cd to previous ($OLDPWD) dir
 #+end_src
  
 ** Add/Remove software
+
 Debian/Ubuntu/Mint
+
 #+begin_src shell
 $ apt-get update                     # First update the package lists
 $ apt-get install emacs          # Install the package emacs
@@ -854,12 +859,14 @@ $ git clone --depth=1 <remote_repo_url>
 #+end_src
 
 ** ignore files in a directory
+
 #+begin_src 
 # ignores all files in tmp directory
 tmp/*
 #+end_src
 
 ** add a remote to current repository 
+
 #+begin_src shell
 $ git remote add origin http://172.16.8.18/mansouri/xbs.git
 #+end_src 
@@ -932,6 +939,7 @@ egal;;the same, all the same
 * disk
 ** partition a disk
 ** list partitions
+
 #+begin_src shell 
 $ sudo fdisk -l        #shows all partitions
 $ sudo fdisk -l /dev/sda
@@ -939,6 +947,7 @@ $ sudo fdisk -l /dev/sda
 
 ** make partitions
 entering command mode in fdisk
+
 #+begin_src shell 
 $ sudo fdisk /dev/sda
 #+end_src 
@@ -946,15 +955,18 @@ $ sudo fdisk /dev/sda
 then type n for new partition.
 
 ** format a partition
+
 #+begin_src shell
 mkfs -v -t ext4 /dev/<xxx>
 #+end_src 
 
 ** make a swap partition
+
 #+begin_src shell
 mkswap /dev/<yyy>
 #+end_src 
 http://www.tldp.org/HOWTO/Partition/fdisk_partitioning.html
+
 ** auto mount a partition
  
 Once a file system is actually mounted , an entry for it is made
@@ -967,12 +979,14 @@ separated by a space or tab.
 ** find UUID of a filesystem
 
 Look up data on /dev/sda1:
+
 #+begin_src shell
 topher@crucible:~$ sudo blkid /dev/sda1
 /dev/sda1: UUID="727cac18-044b-4504-87f1-a5aefa774bda" TYPE="ext3"
 #+end_src 
 
 Show UUID data for all partitions:
+
 #+begin_src shell 
 topher@crucible:~$ sudo blkid
 /dev/sda1: UUID="727cac18-044b-4504-87f1-a5aefa774bda" TYPE="ext3"
@@ -1319,6 +1333,7 @@ echo "scale=2; 100/3" | bc
 #+end_src
 
 * make a ramdisk?
+
 The tmpfs filesystem is a RAMDISK.
 
 #+begin_src shell
@@ -1387,12 +1402,14 @@ curl -i -X OPTIONS http://example.org/path
 #+end_src 
 
 ** set a header
+
 #+begin_src shell
 curl --header "X-MyHeader: 123" www.google.com
 echo "0217"$(date +%Y-%m-%d-%H-%M-%S-%N) | tr -d "-" | php -r 'echo substr(file("php://stdin")[0],0,20);'
 #+end_src 
 
 ** post request
+
 #+begin_src shell
 #With fields:
 
@@ -1434,6 +1451,7 @@ $ sudo vim /etc/default/grub
 
  and set the *GRUB_TIMEOUT*. 
  -1 will disable it. And then run
+
 #+begin_src shell 
 $ sudo update-grub
 #+end_src 
@@ -1441,9 +1459,9 @@ $ sudo update-grub
 ** Repair grub
 
 So you broke grub? Boot from a live cd, [find your linux partition
- under /dev and use fdisk to find the linux partion] mount the linux
- partition, add /proc and /dev and use grub-install /dev/xyz. Suppose
- linux lies on /dev/sda4:
+under /dev and use fdisk to find the linux partion] mount the linux
+partition, add /proc and /dev and use grub-install /dev/xyz. Suppose
+linux lies on /dev/sda4:
 
  #+begin_src shell
  # mount /dev/sda6 /mnt                   # mount the linux partition on /mnt
@@ -1468,6 +1486,7 @@ $ sudo apt-get purge <package_name>
 * deleting broken packages?
 
 use synaptic package manager.
+
 #+begin_src shell 
 $ sudo dpkg -P package_name			# -P for purge
 #+end_src 
@@ -1517,6 +1536,7 @@ $ cat some.json | python -m json.tool
 
 * installation
 ** other useful php modules
+
 #+begin_src shell 
  $ sudo apt-get install php-soap
  $ sudo apt-get install php-ssh2
@@ -1551,6 +1571,7 @@ $ dpkg -S libgthread-2.0.so.0
 
 ** apt-cacher-ng
 *** installing apt-cacher-ng
+
 add *00aptproxy* to */etc/apt/apt.conf.d/* and add the following lines
 
 #+begin_src
@@ -1562,6 +1583,7 @@ Acquire::http::Proxy "http://127.0.0.1:3142";
  deb files in *_import* and and goto *localhost:3142* and hit import.
 
 *** precaching for ubuntu xenial
+
 add =PrecacheFor: uburep/dists/xenial/*/binary-amd64/Packages*= to the
 PreCache section located at =/etc/apt-cacher-ng/acng.conf=.
 
@@ -1576,6 +1598,7 @@ $ sudo apt-cacher-ng -c /etc/apt-cacher-ng/ Port=3142 ForeGround=1 VerboseLog=1
 #+end_src
 
 ** installing postgresql in ubuntu 16.0
+
 #+begin_src shell 
 $ sudo apt-get install postgresql postgresql-contrib
 #+end_src 
@@ -1616,11 +1639,13 @@ psql
 ** php modules for connecting to postgresql
    
 connecting to *postgresql* with *PDO*
+
 #+begin_src shell 
 $ sudo apt-get install php-pgsql
 #+end_src 
 
 Or if the package is installed, you need to enable the module in php.ini
+
 #+begin_src shell 
 extension=php_pgsql.dll (windows)
 extension=php_pgsql.so (linux)
@@ -1629,6 +1654,7 @@ extension=php_pgsql.so (linux)
 ** phpstorm bad gateway in phpstorm
 
 try installing
+
 #+begin_src shell 
 $ sudo apt-get install php-cgi
 #+end_src 
@@ -1673,6 +1699,7 @@ $ sudo apt-get install php-cgi
 ** nvidia binary driver screen flickering
 
 Install Compiz Config, from a terminal, type:
+
 #+begin_src shell 
 $ sudo apt-get install compizconfig-settings-manager
 #+end_src 
@@ -1785,18 +1812,20 @@ ALTER SEQUENCE tablename_colname_seq OWNED BY tablename.colname;
 
 ** Accessing a Postgres Prompt Without Switching Accounts
 ** backup with pg_dump
+
 #+begin_src shell
 /usr/local/bin/pg_dump shahkar -U pgsql > /root/farahoosh/shahkar-db-backup/`date +%Y-%m-%d-%H:%M:%S`.sql
 #+end_src 
+
 You can also run the command you'd like with the postgres account
 directly with sudo.
 
 #+begin_src shell
 $ sudo -u postgres psql
-
 #+end_src
 
 ** create UUID without extension
+   
 #+begin_src sql
 SELECT uuid_in(md5(random()::text || now()::text)::cstring);
 #+end_src
@@ -1848,6 +1877,14 @@ postgres=# SELECT version();
 #+end_src 
 
 ** restoring database with =psql=
+
+#+begin_src shell 
+$ createdb dbname
+$ cat filename* | psql dbname
+#+end_src 
+
+https://www.postgresql.org/docs/8.1/static/backup.html
+
 ** connect to =postgresql= database in local host without password
 
 #+begin_src shell 
@@ -1902,11 +1939,13 @@ systemctl restart apache2
 
 * working with Base64
 ** Decode a string
+
 #+begin_src shell 
 % echo 'Q29uZ3JhdHVsYXRpb25zIQ==' | openssl base64 -d
 #+end_src 
 
 ** Encode the entire contents of a file
+   
 #+begin_src shell 
 % openssl base64 -e -in input.txt -out input.b64
 #+end_src 
@@ -1914,12 +1953,14 @@ systemctl restart apache2
 This puts the Base 64-encoded output in a file called input.b64. 
 
 ** Encode a simple string
+
 #+begin_src shell 
 % echo -n '&a=1&b=2&c=3' | openssl base64 -e
 #+end_src 
 
 * calculating hashes
 ** md5
+
 #+begin_src shell
 % echo -n "my data" | openssl md5
 #+end_src
@@ -1952,6 +1993,7 @@ wget "http://localhost:3142/acng-report.html?abortOnErrors=aOe&calcSize=cs&doDow
 
 * unicode
 ** deocde a utf escaped string
+
 use =echo -en= 
 #+begin_src shell
 $ echo -en "\u0622\u0642\u0627\u06cc"
@@ -2047,13 +2089,14 @@ $ airodump-ng mon0 --channel 6
 #+end_src 
 
 *** viewing management,control and data frames
- usig wireshark enter ~wlan.fc.type==0~ to view management frames.
- enter ~wlan.fc.type==1~ to view control frames.
- enter ~wlan.fc.type==2~ to view data frames.
 
- To additionaly select a *subtype* use ~wlan.fc.subtype~ filter.
- For example to view all the Beacon frame among Manangement Frames,
- use ~(wlan.fc.type == 0) && (wlan.fc.subtype == 8)~.
+usig wireshark enter ~wlan.fc.type==0~ to view management frames.
+enter ~wlan.fc.type==1~ to view control frames.
+enter ~wlan.fc.type==2~ to view data frames.
+
+To additionaly select a *subtype* use ~wlan.fc.subtype~ filter.
+For example to view all the Beacon frame among Manangement Frames,
+use ~(wlan.fc.type == 0) && (wlan.fc.subtype == 8)~.
 
 *** sniffing data packets of a network.
 
@@ -2070,6 +2113,7 @@ $ airodump-ng mon0 --channel 6
 
 *** bypassing authentication
 **** finding hidden SSID
+
  *finding <mac> of hidden SSID*
  find the <mac> of the target with hidden SSID.We will wait for a
  legitimate client to connect to the access point with the hidden 
@@ -2206,6 +2250,7 @@ These designations allow the administrator to use one server to host
 multiple domains or sites off of a single interface or IP by using a
 matching mechanism.
 ** =RewriteRule=
+   
 A RewriteRule consists of three arguments separated by spaces. The arguments are
  - Pattern: which incoming URLs should be affected by the rule;
  - Substitution: where should the matching requests be sent;
@@ -2232,6 +2277,7 @@ The Substitution can also contain back-references to parts of the incoming URL-p
 ~RewriteRule "^/product/(.*)/view$" "/var/web/productdb/$1"~
 
 ** =RewriteCondition=
+   
 One or more RewriteCond directives can be used to restrict the types of requests
 that will be subject to the following RewriteRule.
 
@@ -2270,6 +2316,7 @@ RewriteRule "^/(.*)" "/sites/%1/$1"
 If the request was for http://example.com/foo/bar, then %1 would contain example.com and $1 would contain foo/bar. 
 
 ** =mod_access=
+
 #+begin_src
 <Directory "/usr/local/apache2/htdocs">
     AllowOverride None
@@ -2303,6 +2350,7 @@ Deny from bad_ip_address_here
 #+end_src 
 
 ** =.htaccess= for development server
+
 #+begin_src
 Order Deny,Allow
 Deny from all
@@ -2320,6 +2368,7 @@ RewriteRule \.(js|css|jpg|gif|png|bmp|mp4|3gp|m4a|m4r|aac|mp3|ogg|wave)$ - [F]
 #+end_src 
 
 ** Starting, Stopping, and Restarting Apache
+
 apachectl start
 
 This will start the server if it isn't already running. If it is running, this

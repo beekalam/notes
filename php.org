@@ -1783,11 +1783,13 @@ Create a “factory”—a function or a class method— to “manufacture” ne
 
 * files
 ** Reading Entire files
+
 To read the contents of a file into a string, use =file_get_contents()=. Pass it a file‐
 name, and it returns a string containing everything in the file.
 
 ** Writing Entire file
 use =file_put_contents()=.
+
 #+begin_src php
 // Write the results to page.html
 file_put_contents('page.html', $page);
@@ -1861,6 +1863,7 @@ fclose($fh);
 #+end_src 
 
 ** changing the page type of CSV
+   
 #+begin_src php
 // Tell the web client to expect a CSV file
 header('Content-Type: text/csv');
@@ -1871,16 +1874,19 @@ header('Content-Disposition: attachment; filename="dishes.csv"');
 * lumen
 ** lumen on apache
 install a lumen app in */var/www*
+
 #+begin_src shell
 $ lumen new cms.app
 #+end_src
  
 make your storage folder writable
+
 #+begin_src shell
 $ sudo chmod -R 777 storage
 #+end_src
  
 create a virtual host file
+
 #+begin_src shell
 $ cp /ect/apache2/sites-available/000-default.conf /etc/apache2/sites-available/cms.conf
 #+end_src
@@ -1903,11 +1909,13 @@ change *ports.conf* to listen to port 8081 by adding *Listen 8081*
 to */etc/apache2/ports.conf* file.
 
 now we have to make the *VirtualHost* active by running *a2ensite*.
+
 #+begin_src shell
 $ sudo a2ensite cms.conf
 #+end_src
  
 restart the service for the new settings to take effect.
+
 #+begin_src shell
 $ sudo service apache2 restart   
 #+end_src
@@ -1919,6 +1927,7 @@ https://www.digitalocean.com/community/questions/what-is-the-correct-folder-to-p
 http://tecadmin.net/install-laravel-framework-on-ubuntu/
 ** installing globally
 install the lumen-intaller
+
 #+begin_src shell
 $ composer global require "laravel/lumen-installer"
 #+end_src
@@ -1938,16 +1947,24 @@ $ sudo apt-get install php7.0-zip
 
 ** artisan
 *** create a migration
-php artisan make:migration create_books_table --create=books
+
+#+begin_src 
+$ php artisan make:migration create_books_table --create=books
+#+end_src 
 
 *** commit migration to db
-php artisan migrate
+    
+#+begin_src shel
+$ php artisan migrate
+#+end_src 
 
 *** Refreshing the Schema and Seeding the Database
 
+#+begin_src shell 
 $ composer dump-autoload
 $ php artisan migrate:refresh
 $ php artisan db:seed
+#+end_src 
 
 ** middleware
 Middleware provides a way to filter
@@ -1974,6 +1991,7 @@ class SomeModel extends Model
 
 * installation
 ** php packages
+
 #+begin_src shell
 $ sudo apt-get install libapache2-mod-php    # for running php in apache2
 #+end_src

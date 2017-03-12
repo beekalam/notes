@@ -273,3 +273,19 @@ abstract superclass—a class that expects parts of its behavior to be provided 
 its subclasses. If an expected method is not defined in a subclass, Python
 raises an undefined name exception when the inheritance search fails.
 
+* Arguments and options
+
+#+begin_src python 
+#!/usr/bin/env python
+
+import sys
+
+arguments = sys.argv
+print("The number of arguments passed was: %s") % (str(len(arguments)))
+i=0
+for x in arguments:
+    print("The %d argument is %s") % (i,x)
+    i+=1
+#+end_src 
+
+
