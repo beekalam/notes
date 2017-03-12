@@ -9,11 +9,11 @@
 * network
 ** config
 Ubuntu and all the Debian-based distributions use a unique file to
-configure all the network interfaces; this file is named */etc/network/*
-interfaces.
+configure all the network interfaces; this file is named */etc/network/interfaces*.
 
 An Ethernet interface is configured in either the DHCP or static mode. If it is the
-DHCP mode, we will find the following lines in /etc/network/interfaces :
+DHCP mode, we will find the following lines in */etc/network/interfaces* :
+
 #+begin_src 
 auto eth0
 iface eth0 inet dhcp
@@ -23,6 +23,7 @@ Here, the line containing the auto keyword means that this interface should be
 automatically brought up when a computer boots up.
 
 If it is in the static mode, you will find the output that looks like the following lines:
+
 #+begin_src 
 iface eth0 inet static
 address 192.168.1.58
@@ -41,7 +42,7 @@ nameserver 192.168.1.11
 nameserver 192.168.1.12
 #+end_src
 
-starting from Ubuntu 12.04 and later, =/etc/resolve.conf is located at:
+starting from Ubuntu 12.04 and later, =/etc/resolve.conf= is located at:
 
 #+begin_src 
 sudo vi /etc/resolvconf/resolv.conf.d/base
