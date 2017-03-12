@@ -61,25 +61,33 @@ $ pkg search <packagename>
 
 * installing postgresql
 
-	$ pkg install postgresql-<version>
-	$ /usr/local/etc/rc.d/postgresql initdb
-	$ /usr/local/etc/rc.d/postgresql start
+#+begin_src shell 
+$ pkg install postgresql-<version>
+$ /usr/local/etc/rc.d/postgresql initdb
+$ /usr/local/etc/rc.d/postgresql start
+#+end_src 
 
 the default user created when you install =postgresql= in Freebsd is =pgsql=
 
-	$ su pgsql
+#+begin_src shell
+$ su pgsql
+#+end_src 
 
 logs in as pgsql.
 
-__ADDING root user to postgresql login__
+*ADDING root user to postgresql login*
 
-	$ su pgsql
-	$ createuser --interactive
+#+begin_src shell 
+$ su pgsql
+$ createuser --interactive
+#+end_src 
 
-__REMOVING role__
+*REMOVING role*
 
-	$ su pgsql
-	$ drop role <rolename>
+#+begin_src shell 
+$ su pgsql
+$ drop role <rolename>
+#+end_src 
 
 * restoring database with pg_restore
 
@@ -157,3 +165,5 @@ command:
 #+begin_src 
 make install clean
 #+end_src 
+
+
