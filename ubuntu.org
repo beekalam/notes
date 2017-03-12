@@ -95,8 +95,9 @@ $ netstat -ltpu
 #+end_src 
 
 ** bandwidth usage by program name?
-#+begin_src 
-sudo nethogs <NIC>
+   
+#+begin_src shell
+$ sudo nethogs <NIC>
 #+end_src 
 
 ** static route
@@ -1438,6 +1439,7 @@ $ sudo update-grub
 #+end_src 
 
 ** Repair grub
+
 So you broke grub? Boot from a live cd, [find your linux partition
  under /dev and use fdisk to find the linux partion] mount the linux
  partition, add /proc and /dev and use grub-install /dev/xyz. Suppose
@@ -1458,6 +1460,7 @@ $ sudo apt-get check
 #+end_src
  
 * completely remove a package with configurations
+
 #+begin_src shell	
 $ sudo apt-get purge <package_name>
 #+end_src 	
@@ -1507,6 +1510,7 @@ This will tell recoll to index markdown as normal text, which it is, mostly,
 so I think that things should "just work".
 
 * json pretty print
+  
 #+begin_src shell
 $ cat some.json | python -m json.tool
 #+end_src 
@@ -1526,6 +1530,7 @@ for windows xp or 7 repeatedly press *F8* when you select the windows
 item.
 	
 ** making windows usb boot in ubuntu
+
 #+begin_src shell
  $ sudo apt-get install unetbootin
 #+end_src 
@@ -1539,6 +1544,7 @@ when ubuntu is installed run *sudo update-grub* if the windows is not
 shown in the grub boot list.
 
 ** tell which package does a file belong to?
+
 #+begin_src shell 	
 $ dpkg -S libgthread-2.0.so.0
 #+end_src 
@@ -1677,12 +1683,14 @@ checkbox in "Utility -> Workarounds -> Force full screen redraws
 
 * postgresql
 ** installation
+
 #+begin_src shell
 $ sudo apt-get update
 $ sudo apt-get install postgresql postgresql-contrib
 #+end_src
 
 ** Switching Over to the postgres Account
+
 #+begin_src shell
 sudo -i -u postgres
 #+end_src
@@ -1692,6 +1700,7 @@ sudo -i -u postgres
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
 
 ** Accessing a Postgres Prompt Without Switching Account
+
 #+begin_src shell
 $ sudo -u postgres psql
 #+end_src
@@ -1795,11 +1804,13 @@ SELECT uuid_in(md5(random()::text || now()::text)::cstring);
 http://stackoverflow.com/questions/12505158/generating-a-uuid-in-postgres-for-insert-statement
 
 ** get list of installed extensions?
+   
 #+begin_src sql
 SELECT * FROM pg_available_extensions;
 #+end_src
 
 ** copying postgresql database to another server
+
 #+begin_src shell
 $ pg_dump -C -h localhost -U localuser dbname | psql -h remotehost -U remoteuser dbname
 # from remote host
@@ -1819,6 +1830,36 @@ select * from pg_stat_activity;
    
 #+begin_src sql
 alter <db_name> rename to <new_db_name>;
+#+end_src 
+
+** which version of =postgresql= am I running?
+
+#+begin_src shell
+
+$ pg_config --version
+#Client version:
+$ psql --version
+
+#  using psql
+$psql
+postgres=# \g
+postgres=# SELECT version();
+
+#+end_src 
+
+** restoring database with =psql=
+** connect to =postgresql= database in local host without password
+
+#+begin_src shell 
+$ locate pg_hba.conf
+$ vim /path/to/pg_hba.conf
+#+end_src 
+
+change METHOD to =trust=
+
+#+begin_src 
+TYPE  DATABASE        USER            ADDRESS                 METHOD
+host    all             all             127.0.0.1/32            trust
 #+end_src 
 
 * phppgadmin
@@ -2299,7 +2340,6 @@ isn't running, this command will try to start it.
 apachectl stop
 
 This shuts the server down immediately. Any existing connections are terminated at once.
-
 
 * references
 http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html

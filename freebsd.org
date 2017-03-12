@@ -91,10 +91,12 @@ $ drop role <rolename>
 
 * restoring database with pg_restore
 
-pg_restore -h localhost -p 5432 -U root -C -d mydb ./mydb.custom
+#+begin_src shell
+$ pg_restore -h localhost -p 5432 -U root -C -d mydb ./mydb.custom
 
--C creates the datbase
--d connects to the database
+# -C creates the datbase
+# -d connects to the database
+#+end_src 
 
 * switching between databases in psql
 
@@ -107,11 +109,13 @@ scp -r /tmp/backupmanager root@192.168.1.103:/root/
 #+end_src 
 
 * install bash on freebsd
+
 #+begin_src 
 	pkg install bash
 #+end_src 
 
 * running bash scripts 
+
 #+begin_src 
 	bash /path/bashfile.sh
 #+end_src 
@@ -131,7 +135,6 @@ If you need default system wide PATHs and other ENV variables
 #+begin_src 
 	* * * * * . /etc/profile; your cmd
 #+end_src 
-
 
 * installing PHP extensions
    
