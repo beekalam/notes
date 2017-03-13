@@ -1708,6 +1708,7 @@ error_log("You messed up!", 3, "/var/tmp/my-errors.log");
 #+end_src
 
 ** enabling error reporting
+   
 #+begin_src php
 error_reporting(E_ALL);
 #+end_src
@@ -1975,11 +1976,13 @@ Middleware classes are typically created in the app/Http/Middleware path by conv
 * elqoquent
 ** eloquent postgres json type
 In your migrations you can do something like:
+
 #+begin_src php
  $table->json('field_name');
 #+end_src
  
 And in you model cast it to JSON by adding the $casts property like so:
+
 #+begin_src php
 class SomeModel extends Model
 {
@@ -2714,6 +2717,7 @@ http://jsfiddle.net/nteb4/23/
 ** CSRF protection example
 
 #+begin_src php
+
 $f3->route('GET /',
     function($f3) {
         $f3->set('IP',$f3->get('IP'));
