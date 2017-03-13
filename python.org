@@ -289,3 +289,46 @@ for x in arguments:
 #+end_src 
 
 
+* =compat.py= and python version 2.x and 3.x
+
+in some situations, developers may not want to include additional dependencies
+in some small packages. A common practice is the additional module that gathers
+all the compatibility code, usually named compat.py. Here is an example of such
+a compat module taken from the python-gmaps project
+(https://github.com/swistakm/python-gmaps):
+
+#+begin_src python
+
+# -*- coding: utf-8 -*-
+import sys
+
+if sys.version_info < (3, 0, 0):
+    import urlparse  # noqa
+
+    def is_string(s):
+        return isinstance(s, basestring)
+
+else:
+    from urllib import parse as urlparse  # noqa
+
+    def is_string(s):
+        return isinstance(s, str)
+#+end_src 
+
+Such a compat.py module is popular even in projects that depends on Six for 2/3
+compatibility because it is a very convenient way to store code that handles
+compatibility with different versions of packages used as dependencies.
+* Acronyms
+PyPA (Python Packaging Authority)
+* Useful Resources 
+
+Awesome-python (https://github.com/vinta/awesome-python), which includes a
+curated list of popular packages and frameworks
+
+Python Weekly (http://www.pythonweekly.com/) is a popular newsletter that
+delivers to its subscribers dozens of new and interesting Python packages and
+resources every week
+
+
+
+

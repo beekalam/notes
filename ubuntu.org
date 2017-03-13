@@ -1938,6 +1938,76 @@ Option 2: Using SQL
 SELECT pg_reload_conf();
 #+end_src 
 
+** backup
+*** intro
+*Logical backups*: A logical backup refers to the dump file that is created by the
+pg_dump utility and which might be used to restore the database in the case of a
+data loss or an accidental deletion of a database object, such as a table. The
+pg_dump utility is a PostgreSQL specific utility that can be run on the command
+line, which makes a connection to the database and initiates the logical backup.
+
+*Physical backups*: A physical backup refers to the OS level backup of a database
+directory and its associated files.
+
+*** backup a single database
+
+#+begin_src shell
+$ pg_dump -U username -W -F t database_name > [Backup Location Path]
+#+end_src 
+
+The usage of the options used with the pg_dump command is explained here:
+
+*U switch*: The -U switch specifies the database user initiating the connection.
+As pg_dump is a command-line utility, we need to specify the username via which
+the pg_dump utility can make a database connection.
+
+*W switch*: This option is not mandatory. This option forces pg_dump to prompt for
+the password before connecting to the PostgreSQL database server. After you
+press Enter, pg_dump will prompt for the password of the database user from
+which the connection is initiated.
+
+*F switch*: The -F switch specifies the output file format that will be used. We
+specified the t option with the -F switch because the output file will be
+implemented as a tar format archive file.
+*** logical backup of all databases
+
+to back up all the databases in one go in Linux, use the pg_dumpall command, as
+follows:
+
+#+begin_src shell
+$ pg_dumpall -U postgres >   /home/pgbackup/all.sql
+#+end_src 
+
+To back up all object definitions in all the databases, including roles,
+tablespaces, databases, schemas, tables, indexes, triggers, functions,
+constraints, views, ownership, and privileges, you can use the following command
+in Windows:
+
+#+begin_src shell
+$fpg_dumpall --schema-only > c:\pgdump\definitiononly.sql
+#+end_src 
+
+If you want to back up the role definition only, use the following command:
+
+#+begin_src shell
+$ pg_dumpall --roles-only > c:\pgdump\myroles.sql
+#+end_src 
+
+If you want to back up tablespace definitions, use the following command:
+
+#+begin_src shell
+$ pg_dumpall --tablespaces-only > c:\pgdump\mytablespaces.sql
+#+end_src 
+
+*** taking a base backup
+You can use the pg_basebackup command in the following manner:
+
+#+begin_src shell
+$ pg_basebackup -h 192.168.10.14 -D /home/abcd/pgsql/data
+#+end_src 
+
+Here, we take a base backup of the server located at 192.168.10.14 and store it
+in the /home/abcd/pgsql/data local directory.
 * phppgadmin
 
 *installing phppgadmin and configuring Postgresql user*
