@@ -430,6 +430,7 @@ $ last reboot                              # Show system reboot history
 
 ** Hardware Informations:
 *Kernel detected hardware:*
+
 #+begin_src shell 
 $+begin_src shell
 $ dmesg                               # Detected hardware and boot messages
@@ -488,32 +489,32 @@ $ tail /var/log/warn                          # System warnings messages see sys
 
 *** Kernel modules
 
- #+begin_src shell
- # lsmod                                      # List all modules loaded in the kernel
- # modprobe isdn                      # To load a module (here isdn)
- #+end_src
+#+begin_src shell
+$ lsmod                                      # List all modules loaded in the kernel
+$ modprobe isdn                      # To load a module (here isdn)
+#+end_src
  
-  
-
 *** Compile Kernel
 
- #+begin_src shell
- # cd /usr/src/linux
- # make mrproper                      # Clean everything, including config files
- # make oldconfig                      # Reuse the old .config if existent
- # make menuconfig                 # or xconfig (Qt) or gconfig (GTK)
- # make                                       # Create a compressed kernel image
- # make modules                      # Compile the modules
- # make modules_install         # Install the modules
- # make install                           # Install the kernel
- # reboot
- #+end_src
+#+begin_src shell
+$ cd /usr/src/linux
+$ make mrproper                      # Clean everything, including config files
+$ make oldconfig                      # Reuse the old .config if existent
+$ make menuconfig                 # or xconfig (Qt) or gconfig (GTK)
+$ make                                       # Create a compressed kernel image
+$ make modules                      # Compile the modules
+$ make modules_install         # Install the modules
+$ make install                           # Install the kernel
+$ reboot
+#+end_src
 
 ** processes
 
 listing and pids
 
-each process has a unique number, the pid. a list of all running process is retrieved with ps.
+each process has a unique number, the pid. a list of all running process is
+retrieved with ps.
+
 #+begin_src shell 
 # ps -auxefw                         # extensive list of all running process
 #+end_src 
@@ -534,8 +535,10 @@ $ strace df                                  # trace system calls and signals
 $ truss df                                    # same as above
 #+end_src 
 
-** Signals/Kill:
+** Signals/Kill
+
 Terminate or send a signal with kill or killall.
+
 #+begin_src shell
 $ kill -s TERM 4712                  # same as kill -15 4712
 $ killall -1 httpd                          # Kill HUP processes by exact name
@@ -545,6 +548,7 @@ $ fuser -k -TERM -m /home     # Kill every process accessing /home (to umount)
 #+end_src 
 
 Important signals are:
+
 #+begin_src 
 1       HUP (hang up)
 2       INT (interrupt)
@@ -553,7 +557,8 @@ Important signals are:
 15     TERM (software termination signal)
 #+end_src 
 
-** Permissions:
+** Permissions
+
 Change permission and ownership with chmod and chown.  The default
 umask can be changed for all users in /etc/profile for Linux.  The
 default umask is usually 022. The umask is subtracted from 777, thus
@@ -562,7 +567,8 @@ umask 022 results in a permission 0f 755.
 1 --x execute                        # Mode 764 = exec/read/write | read/write | read
 2 -w- write                          # For:       |--  Owner  --|   |- Group-|   |Oth|
 4 r-- read
-  ugo=a                              u=user, g=group, o=others, a=everyone
+ugo=a                              u=user, g=group, o=others, a=everyone
+
 #+begin_src shell 
 $ chmod [OPTION] MODE[,MODE] FILE    # MODE is of the form [ugoa]*([-+=]([rwxXst]))
 $ chmod 640 /var/log/maillog                      # Restrict the log -rw-r-----
@@ -669,7 +675,8 @@ Mount an image:
 # mount -t iso9660 -o loop file.iso /mnt                # Mount a CD image
 # mount -t ext3 -o loop file.img /mnt                     # Mount an image with ext3 fs
 
-** Create a memory file system:
+** Create a memory file system
+
 A memory based file system is very fast for heavy IO application. How
 to create a 64 MB partition mounted on /memdisk:
 
@@ -677,7 +684,8 @@ to create a 64 MB partition mounted on /memdisk:
 $ mount -t tmpfs -osize=64m tmpfs /memdisk
 #+end_src 
 
-** Disk performance:
+** Disk performance
+
 Read and write a 1 GB file on partition ad4s3c (/home)
 #+begin_src shell
 # time dd if=/dev/ad4s3c of=/dev/null bs=1024k count=1000
@@ -698,7 +706,7 @@ Read and write a 1 GB file on partition ad4s3c (/home)
 # ip neighbor show                                      # Similar to arp -a
 #+end_src 
 
-** Ports in use:
+** Ports in use
 Listening open ports:
 #+begin_src shell 
 # netstat -an | grep LISTEN
@@ -722,13 +730,17 @@ Check if a firewall is running (typical configuration only):
 #+end_src 
 
 ** IP Forward for routing
+
 Check and then enable IP forward with :
+
 #+begin_src shell 
 # cat /proc/sys/net/ipv4/ip_forward  # Check IP forward 0=off, 1=on
 # echo 1 > /proc/sys/net/ipv4/ip_forward
 #+end_src 
-or edit /etc/sysctl.conf with:
-net.ipv4.ip_forward = 1
+
+or edit =/etc/sysctl.conf= with:
+
+~net.ipv4.ip_forward = 1~
 
 Network Address Translation
 #+begin_src shell 
@@ -749,7 +761,9 @@ The domain to which the host belongs is also stored in this file. A minimal conf
 nameserver 66.63.128.84
 search cipi.net intern.lab
 domain cipi.org
+
 Check the system domain name with:
+
 #+begin_src shell
 # hostname -d                # Same as dnsdomainname
 #+end_src 
@@ -778,9 +792,14 @@ relative structure. For example archive /usr/local/etc and
 local/.
 
  #+begin_src shell
- # tar -C /usr -czf local.tgz local/etc local/www
- # tar -C /usr -xzf local.tgz      # To untar the local dir into /usr
- # cd /usr; tar -xzf local.tgz     # Is the same as above
+
+$ tar czf name_of_archive_file.tar.gz name_of_directory_to_tar 
+$ tar -C /usr -czf local.tgz local/etc local/www
+$ tar -C /usr -xzf local.tgz      # To untar the local dir into /usr
+$ cd /usr; tar -xzf local.tgz     # Is the same as above
+
+$ cd /var/www && sudo tar czf ~/www_backups/$(date +%Y%m%d-%H%M%S).tar.gz .
+# This would have created a file named something like 20120902-185558.tar.gz.
  #+end_src
  
 *** Extract
@@ -1814,7 +1833,7 @@ ALTER SEQUENCE tablename_colname_seq OWNED BY tablename.colname;
 ** backup with pg_dump
 
 #+begin_src shell
-/usr/local/bin/pg_dump shahkar -U pgsql > /root/farahoosh/shahkar-db-backup/`date +%Y-%m-%d-%H:%M:%S`.sql
+$ /usr/local/bin/pg_dump shahkar -U pgsql > /root/farahoosh/shahkar-db-backup/`date +%Y-%m-%d-%H:%M:%S`.sql
 #+end_src 
 
 You can also run the command you'd like with the postgres account
@@ -1897,6 +1916,26 @@ change METHOD to =trust=
 #+begin_src 
 TYPE  DATABASE        USER            ADDRESS                 METHOD
 host    all             all             127.0.0.1/32            trust
+#+end_src 
+
+** How to reload config settings without restarting database
+
+if you are making modifications to the Postgres configuration file
+postgresql.conf (or similar), and you want to new settings to take effect
+without needing to restart the entire database, there are two ways to accomplish
+this.
+
+Option 1: From the command-line shell
+
+#+begin_src shell
+$ su - postgres
+$ /usr/bin/pg_ctl reload
+#+end_src 
+
+Option 2: Using SQL
+
+#+begin_src 
+SELECT pg_reload_conf();
 #+end_src 
 
 * phppgadmin
