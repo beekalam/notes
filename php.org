@@ -112,6 +112,7 @@ $username = substr($_GET['username'],0,8);
 #+end_src
 
 ** substring from beginning of the line except the last char
+
 #+begin_src php
 substr("abcd",0,-1);       // abc
 #+end_src
@@ -185,6 +186,7 @@ print "With Spaces: <pre>$spaced</pre>";
 #+end_src
 
 ** trimming space
+
 Use ltrim(), rtrim(), or trim(). ltrim() removes whitespace from the
 beginning of a string, rtrim() from the end of a string, and trim()
 from both the beginning and end of a string:
@@ -371,6 +373,7 @@ printf('#%02X%02X%02X', 0, 102, 204); // #0066CC
 
 * arrays
 ** check for empty array
+
 #+begin_src php
 empty([]) // true
 #+end_src
@@ -2677,6 +2680,19 @@ Bootstrap has a few functions that can be called manually on modals:
 $('#myModal').modal('toggle');
 $('#myModal').modal('show');
 $('#myModal').modal('hide');
+#+end_src 
+
+** pager
+
+#+begin_src html
+<div class="container">
+  <h2>Pager</h2>
+  <p>The .previous and .next classes align each link to the sides of the page:</p>                  
+  <ul class="pager">
+    <li class="previous"><a href="#">Previous</a></li>
+    <li class="next"><a href="#">Next</a></li>
+  </ul>
+</div>
 #+end_src 
 
 * HTML
