@@ -121,6 +121,24 @@ up route add -net 192.168.40.0/24 gw 192.168.30.1 dev em1
 up route add -net 172.16.11.0/24 gw 172.16.12.141 dev eth0:0
 #+end_src
  
+** nmcli
+
+#+begin_src shell
+$ nmcli device wifi list    # the same as sudo iw wlp12s0 scan | grep SSID
+# use nmcli to display configured permissions with the following command:
+$ nmcli general permissions
+
+#creating  a connection
+$ sudo nmcli connection add con-name wired-home \
+ifname enp9s0 type ethernet ip4 192.168.0.8 gw4 192.168.0.1
+Connection 'wired-home' (e17cb6b7-685f-4cf2-9e8b-16cbfae1f73a)
+successfully added.
+#add the DNS configuration to the connection profile
+$ sudo nmcli connection modify wired-home ipv4.dns "192.168.0.3 8.8.8.8"
+# We can now display the properties with the following command:
+$ nmcli -p connection show wired-home
+#+end_src 
+
 * ssh
 ** installation
 
