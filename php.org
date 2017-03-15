@@ -2244,19 +2244,6 @@ $('#myModal').modal('show');
 $('#myModal').modal('hide');
 #+end_src 
 
-** pager
-
-#+begin_src html
-<div class="container">
-  <h2>Pager</h2>
-  <p>The .previous and .next classes align each link to the sides of the page:</p>                  
-  <ul class="pager">
-    <li class="previous"><a href="#">Previous</a></li>
-    <li class="next"><a href="#">Next</a></li>
-  </ul>
-</div>
-#+end_src 
-
 * HTML
 ** How do you disable browser Autocomplete on web form field / input tag?
 
@@ -2290,6 +2277,12 @@ For example:
 ** HTML5 form required attribute. Set custom validation message?
 
 http://jsfiddle.net/nteb4/23/
+
+** disable input box =autocomplete=
+   
+#+begin_src html
+<input type="text"  id="codetxt" autocomplete="off"/>
+#+end_src 
 
 * FatFreeFramework
 ** CSRF protection example
