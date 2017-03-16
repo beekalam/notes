@@ -1232,6 +1232,31 @@ $obj->print_func();      // Returns: print_func
 $obj->print_method();    // Returns: foo::print_method
 #+end_src
 http://www.php.net/manual/en/language.constants.predefined.php
+** get type of variable 
+
+#+begin_src php
+string gettype ( mixed $var );
+<?php
+
+$data = array(1, 1., NULL, new stdClass, 'foo');
+
+foreach ($data as $value) {
+    echo gettype($value), "\n";
+}
+
+?>
+#+end_src 
+
+The above example will output something similar to:
+
+#+begin_src 
+integer
+double
+NULL
+object
+string
+#+end_src 
+
 * Debug
 ** dump all variables?
 
@@ -2306,6 +2331,15 @@ http://jsfiddle.net/nteb4/23/
    
 #+begin_src html
 <input type="text"  id="codetxt" autocomplete="off"/>
+#+end_src
+
+** How to disable the mobile keyboard from displaying input field
+
+To block the mobile device keyboard from displaying you simply need to set the
+field to readonly with jQuery as displayed in the code below.
+
+#+begin_src html
+$('#input_92_31').attr('readonly','readonly');
 #+end_src 
 
 * FatFreeFramework
@@ -2582,7 +2616,83 @@ Sibling selects any element ( F ) that is immediately preceded by element
 element ( F ) that is preceded by element ( E ) on the same level of the tree,
 regardless of whether it is immediately adjacent.
 
-**
+*** Structural Pseudo-classes
+
+As I stated in the introduction to this chapter, a pseudo-class provides a way
+to select an element based on information that is not specified in the docu-
+ment tree.
+
+Take, for example, the following markup:
+
+<div>
+<p>Lorem ipsum.</p>
+<p>Dolor sit amet.</p>
+</div>
+
+The first of the two p elements is the first child of the div element. That’s
+obvious from the document tree, but the document tree doesn’t provide any
+information that would allow you to apply a rule only to that element. CSS2
+introduced the :first-child pseudo-class for exactly that reason:
+
+E:first-child {...}
+
+*** The :nth-* Pseudo-classes
+
+The basic syntax of the :nth-* pseudo-classes is quite straightforward.
+By default, n represents a number that begins at 0 and increments by 1 (1, 2,
+3, etc.). Another integer can be passed into it as a multiplier. For example,
+2n is every multiple of 2 (2, 4, 6, etc.), 3n is every multiple of 3 (3, 6, 9, etc.),
+and so on:
+
+E:nth-*(n) {...}
+E:nth-*(2n) {...}
+E:nth-*(3n) {...}
+
+You may also use the mathematical operators for plus (+) and minus (−).
+So 2n+1 selects every multiple of two plus one (1, 3, 5, etc.), and 3n-1 selects
+every multiple of three minus one (2, 5, 8, etc.):
+
+E:nth-*(n+1) {...}
+E:nth-*(2n+1) {...}
+E:nth-*(3n-1) {...}
+
+Two special keyword values, even and odd , are also available; you can use
+these to replace 2n and 2n+1 , respectively:
+
+E:nth-*(even) {...}
+E:nth-*(odd) {...}
+
+*** :nth-child() and :nth-of-type()
+
+The simplest examples of these pseudo-classes are :nth-child()
+and  :nth-of-type() . The first, :nth-child() , selects an element based on its
+position in a count of the total number of children in its parent element;
+:nth-of-type() bases its count not on the total children, but only on those
+of the specified element type.
+
+E:nth-child(n) {...}
+E:nth-of-type(n) {...}
+E:nth-child(2n) {...}
+E:nth-of-type(2n) {...}
+
+
+In this example, rules u and v are equivalent because the count value
+( n ) is left at the default; both of these simply select all child elements of type
+E . The difference reveals itself in the later examples: in w, :nth-child(2n)
+selects all elements of type E from a count that includes all its siblings
+but only where those elements are even-numbered. In x, by comparison,
+:nth-of-type(2n) selects all even-numbered elements of type E from a count
+that includes only those elements.
+
+.table td{
+    border: red solid 1px !important;
+}
+
+.table th{
+    border: red solid 1px !important;
+}
+
+
 ** useful resources
 
 https://www.w3.org/TR/css3-selectors/
