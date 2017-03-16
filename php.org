@@ -503,7 +503,7 @@ array_splice($array, $offset, $length);
 
 ** Changing array size
 
-Use array_pad() to make an array grow:
+Use ~array_pad()~ to make an array grow:
 
 #+begin_src php 
 
@@ -2243,6 +2243,29 @@ Bootstrap has a few functions that can be called manually on modals:
 $('#myModal').modal('toggle');
 $('#myModal').modal('show');
 $('#myModal').modal('hide');
+#+end_src 
+
+** change =table-stripped= strip color
+
+#+begin_src html
+    /* for bootstrap table-striped strip color*/
+    .table-striped>tbody>tr:nth-child(odd)>td,
+    .table-striped>tbody>tr:nth-child(odd)>th {
+        background-color: #B6E9DF;  /* choose your color here */
+    }
+#+end_src 
+
+** disable modal outside popup close
+
+#+begin_src html
+ <div class="modal fade"  role="dialog" data-backdrop="static" data-keyboard="false">
+#+end_src 
+
+* =datatables=
+** filter for text inside a =<span>= or other html
+
+#+begin_src javascript
+  {column_number: 4, filter_reset_button_text: false, filter_default_label: '', column_data_type:'html', html_data_type:'text', filter_match_mode:'exact'},
 #+end_src 
 
 * HTML
