@@ -503,7 +503,7 @@ array_splice($array, $offset, $length);
 
 ** Changing array size
 
-Use ~array_pad()~ to make an array grow:
+Use array_pad() to make an array grow:
 
 #+begin_src php 
 
@@ -2327,5 +2327,146 @@ $f3->route('GET /',
 if ($f3->get('POST.csrf') == $f3->get('SESSION.csrf')) {
 balalalala
 }
-#+end_src 
+#+end_src
+
+* css
+** media query
+*** basic syntax
+You can use media queries in three ways, all of which match
+the different ways that CSS can be applied to a document.
+
+<link href="file" rel="stylesheet" media="logic media and (expression)">
+
+The second is to call an external style sheet using the @import directive:
+
+@import url('file') logic media and (expression);
+
+The third is to use media queries in an embedded style element or in
+the style sheet itself with the extended @media rule:
+
+@media logic media and (expression) { rules }
+
+writing rules that will apply to all media types
+
+@media all and (expression) { rules }
+@media (expression) { rules }
+
+*** logic
+The first new attribute for the @media rule is logic . This optional key-
+word can have the value of either only or not:
+
+@media only media and (expression) { rules }
+@media not media and (expression) { rules }
+
+The only value is mainly useful if you want to hide the rule from older
+browsers that don’t support the syntax; for browsers that do support it, only
+is effectively ignored. The not value is used to negate the query; you use not
+to apply the styles if the parameters you set are not met.
+
+*** feature
+
+Media features are information about the device that’s being used to display
+the web page: its dimensions, resolution, and so on.
+
+@media (feature: value) { rules }
+@media (feature) { rules }
+
+*** width and height
+
+@media (width: 600px) { rules }
+the rules are applied only to browsers that are set to be
+exactly 600px wide
+
+@media (max-width: 480px) { rules }
+@media (min-width: 640px) { rules }
+
+The first query applies the rules in browsers that are no wider than
+480px, and the second in browsers that are at least 640px wide.
+
+*** Pixel ratio
+In general, the CSS pixel unit (px) is a measurement of a single pixel on the
+computer screen.
+The ratio of physical pixels to CSS pixels is known as the device pixel ratio (DPR).
+
+**** resolution media feature
+@media media and (resolution: value) { rules }
+
+The value of resolution is a number with a unit of resolution: dots per
+inch (DPI), dots per centimeter (DPCM), or, most pertinently to us, dots per pixel
+(DPPX). The DPPX unit maps to the DPR of the device, so to apply a rule to
+devices that have a DPR value of 1.5, you use this:
+
+@media (resolution: 1.5dppx) { rules }
+
+As with the other media features, you can also detect maximum and
+minimum pixel ratios:
+
+@media (max-resolution: number) { rules }
+@media (min-resolution: number) { rules }
+*** device width and height
+
+The width and height media features are related to the dimensions of the
+browser viewport, but that viewport isn’t always as big as the screen it’s
+displayed on. If you need to target the physical screen size rather than the
+viewport size, you can use the *device-width* and *device-height* properties and
+their related min- and max- variants.
+
+<meta name="viewport" content="width=device-width">
+
+When the viewport meta tag with these values is present in the head of a
+page, mobile browsers go into “mobile mode,” in which the viewport is sized
+to ideal dimensions for that device.
+
+*** orientation
+
+If you’re less concerned with the actual dimensions of the viewing device
+but want to optimize your pages for either horizontal (like a typical desk-
+top/laptop web browser) or vertical (like a mobile phone or ebook reader)
+viewing, the media feature you need is orientation . Here is its syntax:
+
+@media (orientation: value) { rules }
+
+value can be one of two keyword options: landscape or portrait . The
+landscape value applies when the width of your browser is greater than its
+height, and the portrait value applies when the opposite is true.
+
+*example*
+
+ul { overflow: hidden; }
+li { float: left; }
+@media (orientation: portrait) {
+    li { float: none; }
+}
+
+*** aspect ratio
+You can also create queries that apply when a certain width-to-height ratio is
+met. Use aspect-ratio to test the browser’s aspect ratio or device-aspect-ratio
+to test the device’s aspect ratio. Here is the syntax for these two features:
+
+@media (aspect-ratio: horizontal/vertical) { rules }
+@media (device-aspect-ratio: horizontal/vertical) { rules }
+
+The horizontal and vertical values are positive integers that represent
+the ratio of the width and height (respectively) of the viewing device’s screen,
+so a square display would be 1/1 and a cinematic widescreen display would
+be 16/9.
+
+*** Multiple Media Features
+
+You can chain multiple queries together on the same media type by adding
+expressions with the and operator:
+
+@media logic media and (expression) and (expression) { rules }
+
+For example, to test for a narrow screen on a device with an
+aspect ratio no greater than 15/10, you use this query:
+
+@media (max-device-aspect-ratio: 15/10) and (max-width: 800px) {...}
+
+You can also use a conditional “or” expression by adding extra queries
+in a comma-separated list:
+
+@media logic media and (expression), logic media and (expression) { rules }
+
+** selectors
 
