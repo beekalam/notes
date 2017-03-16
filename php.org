@@ -1953,6 +1953,7 @@ echo "Did nothing in $time seconds\n";
 =microtime()= and =REQUEST_TIME_FLOAT= (as of PHP 5.4.0)
 
 #+begin_src php
+
 // Randomize sleeping time
  usleep(mt_rand(100, 10000));
  
@@ -2288,7 +2289,6 @@ http://jsfiddle.net/nteb4/23/
 ** CSRF protection example
 
 #+begin_src php
-
 $f3->route('GET /',
     function($f3) {
         $f3->set('IP',$f3->get('IP'));
