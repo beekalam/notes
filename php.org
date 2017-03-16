@@ -2469,4 +2469,122 @@ in a comma-separated list:
 @media logic media and (expression), logic media and (expression) { rules }
 
 ** selectors
+*** Attribute selectors
+E[attr] {...} /* Simple Attribute Selector */
+E[attr='value'] {...} /* Exact Attribute Value Selector */
+E[attr  ~='value'] {...} /* Partial Attribute Value Selector */
+E[attr|='value'] {...} /* Language Attribute Selector */
+
+
+The Simple Attribute Selector applies rules to elements that have the
+s ­ pecified attribute defined, regardless of that attribute’s value.
+
+a[rel] { color: red; }
+
+If you want to be more specific, you can use the Exact Attribute Value Selector
+to define a value:
+
+a[rel='friend'] { color: red; }
+
+This code applies the rule only to the second a element in the
+markup (v) because it selects only elements that have the exact value
+of  friend . If you want to select both of the elements that have this value,
+you would use the Partial Attribute Value Selector:
+
+a[rel~='friend'] { color: red; }
+
+This code looks for the value of friend as part of a space-separated list
+(in most cases, a word)
+
+The final selector, the Language Attribute Selector, applies rules to ele-
+ments that have an attribute matching the first argument in the selector,
+the value of which is the second argument in the selector followed immedi-
+ately by a hyphen.
+
+a[lang|='es'] { color: red; }
+
+*** New Attribute Selectors in CSS3
+Beginning Substring Attribute Value Selector
+
+E[attr^='value'] {...}
+
+This code looks for the supplied value at the beginning of the specified
+attribute.
+
+To illustrate, consider the following example markup, showing a
+list of three items, each of which contains a hyperlink with different (albeit
+similar) values for the title attribute:
+
+<li><a href="http://example.com/" title="Image Library">Example</a></li>
+<li><a href="http://example.com/" title="Free Image Library">Example</a></li>
+<li><a href="http://example.com/" title="Free Sound Library">Example</a></li>
+
+I’ll apply this selector to the example markup:
+
+a[title^='image'] {...}
+
+In this case, the rule will be applied to the a element in the first list
+item because the title attribute string begins with the word image. The rule
+will not be applied to the a element in the second item, however, because,
+although its title attribute contains that string, it doesn’t begin with it. Nor
+will it be applied to the third string, as that string doesn’t match.
+
+*** Ending Substring Attribute Value Selector
+
+E[attr$='value'] {...}
+
+a[title$='library'] {...}
+This time the rule applies to all of the list items, as all of their title
+attribute values end with the string library .
+
+*** Arbitrary Substring Attribute Value Selector
+
+This selector uses the asterisk ( * ) character. Here’s the new syntax:
+E[attr*='value'] {...}
+
+a[title*='image'] {...}
+This rule is applied to the first and second list items because they both
+contain the text string image in their title attributes, even though the string
+appears in a different position in each example.
+
+*** Multiple Attribute Selectors
+
+You can also chain multiple selectors together, which allows you to be really
+specific.
+Imagine,
+for example, that you had links to two files with identical names but that
+were located in different folders:
+
+<p><a href="http://example.com/folder1/file.pdf">Example</a></p>
+<p><a href="http://example.com/folder2/file.pdf">Example</a></p>
+
+If you want to specify a rule to apply to only the second p element, you
+can chain some selectors together:
+
+a[href^='http://'][href*='/folder2/'][href$='.pdf'] {...}
+
+This code looks for a elements that have an href attribute beginning
+with http:// , ending with .pdf , and with /folder2/ contained within it. That’s
+specific!
+
+*** The General Sibling Combinator
+Our final new DOM selector in CSS3 is a combinator, which you’ll recall
+means that it joins together more than one selector. The General Sibling
+Combinator is an extension of the Adjacent Sibling Combinator, which was
+introduced in CSS2. The syntaxes differ by just a single character:
+
+E + F {...} /* Adjacent Sibling Combinator */
+E ~ F {...} /* General Sibling Combinator */
+
+The difference between the two is subtle but important: Adjacent
+Sibling selects any element ( F ) that is immediately preceded by element
+( E ) on the same level of the document tree, but General Sibling selects any
+element ( F ) that is preceded by element ( E ) on the same level of the tree,
+regardless of whether it is immediately adjacent.
+
+**
+** useful resources
+
+https://www.w3.org/TR/css3-selectors/
+
 
