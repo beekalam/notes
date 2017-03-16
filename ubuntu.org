@@ -2614,6 +2614,8 @@ apachectl stop
 
 This shuts the server down immediately. Any existing connections are terminated at once.
 
+* redis
+
 * references
 http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
 

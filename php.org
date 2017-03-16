@@ -2692,9 +2692,176 @@ that includes only those elements.
     border: red solid 1px !important;
 }
 
+*** :nth-last-child() and :nth-last-of-type()
+The :nth-last-child() and :nth-last-of-type() pseudo-classes accept the
+same arguments as :nth-child() and :nth-of-type() , except they are counted
+from the last element, working in reverse.
+*** :first-of-type, :last-child, and :last-of-type
+As you’re no doubt aware, the :first-child pseudo-class is a selector
+used to apply rules to an element that is the first child of its parent. As
+with  :nth-of-type() , however, :first-of-type is more specific, applying only
+to the element that is the first child of the named type of its parent. A pair
+of counterpart pseudo-classes is also available, :last-child and :last-of-type ,
+which—as you might have guessed—select the last child element or the last
+child element of that type, respectively, of the parent.
+*** :only-child and :only-of-type
+These two pseudo-classes are used to select elements in the document tree
+that have a parent but either no sibling elements ( :only-child ) or no siblings
+of the same type ( :only-of-type ).
 
+*** :target
+For example, if you had this markup in a page:
+<h4 id="my_id">Lorem ipsum</h4>
+you could refer to it with this link:
+<a href="page.html#my_id">Lorem</a>
+The :target pseudo-class allows you to apply styles to the element when
+the referring URI has been followed. In this example, if you want to apply
+styles to the h4 element when the URI is followed, you use:
+#my_id:target {...}
+
+*** :empty
+The :empty pseudo-class selects an element that has no children, including
+text nodes.
+html {...} /* Specificity: 1; */
+html:root {...} /* Specificity: 2; */
+
+*** :root
+The :root pseudo-class selects the first element in a document tree
+Let’s say you’re creating a base style sheet and want to set a property on
+the html element, which shouldn’t be altered. In this case, you would use
+something like this:
+
+html:root { background-color: black; }
+
+The higher specificity gives precedence to this rule over any other rules
+applied to the html element, meaning the following is ignored:
+
+html { background-color: white; }
+
+*** :not()
+The negation pseudo-class :not() selects all elements except those that are
+given as the value of an argument:
+E :not(F) {...}
+This rule selects all children of element E except for those of type F . For
+example, to color all the immediate child elements of a div , except for p ele-
+ments, you use this:
+div > :not(p) { color: red; }
+
+*** UI Element States
+CSS3 has three UI state pseudo-class selectors, which allow you to apply
+rules to elements based on their current state:
+:checked {...}
+:disabled {...}
+:enabled {...}
+
+input[type='text']:disabled { border: 1px dotted gray; }
+input[type='text']:enabled { border: 1px solid black; }
+
+*** Constraint Validation Pseudo-classes
+HTML5 introduced a new API for client-side validation of forms, known
+as the constraint validation API, which can be used to determine if certain
+requirements are met before the form contents are sent to the server.
+You can style elements depending on whether they’re required or
+optional by using their namesake pseudo-classes:
+
+:required {...}
+:optional {...}
+
+Each form field can be in one of two states of validation: either valid or
+invalid. If no specific constraints are applied, either by the browser or the
+author, a form field is valid by default. As before, each state has a namesake
+pseudo-class:
+
+:valid {...}
+:invalid {...}
+
+Finally, some HTML5 elements can have a permitted range of values,
+set by using the min and max attributes.
+
+:in-range {...}
+:out-of-range {...}
+
+*** Pseudo-elements
+
+Like pseudo-classes, pseudo-elements provide information that is not speci-
+fied in the document tree. But where pseudo-classes use “phantom” condi-
+tions such as an element’s position in the tree or its state, pseudo-elements
+go further and allow you to apply styles to elements that don’t exist in the
+tree at all.
+
+In CSS2, the four pseudo-elements are :first-line and :first-letter ,
+which select subelements in text nodes, and :after and :before , which allow
+you to apply styles at the beginning and end of existing elements. CSS3
+doesn’t introduce any new pseudo-elements, but it refines the definitions
+slightly and introduces a new syntax to differentiate them from pseudo-
+classes. In CSS3, pseudo-elements are prefixed with a double colon ( :: ),
+like so:
+
+::first-line {...}
+::first-letter {...}
+::after {...}
+::before {...}
+
+*** The ::selection Pseudo-element
+
+::selection is used to apply rules to an element that the user has
+selected in the browser (for example, a portion of a text node):
+::selection {...}
+
+Only a limited number of properties can be applied with ::­selection :
+color , background-color , and the background shorthand (although not
+background-image ). Using ::selection , you can do something like this:
+
+p::selection {
+background-color: black;
+color: white;
+}
+
+** web fonts
+*** The @font-face Rule
+To display web fonts on your pages, you first need to define them by using
+the @font-face rule.
+
+@font-face {
+font-family: FontName;
+src: local('fontname'), xurl('/path/filename.otf') yformat('opentype');
+}
+
+To use the font I just defined, I need only call its name in the font stack,
+as I’d normally do:
+E { font-family: FontName; }
+
+*** Defining Different Faces
+If you want to use a different face, such as a
+bolder weight or an italic type, you have to define each font face individu-
+ally. To do this, you re-use the same name and add extra descriptors to the
+@font-face rule:
+
+@font-face {
+font-family: 'Gentium Basic';
+src: url('vGenBasR.woff') format('woff');
+}
+@font-face {
+font-family: 'Gentium Basic';
+font-style: italic;
+src: url('yGenBasI.woff') format('woff');
+}
+h1 { font-family: 'Gentium Basic', sans-serif; }
+
+*** The Final “Bulletproof” Syntax
+For your chosen font to display the same in every browser on every plat-
+form, you should use code in this format:
+@font-face {
+font-family: 'Gentium Basic';
+src: url('GenBkBasR.eot');
+src: url('GenBasR.eot?#iefix') format('embedded-opentype'),
+url('GenBkBasR.woff') format('woff'),
+url('GenBkBasR.ttf') format('truetype');
+}
+
+*** todo: continue text effects@ch6 the book of css3
 ** useful resources
 
 https://www.w3.org/TR/css3-selectors/
 
-
+http://www.w3.org/TR/css3-fonts/
