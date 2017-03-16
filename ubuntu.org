@@ -1344,19 +1344,17 @@ The easiest way is simply to send all STDOUT and STDERR to Syslog
 
 #+begin_src shell
     * * * * * echo "test message" 2>&1 |logger
-#+end_src
 
-If you want to debug your bash script just add debug mode to the beginning of your script
-
+#If you want to debug your bash script just add debug mode to the beginning of your script
 set -x
 
-To ensure your jobs are executed tail on /var/log/cron
+#To ensure your jobs are executed tail on /var/log/cron
+$ tail -f /var/log/cron
 
-tail -f /var/log/cron
+# To see all the outputs in Syslog
+$ tail -f /var/log/messages
 
-To see all the outputs in Syslog
-
-tail -f /var/log/messages
+#+end_src 
 
 http://www.emind.co/how-to/how-to-debug-cron-jobs/
 
