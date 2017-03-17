@@ -2663,7 +2663,7 @@ E:nth-*(even) {...}
 E:nth-*(odd) {...}
 
 *** :nth-child() and :nth-of-type()
-
+    
 The simplest examples of these pseudo-classes are :nth-child()
 and  :nth-of-type() . The first, :nth-child() , selects an element based on its
 position in a count of the total number of children in its parent element;
