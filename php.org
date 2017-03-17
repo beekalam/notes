@@ -2286,6 +2286,25 @@ $('#myModal').modal('hide');
  <div class="modal fade"  role="dialog" data-backdrop="static" data-keyboard="false">
 #+end_src 
 
+** customize modal style
+
+add an extra class to the modal like ~<div class="modal custom">~ then you can
+style it like ~.modal.custom~.
+
+#+begin_src html
+<div class="modal custom fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  
+.modal.custom .modal-dialog {
+    width:50%;
+    margin:0 auto;
+    /*add what you want here*/
+}
+
+#+end_src 
+
+http://jsfiddle.net/surjithctly/ka8uW/
+
 * =datatables=
 ** filter for text inside a =<span>= or other html
 
@@ -2865,3 +2884,5 @@ url('GenBkBasR.ttf') format('truetype');
 https://www.w3.org/TR/css3-selectors/
 
 http://www.w3.org/TR/css3-fonts/
+
+https://css-tricks.com/
