@@ -106,8 +106,8 @@ if (strpos($_POST['email'], '@') === false) {
 
 #+begin_src php
 <?php
-$substring = substr($string,$start,$length);
-$username = substr($_GET['username'],0,8);
+ $substring = substr($string,$start,$length);
+ $username = substr($_GET['username'],0,8);
 ?>
 #+end_src
 
@@ -220,11 +220,13 @@ use ~ord("h")~
 ** character value of integer
 use ~chr(ascii)~
 ** replace multiple
+
 #+begin_src php
 str_ireplace(['a', 'e', 'i', 'o', 'u'], '!', $str);
 #+end_src
 
 ** convert string to array
+
 #+begin_src php
 // split a string without delimiter
 str_split($str);
@@ -257,6 +259,24 @@ Array
 )
 
 #+end_src
+
+** split string by string
+
+#+begin_src php
+//array explode ( string $delimiter , string $string [, int $limit = PHP_INT_MAX ] );
+
+// Example 1
+$pizza  = "piece1 piece2 piece3 piece4 piece5 piece6";
+$pieces = explode(" ", $pizza);
+echo $pieces[0]; // piece1
+echo $pieces[1]; // piece2
+
+// Example 2
+$data = "foo:*:1023:1000::/home/foo:/bin/sh";
+list($user, $pass, $uid, $gid, $gecos, $home, $shell) = explode(":", $data);
+echo $user; // foo
+echo $pass; // *
+#+end_src 
 
 ** remove alphabet values from string
 
@@ -732,6 +752,13 @@ $today->getTimestamp() - $yesterday->getTimestamp()/86400;
 date('H:i:s', $seconds);
 #+end_src
 
+** current minute, second
+
+#+begin_src php 
+$currentMinute = ltrim(date('i'),'0');
+$currentSecond = date('s')+0;
+#+end_src 
+
 * variables
 ** Establishing a Default Value
 Use isset() to assign a default to a variable that may already have a value:
@@ -977,18 +1004,29 @@ if ($_POST[location] == "") {
 #+end_src
 
 ** making the root path
+
 #+begin_src php
 define("ROOT",realpath(dirname(__FILE__)));
 #+end_src
 
 ** integer division
+
 #+begin_src php
 int intdiv ( int $dividend , int $divisor )
 #+end_src
 
 Returns the integer quotient of the division of dividend by divisor.
+** HTTP refresh with echo
+
+#+begin_src php 
+echo "<meta http-equiv='refresh' content='0;url=http://domain.com?a=1&b=2'>";
+//or even
+header ("Location: url=http://domain.com?a=1&b=2");
+#+end_src 
+
 * json
 ** json encode raw UTF?
+
 #+begin_src php 
 json_encode( $text, JSON_UNESCAPED_UNICODE );
 #+end_src 
@@ -1163,8 +1201,10 @@ class Courier {
 #+end_src 
 
 ** serializing
+
 To serialize data in PHP means to convert it into a text-based format that we can
 store, for example, in a database.
+
 #+begin_src php
 $mycourier = new Courier('Avian Services', 'Australia');
 var_dump($mycourier);
