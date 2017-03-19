@@ -703,6 +703,7 @@ http://stackoverflow.com/questions/7837456/how-to-compare-arrays-in-javascript
 
 * strings
 ** reverse string in javascript?
+
 #+begin_src javascript
 function reverse(s){
     return s.split("").reverse().join("");
@@ -710,6 +711,7 @@ function reverse(s){
 #+end_src
 
 ** ordinal value of a character?
+
 #+begin_src javascript
 "\n".charCodeAt(0);
 #+end_src
@@ -735,6 +737,7 @@ function reverse(s){
 #+end_src
 
 ** replace all non-digit characters
+
 #+begin_src javascript
    str.replace(/\D/g,' ');
 #+end_src 
@@ -746,6 +749,7 @@ function reverse(s){
 #+end_src 
 
 ** split a string by digits of size one or bigger(ignoring negative nums)
+
 #+begin_src javascript
    str.match(/\d+/g)
    str.match((/\d+/g) || []).map(Number)
@@ -779,6 +783,7 @@ You may have to parse out the name though, as it will probably include some extr
 Though, in some implementations you can simply get the name using arguments.callee.name.
 
 Parsing:
+
 #+begin_src javascript
 
     function DisplayMyName() 
@@ -798,6 +803,7 @@ Parsing:
 For the caller, just use caller.toString().
 
 ** Finding and Highlighting All Instances of a Pattern
+
 #+begin_src javascript
 
     var searchString = "Now is the time and this is the time and that is the time";
@@ -814,6 +820,7 @@ For the caller, just use caller.toString().
 #+end_src
 
 The results are:
+
 #+begin_src 
     at 7 we found the
     at 11 we found time
@@ -894,6 +901,18 @@ let s2="anotherstring";
 let v  = new Set([...s1, ...s2]);
 #+end_src
 
+** convert persian digits to English
+
+#+begin_src javascript 
+function toEnDigits(str) {
+    str = str && str.toString().replace(/[\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9]/g,
+                function(v){
+                return String.fromCharCode(v.charCodeAt(0) - 1728)}).replace(/[\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669]/g, 
+                function(v){return String.fromCharCode(v.charCodeAt(0) - 1584)}).replace(/[\u066B]/g, '.');
+    return str;
+}
+#+end_src 
+
 * numbers
 ** isNumber
 
@@ -904,6 +923,7 @@ function isNumber(obj) {
 #+end_src
 
 ** Max & Min value of a array of number?
+
 #+begin_src javascript
 Math.max.apply(0, numbers);
 Math.min.apply(0, numbers);
@@ -921,6 +941,7 @@ isFinite(parseInt(number))
 #+end_src
 
 ** check if a number has a fractional part?
+
 #+begin_src javascript
 const r = Math.sqrt(x);
 if( r % 1 == 0) ...
@@ -939,6 +960,7 @@ Math.round(Math.random() * 100);
 #+end_src
 
 ** generate random number within a range
+   
 #+begin_src javascript
 function ourRandomRange(ourMin, ourMax) {
 
@@ -947,11 +969,13 @@ function ourRandomRange(ourMin, ourMax) {
 #+end_src
 
 ** change base using toString
+   
 #+begin_src javascript
 (num).toString(radix)
 #+end_src
 
 ** convret string to number with operator
+
 #+begin_src javascript
 var num='1234';
 var cnum = +num;
@@ -1025,6 +1049,7 @@ function daydiff(first, second) {
 
 alert(daydiff(parseDate($('#first').val()), parseDate($('#second').val())));
 #+end_src
+
 http://stackoverflow.com/questions/542938/how-do-i-get-the-number-of-days-between-two-dates-in-javascript
 
 ** check if a date object is today
@@ -1213,6 +1238,7 @@ The following one-liner is a regular expression that takes advantage of the fact
 http://stackoverflow.com/questions/9694930/remove-all-occurrences-except-last
 ** regular expression from string
 Use the RegExp object constructor to create a regular expression from a string:
+
 #+begin_src javascript
 var re = new RegExp("a|b", "i");
 // same as
@@ -1387,6 +1413,7 @@ class. To use the Object.prototype.toString() with every object, you
 need to call Function.prototype.call() or Function.prototype.apply()
 on it, passing the object you want to inspect as the first parameter
 called thisArg.
+
 #+begin_src javascript
 var toString = Object.prototype.toString;
 
@@ -1400,6 +1427,7 @@ toString.call(null);        // [object Null]
 #+end_src
 
 ** Reflection
+
 #+begin_src javascript
 function isUndefined(value) {
    return typeof value === 'undefined';
@@ -1413,10 +1441,12 @@ function isDefined(value) {
 #+end_src
 
 ** cloning objects
+   
 #+begin_src javascript
 var object = { firstname: 'Kostas', lastname: 'Bariotis' };
 var clone = JSON.parse(JSON.stringify(object));
 #+end_src
+
 http://stackoverflow.com/questions/728360/how-do-i-correctly-clone-a-javascript-object/
 
 ** return immutable object from a function
@@ -1442,6 +1472,7 @@ function imm1(name, age, location, status) {
 #+end_src
 
 ** tell if a number is even using bitwise & operator
+
 #+begin_src javascript
 return (num & 1) ? "is not even" : "is even";
 #+end_src
