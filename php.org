@@ -272,6 +272,12 @@ function IsNullOrEmptyString($question){
 }
 #+end_src 
 
+** remove all leading zeros from  a string
+
+#+begin_src php 
+$str = ltrim($str, '0');
+#+end_src 
+
 * numbers
 ** Checking Whether a Variable Contains a Valid Number
 
