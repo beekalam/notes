@@ -2423,6 +2423,20 @@ $('#input_92_31').attr('readonly','readonly');
 
 https://html.spec.whatwg.org/multipage/index.html
 
+** web application mobile icons
+
+#+begin_src html
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-startup-image" href="startup.png">
+<link rel="apple-touch-icon" href="youricon.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="128x128" href="youricon.png">
+
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="shortcut icon" sizes="196x196" href="youriconhighres.png">
+<link rel="shortcut icon" sizes="128x128" href="youricon.png">
+#+end_src 
+
 * FatFreeFramework
 ** CSRF protection example
 

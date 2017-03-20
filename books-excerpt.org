@@ -946,5 +946,6 @@ learning. Sweet spot (n): The zone on the edge of current ability
 where learning happens fastest. Marked by a frequency of mistakes, and
 also by the recognition of those mistakes (see Tip #13)."
 
+* 
 * what are the best situations to use pros/cons solving method?
 I think when you want to choose between two options.
