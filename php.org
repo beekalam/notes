@@ -1024,6 +1024,18 @@ echo "<meta http-equiv='refresh' content='0;url=http://domain.com?a=1&b=2'>";
 header ("Location: url=http://domain.com?a=1&b=2");
 #+end_src 
 
+** user IP
+
+#+begin_src php
+if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+  $ip=$_SERVER['HTTP_CLIENT_IP'];}
+elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+  $ip=$_SERVER['HTTP_X_FORWARDED_FOR'];} 
+else {
+  $ip=$_SERVER['REMOTE_ADDR'];
+}
+#+end_src 
+
 * json
 ** json encode raw UTF?
 
@@ -2405,7 +2417,11 @@ field to readonly with jQuery as displayed in the code below.
 
 #+begin_src html
 $('#input_92_31').attr('readonly','readonly');
-#+end_src 
+#+end_src
+
+** useful resources 
+
+https://html.spec.whatwg.org/multipage/index.html
 
 * FatFreeFramework
 ** CSRF protection example
