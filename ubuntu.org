@@ -2615,7 +2615,149 @@ apachectl stop
 This shuts the server down immediately. Any existing connections are terminated at once.
 
 * redis
-** Hello World using redis-cli
+** using from command line
+
+#+begin_src
+$ redis-cli
+127.0.0.1:6379> SET philosopher "socrates"
+OK
+127.0.0.1:6379> GET philosopher
+"socrates"
+127.0.0.1:6379>
+#+end_src 
+
+** Redis data types
+*** Strings
+
+The MSET command sets the values of multiple keys at once. The arguments are
+key-value pairs separated by spaces.
+The MGET command retrieves the values of multiple key names at once, and the
+key names are separated by spaces.
+
+#+begin_src 
+$ redis-cli
+127.0.0.1:6379> MSET first "First Key value" second "Second Key value"
+OK
+127.0.0.1:6379> MGET first second
+1) "First Key value"
+2) "Second Key value"
+#+end_src
+
+*** =EXPIRE= command
+The EXPIRE command adds an expiration time (in seconds) to a given key. After that
+time, the key is automatically deleted. It returns 1 if the expiration is set successfully
+and 0 if the key does not exist or cannot be set.
+The TTL (Time To Live) command returns one of the following:
+•	 A positive integer: This is the amount of seconds a given key
+has left to live
+•	 -2: If the key is expired or does not exist
+•	 -1: If the key exists but has no expiration time set
+
+#+begin_src 
+$ redis-cli
+127.0.0.1:6379> SET current_chapter "Chapter 1"
+OK
+127.0.0.1:6379> EXPIRE current_chapter 10
+(integer) 1
+127.0.0.1:6379> GET current_chapter
+"Chapter 1"
+127.0.0.1:6379> TTL current_chapter
+(integer) 3
+127.0.0.1:6379> TTL current_chapter
+(integer) -2
+127.0.0.1:6379> GET current_chapter
+(nil)
+127.0.0.1:6379>
+#+end_src 
+
+The command INCRBYFLOAT increments a key by a given float number and returns
+the new value. INCRBY, DECRBY, and INCRBYFLOAT accept either a positive or a
+negative number:
+
+#+begin_src 
+$ redis-cli
+127.0.0.1:6379> SET counter 100
+OK
+127.0.0.1:6379> INCR counter
+(integer) 101
+127.0.0.1:6379> INCRBY counter 5
+(integer) 106
+127.0.0.1:6379> DECR counter
+(integer) 105
+127.0.0.1:6379> DECRBY counter 100
+(integer) 5
+127.0.0.1:6379> GET counter
+"5"
+127.0.0.1:6379> INCRBYFLOAT counter 2.4
+"7.4"
+#+end_src 
+
+The preceding commands shown are atomic, which means that they increment/
+decrement and return the new value as a single operation. It is not possible for two
+different clients to execute the same command at the same time and get the same
+result—no race conditions happen with those commands.
+For example, if the counter key is 1 and two different clients (A and B) increment
+their counters at the same time with INCR, client A will receive the value 2 and
+client B will receive 3.
+
+** Hello world using =redis= and =Nodejs=
+
+#+begin_src javascript
+// install by: $ npm install redis
+var redis = require("redis");
+var client = redis.createClient();
+client.set("my_key", "Hello world using nodejs and redis");
+client.get("my_key",redis.print);
+client.quit();
+#+end_src
+
+and run with
+
+#+begin_src shell
+$ node hello.js
+#+end_src 
+
+** Building a voting system with Strings using Node.js
+   
+#+begin_src javascript
+var redis =require('redis');
+
+var client = redis.createClient();
+
+function upVote(id){
+	var key = "article:" + id + ":votes";
+	client.incr(key);
+}
+
+function downVote(id){
+	var key = "article:" + id + ":votes";
+	client.decr(key);
+}
+
+function showResults(id) {
+	var headlineKey = "article:" + id + ":headline";
+	var voteKey = "article:" + id + ":votes";
+	client.mget([headlineKey, voteKey], function(err, replies){
+		console.log("The article " + replies[0] + " has " + replies[1] + " votes");
+	});
+}
+
+upVote(12345);
+upVote(12345);
+upVote(12345);
+upVote(10001);
+upVote(10001);
+downVote(10001);
+upVote(60056);
+
+showResults(12345);
+showResults(10001);
+showResults(60056);
+
+client.quit();
+#+end_src 
+
+
 * references
 http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
 
