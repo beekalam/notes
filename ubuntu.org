@@ -2700,6 +2700,118 @@ For example, if the counter key is 1 and two different clients (A and B) increme
 their counters at the same time with INCR, client A will receive the value 2 and
 client B will receive 3.
 
+*** Lists
+**** intro
+List commands are atomic. There are blocking commands in
+Redis's Lists, which means that when a client executes a blocking command in an
+empty List, the client will wait for a new item to be added to the List.
+
+Redis's Lists are linked lists, therefore insertions and deletions from the beginning or the end
+of a List run in O(1), constant time.
+
+The task of accessing an element in a List runs in O(N), linear time, but accessing
+the first or last element always runs in constant time.
+
+**** List examples with redis-cli
+
+The command *LPUSH* inserts data at the beginning of a List
+(left push), and the command *RPUSH* inserts data at the end of a List (right push):
+
+#+begin_src 
+$ redis-cli
+127.0.0.1:6379> LPUSH books "Clean Code"
+(integer) 1
+127.0.0.1:6379> RPUSH books "Code Complete"
+(integer) 2
+127.0.0.1:6379> LPUSH books "Peopleware"
+(integer) 3
+#+end_src 
+
+The command *LLEN* returns the length of a List. The command *LINDEX* returns
+the element in a given index (indices are zero-based). Elements in a List are always
+accessed from left to right, which means that index 0 is the first element, index 1
+is the second element, and so on. It is possible to use negative indices to access the
+tail of the List, in which -1 is the last element, -2 is penultimate element, and so on.
+LINDEX does not modify a List:
+
+#+begin_src 
+$ redis-cli
+127.0.0.1:6379> LLEN books
+(integer) 3
+127.0.0.1:6379> LINDEX books 1
+"Clean Code"
+#+end_src 
+
+The command *LRANGE* returns an array with all elements from a given index range,
+including the elements in both the start and end indices. As we mentioned previously,
+indices are zero-based and can be positive or negative. See the following example:
+
+#+begin_src 
+$ redis-cli
+127.0.0.1:6379> LRANGE books 0 1
+1) "Peopleware"
+2) "Clean Code"
+127.0.0.1:6379> LRANGE books 0 -1
+1) "Peopleware"
+2) "Clean Code"
+3) "Code Complete"
+#+end_src 
+
+The command *LPOP* removes and returns the first element of a List. The command
+*RPOP* removes and returns the last element of a List. Unlike LINDEX, both LPOP
+and RPOP modify the List:
+
+#+begin_src 
+$ redis-cli
+127.0.0.1:6379> LPOP books
+"Peopleware"
+127.0.0.1:6379> RPOP books
+"Code Complete"
+127.0.0.1:6379> LRANGE books 0 -1
+1) "Clean Code"
+#+end_src 
+
+*** Hashes
+**** intro
+Hashes are a great data structure for storing objects because you can map fields to
+values. They are optimized to use memory efficiently and look for data very fast.
+In a Hash, both the field name and the value are Strings. Therefore, a Hash is a
+mapping of a String to a String.
+**** Using Hashes with redis-cli
+The command HSET sets a value to a field of a given key. The syntax is HSET key
+field value.
+The command HMSET sets multiple field values to a key, separated by spaces.
+Both HSET and HMSET create a field if it does not exist, or overwrite its value
+if it already exists.
+
+The command HINCRBY increments a field by a given integer. Both HINCRBY
+and HINCRBYFLOAT are similar to INCRBY and INCRBYFLOAT (not presented
+in the following code):
+
+#+begin_src 
+$ redis-cli
+127.0.0.1:6379> HSET movie "title" "The Godfather"
+(integer) 1
+127.0.0.1:6379> HMSET movie "year" 1972 "rating" 9.2 "watchers" 10000000
+OK
+127.0.0.1:6379> HINCRBY movie "watchers" 3
+(integer) 10000003
+#+end_src 
+
+The command HGET retrieves a field from a Hash. The command HMGET retrieves
+multiple fields at once:
+
+#+begin_src 
+127.0.0.1:6379> HGET movie "title"
+"The Godfather"
+127.0.0.1:6379> HMGET movie "title" "watchers"
+1) "The Godfather"
+2) "10000003"
+The command HDEL deletes a field from a Hash:
+127.0.0.1:6379> HDEL movie "watchers"
+(integer) 1   
+#+end_src 
+
 ** Hello world using =redis= and =Nodejs=
 
 #+begin_src javascript
@@ -2755,6 +2867,88 @@ showResults(10001);
 showResults(60056);
 
 client.quit();
+#+end_src 
+
+
+** implementing a generic Queue system
+
+=Queue.js=
+
+#+begin_src javascript 
+function Queue(queueName, redisClient){
+    this.queueName = queueName;
+    this.redisClient = redisClient;
+    this.queueKey = 'queues: ' + queueName;
+    // zero means no timeout
+    this.timeout = 0;
+}
+
+Queue.prototype.size = function(callback){
+    this.redisClient.llen(this.queueKey, callback);
+}
+
+Queue.prototype.push = function(data){
+    this.redisClient.lpush(this.queueKey, data);
+}
+
+Queue.prototype.pop = function(callback){
+    // The command BRPOP removes the last element of a Redis List.
+    // If the list is emtpy , it waits until there is something  to remove.
+    this.redisClient.brpop(this.queueKey, this.timeout, callback);
+}
+
+exports.Queue = Queue;
+
+// produce/consumer implementation.
+
+#+end_src 
+
+=producer-worker.js=
+
+#+begin_src javascript 
+var redis= require('redis');
+var client = redis.createClient();
+var queue = require('./queue');
+var logsQueue = new queue.Queue("logs", client);
+var MAX = 5;
+for(var i = 0 ; i < MAX; ++i){
+    logsQueue.push("Hello world  #" + i);
+}
+console.log("Created " + MAX  + " logs");
+client.quit();
+
+#+end_src 
+
+=consumer-worker.js=
+
+#+begin_src javascript
+var redis = require('redis');
+var client = redis.createClient();
+var queue = require("./queue");
+var logsQueue = new queue.Queue("logs", client);
+function logMessages(){
+    logsQueue.pop(function(err, replies){
+        var queueName = replies[0];
+        var message = replies[1];
+        console.log("[Consumer] Got log: " + message);
+
+        logsQueue.size(function(err, size){
+            console.log(size + " logs left");
+        });
+
+        logMessages();
+    });
+}
+
+logMessages();
+
+#+end_src 
+
+run with
+
+#+begin_src shell 
+$ node consumer-worker.js
+$ node producer-worker.js
 #+end_src 
 
 
