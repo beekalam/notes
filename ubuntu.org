@@ -2777,7 +2777,9 @@ Hashes are a great data structure for storing objects because you can map fields
 values. They are optimized to use memory efficiently and look for data very fast.
 In a Hash, both the field name and the value are Strings. Therefore, a Hash is a
 mapping of a String to a String.
+
 **** Using Hashes with redis-cli
+
 The command HSET sets a value to a field of a given key. The syntax is HSET key
 field value.
 The command HMSET sets multiple field values to a key, separated by spaces.
@@ -2810,7 +2812,24 @@ multiple fields at once:
 The command HDEL deletes a field from a Hash:
 127.0.0.1:6379> HDEL movie "watchers"
 (integer) 1   
+
 #+end_src 
+
+The command HGETALL returns an array of all field/value pairs in a Hash:
+
+#+begin_src 
+127.0.0.1:6379> HGETALL movie
+1) "title"
+2) "The Godfather"
+3) "year"
+4) "1972"
+5) "rating"
+6) "9.2"
+127.0.0.1:6379>
+#+end_src 
+
+It is possible to retrieve only the field names or field values of a Hash with the
+commands HKEYS and HVALS respectively.
 
 ** Hello world using =redis= and =Nodejs=
 
@@ -2951,6 +2970,48 @@ $ node consumer-worker.js
 $ node producer-worker.js
 #+end_src 
 
+** A voting system with Hashes and Node.js
+=hash-voting-system.js=
+
+#+begin_src javascript
+var redis = require('redis');
+var client = redis.createClient();
+
+function saveLink(id, author, title, link){
+	client.hmset("Link:" + id, "author", author, "title", title, "link", link,
+		score, 0);	
+}
+
+function upVote(id) {
+	client.hincrby("link:" + id, "score", 1);
+}
+
+function downVote(di) {
+	client.hincrby("link:" + id, "score", -1);
+}
+
+function showDetails(id) {
+	client.hgetall("link: " + id, function(err, replies){
+		console.log("Title: ", replies['title']);
+		console.log("author: " , replies['author']);
+		console.log("Link: " , replies['link']);
+		console.log("score: ", replies['score']);
+		console.log("------------------------------");
+	})
+}
+
+saveLink(123, "dayvson", "Maxwell Dayvson's Github page", "https://github.com/dayvson");
+upVote(123);
+upVote(123);
+saveLink(456, "hltbra", "Hugo Tavares's Github page", "https://github.com/hltbra");
+upVote(456);
+upVote(456);
+downVote(456);
+showDetails(123);
+showDetails(123);
+
+client.quit();
+#+end_src 
 
 * references
 http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
