@@ -2363,6 +2363,10 @@ style it like ~.modal.custom~.
 
 http://jsfiddle.net/surjithctly/ka8uW/
 
+** useful resources
+
+http://www.tutorialrepublic.com/twitter-bootstrap-tutorial
+
 * =datatables=
 ** filter for text inside a =<span>= or other html
 
