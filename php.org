@@ -1,6 +1,8 @@
 #+TITLE:  php recipes
 #+AUTHOR:  Mohammad Reza Mansouri
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+HTML_HEAD: <script src="js/org-info.js"></script>
+#+HTML_HEAD: <script src="js/ganalytics.js" async></script>
 #+STARTUP: overview
 
 * regular expression
