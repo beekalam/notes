@@ -2831,6 +2831,107 @@ The command HGETALL returns an array of all field/value pairs in a Hash:
 It is possible to retrieve only the field names or field values of a Hash with the
 commands HKEYS and HVALS respectively.
 
+*** sets 
+**** intro
+A Set in Redis is an unordered collection of distinct Strings—it's not possible to add
+repeated elements to a Set. Internally, a Set is implemented as a hash table, which
+is the reason that some operations are optimized: member addition, removal, and
+lookup run in O(1), constant time.
+
+**** Set examples with redis-cli
+The command *SADD* is responsible for adding one or many members to a Set. SADD
+ignores members that already exist in a Set and returns the number of added members:
+
+#+begin_src 
+$ redis-cli
+127.0.0.1:6379> SADD user:max:favorite_artists "Arcade Fire" "Arctic Monkeys"
+"Belle & Sebastian" "Lenine"
+(integer) 4
+127.0.0.1:6379> SADD user:hugo:favorite_artists "Daft Punk" "The Kooks" "Arctic
+Monkeys"
+(integer) 3
+#+end_src 
+
+The command SINTER expects one or many Sets and returns an array with the
+members that belong to every Set. In this example, SINTER returns only the favorite
+artists that both Max and Hugo have on their lists:
+
+#+begin_src 
+127.0.0.1:6379> SINTER user:max:favorite_artists user:hugo:favorite_artists
+1) "Arctic Monkeys"
+#+end_src 
+
+The command SDIFF expects one or many Sets. It returns an array with all members
+of the first Set that do not exist in the Sets that follow it. In this command, the key
+name order matters. Any key that does not exist is considered to be an empty Set.
+There are two ways of using the command SDIFF.
+
+The first example returns the names of artists from user:max:favorite_artists that are
+not present in user:hugo:favorite_artists:
+
+#+begin_src 
+127.0.0.1:6379> SDIFF user:max:favorite_artists user:hugo:favorite_artists
+1) "Belle & Sebastian"
+2) "Arcade Fire"
+3) "Lenine"
+#+end_src
+
+The second example returns the names of artists from user:hugo:favorite_artists that
+are not present in user:max:favorite_artists:
+#+begin_src 
+127.0.0.1:6379> SDIFF user:hugo:favorite_artists user:max:favorite_artists
+1) "Daft Punk"
+2) "The Kooks"
+#+end_src 
+
+The SUNION command expects one or many Sets. It returns an array with all
+members of all Sets. The result has no repeated members.
+In this example, SUNION returns the names of all artists in both users' Sets of
+favorite artists:
+
+#+begin_src 
+127.0.0.1:6379> SUNION user:max:favorite_artists user:hugo:favorite_artists
+1) "Lenine"
+2) "Daft Punk"
+3) "Belle & Sebastian"
+4) "Arctic Monkeys"
+5) "Arcade Fire"
+6) "The Kooks"
+#+end_src 
+
+The command SRANDMEMBER returns random members from a Set. Because Sets
+are unordered, it is not possible to retrieve elements from a given position:
+#+begin_src 
+127.0.0.1:6379> SRANDMEMBER user:max:favorite_artists
+"Arcade Fire"
+127.0.0.1:6379> SRANDMEMBER user:max:favorite_artists
+"Lenine"
+#+end_src 
+
+The command SISMEMBER checks whether a member exists in a Set. It returns 1
+if the member exists and 0 if it does not.
+The command SREM removes and returns members from a Set. The command
+SCARD returns the number of members in a Set (also known as cardinality):
+#+begin_src 
+127.0.0.1:6379> SISMEMBER user:max:favorite_artists "Arctic Monkeys"
+(integer) 1
+127.0.0.1:6379> SREM user:max:favorite_artists "Arctic Monkeys"
+(integer) 1
+127.0.0.1:6379> SISMEMBER user:max:favorite_artists "Arctic Monkeys"
+(integer) 0
+127.0.0.1:6379> SCARD user:max:favorite_artists
+(integer) 3
+#+end_src 
+
+The command *SMEMBERS* returns an array with all members of a Set:
+
+#+begin_src
+127.0.0.1:6379> SMEMBERS user:max:favorite_artists
+1) "Belle & Sebastian"
+2) "Arcade Fire"
+3) "Lenine"
+#+end_src 
+
 ** Hello world using =redis= and =Nodejs=
 
 #+begin_src javascript
