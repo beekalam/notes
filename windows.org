@@ -2,3 +2,20 @@
 ** Internet connection sharing
 service name is /sharedAccess/
 C:\windows\System32\svchost.exe -k netsvcs
+* search mp3 file by artist name
+
+Since you specifically asked for Windows Search, you could use Advanced Query Syntax.
+The general syntax for your case would be
+
+kind:music artist:"my artist" title:"my title"
+Search in action
+
+Note how the title and artist matches, but not the filename itself
+
+*More properties*
+
+bitrate, artist, duration, album, genre, track, year
+fileext, title, date, modified, folder
+Note: If you're on a localized Windows, the name of these properties also change
+
+https://msdn.microsoft.com/en-us/library/aa965711(v=vs.85).aspx

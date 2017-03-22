@@ -92,6 +92,15 @@ or have other misquoted words.
 END;
 #+end_src
 
+** search for substring in string
+
+#+begin_src php
+$a = 'How are you?';
+if (strpos($a, 'are') !== false) {
+    echo 'true';
+}
+#+end_src 
+
 ** Accessing Substrings
 
 #+begin_src php
@@ -99,7 +108,7 @@ END;
 
 if (strpos($_POST['email'], '@') === false) {
     print 'There was no @ in the e-mail address!';
- }
+}
 
 ?>
 #+end_src
@@ -1385,11 +1394,10 @@ An exception handler will usually present an error screen to the user—much nic
 than a fatal error message!
 
 #+begin_src php
-A basic exception handler would look similar to this:
+//A basic exception handler would look similar to this:
 function handleMissedException($e) {
-echo "Sorry, something is wrong. Please try again, or contact us if the problem persists";
-error_log('Unhandled Exception: ' . $e->getMessage()
-. ' in file ' . $e->getFile() . ' on line ' . $e->getLine());
+  echo "Sorry, something is wrong. Please try again, or contact us if the problem persists";
+  error_log('Unhandled Exception: ' . $e->getMessage() . ' in file ' . $e->getFile() . ' on line ' . $e->getLine());
 }
 set_exception_handler('handleMissedException');
 throw new Exception('just testing!');
