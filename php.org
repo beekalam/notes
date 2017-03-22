@@ -101,6 +101,20 @@ if (strpos($a, 'are') !== false) {
 }
 #+end_src 
 
+using =strstr()=
+
+#+begin_src php
+<?php
+//string strstr ( string $haystack , mixed $needle [, bool $before_needle = false ] )
+$email  = 'name@example.com';
+$domain = strstr($email, '@');
+echo $domain; // prints @example.com
+
+$user = strstr($email, '@', true); // As of PHP 5.3.0
+echo $user; // prints name
+?>
+#+end_src 
+
 ** Accessing Substrings
 
 #+begin_src php
@@ -1369,6 +1383,7 @@ error_log("You messed up!", 3, "/var/tmp/my-errors.log");
 ** enabling error reporting
    
 #+begin_src php
+ini_set("display_errors","1");
 error_reporting(E_ALL);
 #+end_src
 

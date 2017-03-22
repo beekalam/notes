@@ -2930,6 +2930,64 @@ The command *SMEMBERS* returns an array with all members of a Set:
 1) "Belle & Sebastian"
 2) "Arcade Fire"
 3) "Lenine"
+#+end_src
+
+*** Bitmaps
+**** intro    
+A Bitmap is not a real data type in Redis. Under the hood, a Bitmap is a String.
+We can also say that a Bitmap is a set of bit operations on a String.
+A Bitmap is a sequence of bits where each bit can store 0 or 1. You can think of a
+Bitmap as an array of ones and zeroes.
+
+****  Bitmap examples with redis-cli
+The SETBIT command is used to give a value to a Bitmap offset, and it accepts only
+1 or 0. If the Bitmap does not exist, it creates it. In the following snippet, users 10 and
+15 visited the website on 2015-01-01, and users 10 and 11 visited it on 2015-01-02:
+
+#+begin_src 
+127.0.0.1:6379> SETBIT visits:2015-01-01 10 1
+(integer) 0
+127.0.0.1:6379> SETBIT visits:2015-01-01 15 1
+(integer) 0
+127.0.0.1:6379> SETBIT visits:2015-01-02 10 1
+(integer) 0
+127.0.0.1:6379> SETBIT visits:2015-01-02 11 1
+(integer) 0
+#+end_src 
+
+The GETBIT command returns the value of a Bitmap offset. In the following example,
+it checks whether user 10 visited the website on 2015-01-01, and then checks whether
+user 15 visited the website on 2015-01-02:
+
+#+begin_src 
+127.0.0.1:6379> GETBIT visits:2015-01-01 10
+(integer) 1
+127.0.0.1:6379> GETBIT visits:2015-01-02 15
+(integer) 0
+#+end_src 
+
+The BITCOUNT command returns the number of bits marked as 1 in a Bitmap.
+In this example, it returns the number of users who visited the website on the
+specified dates:
+
+#+begin_src 
+127.0.0.1:6379> BITCOUNT visits:2015-01-01
+(integer) 2
+127.0.0.1:6379> BITCOUNT visits:2015-01-02
+(integer) 2
+#+end_src 
+
+The BITOP command requires a destination key, a bitwise operation, and a list
+of keys to apply to that operation and store the result in the destination key. The
+available bitwise operations are OR, AND, XOR, and NOT. The following example
+uses BITOP OR to find out how many users visited the website on the specified
+dates (2015-01-01 and 2015-01-02):
+
+#+begin_src 
+127.0.0.1:6379> BITOP OR total_users visits:2015-01-01 visits:2015-01-02
+(integer) 2
+127.0.0.1:6379> BITCOUNT total_users
+(integer) 3
 #+end_src 
 
 ** Hello world using =redis= and =Nodejs=
