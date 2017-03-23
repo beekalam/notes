@@ -1,6 +1,7 @@
 #+TITLE:   python recipes 
 #+AUTHOR:  Mohammad Reza Mansouri
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+HTML_HEAD: <script src="js/org-info.js"></script>
 #+HTML_HEAD: <script src="js/ganalytics.js" async></script>
 #+STARTUP: overview
 
@@ -288,7 +289,6 @@ for x in arguments:
     print("The %d argument is %s") % (i,x)
     i+=1
 #+end_src 
-
 
 * =compat.py= and python version 2.x and 3.x
 

@@ -17,6 +17,8 @@
 
 [[file:ubuntu.org][ubuntu]]
 
+[[file:c.org][c]]
+
 [[file:embedded.org][embedded]]
 
 [[file:problem-solving.org][problem solving]]
