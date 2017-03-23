@@ -5735,6 +5735,23 @@ $(function() {
 
 #+end_src
 
+** Disable Button while AJAX Request
+
+#+begin_src javascript 
+$("#ajaxStart").click(function() {
+    $("#ajaxStart").attr("disabled", true);
+    $.ajax({
+        //...
+        success: function(response){
+            //success process here
+             $("#ajaxStart").attr("disabled", false);
+        },
+        //...
+    });
+});
+#+end_src 
+
+
 * =HTML5= validation
 
 #+begin_src html
