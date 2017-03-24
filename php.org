@@ -1454,6 +1454,9 @@ gramming?
 
 *The Solution*
 Create a “factory”—a function or a class method— to “manufacture” new objects.
+** creational 
+*** Factory method
+*** prototype
 
 * files
 ** Reading Entire files
@@ -2397,6 +2400,21 @@ http://www.tutorialrepublic.com/twitter-bootstrap-tutorial
 
 #+begin_src javascript
   {column_number: 4, filter_reset_button_text: false, filter_default_label: '', column_data_type:'html', html_data_type:'text', filter_match_mode:'exact'},
+#+end_src
+
+** make hidden column details visible in responsive mode
+
+#+begin_src javascript 
+var table = $('#datatable-packages').DataTable({
+ //...
+ {
+              details:{
+                  display: $.fn.dataTable.Responsive.display.childRowImmediate,
+                  type: ''
+              }
+            },
+//..
+}]
 #+end_src 
 
 * HTML

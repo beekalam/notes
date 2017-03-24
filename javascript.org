@@ -1,6 +1,7 @@
 #+TITLE:   javascript recipes  
 #+AUTHOR:  Mohammad Reza Mansouri
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+HTML_HEAD: <script src="js/org-info.js"></script>
 #+HTML_HEAD: <script src="js/ganalytics.js" async></script>
 #+STATUP: overview
 
@@ -1717,6 +1718,7 @@ How do we implement a module in JavaScript? First of all,
 we need to detach the module code from the global scope.
 We can only do this by a wrapping module code with a function.
 A common practice here is to go with Immediately Invoked Function Expression (IIFE):
+
 #+begin_src javascript
 IIFE
 (function () {
@@ -3979,7 +3981,179 @@ event.initEvent( "my-event", true, false );
 // Dispatch the event
 btn.dispatchEvent( event );
 #+end_src
- 
+
+* cookies
+** syntax
+There are several parts to each cookie, many of them optional. The syntax for setting cookies is 
+
+#+begin_src 
+name=value [; expires=date] [; domain=domain] [; path=path] [; secure] 
+#+end_src 
+ - *secure* Indicates that the cookie is only to be returned over a secure (HTTPS) connection. 
+
+When a user connects to a site, the browser checks its list of cookies for a
+match. A match is determined by examination of the URL of the current request.
+If the domain and path in a cookie match the given URL (in some loose sense),
+the cookie’s name=value token is sent to the server. If multiple cookies match,
+the browser includes each match in a semicolon-separated string. For example, it
+might return
+
+username=fritz; favoritecolor=green; prefersmenus=yes
+
+** session cookies and persistent cookies
+Cookies that are set without the expires field are called *session cookies*. They
+derive their name from the fact that they are kept for only the current browser
+session; they are destroyed when the user quits the browser. Cookies that are
+not session cookies are called *persistent cookies* because the browser keeps them
+until their expiration date is reached, at which time they are discarded.
+
+** escaping cookie contents
+
+The cookie parsing routines used by the browser assume that any cookies you set
+are well formed. The name/value pair must not contain any whitespace characters,
+commas, or semicolons. Using such characters can cause the cookie to be
+truncated or even discarded. It is common practice to encode cookie values that
+might be problematic before setting them in the cookie. The global escape() and
+unescape() methods available in all major browsers are usually sufficient for
+the job. These functions URL-encode and URL-decode the strings that are passed
+to them as arguments and return the result. Problematic characters such as
+whitespace, commas, and semicolons are replaced with their equivalent in URL
+escape codes. For example, a space character is encoded as %20. The following
+code illustrates their use:
+
+#+begin_src javascript 
+var problemString = "Get rid of , ; and ?";
+var encodedString = escape(problemString);
+alert("Encoded: " + encodedString + "\n" + "Decoded: " + unescape(encodedString));
+#+end_src
+
+** appending and replacing cookie values
+
+When you assign a new cookie value to document.cookie, the current cookies are
+not replaced. The new cookie is parsed and its name/value pair is appended to
+the list. The exception is when you assign a new cookie with the same name (and
+same domain and path, if they exist) as a cookie that already exists. In this
+case, the old value is replaced with the new. For example:
+
+#+begin_src javascript 
+document.cookie = "username=fritz";
+document.cookie = "username=thomas";
+alert("Cookies: " + document.cookie); // Cookies: username=thomas
+#+end_src
+
+** reading cookies 
+
+reading cookies is as simple as examining the document.cookie string. Because
+the browser automatically parses and adds any cookies set into this property, it
+always contains up-to-date name/value pairs of cookies for the current document.
+The only challenging part is parsing the string to extract the information in
+which you are interested. Consider the following code:
+
+#+begin_src javascript
+document.cookie = "username=fritz";
+document.cookie = "favoritecolor=green";
+document.cookie = "jsprogrammer=true";
+#+end_src
+
+The value of document.cookie after these statements are executed is 
+"username=fritz; favoritecolor=green; jsprogrammer=true"
+
+If you are interested in the favoritecolor cookie, you could manually extract
+everything after favoritecolor= and before ; jsprogrammer=true. However, it is
+almost always a good idea to write a function that will do this for you
+automatically.
+
+** parsing cookies
+
+The following code parses the current cookies and places them in an associative
+array indexed by name. It assumes that the browser is ECMAScript-compliant.
+
+#+begin_src javascript
+
+// associative array indexed as cookies["name"] = "value"
+var cookies = new Object();    
+function extractCookies()
+{
+   var name, value;
+   var beginning, middle, end;
+   for (name in cookies)
+   { // if there are any entries currently, get rid of them 
+     cookies = new Object();
+     break;
+   }
+   beginning = 0;  // start at beginning of cookie string
+   while (beginning < document.cookie.length)
+   {
+     middle = document.cookie.indexOf('=', beginning);  // find next =
+     end = document.cookie.indexOf(';', beginning);  // find next ;
+     if (end == -1)  // if no semicolon exists, it's the last cookie
+       end = document.cookie.length;
+     if ( (middle > end) || (middle == -1) )
+      { // if the cookie has no value... 
+        name = document.cookie.substring(beginning, end);
+        value = "";
+      }
+      else
+      { // extract its value
+        name = document.cookie.substring(beginning, middle);
+        value = document.cookie.substring(middle + 1, end);
+      }
+      cookies[name] = unescape(value);  // add it to the associative array
+      beginning = end + 2;  // step over space to beginning of next cookie
+   }
+}
+#+end_src 
+
+Note that invoking unescape() on a string that hasn’t been set to escape() will
+generally not result in any harm. Unescaping affects only substrings of the form
+%hh where the h’s are hex digits. You might wonder if the extra checking for the
+equal sign in the previous example is necessary. It is. Consider the following
+example:
+
+#+begin_src javascript
+document.cookie = "first=value1"
+document.cookie = "second=";
+document.cookie = "third";
+document.cookie = "fourth=value4";
+alert("Cookies: " + document.cookie);
+#+end_src
+
+** deleting cookies
+
+A cookie is deleted by setting a cookie with the same name (and domain and path,
+if they were set) with an expiration date in the past. Any date in the past
+should work, but most often programmers use the first second after the epoch in
+order to accommodate computers with an incorrectly set date. To delete a cookie
+named “username” that was set without a domain or path token, you would write
+
+#+begin_src javascript 
+document.cookie = "username=nothing; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+#+end_src 
+
+This technique deletes cookies set with a value, but, as previously discussed,
+some cookies can exist without explicit values. Such cookies require that the
+equal sign be omitted. For example, the following would define and then
+immediately delete a cookie without an explicit value:
+
+#+begin_src javascript 
+document.cookie = "username";
+document.cookie = "username; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+#+end_src 
+
+With defensive programming in mind, you might want to write a deleteCookie()
+function that tries both techniques to delete cookies:
+
+#+begin_src javascript
+function deleteCookie(name) 
+{
+   document.cookie = name + "=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+   document.cookie = name + "; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+}
+#+end_src 
+
+Remember that if a cookie was set with path or domain information, you need to
+include those tokens in the cookie you use to delete it.
+
 * XHR
 
 XMLHttpRequest (XHR) is the main API in JavaScript to exchange data
