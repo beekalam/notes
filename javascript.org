@@ -4154,6 +4154,88 @@ function deleteCookie(name)
 Remember that if a cookie was set with path or domain information, you need to
 include those tokens in the cookie you use to delete it.
 
+** Using Cookies for User State Management
+
+Often it is useful to send your site’s visitors to different pages on the basis
+of some criterion. For example, first-time visitors might be redirected to an
+introductory page, while returning users should be sent to a content page. This
+is easily accomplished:
+
+#+begin_src javascript
+// this script might go in index.html
+var cookies = new Object();
+// immediately set a cookie to see if they are enabled
+document.cookie = "cookiesenabled=yes";
+ 
+extractCookies();                              
+if (cookies["cookiesenabled"] == "yes")
+ {             
+   if (cookies["returninguser"] == "true")
+    {
+      location.href = "/content.html";
+    }
+   else
+    {                                         
+      var expiration = new Date(); 
+      expiration.setYear(expiration.getYear() + 2);                            
+      // cookie expires in 2 years
+      document.cookie = "returninguser=true; expires=" +                   
+                           expiration.toGMTString();
+       location.href = "/introduction.html";
+    }
+}
+#+end_src
+
+** One-Time Pop-Ups
+
+One-time pop-up windows are used to present users with information the first
+time they visit a particular page. Such pop-ups usually contain a welcome
+message, reminder, special offer, or configuration prompt. An example
+application targeting a “tip of the day” page that is displayed once per session
+is shown here:
+
+#+begin_src javascript 
+var cookies = new Object();
+document.cookie = "cookiesenabled=yes";       
+extractCookies();                               
+if (cookies["cookiesenabled"] == "yes" && !cookies["has_seen_tip"])
+{   
+   document.cookie = "has_seen_tip=true";
+   window.open("/tipoftheday.html", "tipwindow", "resizable");
+}
+#+end_src 
+
+* browser
+** How can I get windowWidth, windowHeight, pageWidth, pageHeight, screenWidth, screenHeight, pageX, pageY, screenX, screenY which will work in all major browsers?
+
+If you are using jQuery, you can get the size of the window or the document using jQuery methods:
+#+begin_src javascript 
+$(window).height();   // returns height of browser viewport
+$(document).height(); // returns height of HTML document (same as pageHeight in screenshot)
+$(window).width();   // returns width of browser viewport
+$(document).width(); // returns width of HTML document (same as pageWidth in screenshot)
+#+end_src 
+
+For screen size you can use the screen object in the following way:
+
+#+begin_src javascript
+screen.height;
+screen.width;
+#+end_src 
+
+another solution
+#+begin_src javascript
+var w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+alert(x + ' × ' + y);
+#+end_src 
+
+http://stackoverflow.com/questions/3437786/get-the-size-of-the-screen-current-web-page-and-browser-window
+
 * XHR
 
 XMLHttpRequest (XHR) is the main API in JavaScript to exchange data
@@ -5924,7 +6006,6 @@ $("#ajaxStart").click(function() {
     });
 });
 #+end_src 
-
 
 * =HTML5= validation
 
