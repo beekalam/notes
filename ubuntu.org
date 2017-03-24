@@ -3298,6 +3298,232 @@ dates (2015-01-01 and 2015-01-02):
 (integer) 2
 127.0.0.1:6379> BITCOUNT total_users
 (integer) 3
+#+end_src
+
+** publish/subscribe
+*** intro
+Generally,the concept of publish/ subscribe, also known as pub/sub, is
+characterized by listeners subscribing to channels, with publishers sending
+binary string messages to channels. Anyone listening to a given channel will
+receive all messages sent to that channel while they’re connected and lis-
+tening. You can think of it like a radio station, where subscribers can listen
+to multiple radio stations at the same time, and publishers can send messages on
+any radio station.
+
+Commands for handling pub/sub in Redis
+
+| Command      | Example use and description                                                                                                                  |
+|--------------+----------------------------------------------------------------------------------------------------------------------------------------------|
+| SUBSCRIBE    | SUBSCRIBE channel [channel ...] —Subscribes to the given channels                                                                            |
+| UNSUBSCRIBE  | UNSUBSCRIBE [channel [channel ...]] —Unsubscribes from the provided channels or unsubscribes all channels if no channel is given             |
+| PUBLISH      | PUBLISH channel message —Publishes a message to the given channel                                                                            |
+| PSUBSCRIBE   | PSUBSCRIBE pattern [pattern ...] —Subscribes to messages broadcast to channels that match the given pattern                                  |
+| PUNSUBSCRIBE | PUNSUBSCRIBE [pattern [pattern ...]] —Unsubscribes from the provided patterns or unsubscribes from all subscribed patterns if none are given |
+
+*** python example
+#+begin_src 
+>>> def publisher(n):
+...     time.sleep(1)                                                   #A
+...     for i in xrange(n):
+...         conn.publish('channel', i)                                  #B
+...         time.sleep(1)                                               #B
+...
+>>> def run_pubsub():
+...     threading.Thread(target=publisher, args=(3,)).start()           #D
+...     pubsub = conn.pubsub()                                          #E
+...     pubsub.subscribe(['channel'])                                   #E
+...     count = 0
+...     for item in pubsub.listen():                                    #F
+...         print item                                                  #G
+...         count += 1                                                  #H
+...         if count == 4:                                              #H
+...             pubsub.unsubscribe()                                    #H
+...         if count == 5:                                              #L
+...             break                                                   #L
+...
+>>> run_pubsub()                                                        #C
+{'pattern': None, 'type': 'subscribe', 'channel': 'channel', 'data': 1L}#I
+{'pattern': None, 'type': 'message', 'channel': 'channel', 'data': '0'} #J
+{'pattern': None, 'type': 'message', 'channel': 'channel', 'data': '1'} #J
+{'pattern': None, 'type': 'message', 'channel': 'channel', 'data': '2'} #J
+{'pattern': None, 'type': 'unsubscribe', 'channel': 'channel', 'data':  #K
+0L}                                                                     #K
+#A We sleep initially in the function to let the SUBSCRIBEr connect and start listening for messages
+#B After publishing, we will pause for a moment so that we can see this happen over time
+#D Let's start the publisher thread to send 3 messages
+#E We'll set up the pubsub object and subscribe to a channel
+#F We can listen to subscription messages by iterating over the result of pubsub.listen()
+#G We'll print every message that we receive
+#H We will stop listening for new messages after the subscribe message and 3 real messages by unsubscribing
+#L When we receive the unsubscribe message, we need to stop receiving messages
+#C Actually run the functions to see them work
+#I When subscribing, we receive a message on the listen channel
+#J These are the structures that are produced as items when we iterate over pubsub.listen()
+#K When we unsubscribe, we receive a message telling us which channels we have unsubscribed from and the number of channels we are still subscribed to
+#+end_src
+
+** sorting
+*** intro
+
+SORT allows us to sort LIST s, SET s, and ZSET s according to data in the LIST /
+SET / ZSET data stored in STRING keys, or even data stored in HASH es. If you’re
+coming from a relational database background, you can think of SORT as like the
+order by clause in a SQL statement that can reference other rows and tables.
+
+*The SORT command definition*
+Command Example use and description
+ - SORT 
+ SORT source-key [BY pattern] [LIMIT offset count] [GET pattern [GET pattern
+ ...]] [ASC|DESC] [ALPHA] [STORE dest-key] —Sorts the input LIST , SET , or ZSET
+ according to the options provided, and returns or stores the result
+
+*** python example
+#+begin_src
+>>> conn.rpush('sort-input', 23, 15, 110, 7)                    #A
+4                                                               #A
+>>> conn.sort('sort-input')                                     #B
+['7', '15', '23', '110']                                        #B
+>>> conn.sort('sort-input', alpha=True)                         #C
+['110', '15', '23', '7']                                        #C
+>>> conn.hset('d-7', 'field', 5)                                #D
+1L                                                              #D
+>>> conn.hset('d-15', 'field', 1)                               #D
+1L                                                              #D
+>>> conn.hset('d-23', 'field', 9)                               #D
+1L                                                              #D
+>>> conn.hset('d-110', 'field', 3)                              #D
+1L                                                              #D
+>>> conn.sort('sort-input', by='d-*->field')                    #E
+['15', '110', '7', '23']                                        #E
+>>> conn.sort('sort-input', by='d-*->field', get='d-*->field')  #F
+['1', '3', '5', '9']                                            #F
+
+#A Start by adding some items to a LIST
+#B We can sort the items numerically
+#C And we can sort the items alphabetically
+#D We are just adding some additional data for SORTing and fetching
+#E We can sort our data by fields of HASHes
+#F And we can even fetch that data and return it instead of or in addition to our input data
+#+end_src
+
+Sorting can be used to sort LIST s, but it can also sort SET s, turning the result into a
+LIST . In this example, we sorted numbers character by character (via the alpha key-
+word argument), we sorted some items based on external data, and we were even able
+to fetch external data to return.
+
+** transactions
+*** basic Redis transactions
+In Redis, a basic transaction involving MULTI and EXEC is meant to provide the oppor-
+tunity for one client to execute multiple commands A, B, C, ... without other clients
+being able to interrupt them. This isn’t the same as a relational database transaction,
+which can be executed partially, and then rolled back or committed. In Redis, every
+command passed as part of a basic MULTI / EXEC transaction is executed one after
+another until they’ve completed. After they’ve completed, other clients may execute
+their commands.
+
+To perform a transaction in Redis, we first call MULTI , followed by any sequence
+of commands we intend to execute, followed by EXEC . When seeing MULTI , Redis will
+queue up commands from that same connection until it sees an EXEC , at which point
+Redis will execute the queued commands sequentially without interruption. Seman-
+tically, our Python library handles this by the use of what’s called a pipeline. Calling
+the pipeline() method on a connection object will create a transaction, which
+when used correctly will automatically wrap a sequence of commands with MULTI
+and EXEC . Incidentally, the Python Redis client will also store the commands to send
+until we actually want to send them. This reduces the number of round trips
+between Redis and the client, which can improve the performance of a sequence
+of commands.
+
+*** python example
+
+#+begin_src 
+>>> def notrans():
+...     print conn.incr('notrans:')                     #A
+...     time.sleep(.1)                                  #B
+...     conn.incr('notrans:', -1)                       #C
+...
+>>> if 1:
+...     for i in xrange(3):                             #D
+...         threading.Thread(target=notrans).start()    #D
+...     time.sleep(.5)                                  #E
+...
+1                                                       #F
+2                                                       #F
+3                                                       #F
+# <end id="simple-pipeline-notrans"/>
+#A Increment the 'notrans:' counter and print the result
+#B Wait for 100 milliseconds
+#C Decrement the 'notrans:' counter
+#D Start three threads to execute the non-transactional increment/sleep/decrement
+#E Wait half a second for everything to be done
+#F Because there is no transaction, each of the threaded commands can interleave freely, causing the counter to steadily grow in this case
+#END
+'''
+
+'''
+>>> def trans():
+...     pipeline = conn.pipeline()                      #A
+...     pipeline.incr('trans:')                         #B
+...     time.sleep(.1)                                  #C
+...     pipeline.incr('trans:', -1)                     #D
+...     print pipeline.execute()[0]                     #E
+...
+>>> if 1:
+...     for i in xrange(3):                             #F
+...         threading.Thread(target=trans).start()      #F
+...     time.sleep(.5)                                  #G
+...
+1                                                       #H
+1                                                       #H
+1                                                       #H
+#A Create a transactional pipeline
+#B Queue up the 'trans:' counter increment
+#C Wait for 100 milliseconds
+#D Queue up the 'trans:' counter decrement
+#E Execute both commands and print the result of the increment operation
+#F Start three of the transactional increment/sleep/decrement calls
+#G Wait half a second for everything to be done
+#H Because each increment/sleep/decrement pair is executed inside a transaction, no other commands can be interleaved, which gets us a result of 1 for all of our results
+#+end_src
+
+** expiring keys
+
+When writing data into Redis, there may be a point at which data is no longer needed.
+We can remove the data explicitly with DEL, or if we want to remove an entire key after
+a specified timeout, we can use what’s known as expiration. When we say that a key has
+a time to live, or that it’ll expire at a given time, we mean that Redis will automatically
+delete the key when its expiration time has arrived.
+
+*Commands for handling expiration in Redis*
+
+| Command   | Example use and description                                                                                                                                     |
+|-----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| PERSIST   | PERSIST key-name —Removes the expiration from a key                                                                                                             |
+| TTL       | TTL key-name —Returns the amount of time remaining before a key will expire                                                                                     |
+| EXPIRE    | EXPIRE key-name seconds —Sets the key to expire in the given number of seconds                                                                                  |
+| EXPIREAT  | EXPIREAT key-name timestamp —Sets the expiration time as the given Unix timestamp                                                                               |
+| PTTL      | PTTL key-name —Returns the number of milliseconds before the key will expire (available in Redis 2.6 and later)                                                 |
+| PEXPIRE   | PEXPIRE key-name milliseconds —Sets the key to expire in the given number of milliseconds (available in Redis 2.6 and later)                                    |
+| PEXPIREAT | PEXPIREAT key-name timestamp-milliseconds —Sets the expiration time to be the given Unix timestamp specified in milliseconds (available in Redis 2.6 and later) |
+
+*** python example
+
+#+begin_src 
+>>> conn.set('key', 'value')                    #A
+True                                            #A
+>>> conn.get('key')                             #A
+'value'                                         #A
+>>> conn.expire('key', 2)                       #B
+True                                            #B
+>>> time.sleep(2)                               #B
+>>> conn.get('key')                             #B
+>>> conn.set('key', 'value2')
+True
+>>> conn.expire('key', 100); conn.ttl('key')    #C
+True                                            #C
+100                                             #C
+#A We are starting with a very simple STRING value
+#B If we set a key to expire in the future, and we wait long enough for the key to expire, when we try to fetch the key, it has already been deleted
+#C We can also easily find out how long it will be before a key will expire
 #+end_src 
 
 ** Hello world using =redis= and =Nodejs=
