@@ -2488,6 +2488,7 @@ https://html.spec.whatwg.org/multipage/index.html
 ** CSRF protection example
 
 #+begin_src php
+
 $f3->route('GET /',
     function($f3) {
         $f3->set('IP',$f3->get('IP'));
@@ -2504,6 +2505,157 @@ if ($f3->get('POST.csrf') == $f3->get('SESSION.csrf')) {
 balalalala
 }
 #+end_src
+
+** Installing Fat-Free Framework (with Composer)
+
+#+begin_src php
+ {
+  "name": "avenirer/myapp",
+  "description": "F3 app",
+  "require": {
+    "bcosca/fatfree": "^3.5"
+  },
+  "authors": [
+    {
+      "name": "Avenirer",
+      "email": "avenir.ro@gmail.com"
+    }
+  ]
+}
+#+end_src
+
+** moving logic to controllers
+
+#+begin_src php
+require_once "vendor/autoload.php";
+
+$app = Base::instance();
+
+class Homepage {
+  function index(){
+    echo 'hello from index';
+  }
+}
+
+
+$app->route('GET /','Homepage->index');
+
+$app->run();
+#+end_src
+
+** setting autoload folder
+
+#+begin_src php
+$f3->set('AUTOLOAD','App/Controllers/');
+//to set multiple folders
+$f3->set('AUTOLOAD','app/controllers/|app/models/');
+#+end_src
+
+** managing redirects in route config file
+
+Now, assuming we had an old page (and we couldn’t simply route the contactus url
+to that controller…), we put the following at the bottom of our routes.cfg:
+
+#+begin_src
+[routes]
+ 
+GET /=Homepage->index
+GET /contact=Contact->index
+ 
+[redirects]
+ 
+GET|HEAD /contactus=/contact
+#+end_src 
+
+** accessing route parameters
+
+#+begin_src 
+# in routes.cfg
+GET /contact/@who=Contact->index
+#+end_src 
+
+#+begin_src php
+
+<?php
+ 
+class Contact {
+ 
+  function index(){
+    $f3 = Base::instance();
+    echo $f3->get('PARAMS.who');
+    echo '<br />';
+    echo 'hello from contact controller';
+  }
+}
+#+end_src
+
+** accessing all url segments
+
+use =PARAMS.0=
+#+begin_src
+# in App/Config/routes.cfg
+GET /contact/@who/*=Contact->index
+#+end_src 
+
+#+begin_src php
+
+<?php
+
+class Contact{
+	function index(){
+	  $f3= Base::instance();
+	  echo $f3->get("PARAMS.0");
+	}
+}
+#+end_src
+
+** Defining and using named routes
+
+#+begin_src 
+GET @the_contact_page: /contact=Contact->index
+#+end_src 
+
+Now, in the views you can use it by calling the *alias()* method
+
+#+begin_src php
+<a href="<?php echo $f3->alias('the_contact_page');?>The contact page</a>
+#+end_src 
+
+If you need to pass one parameter to the named url (assuming the route is
+defined like this: ~GET @the_contact_page:/contact/@who/=Contact->index )~, you
+write:
+
+#+begin_src php
+<a href="<?php echo $f3->alias('the_contact_page, 'who=avenirer');?>The contact page</a>
+#+end_src 
+
+in template files use
+
+#+begin_src php
+<a href="{{'the_contact_page' | alias}}"?>The contact page</a>
+<a href="{{'the_contact_page','who=avenirer,how=byemail' | alias }}">The contact page</a>
+#+end_src
+
+** Organising controllers in subfolders, routes and namespacing
+
+#+begin_src php
+// App/Controllers/Users/Test.php
+<?php
+namespace Users;
+ 
+class Test {
+ 
+  public function index()
+  {
+    echo 'hello';
+  }
+}
+#+end_src 
+
+#+begin_src
+# App/Config/routes.cfg
+GET /testingusers=Users\Test->index
+#+end_src 
 
 * css
 ** media query
@@ -3009,3 +3161,4 @@ https://www.w3.org/TR/css3-selectors/
 http://www.w3.org/TR/css3-fonts/
 
 https://css-tricks.com/
+

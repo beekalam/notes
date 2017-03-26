@@ -1048,7 +1048,7 @@ topher@crucible:~$ sudo blkid -s UUID -o value /dev/sda1
 
 * shell
 ** login shell vs non-login shell?
-
+   
 When you sit at a terminal and enter a username and password in
 response to a prompt from the computer, you get a login
 shell. Similarly, when you use ssh hostname, you get a login
@@ -2473,6 +2473,12 @@ virtual host.
 These designations allow the administrator to use one server to host
 multiple domains or sites off of a single interface or IP by using a
 matching mechanism.
+** enable =MODE_REWRITE=
+
+#+begin_src shell
+$ sudo a2enmod rewrite
+#+end_src 
+
 ** =RewriteRule=
    
 A RewriteRule consists of three arguments separated by spaces. The arguments are
@@ -2614,6 +2620,7 @@ apachectl stop
 
 This shuts the server down immediately. Any existing connections are terminated at once.
 
+ 
 * redis
 ** using from command line
 
