@@ -911,7 +911,15 @@ function toEnDigits(str) {
                 function(v){return String.fromCharCode(v.charCodeAt(0) - 1584)}).replace(/[\u066B]/g, '.');
     return str;
 }
+#+end_src
+
+** extract number from string
+
+#+begin_src javascript
+str.replace(/[^0-9]/g, '')
 #+end_src 
+
+http://stackoverflow.com/questions/10003683/javascript-get-number-from-string
 
 * numbers
 ** isNumber
@@ -3540,6 +3548,7 @@ var head = html.childNodes[0];
 console.log( head.nodeName );  // HEAD
 console.log( head.parentNode === html );  // true
 #+end_src
+
 ** Traversing the DOM
    
 Surely you know how to find an element by ID (document.getElementById)
