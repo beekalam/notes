@@ -614,8 +614,6 @@ namestr = names.toString();
 print(namestr); // David,Cynthia,Raymond,Clayton,Mike,Jennifer
 #+end_src
 
-** Creating New Arrays from Existing Arrays
-   
 ** shuffle array
    
 https://bost.ocks.org/mike/shuffle/
@@ -3543,7 +3541,7 @@ console.log( head.nodeName );  // HEAD
 console.log( head.parentNode === html );  // true
 #+end_src
 ** Traversing the DOM
-
+   
 Surely you know how to find an element by ID (document.getElementById)
 or by tag name (document.getElementsByTagName). You can also search
 for an element by a CSS selector (document.querySelector):
@@ -3877,19 +3875,24 @@ handler will be called after the button's handler (bubbling flow).
 callback is a function that is called when an event fires. It receives
 the Event object as an argument, which has the following properties:
 
-    Event.type: This is the name of the event
-    Event.target: This is the event target on which the event occurred
-    Event.currentTarget: This is the event target to which the listener was attached (target and currentTarget may differ when we attach the same event handler to multiple elements as mentioned at https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget)
-    Event.eventPhase: This indicates which phase of the event flow is being evaluated (none, capturing, at target, or bubbling)
-    Event.bubbles: This indicates whether or not the event is a bubbling one
-    Event.cancelable: This indicates whether or not the default action for the event can be prevented
-    Event.timeStamp: This specifies the event time
-
-Event also has the following methods:
-
-    Event.stopPropagation(): This stops further propagation of the event.
-    Event.stopImmediatePropagation(): If we have multiple listeners subscribed to the same event target, after calling this method none of remaining listeners will be called.
-    Event.preventDefault(): This prevents the default action. For example, if it's a click event on a button of the submit type, by calling this method we prevent it from submitting the form automatically.
+ - Event.type: This is the name of the event
+ - Event.target: This is the event target on which the event occurred
+ - Event.currentTarget: This is the event target to which the listener was
+    attached (target and currentTarget may differ when we attach the same event
+    handler to multiple elements as mentioned at
+    https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget)
+    
+ - Event.eventPhase: This indicates which phase of the event flow is being evaluated (none, capturing, at target, or bubbling)
+ - Event.bubbles: This indicates whether or not the event is a bubbling one
+ - Event.cancelable: This indicates whether or not the default action for the event can be prevented
+ - Event.timeStamp: This specifies the event time Event also has the following methods:
+ - Event.stopPropagation(): This stops further propagation of the event.
+ - Event.stopImmediatePropagation(): If we have multiple listeners subscribed to
+   the same event target, after calling this method none of remaining listeners
+   will be called.
+ - Event.preventDefault(): This prevents the default action. For example, if
+   it's a click event on a button of the submit type, by calling this method we
+   prevent it from submitting the form automatically.
 
 Let's try it now in practice:
 
