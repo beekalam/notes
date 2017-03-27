@@ -2547,8 +2547,7 @@ $app->run();
 
 #+begin_src php
 $f3->set('AUTOLOAD','App/Controllers/');
-//to set multiple folders
-$f3->set('AUTOLOAD','app/controllers/|app/models/');
+AUTOLOAD=app/controllers/|app/models/
 #+end_src
 
 ** managing redirects in route config file
