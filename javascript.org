@@ -5502,6 +5502,153 @@ confirm() method is used to display a dialog box with a message, OK and CANCEL b
 #+end_src
 
 * jquery
+** Basic selectors
+*** selecting elements by Tag Type
+#+begin_src javascript
+$("p");   //selects all paragraph tags.
+#+end_src 
+
+*** selecting Tags by Class Name
+#+begin_src javascript
+$(".foo");   //selects all the elements with the class foo
+#+end_src 
+
+*** selecting elements by ID
+#+begin_src javascript
+$("#bar");    //match all elements with an ID of bar
+#+end_src
+
+*** combining selectors
+#+begin_src javascript
+$("p.foo")        //selects only paragraph tags with the class foo. 
+$("p.foo,#bar")   // select any paragraph tag with a class foo or any element with an ID of bar.
+#+end_src
+
+*** selecting Descendant Elements
+#+begin_src javascript
+$("body span");   //selects descendant spans
+#+end_src 
+
+*** selecting child elements
+#+begin_src javascript
+$("body>span");   //selects any spans that are child elements of the body element
+$("p>span");      //filter all span elements that are direct children of a paragraph element
+#+end_src
+
+*** selecting next elements
+#+begin_src javascript
+$(".foo+p");
+$("p+p");        //select next paragraph element after any pargraph
+#+end_src
+
+*** selecting sibling elements
+Selecting sibling elements works similarly to selecting next elements, except
+the sibling selector will match *all* sibling elements after the starting element,
+rather than just the next one.
+
+#+begin_src javascript
+$(".foo~p");    //match all siblings after the paragraph with class foo
+#+end_src
+
+** Basic filters
+*** selecting first or last elements
+#+begin_src javascript 
+$("p:last");
+#+end_src 
+
+*** selecting elements that do not match a selector
+#+begin_src javascript
+$("p:not(.foo)");     
+#+end_src 
+
+*** selecting even or odd elements
+#+begin_src javascript
+$("p:odd");
+#+end_src
+
+*** selecting elements by Index
+#+begin_src javascript
+$("p:eq(3)");
+#+end_src
+
+*** selecting elements that contain certain text
+The =:contains()= filter is case sensitive.
+#+begin_src javascript
+$("p:contains(Another)");
+#+end_src
+
+*** selecting elements that contain a certain element
+#+begin_src javascript
+$("p:has(span)");
+#+end_src
+
+*** selecting elements that are parents
+#+begin_src javascript
+$("p:parent");      //selects all paragraphs that are parents
+#+end_src
+
+*** visibility filters
+#+begin_src javascript
+$("p:visible");
+#+end_src
+
+** Attribute filters
+*** selecting elements that match an attribute and value
+#+begin_src javascript
+//syntax [attribute=value]
+$("[class=foo]");       //select all elements with a class attribute of foo
+#+end_src
+
+*** selecting elements that don't have the attribute or don't match the attribute value
+#+begin_src javascript
+//syntax [attribute!=value]
+$("p[class!=foo]");      //selects all paragraphs without the class foo
+#+end_src
+
+** child filters
+*** selecting even or odd parameters or parameters by Index or Equation
+One of the more versatile filters, :nth-child() provides four different options
+to pass as a parameter when selecting elements: even, odd, index, or an
+equation.
+
+Like other child filters, this one starts indexing at 1 instead of 0, so the
+first element is at index 1, the second element at 2, and so on.
+
+Using :odd, the result set contained the paragraphs with a class of foo and an
+ID of foo; select odd paragraphs using :nth-child() to see the difference in how
+the filters handle by executing the following command:
+
+#+begin_src javascript
+$("p:nth-child(odd)");   
+#+end_src
+
+*** selecting first or last child elements
+#+begin_src javascript
+$("p span:last");         //find the last span that is a child of a paragraph
+$("p span:last-child");   //find every span that was the last child of a paragraph element
+#+end_src
+
+** Form filters
+*** matching by form element type
+The most common form-specific filters simply match form element types. The
+available filters are :button, :checkbox, :file, :image, :input, :password,
+:radio, :submit, and :text.
+#+begin_src javascript
+$("input:radio");     //select all radio inputs
+#+end_src
+
+*** selecting only enabled or disabled form elements
+#+begin_src javascript
+$(":disabled");
+$(":enabled");
+#+end_src
+
+*** selecting checked or selected form elements
+#+begin_src javascript
+$(":checked");      //selects currenlty checked radio button
+#+end_src
+
+
 ** get/set value of text box
 
 If you've got an input with an id of txtEmail you can use the
@@ -6017,8 +6164,9 @@ $("#ajaxStart").click(function() {
         //...
     });
 });
-#+end_src 
+#+end_src
 
+ 
 * =HTML5= validation
 
 #+begin_src html

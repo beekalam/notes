@@ -1792,7 +1792,7 @@ Shall the new role be a superuser? (y/n) y
 #+end_src
  
 ** creating a new db with =createdb=
-
+   
 By default, another assumption that the Postgres authentication system
 makes is that there will be an database with the same name as the role
 being used to login, which the role has access to.
