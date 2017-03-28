@@ -321,7 +321,52 @@ function IsNullOrEmptyString($question){
 
 #+begin_src php 
 $str = ltrim($str, '0');
-#+end_src 
+#+end_src
+
+** Check number of characters in a range
+
+#+begin_src php
+<?PHP 
+ 
+//check the amount of characters in a string function 
+FUNCTION CheckNoChars($strText){ 
+//check for between 6 and 12 characters 
+IF (EREGI("^.{6,12}$" , $strText)) 
+RETURN TRUE; 
+ELSE 
+RETURN FALSE; 
+} 
+?> 
+ 
+ 
+<?PHP 
+ 
+//test the function 
+$str1 = "mypasswordistoolong"; 
+IF (CheckNoChars($str1)){
+ 
+//if it's okay, display this message 
+     ECHO "this has the correct number of characters"; 
+ 
+//if not okay, display this message instead 
+}ELSE {
+     ECHO "incorrect number of characters"; 
+}
+?>
+#+end_src
+
+** Filter non-alphanumeric characters
+#+begin_src php
+ <?PHP
+ 
+//Begin filtering variable  $data of non alphanumeric characters
+ 
+$data = PREG_REPLACE("/[^0-9a-zA-Z]/i", '', $data);
+ 
+//Finish filtering of non alphanumeric characters
+ 
+?>
+#+end_src
 
 * numbers
 ** Checking Whether a Variable Contains a Valid Number
@@ -574,6 +619,20 @@ array_splice($array, 2);
 // This removes all but the first two elements from $array.
 #+end_src 
 
+** Check if array is associative
+#+begin_src php
+<?PHP
+ 
+FUNCTION is_assoc_array($array){
+    IF(IS_ARRAY($array) && !IS_NUMERIC(ARRAY_SHIFT(ARRAY_KEYS($array)))){
+        RETURN TRUE;
+    }
+    RETURN FALSE;
+}
+ 
+?>
+#+end_src 
+
 * Date and Time
 ** Finding the Current Date and Time
 Use strftime() or date() for a formatted time string, as in Example 3-2.
@@ -782,7 +841,30 @@ date('H:i:s', $seconds);
 #+begin_src php 
 $currentMinute = ltrim(date('i'),'0');
 $currentSecond = date('s')+0;
-#+end_src 
+#+end_src
+
+** Convert minutes to hours #1
+#+begin_src php
+<?PHP
+ 
+// convert minutes to hours:minutes
+$act_elapsedHoursMins = SPRINTF("%d:%02d", ABS((int)($act_elapsed_mins/60)), ABS((int)($act_elapsed_mins%60)));
+ 
+$sch_elapsedHoursMins = SPRINTF("%d:%02d", ABS((int)($sch_elapsed_mins/60)), ABS((int)($sch_elapsed_mins%60)));
+ 
+?>
+#+end_src
+
+** Convert minutes to hours #2
+#+begin_src php
+ <?PHP
+$hours = SPRINTF(”%d:%02d”, ABS((int)$min/60), ABS((int)$min%60));
+ 
+//convert to "1.25" hours
+$elapsedTime = SPRINTF("%01.1f", $elapsed_mins/60);
+ 
+?> 
+#+end_src
 
 * variables
 ** Establishing a Default Value
@@ -1059,7 +1141,1388 @@ elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 else {
   $ip=$_SERVER['REMOTE_ADDR'];
 }
+#+end_src
+
+** block ip address
+
+#+begin_src php
+<?php
+ 
+$denyIP = array("IP Address 1", "IP Address 2", "IP Address 3");
+ 
+IF (in_array ($_SERVER['REMOTE_ADDR'], $denyIP)) {
+    header(”location: http://www.microsoft.com/”);
+    EXIT();
+} 
+ 
+?>
+#+end_src
+
+** check server status 
+
+#+begin_src php
+
+<?php
+ 
+// Domain name to check
+$domainName = "http://www.farahoosh.ir" ;
+ 
+function DomainCheck($domain_name){
+    $start_time = microtime(TRUE);
+    $openDomain = fsockopen ($domain_name, 80, $errno, $errstr, 10);
+    $end_time  = microtime(TRUE);
+    $server_status    = 0;
+ 
+    if (!$openDomain){
+        $server_status = -1;  
+    }else{
+        fclose($openDomain);
+        $status = ($end_time - $start_time) * 1000;
+        $server_status = floor($server_status);
+    }
+    return $server_status;
+}
+ 
+$server_status = DomainCheck($domain_name);
+ 
+ 
+if ($server_status != -1) {
+  print "Cannot reach the server." ;
+}else{
+  print "Server is responding properly." ;
+}
+?>
+
+#+end_src
+
+** check if a domain exists
+
+#+begin_src php
+<?PHP
+ 
+FUNCTION url_exists($strURL) {
+    $resURL = curl_init();
+    curl_setopt($resURL, CURLOPT_URL, $strURL);
+    curl_setopt($resURL, CURLOPT_BINARYTRANSFER, 1);
+    curl_setopt($resURL, CURLOPT_HEADERFUNCTION, 'curlHeaderCallback');
+    curl_setopt($resURL, CURLOPT_FAILONERROR, 1);
+ 
+    curl_exec ($resURL);
+ 
+    $intReturnCode = curl_getinfo($resURL, CURLINFO_HTTP_CODE);
+    curl_close ($resURL);
+ 
+    IF ($intReturnCode != 200 && $intReturnCode != 302 && $intReturnCode != 304) {
+       RETURN FALSE;
+    } ELSE {
+        RETURN TRUE;
+    }
+}
+ 
+ 
+ 
+ 
+OR.................
+ 
+FUNCTION is_valid_url($url)
+{
+    $url = PREG_REPLACE('~^https?://~i', NULL, $url);
+    RETURN @CHECKDNSRR($url);
+}
+ 
+?>
+#+end_src
+
+** Check syntax of multiple PHP files all at once
+
+#+begin_src shell
+find ./ -type f -name \*.php -EXEC php -l {} \;
 #+end_src 
+
+** XSS Sanitizer Function
+
+#+begin_src php
+<?PHP
+ 
+/* CLEANS AGAINST XSS
+ * 
+ * NOTE all credits goes to codeigniter.com
+ * @param string $str - string to check
+ * @param string $charset - character set (default ISO-8859-1)
+ * @return string|bool $value sanitized string
+ */
+ 
+FUNCTION ft_xss($str, $charset = 'ISO-8859-1') {
+    /*
+    * Remove Null Characters
+    *
+    * This prevents sandwiching null characters
+    * between ASCII characters, like Java\0script.
+    *
+    */
+    $str = PREG_REPLACE('/\0+/', '', $str);
+    $str = PREG_REPLACE('/(\\\\0)+/', '', $str);
+ 
+    /*
+    * Validate standard character entities
+    *
+    * Add a semicolon if missing.  We do this to enable
+    * the conversion of entities to ASCII later.
+    *
+    */
+    $str = PREG_REPLACE('#(&\#*\w+)[\x00-\x20]+;#u',"\\1;",$str);
+ 
+    /*
+    * Validate UTF16 two byte encoding (x00)
+    *
+    * Just as above, adds a semicolon if missing.
+    *
+    */
+    $str = PREG_REPLACE('#(&\#x*)([0-9A-F]+);*#iu',"\\1\\2;",$str);
+ 
+    /*
+    * URL Decode
+    *
+    * Just in case stuff like this is submitted:
+    *
+    * <a href="http://%77%77%77%2E%67%6F%6F%67%6C%65%2E%63%6F%6D">Google</a>
+    *
+    * Note: Normally urldecode() would be easier but it removes plus signs
+    *
+    */     
+    $str = PREG_REPLACE("/%u0([a-z0-9]{3})/i", "
+#+end_src
+    
+** Anti-SQL Injection Function
+
+#+begin_src php
+<?PHP
+    FUNCTION anti_injection( $user, $pass ) {
+           // We'll first get rid of any special characters using a simple regex statement.
+           // After that, we'll get rid of any SQL command words using a string replacment.
+            $banlist = ARRAY (
+                    "insert", "select", "update", "delete", "distinct", "having", "truncate", "replace",
+                    "handler", "like", " as ", "or ", "procedure", "limit", "order by", "group by", "asc", "desc"
+            );
+            // ---------------------------------------------
+            IF ( EREGI ( "[a-zA-Z0-9]+", $user ) ) {
+                    $user = TRIM ( STR_REPLACE ( $banlist, '', STRTOLOWER ( $user ) ) );
+            } ELSE {
+                    $user = NULL;
+            }
+            // ---------------------------------------------
+            // Now to make sure the given password is an alphanumerical string
+            // devoid of any special characters. strtolower() is being used
+            // because unfortunately, str_ireplace() only works with PHP5.
+            IF ( EREGI ( "[a-zA-Z0-9]+", $pass ) ) {
+                    $pass = TRIM ( STR_REPLACE ( $banlist, '', STRTOLOWER ( $pass ) ) );
+            } ELSE {
+                    $pass = NULL;
+            }
+            // ---------------------------------------------
+            // Now to make an array so we can dump these variables into the SQL query.
+            // If either user or pass is NULL (because of inclusion of illegal characters),
+            // the whole script will stop dead in its tracks.
+            $array = ARRAY ( 'user' => $user, 'pass' => $pass );
+            // ---------------------------------------------
+            IF ( IN_ARRAY ( NULL, $array ) ) {
+                    DIE ( 'Invalid use of login and/or password. Please use a normal method.' );
+            } ELSE {
+                    RETURN $array;
+            }
+    }
+?>
+#+end_src
+
+** Anti-flood protection
+#+begin_src php
+<?PHP
+ 
+IF (!ISSET($_SESSION)) {
+    SESSION_START();
+}
+// anti flood protection
+IF($_SESSION['last_session_request'] > TIME() - 2){
+    // users will be redirected to this page if it makes requests faster than 2 seconds
+    HEADER("location: /flood.html");
+    EXIT;
+}
+$_SESSION['last_session_request'] = TIME();
+ 
+?>
+#+end_src
+
+** Auto Link Maker
+#+begin_src php
+<?PHP
+ 
+FUNCTION change_string($str){
+     $str = TRIM($str);
+     $str = HTMLSPECIALCHARS($str);
+     $str = PREG_REPLACE('#(.*)\@(.*)\.(.*)#','<a href="mailto:\\1@\\2.\\3">Send email</a>',$str);
+     $str = PREG_REPLACE('=([^\s]*)(www.)([^\s]*)=','<a href="http://\\2\\3" target=\'_new\'>\\2\\3</a>',$str);
+     RETURN $str;
+   }
+ 
+?>
+#+end_src
+
+** Secure Auto-Link Maker
+#+begin_src php
+<?PHP
+ 
+FUNCTION convert_links($str) {
+       $replace = <<<EOPHP
+'<a href="'.htmlentities('\\1').htmlentities('\\2').//remove line break
+'">'.htmlentities('\\1').htmlentities('\\2').'</a>'
+EOPHP;
+   $str = PREG_REPLACE('#(http://)([^\s]*)#e', $replace, $str);
+   RETURN $str;
+}
+ 
+?>
+#+end_src
+
+** Bad word filter
+#+begin_src php
+<?
+ 
+// BadWordFilter
+// This function does all the work. If $replace is 1 it will replace all bad words
+// with the wildcard replacements.  If $replace is 0 it will not replace anything.
+// In either case, it will return 1 if it found bad words or 0 otherwise.
+// Be sure to fill the $bads array with the bad words you want filtered.
+ 
+FUNCTION BadWordFilter(&$text, $replace){
+ 
+     // fill this array with the bad words you want to filter and their replacements
+     $bads = ARRAY (
+          ARRAY("butt","b***"),
+          ARRAY("poop","p***"),
+          ARRAY("crap","c***")
+     );
+ 
+     IF($replace==1) {                                        //we are replacing
+          $remember = $text;
+ 
+          FOR($i=0;$i<sizeof($bads);$i++) {               //go through each bad word
+               $text = EREGI_REPLACE($bads[$i][0],$bads[$i][1],$text); //replace it
+          }
+ 
+          IF($remember!=$text) RETURN 1;                     //if there are any changes, return 1
+ 
+     } ELSE {                                                  //we are just checking
+ 
+          FOR($i=0;$i<sizeof($bads);$i++) {               //go through each bad word
+               IF(EREGI($bads[$i][0],$text)) RETURN 1; //if we find any, return 1
+          }     
+     }
+}
+ 
+// this will replace all bad words with their replacements. $any is 1 if it found any
+$any = BadWordFilter($wordsToFilter,1); 
+ 
+// this will not repace any bad words. $any is 1 if it found any
+$any = BadWordFilter($wordsToFilter,0); 
+ 
+?>
+#+end_src
+
+** Ban Proxy Servers
+
+#+begin_src php
+<?PHP
+ 
+IF(ISSET($_SERVER['HTTP_X_FORWARDED_FOR']) || ($_SERVER['HTTP_USER_AGENT']=='') || ($_SERVER['HTTP_VIA']!='')){
+        DIE("Proxy servers not allowed.");
+}
+ 
+$proxy_headers = ARRAY(   
+     'HTTP_VIA',   
+     'HTTP_X_FORWARDED_FOR',   
+     'HTTP_FORWARDED_FOR',   
+     'HTTP_X_FORWARDED',   
+     'HTTP_FORWARDED',   
+     'HTTP_CLIENT_IP',   
+     'HTTP_FORWARDED_FOR_IP',   
+     'VIA',   
+     'X_FORWARDED_FOR',   
+     'FORWARDED_FOR',   
+     'X_FORWARDED',   
+     'FORWARDED',   
+     'CLIENT_IP',   
+     'FORWARDED_FOR_IP',   
+     'HTTP_PROXY_CONNECTION'   
+        );
+FOREACH($proxy_headers AS $x){
+     IF (ISSET($_SERVER[$x])) DIE("You are using a proxy.");
+        EXIT;
+}
+ 
+?> 
+#+end_src
+
+** Buffered Download code
+   
+#+begin_src php
+ <?php
+ 
+//start buffered download
+    WHILE(!feof($fp)){
+ 
+        $total     = filesize($file);
+        $sent      = 0;
+        $blocksize = (2 << 20); //2M chunks
+        $handle    = fopen($file, "r");
+ 
+        // Now we need to loop through the file 
+        // AND echo out chunks of file data
+        WHILE($sent < $total){
+            echo fread($handle, $blocksize);
+            $sent += $blocksize;
+        }
+ 
+        EXIT(0);
+        @flush();
+        @ob_flush();
+    }
+ 
+?>  
+#+end_src
+
+** Build Date Select Boxes
+#+begin_src php
+<?PHP
+ 
+FUNCTION buildDate($name, $m, $d, $y) {
+        $date = DATE("m-d-Y",STRTOTIME("now"));
+        $date_array = EXPLODE("-",$date);
+        $now_m = "";
+        $now_d = "";
+        $now_y = "";
+        $month = '<select class="small" name="'.$name.'_month">';
+        $month .= '<option value="" selected disabled>mm</option>';
+        FOR ($i=1;$i<=12;$i++) {
+                IF ( $m != "" ) {
+                        IF ( $m == $i ) {
+                                $now_m = "selected";
+                        }
+                }ELSEIF ( $m == "0" ) {
+                        $now_m = "";
+                }ELSE{
+                        IF ( $date_array[0] == $i ) {
+                                $now_m = "selected";
+                        }
+                }
+                $month .= '<option value="'.$i.'" '.$now_m.'>'.$i.'</option>';
+                $now_m = "";
+        }//END month for loop
+        $month .= '</select>';
+        $day = '<select class="small" name="'.$name.'_day">';
+        $day .= '<option value="" selected disabled>dd</option>';
+        FOR ($i=1;$i<=31;$i++) {
+                IF ( $d != "" ) {
+                        IF ( $d == $i ) {
+                                $now_d = "selected";
+                        }
+                }ELSEIF ( $d == "0" ) {
+                        $now_d = "";
+                }ELSEIF ( $d == $i ) {
+                        $now_d = "selected";
+                }ELSE{
+                        IF ( $date_array[1] == $i ) {
+                                $now_d = "selected";
+                        }
+                }
+                $day .= '<option value="'.$i.'" '.$now_d.'>'.$i.'</option>';
+                $now_d = "";
+        }//END day for loop
+        $day .= '</select>';
+        $year = '<select class="small" name="'.$name.'_year">';
+        $year .= '<option value="" selected disabled>yyyy</option>';
+        FOR ($i=GMDATE("Y"); $i <=SUBSTR(get330Date(),0,4); $i++) {
+                IF ( $y != "" ) {
+                        IF ( $y == $i ) {
+                                $now_y = "selected";
+                        }
+                }ELSEIF ( $y == "0" ) {
+                        $now_y = "";
+                }ELSEIF ( $y == $i ) {
+                        $now_y = "selected";
+                }ELSE{
+                        IF ( $date_array[2] == $i ) {
+                                $now_y = "selected";
+                        }
+                }
+                $year .= '<option value="'.$i.'" '.$now_y.'>'.$i.'</option>';
+                $now_y = "";
+        }//END year for loop
+        $year .= '</select>';
+        //-------------------------------------------
+        ECHO $month." ".$day." ".$year;
+}//END buildDate function
+// ------------------------------------
+FUNCTION get330Date() {
+        RETURN DATE("Y-m-d", MKTIME(0, 0, 0, SUBSTR(GMDATE("Y m d"),5,2), 
+        SUBSTR(GMDATE("Y m d"),8,2) + 330, 
+        SUBSTR(GMDATE("Y m d"),0,4)))."<br />";
+}
+ 
+?>
+#+end_src
+
+** Calculate Distance
+#+begin_src php
+ <?PHP
+ 
+FUNCTION distance($lat1, $lng1, $lat2, $lng2, $miles = TRUE)
+{
+     $pi80 = M_PI / 180;
+     $lat1 *= $pi80;
+     $lng1 *= $pi80;
+     $lat2 *= $pi80;
+     $lng2 *= $pi80;
+ 
+     $r = 6372.797; // mean radius of Earth in km
+     $dlat = $lat2 - $lat1;
+     $dlng = $lng2 - $lng1;
+     $a = SIN($dlat / 2) * SIN($dlat / 2) + COS($lat1) * COS($lat2) * SIN($dlng / 2) * SIN($dlng / 2);
+     $c = 2 * ATAN2(SQRT($a), SQRT(1 - $a));
+     $km = $r * $c;
+ 
+     RETURN ($miles ? ($km * 0.621371192) : $km);
+}
+ 
+?> 
+#+end_src
+
+** captcha GD Image Library
+#+begin_src php
+<?PHP
+// start the session to store the variable
+SESSION_START();
+ 
+// generate the random code
+$chars = 'abcdefghkmnprstuvwxyzABCDEFGHJKLMNPQRSTUV2345689';
+$length = 6;
+$code = '';
+FOR($i = 0; $i < $length; $i++){
+   $pos = MT_RAND(0, STRLEN($chars)-1);
+   $code .= SUBSTR($chars, $pos, 1);
+}
+ 
+// store the code to compare later
+$_SESSION['captcha'] = $code;
+ 
+// set up the image
+// size
+$width = 120;
+$height = 30;
+// colors
+$r = MT_RAND(160, 255);
+$g = MT_RAND(160, 255);
+$b = MT_RAND(160, 255);
+// create handle for new image
+$image = imagecreate($width, $height);
+// create color handles
+$background = imagecolorallocate($image, $r, $g, $b);
+$text = imagecolorallocate($image, $r-128, $g-128, $b-128);
+// fill the background
+imagefill($image, 0, 0, $background);
+ 
+// add characters in random orientation
+FOR($i = 1; $i <= $length; $i++){
+   $counter = MT_RAND(0, 1);
+   IF ($counter == 0){
+      $angle = MT_RAND(0, 30);
+   }
+   IF ($counter == 1){
+      $angle = MT_RAND(330, 360);
+   }
+   // "arial.ttf" can be replaced by any TTF font file stored in the same directory as the script
+   imagettftext($image, MT_RAND(14, 18), $angle, ($i * 18)-8, MT_RAND(20, 25), $text, "arial.ttf", SUBSTR($code, ($i - 1), 1));
+}
+ 
+// draw a line through the text
+imageline($image, 0, MT_RAND(5, $height-5), $width, MT_RAND(5, $height-5), $text);
+ 
+// blur the image
+$gaussian = ARRAY(ARRAY(1.0, 2.0, 1.0), ARRAY(2.0, 4.0, 2.0), ARRAY(1.0, 2.0, 1.0));
+imageconvolution($image, $gaussian, 16, 0);
+ 
+// add a border for looks
+imagerectangle($image, 0, 0, $width - 1, $height - 1, $text);
+ 
+// prevent caching
+HEADER('Expires: Tue, 08 Oct 1991 00:00:00 GMT');
+HEADER('Cache-Control: no-cache, must-revalidate');
+ 
+// output the image
+HEADER("Content-Type: image/gif");
+imagegif($image);
+imagedestroy($image); 
+?>
+ 
+ 
+ 
+Sample Page:
+ 
+<?PHP SESSION_START(); ?>
+<html>
+<head>
+<title>CATCHA Test</title>
+</head>
+<body>
+<?PHP
+IF(ISSET($_POST['captcha'])){
+   IF(STRTOLOWER($_POST['captcha']) == STRTOLOWER($_SESSION['captcha'])){
+      ECHO '<div>Success</div>';
+   }
+   ELSE{
+      ECHO '<div>Incorrect</div>';
+   }
+}
+?>
+<img src="captcha.php" alt="CAPTCHA" width="120" height="30">
+<form method="post">
+  <input type="text" name="captcha" id="captcha">
+  <input type="submit" name="submit" id="submit" value="Test">
+</form>
+</body>
+</html>
+#+end_src
+
+** Convert HTML to plain text
+#+begin_src php
+<?PHP
+ 
+// $document should contain an HTML document.
+// This will remove HTML tags, javascript sections
+// and white space. It will also convert some
+// common HTML entities to their text equivalent.
+ 
+$search = ARRAY ("'<script[^>]*?>.*?</script>'si",  // Strip out javascript
+                 "'<[/!]*?[^<>]*?>'si",          // Strip out HTML tags
+                 "'([rn])[s]+'",                // Strip out white space
+                 "'&(quot|#34);'i",                // Replace HTML entities
+                 "'&(amp|#38);'i",
+                 "'&(lt|#60);'i",
+                 "'&(gt|#62);'i",
+                 "'&(nbsp|#160);'i",
+                 "'&(iexcl|#161);'i",
+                 "'&(cent|#162);'i",
+                 "'&(pound|#163);'i",
+                 "'&(copy|#169);'i",
+                 "'&#(d+);'e");                    // evaluate as php
+ 
+$replace = ARRAY ("",
+                 "",
+                 "\1",
+                 "\"",
+                 "&",
+                 "<",
+                 ">",
+                 " ",
+                 CHR(161),
+                 CHR(162),
+                 CHR(163),
+                 CHR(169),
+                 "chr(\1)");
+ 
+$text = PREG_REPLACE($search, $replace, $document);
+ 
+?> 
+#+end_src
+
+** Cookie Login Code
+#+begin_src php
+ <?PHP
+ 
+ IF( (ISSET($_COOKIE['USERNAME_COOKIE'])) && (ISSET($_COOKIE['PASSWORD_COOKIE'])) ) {
+        $qry=MYSQL_QUERY("select * from loginTblName where username='".$_COOKIE['USERNAME_COOKIE']."' and password='".$_COOKIE['PASSWORD_COOKIE']."'") or DIE(MYSQL_ERROR());
+        IF(MYSQL_NUM_ROWS($qry)!=0){
+                $res=MYSQL_FETCH_ARRAY($qry);
+                $_SESSION["ad_id"]        =    $res["ad_id"];
+                $_SESSION["name"]        =    $res["fname"]." ".$res["sname"];
+                $prevkeys                =   $res["priv"];
+                $_SESSION["tempSessId"]    =    SESSION_ID();
+                $keys                    = "";
+                $prevkeys                = EXPLODE("#",$prevkeys);
+                HEADER("location:filename.php");
+            }
+            ELSE{
+                $err="Invalid Username or Password.";
+            }
+    }
+ 
+IF(ISSET($_POST["submitLogin"])){
+        $qry=MYSQL_QUERY("select * from loginTblName where username='".ADDSLASHES($_POST["UserName"])."' and password='".BASE64_ENCODE($_POST["password"])."'") or DIE(MYSQL_ERROR());
+        IF($_POST["signedin"]=='1'){
+            $_POST['password']=BASE64_ENCODE($_POST['password']);
+            $hour = TIME() + 60*60*24*30; 
+            SETCOOKIE(USERNAME_COOKIE, $_POST['UserName'], $hour);
+            SETCOOKIE(PASSWORD_COOKIE, $_POST['password'], $hour);    
+            //print_r($_COOKIE);
+        }
+        IF(MYSQL_NUM_ROWS($qry)!=0){
+            $res=MYSQL_FETCH_ARRAY($qry);
+            $_SESSION["ad_id"]        =    $res["ad_id"];
+            $_SESSION["name"]        =    $res["fname"]." ".$res["sname"];
+            $prevkeys                =   $res["priv"];
+            $_SESSION["tempSessId"]    =    SESSION_ID();
+            HEADER("location:filename.php");
+        }
+        ELSE{
+            $err="Invalid Username or Password.";
+        }
+    }
+ 
+?>
+ 
+<form method="post">
+<table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td><label for="username">Username:</label></td>
+                        <td><input name="UserName" id="UserName" valign="top" class="StandardForm" tabindex="1" size="30" maxsize="100"></td>
+                        <td valign="top"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="password">Password:</label></td>
+                        <td><input name="password" type="password" class="StandardForm" tabindex="2" size="30" maxsize="100" id="password"></td>
+                        <td></div></td>
+                    </tr>
+                </table>
+ 
+<label for="signedin" class="small">Keep me signed in</label><input type="checkbox" id="signedin" value="1" name="signedin" class="checked" />
+            <div id="divLogin"><input type="Submit" tabindex="4" name="submitLogin" id="submitLogin" value="LOGIN" class="submit"></div>
+ 
+</form>   
+#+end_src
+
+** Set/Get/Remove Cookies
+#+begin_src php
+ /* Add Cookies */ 
+<?PHP 
+SETCOOKIE ("TestCookie", $value); 
+SETCOOKIE ("TestCookie", $value,TIME() 3600); /* expire in 1 hour */ 
+SETCOOKIE ("TestCookie", $value,TIME() 3600, "/~rasmus/", ".utoronto.ca", 1); 
+?> 
+ 
+/* Remove Cookies */ 
+<?PHP 
+// set the expiration date to one hour ago 
+SETCOOKIE ("TestCookie", "", TIME() - 3600); 
+SETCOOKIE ("TestCookie", "", TIME() - 3600, "/~rasmus/", ".utoronto.ca", 1); 
+?> 
+ 
+/* Use Cookies */ 
+<?PHP 
+ECHO $TestCookie; 
+ECHO $_COOKIE["TestCookie"]; 
+?> 
+ 
+/* Set cookie array */ 
+<?PHP 
+SETCOOKIE ("cookie[three]", "cookiethree"); 
+SETCOOKIE ("cookie[two]", "cookietwo"); 
+SETCOOKIE ("cookie[one]", "cookieone"); 
+     IF (ISSET ($cookie)) { 
+          WHILE (LIST ($name, $value) = EACH ($cookie)) { 
+          ECHO "$name == $value<br>\n"; 
+     } 
+} 
+?>  
+#+end_src
+
+** Copy File From Server
+#+begin_src php
+<?PHP
+ 
+$inputfile = FOPEN("http://the-remote-server.com/inputfile.txt", "r");
+$outputfile = FOPEN("outputfile.txt", "w");
+ECHO "File opened...";
+$data = '';
+ 
+WHILE (!FEOF($inputfile)) {
+  $data .= FREAD($inputfile, 8192);
+}
+ 
+ECHO "Data read...";
+FWRITE($outputfile, $data);
+ECHO "transfered data";
+FCLOSE ($inputfile);
+FCLOSE ($outputfile);
+ 
+ECHO "Done.";
+ 
+?>
+ 
+#+end_src
+
+** Count lines in file
+#+begin_src php
+ <?PHP  
+ 
+$file = "somefile.txt";  
+$lines = COUNT(FILE($file));  
+ECHO "There are $lines lines in $file";
+ 
+?> 
+#+end_src
+
+** Find days between dates #1
+#+begin_src php
+<?PHP
+ 
+$dt=ARRAY("27.01.1985","12.09.2008");
+$dates=ARRAY();
+$i=0;
+WHILE(STRTOTIME($dt[1])>=STRTOTIME("+".$i." day",STRTOTIME($dt[0])))
+$dates[]=DATE("Y-m-d",STRTOTIME("+".$i++." day",STRTOTIME($dt[0])));
+ 
+FOREACH($dates AS $value) ECHO $value."<br />"; 
+ 
+?>
+#+end_src
+
+** Count days between dates
+#+begin_src php
+<?PHP
+ 
+// First Date: 1 January 2005
+// Second Date: 27 January 2005
+ 
+$first_date = MKTIME(12,0,0,1,1,2005);
+$second_date = MKTIME(12,0,0,1,27,2005);
+ 
+$offset = $second_date-$first_date;
+ 
+ECHO FLOOR($offset/60/60/24) . " days";
+ 
+// This will display: 26 days. 
+ 
+?>
+#+end_src
+
+** How many days ago
+#+begin_src php
+<?PHP
+ 
+// convert a date into a string that tells how long 
+// ago that date was.... eg: 2 days ago, 3 minutes ago.
+FUNCTION ago($d) {
+     $c = GETDATE();
+     $p = ARRAY('year', 'mon', 'mday', 'hours', 'minutes', 'seconds');
+     $display = ARRAY('year', 'month', 'day', 'hour', 'minute', 'second');
+     $factor = ARRAY(0, 12, 30, 24, 60, 60);
+     $d = datetoarr($d);
+     FOR ($w = 0; $w < 6; $w++) {
+          IF ($w > 0) {
+               $c[$p[$w]] += $c[$p[$w-1]] * $factor[$w];
+               $d[$p[$w]] += $d[$p[$w-1]] * $factor[$w];
+          }
+          IF ($c[$p[$w]] - $d[$p[$w]] > 1) { 
+               RETURN ($c[$p[$w]] - $d[$p[$w]]).' '.$display[$w].'s ago';
+          }
+     }
+     RETURN '';
+}
+ 
+// you can replace this if need be. This converts the dates 
+// returned from a mysql date string into an array object similar 
+// to that returned by getdate().
+FUNCTION datetoarr($d) {
+     PREG_MATCH("/([0-9]{4})(\\-)([0-9]{2})(\\-)([0-9]{2}) ([0-9]{2})(\\:)([0-9]{2})(\\:)([0-9]{2})/", $d, $matches);
+    RETURN ARRAY( 
+          'seconds' => $matches[10], 
+          'minutes' => $matches[8], 
+          'hours' => $matches[6],  
+          'mday' => $matches[5], 
+          'mon' => $matches[3],  
+          'year' => $matches[1], 
+     );
+}
+ 
+?>
+#+end_src
+
+** Days in month #1
+#+begin_src php
+ <?PHP
+ 
+//return the number of days for this month and this year
+$ndays = DATE("t"); 
+ 
+// You can also specify a date
+$ndays = DATE("t", MKTIME(0, 0, 0, 12, 1, 2004)); 
+ 
+?> 
+#+end_src
+
+** Days in month #2
+#+begin_src php
+<?PHP
+ 
+/*
+days_in_month($month, $year)
+Returns the number of days in a given month and 
+year, taking into account leap years.
+ 
+$month: numeric month (integers 1-12)
+$year: numeric year (any integer)
+ 
+*/
+ 
+FUNCTION days_in_month($month, $year){
+// calculate number of days in a month
+RETURN $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
+}
+?> 
+#+end_src
+
+** Delete by date
+#+begin_src php
+<?PHP
+ 
+// set delete time threshold for two weeks
+$DAYS = 14;
+ 
+IF (IS_DIR("$path") ){
+   $handle=OPENDIR($path);
+   WHILE (FALSE!==($file = READDIR($handle))) {
+       IF ($file != "." && $file != "..") { 
+           $Diff = (TIME() - FILECTIME("$path/$file"))/60/60/24;
+           IF ($Diff > $DAYS) UNLINK("$path/$file");
+       }
+   }
+   CLOSEDIR($handle);
+}
+ 
+?>
+#+end_src
+
+** Delete by wildcard
+#+begin_src php
+ <?PHP
+ 
+FOREACH (GLOB("*.jpg") AS $filename) {
+   ECHO "$filename size " . FILESIZE($filename) . "\n";
+   UNLINK($filename);
+}
+ 
+?>
+#+end_src
+
+** Directory Listing
+#+begin_src php
+<?PHP
+ 
+//define the path as relative
+$path = "/home/yoursite/public_html/whatever";
+ 
+//using the opendir function
+$dir_handle = @OPENDIR($path) or DIE("Unable to open $path");
+ 
+ECHO "Directory Listing of $path<br/>";
+ 
+//running the while loop
+WHILE ($file = READDIR($dir_handle)) {
+        ECHO "<a href=$file>$file</a><br/>";
+}
+ 
+//closing the directory
+CLOSEDIR($dir_handle);
+ 
+?> 
+#+end_src
+
+** Directory Listing #2
+#+begin_src php
+<?PHP
+ 
+// No slash at the end
+$main_dir = 'path/to/dir'; 
+ 
+$dirs = GLOB("{$main_dir}/*", GLOB_ONLYDIR);
+$dirs = ARRAY_MAP('basename', $dirs);
+$dirs = ARRAY_FILTER($dirs, 'no_underscore');
+ 
+FUNCTION no_underscore($dirname){
+    RETURN $dirname[0] != '_';
+}
+ 
+ECHO '<pre>', PRINT_R($dirs, TRUE), '</pre>'; 
+ 
+?>
+#+end_src
+
+** Download File To Client
+#+begin_src php
+<?PHP
+ 
+FUNCTION send_file($name) {
+  OB_END_CLEAN();
+  $path = "protected/".$name;
+  IF (!IS_FILE($path) or CONNECTION_STATUS()!=0) RETURN(FALSE);
+  HEADER("Cache-Control: no-store, no-cache, must-revalidate");
+  HEADER("Cache-Control: post-check=0, pre-check=0", FALSE);
+  HEADER("Pragma: no-cache");
+  HEADER("Expires: ".GMDATE("D, d M Y H:i:s", MKTIME(DATE("H")+2, DATE("i"), DATE("s"), DATE("m"), DATE("d"), DATE("Y")))." GMT");
+  HEADER("Last-Modified: ".GMDATE("D, d M Y H:i:s")." GMT");
+  HEADER("Content-Type: application/octet-stream");
+  HEADER("Content-Length: ".(string)(FILESIZE($path)));
+  HEADER("Content-Disposition: inline; filename=$name");
+  HEADER("Content-Transfer-Encoding: binary\n");
+  IF ($file = FOPEN($path, 'rb')) {
+   WHILE(!FEOF($file) and (CONNECTION_STATUS()==0)) {
+     PRINT(FREAD($file, 1024*8));
+     FLUSH();
+   }
+   FCLOSE($file);
+  }
+  RETURN((CONNECTION_STATUS()==0) and !CONNECTION_ABORTED());
+}
+ 
+?>
+ 
+ 
+And here's an example of using the function:
+ 
+<?PHP
+ 
+IF (!send_file("platinumdemo.zip")) {
+DIE ("file transfer failed");
+ 
+// either the file transfer was incomplete
+// or the file was not found
+ 
+} ELSE {
+ 
+// the download was a success
+// log, or do whatever else
+}
+ 
+?> 
+#+end_src
+
+** Echo 'n' number of words
+#+begin_src php
+<?PHP
+ 
+$the_string = "a very long string of words";
+ 
+$space_offset = 0; 
+$space_num = 0; 
+ 
+WHILE($space_num <= 250){
+$space_offset  = stripos($the_string, ' ',$space_offset + 1);
+$space_num++;
+} 
+ 
+?>
+ 
+// after the loop completes, $space_offset will have the offset 
+// of the space just before the 250th word.
+#+end_src
+
+** Validate email address #1
+#+begin_src php
+<?PHP
+ 
+$email = "someone@example.com";
+IF(EREGI("^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$", $email)) {
+  ECHO "Valid email address.";
+}ELSE{
+  ECHO "Invalid email address.";
+}
+ 
+?>
+#+end_src
+
+** Validate email address #2
+#+begin_src php
+<?PHP
+ 
+FUNCTION checkEmail($email) {
+     IF (EREG("^[a-zA-Z0-9][a-zA-Z0-9_\.\-]*[@][a-zA-Z0-9\.\-]*[\.][a-zA-Z]{2,4}$", $email)) {
+          RETURN TRUE;
+     } ELSE {
+          RETURN FALSE;
+     }
+}
+ 
+?>
+#+end_src
+
+** Validate email address #3
+#+begin_src php
+<?PHP
+ 
+FUNCTION isValidEmail( $email = NULL ){
+     RETURN PREG_MATCH( "/^
+     [\d\w\/+!=#|$?%{^&}*`'~-]
+     [\d\w\/\.+!=#|$?%{^&}*`'~-]*@
+     [A-Z0-9]
+     [A-Z0-9.-]{1,61}
+     [A-Z0-9]\.
+     [A-Z]{2,6}$/ix", $email );
+}
+ 
+?>
+#+end_src
+
+** EVAL a file
+#+begin_src php
+ <?PHP
+ 
+$str = compile('file_to_process');
+ 
+$str = do_more_things_with($str);
+ 
+ECHO $str;
+ 
+FUNCTION compile($file) {
+    OB_START();
+    REQUIRE $file;
+    RETURN OB_GET_CLEAN();
+}
+ 
+?>  
+#+end_src
+
+** Fake email addresses
+#+begin_src php
+<?PHP
+ 
+// maximum emails to generate on each page
+$maxemails = 50;
+ 
+$tld = ARRAY(".com",".com",".biz",".info",".com.au",".co.uk",".sg",".cn",".fr",".de",".org",".gov",".net",".no");
+SLEEP(2);
+ 
+SRAND ((double) MICROTIME() * 1000000);
+FOR ($i = 1; $i <= $maxemails; $i++) {
+        $nextmail = "";
+        $rnd = RAND(5,12);
+        FOR ($a = 1; $a <= $rnd; $a++) {
+                $tmp = RAND(97, 122);
+                $nextmail .= CHR($tmp);
+        }
+        $fornavn = $nextmail;
+        $nextmail .= "@";
+        $rnd = RAND(7,12);
+        FOR ($a = 1; $a <= $rnd; $a++) {
+                $tmp = RAND(97, 122);
+                $nextmail .= CHR($tmp);
+        }
+        $rnd = RAND(1,COUNT($tld));
+        $nextmail .= $tld[$rnd];
+        ECHO "<a href=\"mailto:$nextmail\">".$nextmail."</a><br>\n";
+}
+ 
+?>
+#+end_src
+
+** Filter Empty Array Elements
+
+#+begin_src php
+<?PHP
+ 
+// filter empty elements
+$some_array = PREG_GREP('#\S#', ARRAY_MAP('trim', $some_array));
+ 
+?>
+#+end_src
+
+** Find IP from Hostname
+#+begin_src php
+<?PHP
+ 
+$ip = RTRIM(`/usr/bin/dig $host A +short | /usr/bin/tail -1`);
+ 
+?>
+#+end_src
+
+** Get all files into an Array
+#+begin_src php
+<?PHP
+ 
+$files = GLOB('/path/to/some/directory/*.*');
+ 
+PRINT_R($files);  
+ 
+?>
+#+end_src
+
+** Make grayscaled image
+#+begin_src php
+<?PHP
+ 
+HEADER("content-type: image/jpeg");
+$image = imagecreatefromjpeg("image.jpg");
+imagefilter($image,IMG_FILTER_GRAYSCALE);
+imagejpeg($image);
+imagedestroy($image);
+ 
+?>
+#+end_src
+
+** Auto Link Maker #2
+#+begin_src php
+<?PHP
+ 
+FUNCTION linkScan($string1)
+     {
+     $pattern1 = "/(?<![\\/\\d\\w])(http:\\/\\/)?([\\w\\d\\-]+)
+             ((\\.([\\w\\d\\-])+){2,})([\\/\\?\\w\\d\\.\\-_&=+%]*)?/i";
+     $replace1 = "<a href=\\"http://$2$3$6\\" target=\\"popup\\">$0</a>";
+     $string2 = PREG_REPLACE($pattern1,$replace1,$string1);
+     $pattern2 = "/[\\d\\w\\.\\-_]+@[\\d\\w\\-_\\.]+?
+             \\.[\\w]{2,3}(\\.[\\w]{2,3})?/i";
+     $replace2 = "<a href=\\"mailto:$0\\">$0</a>";
+     $string3 = PREG_REPLACE($pattern2,$replace2,$string2);     
+     RETURN $string3;     
+     }
+ 
+?>
+#+end_src
+
+** Get file in as variable
+#+begin_src php
+<?PHP
+ 
+// get contents of a file into a string
+$filename = "/usr/local/something.txt";
+$handle = FOPEN($filename, "r");
+$contents = FREAD($handle, FILESIZE($filename));
+FCLOSE($handle);
+ 
+?> 
+#+end_src
+
+** Get filesize without downloading
+#+begin_src php
+<?PHP
+ 
+$file = 'http://www.example.com/file.zip';
+ 
+$fp   = FOPEN( $file, 'r' );
+$data = STREAM_GET_META_DATA( $fp )
+FCLOSE( $fp );
+ 
+PRINT_R( $data );
+ 
+ 
+/*
+$data will contain something similar to the following:
+ 
+Array
+(
+    [0] => HTTP/1.1 200 OK
+    [1] => Date: Sat, 23 Jun 2007 00:48:50 GMT
+    [2] => Server: Apache/2.2.0 (Fedora)
+    [3] => Last-Modified: Sat, 23 Dec 2006 20:05:47 GMT
+    [4] => ETag: "9f2523-25b0-1716fcc0"
+    [5] => Accept-Ranges: bytes
+    [6] => Content-Length: 9648
+    [7] => Connection: close
+    [8] => Content-Type: image/jpeg
+)
+ 
+You'll want the Content-Length header for file size, or $data[6].
+ 
+*/
+ 
+?>
+#+end_src
+   
+** get link text
+#+begin_src php
+
+<?PHP
+ 
+FUNCTION getUrlLinkText($url){
+ 
+    PREG_MATCH('/\>(.*)<\/a>/', $url, $matches);
+    /*** return the match ***/
+    RETURN $matches[1];
+}
+ 
+/* example usage 
+ 
+$url = '<a href="http://www.domain.com" class="something" id="link_id">Url Text Link Here</a>';
+echo getUrlLinkText($url);
+ 
+*/
+ 
+?>
+#+end_src
+
+** Get text between tags
+#+begin_src php
+<?PHP
+ 
+$str = " 
+Line 1: This is a string 
+Line 2: <pre>This is something within a pre-formatted section 
+spanning 2+ lines. 
+The end.</pre> Should not be included. 
+Line 3: End of test string."; 
+ 
+PREG_MATCH("|<pre>(.+)</pre>|si", $str, $m); 
+ECHO NL2BR($m[1]); 
+ 
+?> 
+#+end_src
+
+** Googlebot monitor
+#+begin_src php
+<?PHP
+ 
+IF(EREGI("googlebot",$_SERVER['HTTP_USER_AGENT'])) {
+  $s = "";
+  FOREACH($_SERVER AS $item => $value) {
+    $s .= "\n$item : $value";
+  }
+  $sdate = DATE("Y-m-d h:i:s");
+  $message = <<<MESSAGE
+Visit date:$sdate
+Information:
+=================================
+$s
+=================================
+MESSAGE;
+  IF($google_alert) {
+    MAIL("youremail@yourdomain.com", "googlebot alert", $message);
+  }
+}
+ 
+?>
+#+end_src
+
+** HEX Encode / Decode
+#+begin_src php
+<?PHP
+ 
+   $text = "PHP rocks!";
+   $encoded = PREG_REPLACE(
+           "'(.)'e"
+         ,"dechex(ord('\\1'))"
+         ,$text
+   );
+   PRINT "ENCODED: $encoded\n";
+ 
+?>
+ 
+ENCODED: 50485020726f636b7321
+ 
+<?PHP
+ 
+   PRINT "DECODED: ".PREG_REPLACE(
+       "'([\S,\d]{2})'e"
+     ,"chr(hexdec('\\1'))"
+     ,$encoded)."\n";
+ 
+?>
+ 
+DECODED: PHP rocks!
+#+end_src
+
+** HEX to RGB array
+#+begin_src php
+<?PHP
+ 
+FUNCTION hex2dec($hex) {
+  $color = STR_REPLACE('#', '', $hex);
+  $ret = ARRAY(
+   'r' => HEXDEC(SUBSTR($color, 0, 2)),
+   'g' => HEXDEC(SUBSTR($color, 2, 2)),
+   'b' => HEXDEC(SUBSTR($color, 4, 2))
+  );
+  RETURN $ret;
+}
+ 
+?>
+#+end_src
+
+** Perfect Highlighting Function
+#+begin_src php
+<?PHP
+// highlight words in a string 
+FUNCTION highlight($text, $search) {
+   $text = PREG_REPLACE( "/(^|\s|,!|;)(".PREG_QUOTE($search, "/").")(\s|,|!|&|$)/i", "\\1<span class='hlstyle'>\\2</span>\\3", $text );
+   RETURN $text;
+}
+ 
+?>
+#+end_src
+
+** Highlight Words #2
+#+begin_src php
+<?PHP
+ 
+FUNCTION highlight($haystack,$needle){
+   $haystack=PREG_REPLACE("/($needle)/i","<span style='font-weight:bold'>\${1}</span>",$haystack);
+   RETURN $haystack;
+}
+ 
+?>
+#+end_src
+
+** Strip HTML to Text
+#+begin_src php
+<?PHP
+ 
+FUNCTION html2text($html){
+    $tags = ARRAY (
+    0 => '~<h[123][^>]+>~si',
+    1 => '~<h[456][^>]+>~si',
+    2 => '~<table[^>]+>~si',
+    3 => '~<tr[^>]+>~si',
+    4 => '~<li[^>]+>~si',
+    5 => '~<br[^>]+>~si',
+    6 => '~<p[^>]+>~si',
+    7 => '~<div[^>]+>~si',
+    );
+    $html = PREG_REPLACE($tags,"\n",$html);
+    $html = PREG_REPLACE('~</t(d|h)>\s*<t(d|h)[^>]+>~si',' - ',$html);
+    $html = PREG_REPLACE('~<[^>]+>~s','',$html);
+    // reducing spaces
+    $html = PREG_REPLACE('~ +~s',' ',$html);
+    $html = PREG_REPLACE('~^\s+~m','',$html);
+    $html = PREG_REPLACE('~\s+$~m','',$html);
+    // reducing newlines
+    $html = PREG_REPLACE('~\n+~s',"\n",$html);
+    RETURN $html;
+}
+ 
+?>
+#+end_src
+
+** Improved Strip_Tags()
+#+begin_src php
+<?PHP
+ 
+FUNCTION strip_tags_in_big_string($textstring){
+WHILE($textstring != STRIP_TAGS($textstring))
+   {
+   WHILE (STRLEN($textstring) != 0)
+         {
+         IF (STRLEN($textstring) > 1024) {
+             $otherlen = 1024;
+         } ELSE {
+             $otherlen = STRLEN($textstring);
+         }
+         $temptext = STRIP_TAGS(SUBSTR($textstring,0,$otherlen));
+         $safetext .= $temptext;
+         $textstring = SUBSTR_REPLACE($textstring,'',0,$otherlen);
+         } 
+   $textstring = $safetext;
+   }
+RETURN $textstring;
+ 
+?>
+#+end_src
 
 * json
 ** json encode raw UTF?
@@ -1546,7 +3009,66 @@ fclose($fh);
 header('Content-Type: text/csv');
 // Tell the web client to view the CSV file in a separate program
 header('Content-Disposition: attachment; filename="dishes.csv"');
-#+end_src 
+#+end_src
+
+** delete all files in a directory
+#+begin_src php
+<?PHP
+ 
+FUNCTION emptyDir($path) { 
+ 
+     // init the debug string
+     $debugStr = '';
+     $debugStr .= "Deleting Contents Of: $path<br /><br />";
+ 
+     // parse the folder
+     IF ($handle = OPENDIR($path)) {
+ 
+          WHILE (FALSE !== ($file = READDIR($handle))) {
+ 
+               IF ($file != "." && $file != "..") {
+ 
+               // If it's a file, delete it
+               IF(IS_FILE($path."/".$file)) {
+ 
+                    IF(UNLINK($path."/".$file)) {
+                    $debugStr .= "Deleted File: ".$file."<br />";     
+                    }
+ 
+               } ELSE {
+ 
+                    // It's a directory...
+                    // crawl through the directory and delete the contents               
+                    IF($handle2 = OPENDIR($path."/".$file)) {
+ 
+                         WHILE (FALSE !== ($file2 = READDIR($handle2))) {
+ 
+                              IF ($file2 != "." && $file2 != "..") {
+                                   IF(UNLINK($path."/".$file."/".$file2)) {
+                                   $debugStr .= "Deleted File: $file/$file2<br />";     
+                                   }
+                              }
+ 
+                         }
+ 
+                    }
+ 
+                    IF(RMDIR($path."/".$file)) {
+                    $debugStr .= "Directory: ".$file."<br />";     
+                    }
+ 
+               }
+ 
+               }
+ 
+          }
+ 
+     }
+     RETURN $debugStr;
+}
+ 
+ 
+#+end_src
 
 * lumen
 ** lumen on apache
@@ -3161,3 +4683,7 @@ http://www.w3.org/TR/css3-fonts/
 
 https://css-tricks.com/
 
+* useful resources
+** php snippets
+
+http://psoug.org/browse.htm?cid=2

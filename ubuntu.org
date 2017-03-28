@@ -1474,7 +1474,14 @@ curl --tr-encoding -X POST -v -# -o output -T filename.dat  http://example.com/r
 
 #+end_src 
 
-*** links
+** get cookie
+#+begin_src shell
+$ curl -c 'http://example.com/'
+# session flood
+$ hile true; do curl -c - 'http://localhost/xbs/login' 1> /dev/null; done 
+#+end_src
+
+** links
 
 https://curl.haxx.se/docs/httpscripting.html
 * grub
@@ -2620,7 +2627,6 @@ apachectl stop
 
 This shuts the server down immediately. Any existing connections are terminated at once.
 
- 
 * redis
 ** using from command line
 
@@ -3713,6 +3719,8 @@ showDetails(123);
 
 client.quit();
 #+end_src 
+
+* useful resources
 
 * references
 http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
