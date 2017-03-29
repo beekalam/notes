@@ -1219,10 +1219,7 @@ FUNCTION url_exists($strURL) {
     }
 }
  
- 
- 
- 
-OR.................
+//OR.................
  
 FUNCTION is_valid_url($url)
 {
@@ -2235,6 +2232,7 @@ $some_array = PREG_GREP('#\S#', ARRAY_MAP('trim', $some_array));
 #+end_src
 
 ** Find IP from Hostname
+
 #+begin_src php
 <?PHP
  
@@ -2244,6 +2242,7 @@ $ip = RTRIM(`/usr/bin/dig $host A +short | /usr/bin/tail -1`);
 #+end_src
 
 ** Get all files into an Array
+
 #+begin_src php
 <?PHP
  
@@ -2255,6 +2254,7 @@ PRINT_R($files);
 #+end_src
 
 ** Make grayscaled image
+
 #+begin_src php
 <?PHP
  
@@ -2268,6 +2268,7 @@ imagedestroy($image);
 #+end_src
 
 ** Auto Link Maker #2
+
 #+begin_src php
 <?PHP
  
@@ -2288,6 +2289,7 @@ FUNCTION linkScan($string1)
 #+end_src
 
 ** Get file in as variable
+
 #+begin_src php
 <?PHP
  
@@ -2301,6 +2303,7 @@ FCLOSE($handle);
 #+end_src
 
 ** Get filesize without downloading
+
 #+begin_src php
 <?PHP
  
@@ -2311,7 +2314,6 @@ $data = STREAM_GET_META_DATA( $fp )
 FCLOSE( $fp );
  
 PRINT_R( $data );
- 
  
 /*
 $data will contain something similar to the following:
@@ -2337,6 +2339,7 @@ You'll want the Content-Length header for file size, or $data[6].
 #+end_src
    
 ** get link text
+
 #+begin_src php
 
 <?PHP
@@ -2359,6 +2362,7 @@ echo getUrlLinkText($url);
 #+end_src
 
 ** Get text between tags
+
 #+begin_src php
 <?PHP
  
@@ -2376,6 +2380,7 @@ ECHO NL2BR($m[1]);
 #+end_src
 
 ** Googlebot monitor
+  
 #+begin_src php
 <?PHP
  
@@ -2401,6 +2406,7 @@ MESSAGE;
 #+end_src
 
 ** HEX Encode / Decode
+
 #+begin_src php
 <?PHP
  
@@ -2429,6 +2435,7 @@ DECODED: PHP rocks!
 #+end_src
 
 ** HEX to RGB array
+
 #+begin_src php
 <?PHP
  
@@ -2446,6 +2453,7 @@ FUNCTION hex2dec($hex) {
 #+end_src
 
 ** Perfect Highlighting Function
+
 #+begin_src php
 <?PHP
 // highlight words in a string 
@@ -2458,6 +2466,7 @@ FUNCTION highlight($text, $search) {
 #+end_src
 
 ** Highlight Words #2
+
 #+begin_src php
 <?PHP
  
@@ -2470,6 +2479,7 @@ FUNCTION highlight($haystack,$needle){
 #+end_src
 
 ** Strip HTML to Text
+
 #+begin_src php
 <?PHP
  
@@ -2500,6 +2510,7 @@ FUNCTION html2text($html){
 #+end_src
 
 ** Improved Strip_Tags()
+
 #+begin_src php
 <?PHP
  
@@ -2522,6 +2533,1139 @@ WHILE($textstring != STRIP_TAGS($textstring))
 RETURN $textstring;
  
 ?>
+#+end_src
+
+** Insert Into Middle Of Text
+
+#+begin_src php
+<?PHP
+ 
+// find the middle
+$full_size = STRLEN($art_text);
+$halfway_mark = ($full_size / 2);
+ 
+// clip off the first half
+$firsthalf = SUBSTR($art_text, 0, $halfway_mark);
+ 
+// find the last '<br>' in the first half
+$end_mark = STRRPOS($firsthalf, '<br>');
+ 
+// add in the adblob at the position found above
+$art_text = SUBSTR($art_text, 0, $end_mark) . "<p> $ADBLOB <p>" . SUBSTR($art_text, $end_mark); 
+ 
+?>
+#+end_src
+
+** Invert Hex Color
+#+begin_src php
+<?PHP
+ 
+FUNCTION inverseHex( $color )
+{
+     $color       = TRIM($color);
+     $prependHash = FALSE;
+ 
+     IF(STRPOS($color,'#')!==FALSE) {
+          $prependHash = TRUE;
+          $color       = STR_REPLACE('#',NULL,$color);
+     }
+ 
+     SWITCH($len=STRLEN($color)) {
+          CASE 3:
+               $color=PREG_REPLACE("/(.)(.)(.)/","\\1\\1\\2\\2\\3\\3",$color);
+          CASE 6:
+               BREAK;
+          DEFAULT:
+               TRIGGER_ERROR("Invalid hex length ($len). Must be (3) or (6)", E_USER_ERROR);
+     }
+ 
+     IF(!PREG_MATCH('/[a-f0-9]{6}/i',$color)) {
+          $color = HTMLENTITIES($color);
+          TRIGGER_ERROR( "Invalid hex string #$color", E_USER_ERROR );
+     }
+ 
+     $r = DECHEX(255-HEXDEC(SUBSTR($color,0,2)));
+     $r = (STRLEN($r)>1)?$r:'0'.$r;
+     $g = DECHEX(255-HEXDEC(SUBSTR($color,2,2)));
+     $g = (STRLEN($g)>1)?$g:'0'.$g;
+     $b = DECHEX(255-HEXDEC(SUBSTR($color,4,2)));
+     $b = (STRLEN($b)>1)?$b:'0'.$b;
+ 
+     RETURN ($prependHash?'#':NULL).$r.$g.$b;
+}
+ 
+// Demo
+// echo inverseHex('#000000'); // #ffffff
+?>
+#+end_src
+
+** Invert Hex Color #2
+#+begin_src php
+<?PHP
+ 
+// precond: $color is a hex integer
+// postcond: returns inversion
+FUNCTION InvertColor($color){
+  RETURN (int) 0xffffff - $color;
+}
+ 
+?>
+#+end_src
+
+** Live validation of email address
+#+begin_src php
+<?PHP
+ 
+FUNCTION check_email($email){
+   IF(@EREG("^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$", $email)){
+ 
+       $url = SUBSTR(STRRCHR($email, "@"), 1);
+       IF (STRSTR($url, "/")) {
+           $url = EXPLODE("/", $url, 2);
+           $url[1] = "/".$url[1];
+       } ELSE {
+           $url = ARRAY($url, "/");
+       }
+       $fh = @FSOCKOPEN($url[0], 80);
+       IF ($fh) {
+           @FPUTS($fh,"GET ".$url[1]." HTTP/1.1\nHost:".$url[0]."\n\n");
+           IF (@FREAD($fh, 22) == "HTTP/1.1 404 Not Found") { RETURN FALSE; }
+           ELSE { RETURN TRUE;    }
+       } ELSE { RETURN FALSE;}
+   }ELSE{
+       RETURN FALSE;
+   }
+}
+ 
+?>
+#+end_src
+
+** Weighted Random Choice
+#+begin_src php
+<?PHP
+ 
+// Give higher priorities to the users who pay the most.
+// Gives lowest-priced rows the highest priority:
+ 
+SELECT * FROM LINK ORDER BY RAND()*payPerClick/RAND();
+ 
+ 
+// Gives highest-priced rows the highest priority
+ 
+SELECT 'field' FROM 'table' WHERE 'ppc' > 0 ORDER BY RAND() / 'ppc' * RAND()
+ 
+// Running the query above 6000 times produces:
+// 3 cent: 402
+// 4 cent: 517
+// 5 cent: 615
+// 7 cent: 800
+// 9 cent: 1020
+// 11 cent: 1214
+// 13 cent: 1432
+ 
+ 
+// OR
+ 
+FUNCTION w_rand($weights) {
+    $r = MT_RAND(1,1000);
+    $offset = 0;
+    FOREACH ($weights AS $k => $w) {
+        $offset += $w*1000;
+        IF ($r <= $offset) {
+            RETURN $k;
+        }
+    }
+} 
+ 
+?>
+#+end_src
+
+** Nice 'Read More...' links
+#+begin_src php
+<?PHP
+ 
+ECHO SUBSTR($entry['content'],0,STRPOS($entry['content'],".",200)+1)." <a href=\"your-link\">read more</a></p>\n";
+ 
+?>
+#+end_src
+
+** Ordinalize (Suffix) Numbers
+#+begin_src php
+<?PHP
+ 
+FUNCTION ordinalize($number) {
+ 
+IF (IN_ARRAY(($number % 100),RANGE(11,13))){
+     RETURN $number.'th';
+}ELSE{
+     SWITCH (($number % 10)) {
+CASE 1:
+     RETURN $number.'st';
+BREAK;
+     CASE 2:
+     RETURN $number.'nd';
+BREAK;
+CASE 3:
+     RETURN $number.'rd';
+DEFAULT:
+     RETURN $number.'th';
+BREAK;
+}
+}
+}
+ 
+?>
+#+end_src
+
+** Output as Word Doc format
+#+begin_src php
+<?PHP
+ 
+$query = "SELECT * FROM TABLE  WHERE data = '$data'";
+ 
+    $result = MYSQL_QUERY($query);
+    $count = MYSQL_NUM_FIELDS($result); 
+ 
+    FOR ($i = 0; $i < $count; $i++){ 
+        IF (ISSET($header)) 
+            $header .= MYSQL_FIELD_NAME($result, $i)."\t"; 
+            ELSE 
+                $header = MYSQL_FIELD_NAME($result, $i)."\t"; 
+        } 
+ 
+    WHILE ($row = MYSQL_FETCH_ROW($result)){ 
+        $line = ''; 
+ 
+        FOREACH ($row AS $value) 
+            { 
+            IF (!ISSET($value) || $value == '') 
+                $value = "\t"; 
+                ELSE 
+                    { 
+                    $value = STR_REPLACE('"', '""', $value); 
+                    $value = '"'.$value.'"'."\t"; 
+                    } 
+ 
+            $line .= $value; 
+            } 
+ 
+        IF (ISSET($data)) 
+            $data .= TRIM($line)."\n"; 
+            ELSE 
+                $data = TRIM($line)."\n"; 
+        } 
+ 
+    $data = STR_REPLACE("\r", "", $data); 
+ 
+    IF ($data == '') 
+        $data = "\nno matching records\n"; 
+ 
+    HEADER("Content-Type: application/vnd.ms-word; name='word'"); 
+    HEADER("Content-type: application/octet-stream"); 
+    HEADER("Content-Disposition: attachment; filename=filename_here.doc"); 
+    HEADER("Cache-Control: must-revalidate, post-check=0, pre-check=0"); 
+    HEADER("Pragma: no-cache"); 
+    HEADER("Expires: 0"); 
+ 
+    ECHO $header."\n".$data; 
+    EXIT;
+ 
+?> 
+#+end_src
+
+** Pronouncable password generator
+#+begin_src php
+<?PHP
+ 
+FUNCTION generatePassword($length=9, $strength=0) {
+    $vowels = 'aeuy';
+    $consonants = 'bdghjmnpqrstvz';
+    IF ($strength & 1) {
+        $consonants .= 'BDGHJLMNPQRSTVWXZ';
+    }
+    IF ($strength & 2) {
+        $vowels .= "AEUY";
+    }
+    IF ($strength & 4) {
+        $consonants .= '23456789';
+    }
+    IF ($strength & 8) {
+        $consonants .= '@#$%';
+    }
+ 
+    $password = '';
+    $alt = TIME() % 2;
+    FOR ($i = 0; $i < $length; $i++) {
+        IF ($alt == 1) {
+            $password .= $consonants[(RAND() % STRLEN($consonants))];
+            $alt = 0;
+        } ELSE {
+            $password .= $vowels[(RAND() % STRLEN($vowels))];
+            $alt = 1;
+        }
+    }
+    RETURN $password;
+}
+ 
+?>
+#+end_src
+
+** Pick Randomly from Array
+#+begin_src php
+ <?PHP
+ 
+// This method only works where the elements exist AND are 
+// sequentially numbered. If you unset() elements from the 
+// array, you may end up picking elements that no longer exist. 
+ 
+$quote = $quotes_array[RAND(0, COUNT($quotes_array) - 1)]; 
+ 
+?>
+#+end_src
+
+** Automatically process email
+#+begin_src php
+ <?PHP
+ 
+/*
+Prerequisites:
+Linux/BSD
+PHP with CLI enabled
+PEAR
+Sendmail with individual user account
+ 
+Aim: Save attachments to server storage.
+ 
+1. Setup sendmail account to forward to PHP script.
+ 
+In the home directory (/home/user) on the foo.bar machine make 
+and edit a file called ".forward". In this file put in the 
+following.
+ 
+|"/dir_to_php_script/process.php"
+ 
+This will forward any email sent to user@foo.bar.com to the 
+php script.
+ 
+2. PHP script to process email "/dir_to_php_script/process.php"
+[Don't forget to chmod 755 process.php]
+ 
+*/
+ 
+// begin contents of process.php
+#!/usr/local/bin/php
+<?PHP
+// Need PEAR installed
+INCLUDE('Mail.php');
+INCLUDE('Mail/mime.php');
+REQUIRE_ONCE 'Mail/mimeDecode.php';
+ 
+// read email using stdin
+$fd = FOPEN("php://stdin", "r");
+$email = "";
+WHILE (!FEOF($fd)) {
+        $email .= FREAD($fd, 1024);
+}
+FCLOSE($fd);
+ 
+$params['include_bodies'] = TRUE;
+$params['decode_bodies']  = TRUE;
+$params['decode_headers'] = TRUE;
+ 
+$message=NEW Mail_mimeDecode($email);
+$mailObj=$message->decode($params);
+ 
+// Who is it from
+$from=$mailObj->headers['from'];
+// Get Subject
+$subj=$mailObj->headers['subject'];
+// Get Message Body
+$body=$mailObj->parts[0]->body;
+$gather="From:$from\nSubject:$subj\nBody:$body";
+ 
+ 
+// Get and Save the Attachments
+FOREACH($mailObj->parts AS $key=>$val):
+        $tmpObj=$mailObj->parts[$key];
+        $tmp=$tmpObj->d_parameters['filename'];
+        IF(!EMPTY($tmp)):
+                $fd = FOPEN($tmp, 'w');
+                FWRITE($fd, $tmpObj->body);
+        ENDIF;
+ 
+} //endforeach;
+ 
+// end of contents of process.php
+?>
+ 
+//Posted by Christian in Php at 07:04 
+#+end_src
+
+** Prompt user at command line
+#+begin_src php
+<?PHP
+ 
+ECHO "Give me your name: ";
+$data = FOPEN("php://stdin", "rb");
+ 
+WHILE (1==1) {
+   $chunk = FREAD($data, 1);
+   IF ($chunk == "\n" || $chunk == "\r") BREAK;
+   $input .= $chunk;
+}
+FCLOSE($data);
+ 
+ECHO "Hello $input!\n";
+ 
+?>
+#+end_src
+
+** Protect Writable Directory
+
+Use this in writeable directories in .htaccess. 
+This prevents execution of php files but allows everything else.
+
+#+begin_src
+<Files ~ "\.(php)$">
+order deny,allow
+allow from <my ip address>
+deny from all
+</Files>
+#+end_src
+
+** Random Pronounceable Passwords
+#+begin_src php
+<?PHP
+ 
+FUNCTION auth_pwgen(){
+  $pw = '';
+  $c  = 'bcdfghjklmnprstvwz'; //consonants except hard to speak ones
+  $v  = 'aeiou';              //vowels
+  $a  = $c.$v;                //both
+ 
+  //use two syllables...
+  FOR($i=0;$i < 2; $i++){
+    $pw .= $c[RAND(0, STRLEN($c)-1)];
+    $pw .= $v[RAND(0, STRLEN($v)-1)];
+    $pw .= $a[RAND(0, STRLEN($a)-1)];
+  }
+  //... and add a nice number
+  $pw .= RAND(10,99);
+ 
+  RETURN $pw;
+}
+ 
+?>
+#+end_src
+
+** Regex Matching Patterns
+#+begin_src php
+ 
+ 
+Social Security Number
+^(?!000)([0-6]\d{2}|7([0-6]\d|7[012]))([ -]?)(?!00)\d\d\3(?!0000)\d{4}$
+ 
+US phone with or without parentheses
+^\([0-9]{3}\)\s?[0-9]{3}(-|\s)?[0-9]{4}$|^[0-9]{3}-?[0-9]{3}-?[0-9]{4}$
+ 
+ISO Date (19th to 21st century only)
+^((18|19|20)\d\d)-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])$
+#+end_src
+
+** Remote file_exist()
+#+begin_src php
+<?PHP
+ 
+FUNCTION remote_file_exists($url){
+    RETURN (bool)PREG_MATCH('~HTTP/1\.\d\s+200\s+OK~', @CURRENT(get_headers($url)));
+}  
+ 
+?>
+#+end_src
+
+** Unique Array function
+Similar to array_unique(), but implemented manually
+
+#+begin_src php
+<?PHP
+ 
+FUNCTION uniqueArray($array)
+{
+// Get unique elts as keys in assoc. array
+FOR ($i=0,$n=COUNT($array, 1);$i<$n;$i++)
+     $u_array[$array[$i]] = 1;
+ 
+// Copy keys only into another array
+RESET($u_array, 1);
+FOR ($i=0,$n=COUNT($u_array, 1);$i<$n;$i++) {
+     $unduplicated_array[] = KEY($u_array, 1);
+     NEXT($u_array, 1);
+}
+RETURN $unduplicated_array;
+}
+ 
+?>
+#+end_src
+
+** Remove extra linebreaks
+#+begin_src php
+<?PHP
+ 
+$string = PREG_REPLACE('/(\r?\n){2,}/', "\n\n", $string);  
+ 
+?>
+#+end_src
+
+** Show mySQL table as HTML
+#+begin_src php
+<?PHP
+ 
+$table = 'spheres';
+ 
+IF (!MYSQL_CONNECT($db_host, $db_user, $db_pwd))
+    DIE("Can't connect to database");
+ 
+IF (!MYSQL_SELECT_DB($database)) DIE("Can't select database");
+ 
+// sending query
+$result = MYSQL_QUERY("SELECT * FROM {$table}");
+IF (!$result) {
+    DIE("Query to show fields from table failed");
+}
+ 
+$fields_num = MYSQL_NUM_FIELDS($result);
+ 
+ECHO "<h1>Table: {$table}</h1>";
+ECHO "<table border='1'><tr>";
+// printing table headers
+FOR($i=0; $i<$fields_num; $i++)
+{
+    $field = MYSQL_FETCH_FIELD($result);
+    ECHO "<td>{$field->name}</td>";
+}
+ECHO "</tr>\n";
+// printing table rows
+WHILE($row = MYSQL_FETCH_ROW($result))
+{
+    ECHO "<tr>";
+ 
+    // $row is array... foreach( .. ) puts every element
+    // of $row to $cell variable
+    FOREACH($row AS $cell)
+        ECHO "<td>$cell</td>";
+ 
+    ECHO "</tr>\n";
+}
+MYSQL_FREE_RESULT($result);
+ 
+?>
+#+end_src
+
+** Split all chars in string
+#+begin_src php
+<?PHP
+ 
+// Make the function
+FUNCTION Split_String($String) {
+    // Get the String Length
+    $STR_LEN = STRLEN($String);
+ 
+    // To prevent notice errors
+    $New_String = "";
+ 
+    // Loop for each character
+    FOR ($i = 0; $i < $STR_LEN; $i++) {
+        // Set it to a variable, you can also echo it...
+        $New_String .= $String{$i} . "<br />";
+    }
+ 
+    // Return the new variable
+    RETURN $New_String;
+}
+ 
+// Set the text to be split
+$text = "test test test lol...";
+ 
+// Echo the outputs of what the function does
+ECHO Split_String($text);
+ 
+?> 
+#+end_src
+
+** Split URL into parts #1
+#+begin_src php
+ <?PHP
+ 
+$fullurl = "http://www.domain.com/cgi-bin/printurl.cgi?url=http://test.com&email=foobar@reserved.com";
+ 
+ECHO "The full URL: " . $fullurl . "<br><br>\n";
+ 
+$fullurl = EREGI_REPLACE("http://", "", $fullurl);
+ECHO "The full URL without http: " . $fullurl . "<br><br>\n";
+ 
+$request_part =  STRISTR($fullurl, "/");
+ECHO "The request part: " . $request_part . "<br><br>\n";
+ 
+$main_url = SUBSTR($fullurl, 0, STRPOS($fullurl, "/"));
+ECHO "The domain only: $main_url";
+ 
+?>
+#+end_src
+
+** Test If File Is Included
+#+begin_src php
+<?PHP
+ 
+IF(__FILE__ == $_SERVER['SCRIPT_FILENAME'])
+    DIE("This file cannot be executed directly");
+ 
+?>
+#+end_src
+
+** Truncate Links Over X Chars long
+#+begin_src php
+<?PHP
+ 
+FUNCTION handle_url_tag($url, $link = ''){
+     GLOBAL $FORUM_user;
+ 
+     // maximum link length
+     $MAXLEN = 50;
+ 
+     // if too long, clip it to how many chars?
+     $CLIPTO = 45;
+ 
+     $full_url = STR_REPLACE(ARRAY(' ', '\'', '`', '"'), array('%20', '', '', ''), $url);
+     if (strpos($url, 'www.') === 0)               // If it starts with www, we add http://
+          $full_url = 'http://'.$full_url;
+     else if (strpos($url, 'ftp.') === 0)     // Else if it starts with ftp, we add ftp://
+          $full_url = 'ftp://'.$full_url;
+     else if (!preg_match('#^([a-z0-9]{3,6})://#', $url, $bah))      // Else if it doesn't start with abcdef://, we add http://
+          $full_url = 'http://'.$full_url;
+ 
+     // Ok, not very pretty :-)
+     $link = ($link == '' || $link == $url) ? ((strlen($url) > $MAXLEN) ? substr($url, 0 , $CLIPTO).' … '.substr($url, -10) : $url) : stripslashes($link);
+ 
+     return '<a href="'.$full_url.'">'.$link.'</a>';
+}
+ 
+?>
+#+end_src
+
+** UNIX Timestamp conversion
+#+begin_src php
+<?PHP
+ 
+// produces a timestamp that looks like "YYYY-MM-DD 24:00:00":
+$formated_datetime = DATE("Y-m-d H:i:s");
+ 
+// takes $formated_datetime and converts to "UNIX timestamp":
+$unix_timestamp = STRTOTIME($formated_datetime);
+ 
+// converts $unix_timestamp to "normal" formated_datetime:         
+$formated_datetime = DATE("Y-m-d H:i:s",$unix_timestamp);   
+ 
+?>
+#+end_src
+
+** Use SendMail
+#+begin_src php
+<?PHP
+ 
+$fd = POPEN("/usr/sbin/sendmail -t","w");
+   FPUTS($fd, "To: myaddress@domain.tld ");
+   FPUTS($fd, "From: Me ");
+   FPUTS($fd, "Subject: Test message from my web site ");
+   FPUTS($fd, "X-Mailer: PHP3 ");
+   FPUTS($fd, "Testing. ");
+PCLOSE($fd);
+ 
+?>
+#+end_src
+
+** What Season Is It?
+#+begin_src php
+<?PHP 
+ 
+FUNCTION season() {
+   $limits=ARRAY('/12/21'=>'Winter','/09/21'=>'Autumn','/06/21'=>'Summer','/03/21'=>'Spring','/12/31'=>'Winter');
+   FOREACH ($limits AS $key => $value) {
+       $limit=DATE("Y").$key;
+       IF (STRTOTIME("now")>strtotime($limit)) {
+           RETURN $value;
+       }
+   }
+}
+ 
+ECHO season();
+ 
+?>
+#+end_src
+
+** Write text onto an image
+#+begin_src php
+<?PHP
+ 
+// load the image from the file specified:
+$im = imagecreatefrompng("image.png");
+// if there's an error, stop processing the page:
+IF(!$im)
+{
+DIE("");
+}
+ 
+// define some colours to use with the image
+$yellow = imagecolorallocate($im, 255, 255, 0);
+$black = imagecolorallocate($im, 0, 0, 0);
+ 
+// get the width and the height of the image
+$width = imagesx($im);
+$height = imagesy($im);
+ 
+// draw a black rectangle across the bottom, say, 20 pixels of the image:
+imagefilledrectangle($im, 0, ($height-20) , $width, $height, $black);
+ 
+// now we want to write in the centre of the rectangle:
+$font = 4; // store the int ID of the system font we're using in $font
+$text = "vdhri.net"; // store the text we're going to write in $text
+// calculate the left position of the text:
+$leftTextPos = ( $width - imagefontwidth($font)*STRLEN($text) )/2;
+// finally, write the string:
+imagestring($im, $font, $leftTextPos, $height-18, $text, $yellow);
+ 
+// output the image
+// tell the browser what we're sending it
+HEADER('Content-type: image/png');
+// output the image as a png
+imagepng($im);
+ 
+// tidy up
+imagedestroy($im);
+ 
+?>
+#+end_src
+
+** PHP to JavaScript Array
+#+begin_src php
+ <?PHP
+ 
+/*
+ * Converts a PHP array to a JavaScript array
+ *
+ * Takes a PHP array, and returns a string formated as a 
+ * JavaScript array that exactly matches the PHP array.
+ *
+ * @param       array  $phpArray  The PHP array
+ * @param       string $jsArrayName   The name for the JavaScript array
+ * @return      string
+ */
+ 
+FUNCTION get_javascript_array($phpArray, $jsArrayName, &$html = '') {
+        $html .= $jsArrayName . " = new Array(); \r\n ";
+        FOREACH ($phpArray AS $key => $value) {
+                $outKey = (IS_INT($key)) ? '[' . $key . ']' : "['" . $key . "']";
+ 
+                IF (IS_ARRAY($value)) {
+                        get_javascript_array($value, $jsArrayName . $outKey, $html);
+                        CONTINUE;
+                }
+                $html .= $jsArrayName . $outKey . " = ";
+                IF (IS_STRING($value)) {
+                        $html .= "'" . $value . "'; \r\n ";
+                } ELSE IF ($value === FALSE) {
+                        $html .= "false; \r\n";
+                } ELSE IF ($value === NULL) {
+                        $html .= "null; \r\n";
+                } ELSE IF ($value === TRUE) {
+                        $html .= "true; \r\n";
+                } ELSE {
+                        $html .= $value . "; \r\n";
+                }
+        }
+ 
+        RETURN $html;
+}
+ 
+?>
+#+end_src
+
+** Universal parameter reading
+#+begin_src php
+<?PHP
+ 
+FUNCTION param($Name)
+         {
+         GLOBAL $HTTP_GET_VARS;
+         GLOBAL $HTTP_POST_VARS;
+         GLOBAL $HTTP_COOKIE_VARS;
+ 
+         IF(ISSET($HTTP_GET_VARS[$Name]))
+            RETURN($HTTP_GET_VARS[$Name]);
+ 
+         IF(ISSET($HTTP_POST_VARS[$Name]))
+            RETURN($HTTP_POST_VARS[$Name]);
+ 
+         IF(ISSET($HTTP_COOKIE_VARS[$Name]))
+            RETURN($HTTP_COOKIE_VARS[$Name]);
+ 
+         RETURN("");
+         }                
+ 
+?>
+#+end_src
+
+** Base 64 Decode
+Description: I recently ran across a freeware web application written in PHP
+that utilized the following method to encrypt its source code. You can decode
+the encoded script with this PHP snippet.
+
+#+begin_src php
+<?PHP 
+ 
+// sample is encoded like this:
+// eval(gzinflate(base64_decode('encoded text'))); 
+ 
+ 
+ECHO "\nDECODE nested eval(gzinflate()) by DEBO Jurgen <jurgen@person.be>\n\n";
+ECHO "1. Reading coded.txt\n";
+$fp1 = FOPEN ("coded.txt", "r");
+$contents = FREAD ($fp1, FILESIZE ("coded.txt"));
+FCLOSE($fp1);
+ECHO "2. Decoding\n";
+WHILE (PREG_MATCH("/eval\(gzinflate/",$contents)) {
+$contents=PREG_REPLACE("/< \?|\?>/", "", $contents);
+EVAL(PREG_REPLACE("/eval/", "\$contents=", $contents));
+}
+ECHO "3. Writing decoded.txt\n";
+$fp2 = FOPEN("decoded.txt","w");
+FWRITE($fp2, TRIM($contents));
+FCLOSE($fp2);
+ 
+/*
+1.) Save the code you wish to decode in coded.txt
+2.) Save the above PHP snippet in file like decrypt.php
+3.) Create an empty text file called decoded.txt and it CHMOD it to 0666.
+4.) Run decrypt.php and open up decoded.txt to view the source code.
+*/
+ 
+?>
+#+end_src
+
+** Heavy Duty URL validator
+#+begin_src php
+<?PHP
+ 
+$valid = "^(https?|ftp)\:\/\/([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*(\:[0-9]{2,5})?(\/([a-z0-9+\$_-]\.?)+)*\/?(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)?(#[a-z_.-][a-z0-9+\$_.-]*)?\$";
+ 
+?>
+#+end_src
+
+** Convert 12 to 24 hour time and vice versa
+#+begin_src php
+<?PHP
+ 
+// 24-hour time to 12-hour time 
+$time_in_12_hour_format  = DATE("g:i a", STRTOTIME("13:30"));
+ 
+// 12-hour time to 24-hour time 
+$time_in_24_hour_format  = DATE("H:i", STRTOTIME("1:30 pm"));
+ 
+?>
+#+end_src
+
+** Create thumbnails with PHP
+#+begin_src php
+<?PHP
+ 
+FUNCTION thumbnail($image_path,$thumb_path,$image_name,$thumb_width) 
+{ 
+    $src_img = imagecreatefromjpeg("$image_path/$image_name"); 
+    $origw=imagesx($src_img); 
+    $origh=imagesy($src_img); 
+    $new_w = $thumb_width; 
+    $diff=$origw/$new_w; 
+    $new_h=$new_w; 
+    $dst_img = imagecreate($new_w,$new_h); 
+    imagecopyresized($dst_img,$src_img,0,0,0,0,$new_w,$new_h,imagesx($src_img),imagesy($src_img)); 
+ 
+    imagejpeg($dst_img, "$thumb_path/$image_name"); 
+    RETURN TRUE; 
+} 
+ 
+?>
+#+end_src
+
+** Rounded random numbers
+#+begin_src php
+$foo = ROUND(RAND(1, 1000));
+#+end_src
+
+** Export table to Excel or MS Word file
+#+begin_src php
+<?PHP
+ 
+//EDIT YOUR MySQL Connection Info:
+$DB_Server = "";        //your MySQL Server
+$DB_Username = "";                 //your MySQL User Name
+$DB_Password = "";                //your MySQL Password
+$DB_DBName = "";                //your MySQL Database Name
+$DB_TBLName = "";                //your MySQL Table Name
+ 
+//$DB_TBLName,  $DB_DBName, may also be commented out & passed to the browser
+//as parameters in a query string, so that this code may be easily reused for
+//any MySQL table or any MySQL database on your server
+ 
+//DEFINE SQL QUERY:
+//edit this to suit your needs
+$sql = "Select * from $DB_TBLName";
+ 
+//Optional: print out title to top of Excel or Word file with Timestamp
+//for when file was generated:
+//set $Use_Titel = 1 to generate title, 0 not to use title
+$Use_Title = 1;
+//define date for title: EDIT this to create the time-format you need
+$now_date = DATE('m-d-Y H:i');
+//define title for .doc or .xls file: EDIT this if you want
+$title = "Dump For Table $DB_TBLName from Database $DB_DBName on $now_date";
+/*
+ 
+Leave the connection info below as it is:
+just edit the above.
+ 
+(Editing of code past this point recommended only for advanced users.)
+*/
+//create MySQL connection
+$Connect = @MYSQL_CONNECT($DB_Server, $DB_Username, $DB_Password)
+     or DIE("Couldn't connect to MySQL:<br>" . MYSQL_ERROR() . "<br>" . MYSQL_ERRNO());
+//select database
+$Db = @MYSQL_SELECT_DB($DB_DBName, $Connect)
+     or DIE("Couldn't select database:<br>" . MYSQL_ERROR(). "<br>" . MYSQL_ERRNO());
+//execute query
+$result = @MYSQL_QUERY($sql,$Connect)
+     or DIE("Couldn't execute query:<br>" . MYSQL_ERROR(). "<br>" . MYSQL_ERRNO());
+ 
+//if this parameter is included ($w=1), file returned will be in word format ('.doc')
+//if parameter is not included, file returned will be in excel format ('.xls')
+IF (ISSET($w) && ($w==1))
+{
+     $file_type = "msword";
+     $file_ending = "doc";
+}ELSE {
+     $file_type = "vnd.ms-excel";
+     $file_ending = "xls";
+}
+//header info for browser: determines file type ('.doc' or '.xls')
+HEADER("Content-Type: application/$file_type");
+HEADER("Content-Disposition: attachment; filename=database_dump.$file_ending");
+HEADER("Pragma: no-cache");
+HEADER("Expires: 0");
+ 
+/*    Start of Formatting for Word or Excel    */
+ 
+IF (ISSET($w) && ($w==1)) //check for $w again
+{
+     /*    FORMATTING FOR WORD DOCUMENTS ('.doc')   */
+     //create title with timestamp:
+     IF ($Use_Title == 1)
+     {
+         ECHO("$title\n\n");
+     }
+     //define separator (defines columns in excel & tabs in word)
+     $sep = "\n"; //new line character
+ 
+     WHILE($row = MYSQL_FETCH_ROW($result))
+     {
+         //set_time_limit(60); // HaRa
+         $schema_insert = "";
+         FOR($j=0; $j<mysql_num_fields($result);$j++)
+         {
+         //define field names
+         $field_name = MYSQL_FIELD_NAME($result,$j);
+         //will show name of fields
+         $schema_insert .= "$field_name:\t";
+             IF(!ISSET($row[$j])) {
+                 $schema_insert .= "NULL".$sep;
+                 }
+             ELSEIF ($row[$j] != "") {
+                 $schema_insert .= "$row[$j]".$sep;
+                 }
+             ELSE {
+                 $schema_insert .= "".$sep;
+                 }
+         }
+         $schema_insert = STR_REPLACE($sep."$", "", $schema_insert);
+         $schema_insert .= "\t";
+         PRINT(TRIM($schema_insert));
+         //end of each mysql row
+         //creates line to separate data from each MySQL table row
+         PRINT "\n----------------------------------------------------\n";
+     }
+}ELSE{
+     /*    FORMATTING FOR EXCEL DOCUMENTS ('.xls')   */
+     //create title with timestamp:
+     IF ($Use_Title == 1)
+     {
+         ECHO("$title\n");
+     }
+     //define separator (defines columns in excel & tabs in word)
+     $sep = "\t"; //tabbed character
+ 
+     //start of printing column names as names of MySQL fields
+     FOR ($i = 0; $i < MYSQL_NUM_FIELDS($result); $i++)
+     {
+         ECHO MYSQL_FIELD_NAME($result,$i) . "\t";
+     }
+     PRINT("\n");
+     //end of printing column names
+ 
+     //start while loop to get data
+     WHILE($row = MYSQL_FETCH_ROW($result))
+     {
+         //set_time_limit(60); // HaRa
+         $schema_insert = "";
+         FOR($j=0; $j<mysql_num_fields($result);$j++)
+         {
+             IF(!ISSET($row[$j]))
+                 $schema_insert .= "NULL".$sep;
+             ELSEIF ($row[$j] != "")
+                 $schema_insert .= "$row[$j]".$sep;
+             ELSE
+                 $schema_insert .= "".$sep;
+         }
+         $schema_insert = STR_REPLACE($sep."$", "", $schema_insert);
+         //following fix suggested by Josue (thanks, Josue!)
+         //this corrects output in excel when table fields contain \n or \r
+         //these two characters are now replaced with a space
+         $schema_insert = PREG_REPLACE("/\r\n|\n\r|\n|\r/", " ", $schema_insert);
+         $schema_insert .= "\t";
+         PRINT(TRIM($schema_insert));
+         PRINT "\n";
+     }
+}
+ 
+?>
+#+end_src
+
+** Simple DB connection class
+#+begin_src php
+<?PHP
+ 
+CLASS DB_Class {
+ 
+     VAR $db;
+     ///////////////////////////
+     FUNCTION DB_Class($dbname, $username, $password) {
+          $this->db = MYSQL_CONNECT ('localhost', $username, $password)
+           or DIE ("Unable to connect to Database Server");
+ 
+          MYSQL_SELECT_DB ($dbname, $this->db) or DIE ("Could not select database");
+     }
+ 
+     FUNCTION query($sql) {
+          $result = MYSQL_QUERY ($sql, $this->db) or DIE ("Invalid query: " . MYSQL_ERROR());
+          RETURN $result;
+     }
+     ///////////////////////////
+     FUNCTION fetch($sql) {
+          $data = ARRAY();
+          $result = $this->query($sql);
+ 
+          WHILE($row = MYSQL_FETCH_ASSOC($result)) {
+               $data[] = $row;
+          }
+               RETURN $data;
+     }
+     ///////////////////////////
+     FUNCTION getone($sql) {
+     $result = $this->query($sql);
+ 
+     IF(MYSQL_NUM_ROWS($result) == 0)
+          $value = FALSE;
+     ELSE
+          $value = MYSQL_RESULT($result, 0);
+          RETURN $value;
+     }
+     ///////////////////////////
+}
+?>
+ 
+// usage example....
+ 
+<?PHP
+ 
+$dbconnect = NEW DB_Class('table', 'user', 'password');
+$query = "SELECT user_id FROM user_table WHERE $match = $search ORDER BY user_id DESC";
+$result = $dbconnect->fetch($query);
+ 
+?> 
+#+end_src
+
+** Language Specific Response
+#+begin_src php
+ <?PHP
+ 
+$languages_supported_by_browser=$_SERVER["HTTP_ACCEPT_LANGUAGE"];
+ 
+$pos=STRPOS($languages_supported_by_browser,";");
+ 
+IF ($pos>0) {
+    $languages_supported_by_browser =
+        SUBSTR($languages_supported_by_browser,0,$pos);
+}
+ 
+$languages=SPLIT(",",$languages_supported_by_browser);
+ 
+ECHO "First language supported by browser is: ".
+        $languages[0].".";
+ 
+?>
+ 
+ 
+#+end_src
+
+** Delete all cookies set
+#+begin_src php
+<?PHP
+ 
+FOREACH($_COOKIE AS $key => $value) {
+     SETCOOKIE($key,$value,TIME()-10000,"/",".domain.com");
+}
+ 
+?>
+#+end_src
+
+** Find the current URL of the page
+#+begin_src php
+<?PHP
+ 
+FUNCTION getCurrentPage() {
+        $thedomain .= "http://";
+     $thedomain .= $_SERVER['HTTP_HOST'];
+     $thedomain .= $_SERVER['REQUEST_URI'];
+     RETURN $thedomain ;
+}
+ 
+ECHO "The current URL is: ".getCurrentPage()."!";
+ 
+?>
+#+end_src
+
+** List files in directory
+#+begin_src php
+<?PHP 
+ 
+IF ($handle = OPENDIR('/system/path/to/files')) { 
+    ECHO "Files:\n"; 
+ 
+    // list out the files 
+    WHILE (FALSE !== ($file = READDIR($handle))) { 
+        ECHO "$file\n"; 
+    } 
+ 
+    CLOSEDIR($handle); 
+} 
+ 
+?> 
 #+end_src
 
 * json
