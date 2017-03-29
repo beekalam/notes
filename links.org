@@ -131,6 +131,7 @@ http://devdocs.io/lodash~4/
     O(Array('first', 'second'), 'mouseover', 'mousehandler')
 
 * programming problems
+  https://github.com/lnishan/awesome-competitive-programming
   http://rosettacode.org/
   http://codekata.pragprog.com/
   http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html

@@ -1858,7 +1858,7 @@ ECHO "Done.";
 
 ** Count lines in file
 #+begin_src php
- <?PHP  
+<?PHP  
  
 $file = "somefile.txt";  
 $lines = COUNT(FILE($file));  
@@ -1945,7 +1945,7 @@ FUNCTION datetoarr($d) {
 
 ** Days in month #1
 #+begin_src php
- <?PHP
+<?PHP
  
 //return the number of days for this month and this year
 $ndays = DATE("t"); 
@@ -5831,3 +5831,6 @@ https://css-tricks.com/
 ** php snippets
 
 http://psoug.org/browse.htm?cid=2
+** other
+
+https://github.com/ziadoz/awesome-php
