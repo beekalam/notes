@@ -1485,6 +1485,16 @@ function imm1(name, age, location, status) {
 return (num & 1) ? "is not even" : "is even";
 #+end_src
 
+** get current domain
+#+begin_src javascript
+function getDomain() {
+  var fullDomain = document.domain;
+  var parts = fullDomain.toString().split('.'.toString());
+  var domainName = parts[parts.length - 2] + '.' + parts[parts.length - 1];
+  return domainName;
+}
+#+end_src
+
 * code conventions, styles
 http://javascript.crockford.com/code.html
 https://github.com/ryanmcdermott/clean-code-javascript

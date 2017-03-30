@@ -79,6 +79,28 @@ preg_replace($pattern,$replacement,$string,$limit);
 #+end_src
 
 $limit is by the default is -1 which means no limit.
+** preg_match for a PHP URI (GET request)
+#+begin_src php
+<?php
+
+# a php uri pattern match (for a php get request)
+# look for anything other than these allowable characters
+# A-Z, a-z, 0-9, _, ., -, +, ?, /, =
+$pattern = "/[^A-Za-z0-9_\.\-\+\?\/=]/";
+$string  = "?q=foo+a_b+a-z.java/foo/bar.cgi";
+
+if (preg_match($pattern, $string))
+{
+  echo "string had bad characters in it";
+}
+else
+{
+  echo "no bad characters";
+}
+
+?>
+#+end_src
+
 * strings
 ** defining heredoc document
    
@@ -366,6 +388,236 @@ $data = PREG_REPLACE("/[^0-9a-zA-Z]/i", '', $data);
 //Finish filtering of non alphanumeric characters
  
 ?>
+#+end_src
+
+** How to remove non-printable characters from strings
+Solution: Allow only ASCII characters
+
+#+begin_src php
+$result = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $string);
+#+end_src
+
+Possible solution: Use the 'print' regex
+Another possible solution is to use the ‘print’ regular expression shown in this example with preg_replace:
+
+#+begin_src php
+$result = preg_replace('/[[:^print:]]/', "", $string);
+#+end_src
+
+*More PHP regular expressions*
+#+begin_src
+[:digit:]      Only the digits 0 to 9
+[:alnum:]      Any alphanumeric character 0 to 9 OR A to Z or a to z.
+[:alpha:]      Any alpha character A to Z or a to z.
+[:blank:]      Space and TAB characters only.
+[:xdigit:]     .
+[:punct:]      Punctuation symbols . , " ' ? ! ; :
+[:print:]      Any printable character.
+[:space:]      Any space characters.
+[:graph:]      .
+[:upper:]      Any alpha character A to Z.
+[:lower:]      Any alpha character a to z.
+[:cntrl:]      .
+#+end_src
+
+As shown in my earlier example, you actually need to use two brackets with these
+regex patterns when using preg_replace:
+
+#+begin_src php
+$result = preg_replace('/[[:^print:]]/', "", $string);
+#+end_src
+
+http://php.net/manual/en/ref.regex.php
+
+** example PHP MySQL script (with a SQL 'SELECT' query)
+#+begin_src php
+<?php
+  $servername = "localhost";
+  $username = "d8_user";
+  $password = "d8_pass";
+  $dbname = "aa_d8";
+
+  # connect to the database
+  $conn = new mysqli($servername, $username, $password, $dbname);
+  if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+  }
+
+  # execute a query and output its results
+  $sql = "SELECT * FROM node__field_photo";
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+      // output data of each row
+      while($row = $result->fetch_assoc()) {
+          echo "bundle: " . $row["bundle"]. ", " . $row["entity_id"]. ", " . $row["field_photo_target_id"]. "\n";
+      }
+  } else {
+      echo "0 results";
+  }
+
+  $conn->close();
+ 
+?>
+#+end_src
+
+** PHP json_encode array conversion example
+*** example #1
+#+begin_src php
+<?php
+
+#
+# do some stuff here ...
+#
+
+# send a json reply back to the sencha client
+header('Content-type: text/html');
+echo json_encode(array(
+    "success" => true,
+    "msg" => $message,
+    "id" => $id
+));
+
+?>
+#+end_src
+
+*** example #2
+#+begin_src php
+<?php
+
+header('Content-type: text/html');
+echo json_encode(
+    array(
+        array('symbol' => 'AAPL', 'price' => '525.00'),
+        array('symbol' => 'GOOG', 'price' => '600.00'),
+        array('symbol' => 'TSLA', 'price' => '220.00')
+    )
+);
+?>
+#+end_src
+
+** use PHP curl and curl_setopt with JSON web services
+*** A PHP curl GET request
+#+begin_src php
+<?php
+
+# An HTTP GET request example
+
+$url = 'http://localhost:8080/stocks';
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$data = curl_exec($ch);
+curl_close($ch);
+echo $data;
+?>
+#+end_src
+
+*** A PHP curl POST request, with JSON data
+
+#+begin_src php
+<?php
+
+# An HTTP POST request example
+
+# a pass-thru script to call my Play server-side code.
+# currently needed in my dev environment because Apache and Play run on
+# different ports. (i need to do something like a reverse-proxy from
+# Apache to Play.)
+
+# the POST data we receive from Sencha (which is not JSON)
+$id = $_POST['id'];
+$symbol = $_POST['symbol'];
+$companyName = $_POST['companyName'];
+
+# data needs to be POSTed to the Play url as JSON.
+# (some code from http://www.lornajane.net/posts/2011/posting-json-data-with-php-curl)
+$data = array("id" => "$id", "symbol" => "$symbol", "companyName" => "$companyName");
+$data_string = json_encode($data);
+
+$ch = curl_init('http://localhost:8080/stocks/add');
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($data_string))
+);
+curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+
+//execute post
+$result = curl_exec($ch);
+
+//close connection
+curl_close($ch);
+
+echo $result;
+
+?>
+#+end_src
+
+** PHP5 Email Validation
+#+begin_src php
+function isValidEmail($email){
+ return filter_var(filter_var($email, FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
+}
+
+if(isValidEmail('email@domain.com')){
+//valid
+} else {
+//not valid
+}
+#+end_src
+
+** reduce multiple consecutive spaces to a single space
+A PHP function that reduces multiple consecutive spaces in a string to one
+single space, so something like " " is reduced to " ".
+#+begin_src php 
+function reduceMultipleSpacesToSingleSpace($text) {
+  return preg_replace('/\s+/', " ", $text );
+}
+#+end_src
+
+** strip all non alphanumeric characters from a string
+A PHP function that strips a string of all characters other than alphanumeric
+characters:
+
+#+begin_src php 
+function onlyAlphanumericAndSpaces($text) {
+  # allow only alphanumeric
+  return ereg_replace("[^A-Za-z0-9 ]", "", $text );
+}
+#+end_src 
+
+** remove all illegal characters from an email address
+#+begin_src php
+<?php
+$email = "john(.doe)@exa//mple.com";
+
+$email = filter_var($email, FILTER_SANITIZE_EMAIL);
+echo $email;
+?>
+#+end_src
+
+** A PHP last character function
+#+begin_src php  
+# a php last character function
+function last_char($str)
+{
+  $len = strlen($str);
+  return char_at($str, $len-1);
+}
+
+function char_at($str, $pos)
+{
+  return $str{$pos};
+}
+#+end_src 
+
+** array to CSV string example
+#+begin_src php
+$csv_string = implode(',', $tags);
 #+end_src
 
 * numbers
@@ -865,6 +1117,93 @@ $elapsedTime = SPRINTF("%01.1f", $elapsed_mins/60);
  
 ?> 
 #+end_src
+
+** Creating a PHP date in the format for a SQL Timestamp insert
+*** example #1
+you can get the current date and time in the proper format using just PHP, like this:
+
+#+begin_src php
+$timestamp = date('Y-m-d G:i:s');
+//If you print this out, your $timestamp field will now contain contents like this:
+//2011-08-06 14:54:17
+#+end_src
+
+*** Getting a timestamp for some other date and time
+   
+Note that the PHP date function defaults to the current date and time. This is
+exactly what I need for my purposes here. If you need to create a formatted
+timestamp field for some other date and time, you can do that something like
+this:
+
+#+begin_src php
+$timestamp = date('Y-m-d G:i:s', mktime(0, 0, 0, 7, 1, 2000));
+//Here are some other mktime examples:
+$tomorrow  = mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"));
+$lastmonth = mktime(0, 0, 0, date("m")-1, date("d"),   date("Y"));
+$nextyear  = mktime(0, 0, 0, date("m"),   date("d"),   date("Y")+1);
+#+end_src
+
+** PHP string to date 
+
+The following PHP code shows the two steps I used to convert a date string into
+a PHP date structure I could work with:
+#+begin_src php 
+<?php
+
+// (1) returns a Unix timestamp, like 1304496000
+$time = strtotime("2011/05/21");
+
+// (2) getDate() returns an associative array containing the date 
+// information of the timestamp, or the current local time if 
+// no timestamp is given
+$date = getDate($time);
+
+print_r($date);
+
+?>
+When printed, the $date data structure (a hash) looks like this:
+
+Array
+(
+  [seconds] => 0
+  [minutes] => 0
+  [hours] => 0
+  [mday] => 21
+  [wday] => 6
+  [mon] => 5
+  [year] => 2011
+  [yday] => 140
+  [weekday] => Saturday
+  [month] => May
+  [0] => 1305964800
+)
+#+end_src
+
+** next month
+#+begin_src php
+$next_month = getDate(mktime(1, 1, 1, $date['mon'] + 1, $date["mday"], $date["year"];));
+#+end_src 
+
+** PHP date validation
+the basic PHP date validation technique is to use the checkdate function, like this:
+
+#+begin_src php
+$valid = checkdate($month, $day, $year);
+
+#+end_src
+
+The PHP checkdate function returns true if:
+$month is between 1 and 12,
+$year is between 1 and 32767, and
+$day is between 1 and the correct maximum number of days for the given month and year (correctly handling leap years).
+
+Used in a PHP if/then statement, the PHP checkdate function call looks like this:
+
+#+begin_src php
+if (checkdate($month, $day, $year)) {
+  // do something
+}
+#+end_src 
 
 * variables
 ** Establishing a Default Value
@@ -3668,6 +4007,147 @@ IF ($handle = OPENDIR('/system/path/to/files')) {
 ?> 
 #+end_src
 
+** Check if a URL exists with cURL
+#+begin_src php
+function urlExists($url=NULL)
+	{
+		if($url == NULL) return false;
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$data = curl_exec($ch);
+		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch); 
+		if($httpcode>=200 && $httpcode<300){
+			return true;
+		} else {
+			return false;
+		}
+	}
+#+end_src
+
+** Issue a ping command from a PHP script
+#+begin_src php 
+<?php
+$str = exec("ping -c 1 www.google.com");
+if ($result == 0){
+  echo "ping succeeded";
+}else{
+  echo "ping failed";
+}
+?>
+#+end_src
+
+** Handle comma separated input
+The code below will turn your POST variable into an array containing the user’s
+input which you can further validate or store in a database. This is useful for
+letting users add tags to items on your website
+#+begin_src php
+$tagsString = isset($_POST['tags']) ? (string)strip_tags($_POST['tags']) : '';
+if ($tagsString != '') {
+	$tags_array = explode(",", $tagsString);
+	$tags_array = array_unique($tags_array); //no dups, please
+	foreach($tags_array AS $key => $tag)
+	{
+		$tag = trim(stripslashes($tag));
+		if($tag == '') continue; //skips if empty
+		echo $key.' - '.$tag;
+	}
+}
+#+end_src
+
+** Check image type in PHP
+if you’re looking to determine the type of uploaded image you can use the following code:
+
+#+begin_src php
+$type = exif_imagetype($_FILES['uploaded_image']['tmp_name']);
+if ($type == 1 || $type == 2 || $type == 3)
+{
+//image type is jpg, gif or png
+}
+#+end_src
+
+** Write to STDERR in a PHP script
+just use the PHP fwrite function like this:
+#+begin_src php
+fwrite(STDERR, “hello, world\n”);
+#+end_src 
+
+Or, in a more real-world example, here's how I'm writing MySQL error messages to
+STDERR in PHP:
+#+begin_src php 
+fwrite(STDERR, "MySQL INSERT error on \"INSERT INTO files\" statement: " . mysql_error());
+#+end_src 
+
+** A simple PHP form example
+#+begin_src php
+<?php
+// created by alvin alexander, http://devdaily.com
+$first_name = $_POST["first_name"];
+$last_name = $_POST["last_name"];
+?>
+
+<html>
+<head>
+<title>Simple PHP Form Example</title>
+</head>
+
+<body>
+
+<?php
+if (!isset($_POST['submit']))
+{
+  // display the form
+  ?>
+  <p>
+  <form method="post" action="<?php echo $PHP_SELF;?>">
+  First Name: <input type="text" name="first_name">
+  <br/>Last Name: <input type="text" name="last_name">
+  <br/><input type="submit" value="submit" name="submit">
+  </form>
+  </p>
+
+<?
+}
+else
+{
+  // display the output
+  echo "<p>";
+  echo "First Name: $first_name<br />";
+  echo "Last Name: $last_name<br />";
+  echo "</p>";
+}
+?>
+
+</body>
+</html>
+#+end_src
+
+** read command line arguments
+You just need to access the PHP argv array, as shown in this example:
+#+begin_src php 
+#!/usr/bin/php
+<?php
+// loop through each element in the $argv array
+foreach($argv as $value)
+{
+  echo "$value\n";
+}
+?>
+#+end_src 
+
+If I save this file as argtest.php, and then run it, like this:
+
+#+begin_src shell
+php argtest.php foo bar baz
+# I'll get the following output from the script:
+argtest.php
+foo
+bar
+baz
+#+end_src 
+
 * json
 ** json encode raw UTF?
 
@@ -4749,7 +5229,7 @@ a class declaration that it’s yet to see.
 
 * security
 ** Cross-site scripting
-   
+*** intro   
 For cross-site scripting—commonly abbreviated as XSS—the attack vector targets
 an area where a user-supplied variable is included in application output, but not
 properly escaped. This allows an attacker to inject a client-side script of their choice
@@ -4773,6 +5253,24 @@ This looks like the following:
 </form>
 #+end_src 
 
+*** How To Avoid $_SERVER["PHP_SELF"] Exploits?
+~$_SERVER["PHP_SELF"]~ exploits can be avoided by using the ~htmlspecialchars()~
+function.
+
+The form code should look like this:
+#+begin_src php
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+#+end_src 
+
+The ~htmlspecialchars()~ function converts special characters to HTML entities.
+Now if the user tries to exploit the PHP_SELF variable, it will result in the
+following output:
+
+#+begin_src 
+<form method="post" action="test_form.php/&quot;&gt;&lt;script&gt;alert('hacked')&lt;/script&gt;">
+#+end_src 
+
+The exploit attempt fails, and no harm is done!
 ** Cross-site Request Forgery(CSRF)
 *** intro   
 a Cross-site Request Forgery, often abbreviated to CSRF.
