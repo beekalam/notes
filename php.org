@@ -4774,7 +4774,7 @@ This looks like the following:
 #+end_src 
 
 ** Cross-site Request Forgery(CSRF)
-   
+*** intro   
 a Cross-site Request Forgery, often abbreviated to CSRF.
 The purpose of this type of attack is to have a victim send an HTTP request to a
 specific website, taking advantage of the victim’s established identity with that
@@ -4817,6 +4817,42 @@ if ($_POST && $_POST['token'] == $_SESSION['token']) {
 <?php
 }
 #+end_src 
+
+*** example #1
+Add a hidden form field with a one-time token, and store this token in the user’s session:
+
+#+begin_src php
+
+<?php
+session_start();
+$_SESSION['token'] = md5(uniqid(mt_rand(), true));
+?>
+
+<form action="buy.php" method="POST">
+<input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>" />
+<p>Stock Symbol: <input type="text" name="symbol" /></p>
+<p>Quantity: <input type="text" name="quantity" /></p>
+<p><input type="submit" value="Buy Stocks" /></p>
+</form>
+#+end_src 
+
+When you receive a request that represents a form submission, check the tokens to be sure they match:
+
+#+begin_src php
+
+<?php
+
+session_start();
+
+if ($_POST['token'] != $_SESSION['token'] ||
+    !isset($_SESSION['token'])) {
+    /* Prompt user for password. */
+} else {
+    /* Continue. */
+}
+
+?>
+#+end_src
 
 * apache =.htaccess= sample configuration
   
