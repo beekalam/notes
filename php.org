@@ -5728,6 +5728,14 @@ if ( is_session_started() === FALSE ) session_start();
 ?>
 #+end_src
 
+** delete a single item of ~$_SESSION~
+To remove a specific variable from the session use:
+#+begin_src php 
+session_unregister('variableName');
+# or
+unset($_SESSION['variableName']);
+#+end_src 
+
 * SPL
 ** Available objects in SPL
    
