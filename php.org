@@ -233,7 +233,7 @@ print "With Spaces: <pre>$spaced</pre>";
 #+end_src
 
 ** trimming space
-
+   
 Use ltrim(), rtrim(), or trim(). ltrim() removes whitespace from the
 beginning of a string, rtrim() from the end of a string, and trim()
 from both the beginning and end of a string:
@@ -1854,6 +1854,7 @@ $vehicles = array('cars' => null);
 array_key_exists('cars', $vehicles); // true
 isset($vehicles['cars']);            // false
 #+end_src 
+
 ** Exchanging Values Without Using Temporary Variables
 To swap $a and $b:
 #+begin_src php
@@ -4762,7 +4763,7 @@ bar
 baz
 #+end_src 
 
-** Checking if a value is null or false
+** Checking if a value is null or false (/best practice/)
 *Use the === operator to check for null and boolean false values.*
 
 PHP’s loose typing system offers many different ways of checking a variable’s

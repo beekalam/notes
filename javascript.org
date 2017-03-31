@@ -6176,7 +6176,6 @@ $("#ajaxStart").click(function() {
 });
 #+end_src
 
- 
 * =HTML5= validation
 
 #+begin_src html
@@ -6218,7 +6217,5 @@ function urldecode(str) {
 
 
 https://github.com/kvz/locutus/blob/master/src/php/url/urldecode.js
-
-* css
 
 * references
