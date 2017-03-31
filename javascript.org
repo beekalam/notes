@@ -701,6 +701,17 @@ function arraysEqual(a1,a2) {
 http://stackoverflow.com/questions/3115982/how-to-check-if-two-arrays-are-equal-with-javascript
 http://stackoverflow.com/questions/7837456/how-to-compare-arrays-in-javascript
 
+** clone array
+
+#+begin_src javascript
+// cloning an array in ECMAScript 5
+var colors = [ "red", "green", "blue" ];
+var clonedColors = colors.concat();
+console.log(clonedColors); // "[red,green,blue]"
+#+end_src 
+
+Although the concat() method is intended to concatenate two arrays, call-
+ing it without an argument returns a clone of the array.
 * strings
 ** reverse string in javascript?
 
@@ -3078,7 +3089,7 @@ AbstractFoo = function(){
 
 * ES6
 ** Block level declarations
-   
+*** intro   
 use ~let~ keyword instead of ~var~.
 use ~const~ instead of ~var~.
 
@@ -3089,16 +3100,14 @@ var count = 30;
 let count = 40;
 #+end_src
 
-
 *** const
+**** intro    
  #+begin_src javascript 
  // valid constant
  const maxItems = 30;
  // syntax error: missing initialization
  const name; 
- #+end_src
-
- #+begin_src javascript
+ 
  const maxItems = 5;
  // throws an error
  maxItems = 6;
@@ -3113,7 +3122,7 @@ let count = 40;
  #+begin_src javascript
 
  const person = {
- name: "Nicholas"
+   name: "Nicholas"
  };
 
  // works
@@ -3121,7 +3130,7 @@ let count = 40;
 
  // throws an error
  person = {
- name: "Greg"
+  name: "Greg"
  };
  #+end_src
 
@@ -3426,7 +3435,6 @@ let createIterator = function *(items) {
 };
 #+end_src
 
-
 **** Generator Object Methods
 Because generators are just functions, you can add them to objects, too. For
 example, you can make a generator in an ECMAScript 5–style object literal
@@ -3524,8 +3532,245 @@ for (let x of collection) {
 }
 #+end_src
 
-
 ** [[Accessors in ES6 classes][Accessors in ES6 classes]]
+** Destructuring
+*** Object Destructuring
+
+Object destructuring syntax uses an object literal on the left side of an
+assignment operation. For example:
+#+begin_src javascript 
+
+let node = {
+type: "Identifier",
+name: "foo"
+};
+
+let { type, name } = node;
+console.log(type); // "Identifier"
+console.log(name); // "foo"
+#+end_src 
+
+*** Destructuring Assignment
+#+begin_src php 
+let node = {
+  type: "Identifier",
+  name: "foo"
+},
+type = "Literal",
+name = 5;
+
+// assign different values using destructuring
+({ type, name } = node);
+console.log(type); // "Identifier"
+console.log(name); // "foo"
+#+end_src 
+
+*** Default Values
+When you use a destructuring assignment statement and you specify a local
+variable with a property name that doesn’t exist on the object, that local vari-
+able is assigned a value of undefined . For example:
+
+#+begin_src javascript 
+let node = {
+  type: "Identifier",
+  name: "foo"
+};
+
+let { type, name, value } = node;
+console.log(type); // "Identifier"
+console.log(name); // "foo"
+console.log(value); // undefined
+#+end_src 
+
+This code defines an additional local variable called value and attempts
+to assign it a value. However, no corresponding value property is on the node
+object, so the variable is assigned the value of undefined as expected.
+You can optionally define a default value to use when a specified prop-
+erty doesn’t exist. To do so, insert an equal sign ( = ) after the property name
+and specify the default value, like this:
+
+#+begin_src javascript 
+let node = {
+type: "Identifier",
+name: "foo"
+};
+let { type, name, value = true } = node;
+console.log(type); // "Identifier"
+console.log(name); // "foo"
+console.log(value); // true
+#+end_src 
+
+*** Assigning to Different Local Variable Names
+
+#+begin_src javascript 
+let node = {
+type: "Identifier",
+name: "foo"
+};
+
+let { type: localType, name: localName } = node;
+console.log(localType); // "Identifier"
+console.log(localName); // "foo"
+#+end_src 
+
+*** Nested Object Destructuring
+#+begin_src javascript 
+let node = {
+  type: "Identifier",
+  name: "foo",
+  loc: {
+    start: {
+      line: 1,
+      column: 1
+    },
+    end: {
+      line: 1,
+      column: 4
+    }
+  }
+};
+
+let { loc: { start }} = node;
+console.log(start.line); // 1
+console.log(start.column); // 1
+
+// You can go one step further and use a different name for the local vari-
+// able as well
+// extract node.loc.start
+let { loc: { start: localStart }} = node;
+console.log(localStart.line); // 1
+console.log(localStart.column); // 1
+#+end_src 
+
+The destructuring pattern in this example uses curly braces to indicate
+that the pattern should descend into the property named loc on node and
+look for the start property.
+
+*** Array Destructuring
+
+#+begin_src javascript 
+let colors = [ "red", "green", "blue" ];
+let [ firstColor, secondColor ] = colors;
+console.log(firstColor); // "red"
+console.log(secondColor); // "green"
+#+end_src 
+
+Here, array destructuring pulls out the values "red" and "green" from
+the colors array, and stores them in the firstColor and secondColor variables.
+
+You can also omit items in the destructuring pattern and only provide
+variable names for the items you’re interested in.
+#+begin_src javascript
+let colors = [ "red", "green", "blue" ];
+let [ , , thirdColor ] = colors;
+console.log(thirdColor); // "blue"
+#+end_src 
+This code uses a destructuring assignment to retrieve the third item in
+colors .
+
+*** Destructuring Assignment
+You can use array destructuring in the context of an assignment, but unlike
+object destructuring, there is no need to wrap the expression in parenthe-
+ses.
+
+#+begin_src javascript 
+let colors = [ "red", "green", "blue" ],
+firstColor = "black",
+secondColor = "purple";
+[ firstColor, secondColor ] = colors;
+console.log(firstColor); // "red"
+console.log(secondColor); // "green"
+#+end_src
+
+*swapping values*
+#+begin_src javascript 
+// swapping variables in ECMAScript 6
+let a = 1,
+b = 2;
+[ a, b ] = [ b, a ];
+
+console.log(a); // 2
+console.log(b); // 1
+#+end_src
+
+*** Default Values
+
+Array destructuring assignment allows you to specify a default value for any
+position in the array, too. The default value is used when the property at the
+given position either doesn’t exist or has the value undefined . For example:
+
+#+begin_src javascript 
+let colors = [ "red" ];
+let [ firstColor, secondColor = "green" ] = colors;
+console.log(firstColor); // "red"
+console.log(secondColor); // "green"
+#+end_src
+
+*** Nested Array Destructuring
+You can destructure nested arrays in a manner similar to destructuring
+nested objects. By inserting another array pattern into the overall pattern,
+the destructuring will descend into a nested array, like this:
+
+#+begin_src javascript 
+let colors = [ "red", [ "green", "lightgreen" ], "blue" ];
+// later
+let [ firstColor, [ secondColor ] ] = colors;
+console.log(firstColor); // "red"
+console.log(secondColor); // "green"
+#+end_src 
+
+*** Rest Items
+rest items use the ... syntax to assign
+the remaining items in an array to a particular variable.
+
+#+begin_src javascript 
+let colors = [ "red", "green", "blue" ];
+let [ firstColor, ...restColors ] = colors;
+console.log(firstColor); // "red"
+console.log(restColors.length); //  2
+console.log(restColors[0]); // "green"
+console.log(restColors[1]); // "blue"
+#+end_src 
+
+*cloning array*
+#+begin_src javascript
+// cloning an array in ECMAScript 6
+let colors = [ "red", "green", "blue" ];
+let [ ...clonedColors ] = colors;
+console.log(clonedColors); // "[red,green,blue]"
+#+end_src 
+
+*** Mixed Destructuring
+You can use object and array destructuring together to create more complex
+expressions. By doing so, you’re able to extract just the pieces of information
+you want from any mixture of objects and arrays.
+#+begin_src javascript
+let node = {
+  type: "Identifier",
+  name: "foo",
+  loc: {
+    start: {
+      line: 1,
+      column: 1
+    },
+    end: {
+      line: 1,
+      column: 4
+    }
+  },
+  range: [0, 3]
+};
+
+let {
+  loc: { start },
+  range: [ startIndex ]
+} = node;
+
+console.log(start.line); // 1
+console.log(start.column); // 1
+console.log(startIndex); // 0
+#+end_src
+
 * Is javascript Functional or object-oriented?
 
 One of JavaScript’s defining characteristics is its treatment of functions as first-class values. Like
