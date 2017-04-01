@@ -2153,6 +2153,7 @@ if(strpos('abc', 'a') !== false)
 
 * functions
 ** checking for a function's existence
+
 #+begin_src php
 <?php
 if (function_exists("array_combine"))
@@ -2230,19 +2231,6 @@ use  ~return~ eg:
 #+begin_src php
 $res = eval('return 2 + 3;');      // 5
 #+end_src
-
-** check if a class has a property
-
-#+begin_src php
-bool property_exists ( mixed $class , string $property )
-#+end_src
-
-This function checks if the given property exists in the specified class.
-
-Note:
-As opposed with isset(), property_exists() returns TRUE even if the property has the value NULL.
-
-Returns TRUE if the property exists, FALSE if it doesn't exist or NULL in case of an error.
 
 ** redirecting
    
@@ -2985,125 +2973,7 @@ SETCOOKIE ("cookie[one]", "cookieone");
 } 
 ?>  
 #+end_src
-
-** Copy File From Server
-#+begin_src php
-<?PHP
- 
-$inputfile = FOPEN("http://the-remote-server.com/inputfile.txt", "r");
-$outputfile = FOPEN("outputfile.txt", "w");
-ECHO "File opened...";
-$data = '';
- 
-WHILE (!FEOF($inputfile)) {
-  $data .= FREAD($inputfile, 8192);
-}
- 
-ECHO "Data read...";
-FWRITE($outputfile, $data);
-ECHO "transfered data";
-FCLOSE ($inputfile);
-FCLOSE ($outputfile);
- 
-ECHO "Done.";
- 
-?>
- 
-#+end_src
-
-** Count lines in file
-#+begin_src php
-<?PHP  
- 
-$file = "somefile.txt";  
-$lines = COUNT(FILE($file));  
-ECHO "There are $lines lines in $file";
- 
-?> 
-#+end_src
-
-** Delete by date
-#+begin_src php
-<?PHP
- 
-// set delete time threshold for two weeks
-$DAYS = 14;
- 
-IF (IS_DIR("$path") ){
-   $handle=OPENDIR($path);
-   WHILE (FALSE!==($file = READDIR($handle))) {
-       IF ($file != "." && $file != "..") { 
-           $Diff = (TIME() - FILECTIME("$path/$file"))/60/60/24;
-           IF ($Diff > $DAYS) UNLINK("$path/$file");
-       }
-   }
-   CLOSEDIR($handle);
-}
- 
-?>
-#+end_src
-
-** Delete by wildcard
-#+begin_src php
- <?PHP
- 
-FOREACH (GLOB("*.jpg") AS $filename) {
-   ECHO "$filename size " . FILESIZE($filename) . "\n";
-   UNLINK($filename);
-}
- 
-?>
-#+end_src
-
-** Download File To Client
-#+begin_src php
-<?PHP
- 
-FUNCTION send_file($name) {
-  OB_END_CLEAN();
-  $path = "protected/".$name;
-  IF (!IS_FILE($path) or CONNECTION_STATUS()!=0) RETURN(FALSE);
-  HEADER("Cache-Control: no-store, no-cache, must-revalidate");
-  HEADER("Cache-Control: post-check=0, pre-check=0", FALSE);
-  HEADER("Pragma: no-cache");
-  HEADER("Expires: ".GMDATE("D, d M Y H:i:s", MKTIME(DATE("H")+2, DATE("i"), DATE("s"), DATE("m"), DATE("d"), DATE("Y")))." GMT");
-  HEADER("Last-Modified: ".GMDATE("D, d M Y H:i:s")." GMT");
-  HEADER("Content-Type: application/octet-stream");
-  HEADER("Content-Length: ".(string)(FILESIZE($path)));
-  HEADER("Content-Disposition: inline; filename=$name");
-  HEADER("Content-Transfer-Encoding: binary\n");
-  IF ($file = FOPEN($path, 'rb')) {
-   WHILE(!FEOF($file) and (CONNECTION_STATUS()==0)) {
-     PRINT(FREAD($file, 1024*8));
-     FLUSH();
-   }
-   FCLOSE($file);
-  }
-  RETURN((CONNECTION_STATUS()==0) and !CONNECTION_ABORTED());
-}
- 
-?>
- 
- 
-And here's an example of using the function:
- 
-<?PHP
- 
-IF (!send_file("platinumdemo.zip")) {
-DIE ("file transfer failed");
- 
-// either the file transfer was incomplete
-// or the file was not found
- 
-} ELSE {
- 
-// the download was a success
-// log, or do whatever else
-}
- 
-?> 
-#+end_src
-
+  
 ** Echo 'n' number of words
 #+begin_src php
 <?PHP
@@ -3278,42 +3148,6 @@ FUNCTION linkScan($string1)
 ?>
 #+end_src
 
-** Get filesize without downloading
-
-#+begin_src php
-<?PHP
- 
-$file = 'http://www.example.com/file.zip';
- 
-$fp   = FOPEN( $file, 'r' );
-$data = STREAM_GET_META_DATA( $fp )
-FCLOSE( $fp );
- 
-PRINT_R( $data );
- 
-/*
-$data will contain something similar to the following:
- 
-Array
-(
-    [0] => HTTP/1.1 200 OK
-    [1] => Date: Sat, 23 Jun 2007 00:48:50 GMT
-    [2] => Server: Apache/2.2.0 (Fedora)
-    [3] => Last-Modified: Sat, 23 Dec 2006 20:05:47 GMT
-    [4] => ETag: "9f2523-25b0-1716fcc0"
-    [5] => Accept-Ranges: bytes
-    [6] => Content-Length: 9648
-    [7] => Connection: close
-    [8] => Content-Type: image/jpeg
-)
- 
-You'll want the Content-Length header for file size, or $data[6].
- 
-*/
- 
-?>
-#+end_src
-   
 ** get link text
 
 #+begin_src php
@@ -3946,17 +3780,6 @@ US phone with or without parentheses
  
 ISO Date (19th to 21st century only)
 ^((18|19|20)\d\d)-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])$
-#+end_src
-
-** Remote file_exist()
-#+begin_src php
-<?PHP
- 
-FUNCTION remote_file_exists($url){
-    RETURN (bool)PREG_MATCH('~HTTP/1\.\d\s+200\s+OK~', @CURRENT(get_headers($url)));
-}  
- 
-?>
 #+end_src
 
 ** Unique Array function
@@ -4709,6 +4532,27 @@ bar
 baz
 #+end_src 
 
+** Remote file_exist()
+#+begin_src php
+<?PHP
+ 
+FUNCTION remote_file_exists($url){
+    RETURN (bool)PREG_MATCH('~HTTP/1\.\d\s+200\s+OK~', @CURRENT(get_headers($url)));
+}  
+ 
+?>
+#+end_src
+
+** the protocol that is being used to serve the request
+
+#+begin_src php
+protected static function getProtocol() 
+{ 
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://"; 
+    return $protocol; 
+} 
+#+end_src 
+
 * json
 ** json encode raw UTF?
 
@@ -5013,6 +4857,18 @@ myClass::test();
 
 ?>
 #+end_src
+
+** check if a class has a property
+
+#+begin_src php
+bool property_exists ( mixed $class , string $property )
+#+end_src
+
+This function checks if the given property exists in the specified class.
+
+Note: As opposed with isset(), property_exists() returns TRUE even if the property has the value NULL.
+
+Returns TRUE if the property exists, FALSE if it doesn't exist or NULL in case of an error.
 
 * Debug
 ** dump all variables?
@@ -5364,6 +5220,160 @@ ECHO '<pre>', PRINT_R($dirs, TRUE), '</pre>';
 ?>
 #+end_src
 
+** Copy File From Server
+#+begin_src php
+<?PHP
+ 
+$inputfile = FOPEN("http://the-remote-server.com/inputfile.txt", "r");
+$outputfile = FOPEN("outputfile.txt", "w");
+ECHO "File opened...";
+$data = '';
+ 
+WHILE (!FEOF($inputfile)) {
+  $data .= FREAD($inputfile, 8192);
+}
+ 
+ECHO "Data read...";
+FWRITE($outputfile, $data);
+ECHO "transfered data";
+FCLOSE ($inputfile);
+FCLOSE ($outputfile);
+ 
+ECHO "Done.";
+ 
+?>
+ 
+#+end_src
+
+** Count lines in file
+#+begin_src php
+<?PHP  
+ 
+$file = "somefile.txt";  
+$lines = COUNT(FILE($file));  
+ECHO "There are $lines lines in $file";
+ 
+?> 
+#+end_src
+
+** Delete by date
+#+begin_src php
+<?PHP
+ 
+// set delete time threshold for two weeks
+$DAYS = 14;
+ 
+IF (IS_DIR("$path") ){
+   $handle=OPENDIR($path);
+   WHILE (FALSE!==($file = READDIR($handle))) {
+       IF ($file != "." && $file != "..") { 
+           $Diff = (TIME() - FILECTIME("$path/$file"))/60/60/24;
+           IF ($Diff > $DAYS) UNLINK("$path/$file");
+       }
+   }
+   CLOSEDIR($handle);
+}
+ 
+?>
+#+end_src
+
+** Delete by wildcard
+#+begin_src php
+ <?PHP
+ 
+FOREACH (GLOB("*.jpg") AS $filename) {
+   ECHO "$filename size " . FILESIZE($filename) . "\n";
+   UNLINK($filename);
+}
+ 
+?>
+#+end_src
+
+** Download File To Client
+#+begin_src php
+<?PHP
+ 
+FUNCTION send_file($name) {
+  OB_END_CLEAN();
+  $path = "protected/".$name;
+  IF (!IS_FILE($path) or CONNECTION_STATUS()!=0) RETURN(FALSE);
+  HEADER("Cache-Control: no-store, no-cache, must-revalidate");
+  HEADER("Cache-Control: post-check=0, pre-check=0", FALSE);
+  HEADER("Pragma: no-cache");
+  HEADER("Expires: ".GMDATE("D, d M Y H:i:s", MKTIME(DATE("H")+2, DATE("i"), DATE("s"), DATE("m"), DATE("d"), DATE("Y")))." GMT");
+  HEADER("Last-Modified: ".GMDATE("D, d M Y H:i:s")." GMT");
+  HEADER("Content-Type: application/octet-stream");
+  HEADER("Content-Length: ".(string)(FILESIZE($path)));
+  HEADER("Content-Disposition: inline; filename=$name");
+  HEADER("Content-Transfer-Encoding: binary\n");
+  IF ($file = FOPEN($path, 'rb')) {
+   WHILE(!FEOF($file) and (CONNECTION_STATUS()==0)) {
+     PRINT(FREAD($file, 1024*8));
+     FLUSH();
+   }
+   FCLOSE($file);
+  }
+  RETURN((CONNECTION_STATUS()==0) and !CONNECTION_ABORTED());
+}
+ 
+?>
+ 
+ 
+And here's an example of using the function:
+ 
+<?PHP
+ 
+IF (!send_file("platinumdemo.zip")) {
+DIE ("file transfer failed");
+ 
+// either the file transfer was incomplete
+// or the file was not found
+ 
+} ELSE {
+ 
+// the download was a success
+// log, or do whatever else
+}
+ 
+?> 
+#+end_src
+
+** Get filesize without downloading
+
+#+begin_src php
+<?PHP
+ 
+$file = 'http://www.example.com/file.zip';
+ 
+$fp   = FOPEN( $file, 'r' );
+$data = STREAM_GET_META_DATA( $fp )
+FCLOSE( $fp );
+ 
+PRINT_R( $data );
+ 
+/*
+$data will contain something similar to the following:
+ 
+Array
+(
+    [0] => HTTP/1.1 200 OK
+    [1] => Date: Sat, 23 Jun 2007 00:48:50 GMT
+    [2] => Server: Apache/2.2.0 (Fedora)
+    [3] => Last-Modified: Sat, 23 Dec 2006 20:05:47 GMT
+    [4] => ETag: "9f2523-25b0-1716fcc0"
+    [5] => Accept-Ranges: bytes
+    [6] => Content-Length: 9648
+    [7] => Connection: close
+    [8] => Content-Type: image/jpeg
+)
+ 
+You'll want the Content-Length header for file size, or $data[6].
+ 
+*/
+ 
+?>
+#+end_src
+ 
 * lumen
 ** lumen on apache
 install a lumen app in */var/www*
