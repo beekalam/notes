@@ -1819,6 +1819,162 @@ echo('The 2nd date is ' . $difference->days . ' later than 1st date.');
 
  - Using DateTime::getTimestamp() on 32-bit systems will not represent dates past 2038. 64-bit systems are OK.
 
+** Count days between dates
+#+begin_src php
+<?PHP
+ 
+// First Date: 1 January 2005
+// Second Date: 27 January 2005
+ 
+$first_date = MKTIME(12,0,0,1,1,2005);
+$second_date = MKTIME(12,0,0,1,27,2005);
+ 
+$offset = $second_date-$first_date;
+ 
+ECHO FLOOR($offset/60/60/24) . " days";
+ 
+// This will display: 26 days. 
+ 
+?>
+#+end_src
+
+** Convert 12 to 24 hour time and vice versa
+#+begin_src php
+<?PHP
+ 
+// 24-hour time to 12-hour time 
+$time_in_12_hour_format  = DATE("g:i a", STRTOTIME("13:30"));
+ 
+// 12-hour time to 24-hour time 
+$time_in_24_hour_format  = DATE("H:i", STRTOTIME("1:30 pm"));
+ 
+?>
+#+end_src
+
+** UNIX Timestamp conversion
+#+begin_src php
+<?PHP
+// produces a timestamp that looks like "YYYY-MM-DD 24:00:00":
+$formated_datetime = DATE("Y-m-d H:i:s");
+ 
+// takes $formated_datetime and converts to "UNIX timestamp":
+$unix_timestamp = STRTOTIME($formated_datetime);
+ 
+// converts $unix_timestamp to "normal" formated_datetime:         
+$formated_datetime = DATE("Y-m-d H:i:s",$unix_timestamp);   
+?>
+#+end_src
+
+** What Season Is It?
+#+begin_src php
+<?PHP 
+ 
+FUNCTION season() {
+   $limits=ARRAY('/12/21'=>'Winter','/09/21'=>'Autumn','/06/21'=>'Summer','/03/21'=>'Spring','/12/31'=>'Winter');
+   FOREACH ($limits AS $key => $value) {
+       $limit=DATE("Y").$key;
+       IF (STRTOTIME("now")>strtotime($limit)) {
+           RETURN $value;
+       }
+   }
+}
+ 
+ECHO season();
+ 
+?>
+#+end_src
+
+** Days in month #1
+#+begin_src php
+<?PHP
+ 
+//return the number of days for this month and this year
+$ndays = DATE("t"); 
+ 
+// You can also specify a date
+$ndays = DATE("t", MKTIME(0, 0, 0, 12, 1, 2004)); 
+ 
+?> 
+#+end_src
+
+** Days in month #2
+#+begin_src php
+<?PHP
+ 
+/*
+days_in_month($month, $year)
+Returns the number of days in a given month and 
+year, taking into account leap years.
+ 
+$month: numeric month (integers 1-12)
+$year: numeric year (any integer)
+ 
+*/
+ 
+FUNCTION days_in_month($month, $year){
+// calculate number of days in a month
+RETURN $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
+}
+?> 
+#+end_src
+
+** How many days ago
+#+begin_src php
+<?PHP
+ 
+// convert a date into a string that tells how long 
+// ago that date was.... eg: 2 days ago, 3 minutes ago.
+FUNCTION ago($d) {
+     $c = GETDATE();
+     $p = ARRAY('year', 'mon', 'mday', 'hours', 'minutes', 'seconds');
+     $display = ARRAY('year', 'month', 'day', 'hour', 'minute', 'second');
+     $factor = ARRAY(0, 12, 30, 24, 60, 60);
+     $d = datetoarr($d);
+     FOR ($w = 0; $w < 6; $w++) {
+          IF ($w > 0) {
+               $c[$p[$w]] += $c[$p[$w-1]] * $factor[$w];
+               $d[$p[$w]] += $d[$p[$w-1]] * $factor[$w];
+          }
+          IF ($c[$p[$w]] - $d[$p[$w]] > 1) { 
+               RETURN ($c[$p[$w]] - $d[$p[$w]]).' '.$display[$w].'s ago';
+          }
+     }
+     RETURN '';
+}
+ 
+// you can replace this if need be. This converts the dates 
+// returned from a mysql date string into an array object similar 
+// to that returned by getdate().
+FUNCTION datetoarr($d) {
+     PREG_MATCH("/([0-9]{4})(\\-)([0-9]{2})(\\-)([0-9]{2}) ([0-9]{2})(\\:)([0-9]{2})(\\:)([0-9]{2})/", $d, $matches);
+    RETURN ARRAY( 
+          'seconds' => $matches[10], 
+          'minutes' => $matches[8], 
+          'hours' => $matches[6],  
+          'mday' => $matches[5], 
+          'mon' => $matches[3],  
+          'year' => $matches[1], 
+     );
+}
+ 
+?>
+#+end_src
+
+** Find days between dates #1
+#+begin_src php
+<?PHP
+ 
+$dt=ARRAY("27.01.1985","12.09.2008");
+$dates=ARRAY();
+$i=0;
+WHILE(STRTOTIME($dt[1])>=STRTOTIME("+".$i." day",STRTOTIME($dt[0])))
+$dates[]=DATE("Y-m-d",STRTOTIME("+".$i++." day",STRTOTIME($dt[0])));
+ 
+FOREACH($dates AS $value) ECHO $value."<br />"; 
+ 
+?>
+#+end_src
+
 * variables
 ** Establishing a Default Value
 Use isset() to assign a default to a variable that may already have a value:
@@ -1949,6 +2105,51 @@ To recreate the variables, use unserialize():
 #+begin_src php
 $new_pantry = unserialize(file_get_contents('/tmp/pantry'));
 #+end_src 
+
+** Checking if a value is null or false (/best practice/)
+*Use the === operator to check for null and boolean false values.*
+
+PHP’s loose typing system offers many different ways of checking a variable’s
+value. However it also presents a lot of problems. Using == to check if a value
+is null or false can return false positives if the value is actually an empty
+string or 0. isset() checks whether a variable has a value that is not null, but
+doesn’t check against boolean false.
+
+The is_null() function accurately checks if a value is null, and the is_bool()
+function checks if it’s a boolean value (like false), but there’s an even better
+option: the === operator. === checks if the values are identical, which is not
+the same as equivalent in PHP’s loosely-typed world. It’s also slightly faster
+than is_null() and is_bool(), and looks nicer than using a function for
+comparison.
+#+begin_src php
+<?php
+$x = 0;
+$y = null;
+ 
+// Is $x null?
+if($x == null)
+    print('Oops! $x is 0, not null!');
+ 
+// Is $y null?
+if(is_null($y))
+    print('Great, but could be faster.');
+ 
+if($y === null)
+    print('Perfect!');
+ 
+// Does the string abc contain the character a?
+if(strpos('abc', 'a'))
+    // GOTCHA!  strpos returns 0, indicating it wishes to return the position of the first character.
+    // But PHP interpretes 0 as false, so we never reach this print statement!
+    print('Found it!');
+ 
+//Solution: use !== (the opposite of ===) to see if strpos() returns 0, or boolean false.
+if(strpos('abc', 'a') !== false)
+    print('Found it for real this time!');
+?>
+#+end_src
+
+ - When testing the return value of a function that can return either 0 or boolean false, like strpos(), always use === and !==, or you’ll run in to problems.
 
 * functions
 ** checking for a function's existence
@@ -2821,116 +3022,6 @@ ECHO "There are $lines lines in $file";
 ?> 
 #+end_src
 
-** Find days between dates #1
-#+begin_src php
-<?PHP
- 
-$dt=ARRAY("27.01.1985","12.09.2008");
-$dates=ARRAY();
-$i=0;
-WHILE(STRTOTIME($dt[1])>=STRTOTIME("+".$i." day",STRTOTIME($dt[0])))
-$dates[]=DATE("Y-m-d",STRTOTIME("+".$i++." day",STRTOTIME($dt[0])));
- 
-FOREACH($dates AS $value) ECHO $value."<br />"; 
- 
-?>
-#+end_src
-
-** Count days between dates
-#+begin_src php
-<?PHP
- 
-// First Date: 1 January 2005
-// Second Date: 27 January 2005
- 
-$first_date = MKTIME(12,0,0,1,1,2005);
-$second_date = MKTIME(12,0,0,1,27,2005);
- 
-$offset = $second_date-$first_date;
- 
-ECHO FLOOR($offset/60/60/24) . " days";
- 
-// This will display: 26 days. 
- 
-?>
-#+end_src
-
-** How many days ago
-#+begin_src php
-<?PHP
- 
-// convert a date into a string that tells how long 
-// ago that date was.... eg: 2 days ago, 3 minutes ago.
-FUNCTION ago($d) {
-     $c = GETDATE();
-     $p = ARRAY('year', 'mon', 'mday', 'hours', 'minutes', 'seconds');
-     $display = ARRAY('year', 'month', 'day', 'hour', 'minute', 'second');
-     $factor = ARRAY(0, 12, 30, 24, 60, 60);
-     $d = datetoarr($d);
-     FOR ($w = 0; $w < 6; $w++) {
-          IF ($w > 0) {
-               $c[$p[$w]] += $c[$p[$w-1]] * $factor[$w];
-               $d[$p[$w]] += $d[$p[$w-1]] * $factor[$w];
-          }
-          IF ($c[$p[$w]] - $d[$p[$w]] > 1) { 
-               RETURN ($c[$p[$w]] - $d[$p[$w]]).' '.$display[$w].'s ago';
-          }
-     }
-     RETURN '';
-}
- 
-// you can replace this if need be. This converts the dates 
-// returned from a mysql date string into an array object similar 
-// to that returned by getdate().
-FUNCTION datetoarr($d) {
-     PREG_MATCH("/([0-9]{4})(\\-)([0-9]{2})(\\-)([0-9]{2}) ([0-9]{2})(\\:)([0-9]{2})(\\:)([0-9]{2})/", $d, $matches);
-    RETURN ARRAY( 
-          'seconds' => $matches[10], 
-          'minutes' => $matches[8], 
-          'hours' => $matches[6],  
-          'mday' => $matches[5], 
-          'mon' => $matches[3],  
-          'year' => $matches[1], 
-     );
-}
- 
-?>
-#+end_src
-
-** Days in month #1
-#+begin_src php
-<?PHP
- 
-//return the number of days for this month and this year
-$ndays = DATE("t"); 
- 
-// You can also specify a date
-$ndays = DATE("t", MKTIME(0, 0, 0, 12, 1, 2004)); 
- 
-?> 
-#+end_src
-
-** Days in month #2
-#+begin_src php
-<?PHP
- 
-/*
-days_in_month($month, $year)
-Returns the number of days in a given month and 
-year, taking into account leap years.
- 
-$month: numeric month (integers 1-12)
-$year: numeric year (any integer)
- 
-*/
- 
-FUNCTION days_in_month($month, $year){
-// calculate number of days in a month
-RETURN $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
-}
-?> 
-#+end_src
-
 ** Delete by date
 #+begin_src php
 <?PHP
@@ -2960,49 +3051,6 @@ FOREACH (GLOB("*.jpg") AS $filename) {
    ECHO "$filename size " . FILESIZE($filename) . "\n";
    UNLINK($filename);
 }
- 
-?>
-#+end_src
-
-** Directory Listing
-#+begin_src php
-<?PHP
- 
-//define the path as relative
-$path = "/home/yoursite/public_html/whatever";
- 
-//using the opendir function
-$dir_handle = @OPENDIR($path) or DIE("Unable to open $path");
- 
-ECHO "Directory Listing of $path<br/>";
- 
-//running the while loop
-WHILE ($file = READDIR($dir_handle)) {
-        ECHO "<a href=$file>$file</a><br/>";
-}
- 
-//closing the directory
-CLOSEDIR($dir_handle);
- 
-?> 
-#+end_src
-
-** Directory Listing #2
-#+begin_src php
-<?PHP
- 
-// No slash at the end
-$main_dir = 'path/to/dir'; 
- 
-$dirs = GLOB("{$main_dir}/*", GLOB_ONLYDIR);
-$dirs = ARRAY_MAP('basename', $dirs);
-$dirs = ARRAY_FILTER($dirs, 'no_underscore');
- 
-FUNCTION no_underscore($dirname){
-    RETURN $dirname[0] != '_';
-}
- 
-ECHO '<pre>', PRINT_R($dirs, TRUE), '</pre>'; 
  
 ?>
 #+end_src
@@ -3195,18 +3243,6 @@ $ip = RTRIM(`/usr/bin/dig $host A +short | /usr/bin/tail -1`);
 ?>
 #+end_src
 
-** Get all files into an Array
-
-#+begin_src php
-<?PHP
- 
-$files = GLOB('/path/to/some/directory/*.*');
- 
-PRINT_R($files);  
- 
-?>
-#+end_src
-
 ** Make grayscaled image
 
 #+begin_src php
@@ -3240,20 +3276,6 @@ FUNCTION linkScan($string1)
      }
  
 ?>
-#+end_src
-
-** Get file in as variable
-
-#+begin_src php
-<?PHP
- 
-// get contents of a file into a string
-$filename = "/usr/local/something.txt";
-$handle = FOPEN($filename, "r");
-$contents = FREAD($handle, FILESIZE($filename));
-FCLOSE($handle);
- 
-?> 
 #+end_src
 
 ** Get filesize without downloading
@@ -4066,16 +4088,6 @@ ECHO "The domain only: $main_url";
 ?>
 #+end_src
 
-** Test If File Is Included
-#+begin_src php
-<?PHP
- 
-IF(__FILE__ == $_SERVER['SCRIPT_FILENAME'])
-    DIE("This file cannot be executed directly");
- 
-?>
-#+end_src
-
 ** Truncate Links Over X Chars long
 #+begin_src php
 <?PHP
@@ -4106,22 +4118,6 @@ FUNCTION handle_url_tag($url, $link = ''){
 ?>
 #+end_src
 
-** UNIX Timestamp conversion
-#+begin_src php
-<?PHP
- 
-// produces a timestamp that looks like "YYYY-MM-DD 24:00:00":
-$formated_datetime = DATE("Y-m-d H:i:s");
- 
-// takes $formated_datetime and converts to "UNIX timestamp":
-$unix_timestamp = STRTOTIME($formated_datetime);
- 
-// converts $unix_timestamp to "normal" formated_datetime:         
-$formated_datetime = DATE("Y-m-d H:i:s",$unix_timestamp);   
- 
-?>
-#+end_src
-
 ** Use SendMail
 #+begin_src php
 <?PHP
@@ -4133,25 +4129,6 @@ $fd = POPEN("/usr/sbin/sendmail -t","w");
    FPUTS($fd, "X-Mailer: PHP3 ");
    FPUTS($fd, "Testing. ");
 PCLOSE($fd);
- 
-?>
-#+end_src
-
-** What Season Is It?
-#+begin_src php
-<?PHP 
- 
-FUNCTION season() {
-   $limits=ARRAY('/12/21'=>'Winter','/09/21'=>'Autumn','/06/21'=>'Summer','/03/21'=>'Spring','/12/31'=>'Winter');
-   FOREACH ($limits AS $key => $value) {
-       $limit=DATE("Y").$key;
-       IF (STRTOTIME("now")>strtotime($limit)) {
-           RETURN $value;
-       }
-   }
-}
- 
-ECHO season();
  
 ?>
 #+end_src
@@ -4310,19 +4287,6 @@ FCLOSE($fp2);
 <?PHP
  
 $valid = "^(https?|ftp)\:\/\/([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*(\:[0-9]{2,5})?(\/([a-z0-9+\$_-]\.?)+)*\/?(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)?(#[a-z_.-][a-z0-9+\$_.-]*)?\$";
- 
-?>
-#+end_src
-
-** Convert 12 to 24 hour time and vice versa
-#+begin_src php
-<?PHP
- 
-// 24-hour time to 12-hour time 
-$time_in_12_hour_format  = DATE("g:i a", STRTOTIME("13:30"));
- 
-// 12-hour time to 24-hour time 
-$time_in_24_hour_format  = DATE("H:i", STRTOTIME("1:30 pm"));
  
 ?>
 #+end_src
@@ -4604,24 +4568,6 @@ ECHO "The current URL is: ".getCurrentPage()."!";
 ?>
 #+end_src
 
-** List files in directory
-#+begin_src php
-<?PHP 
- 
-IF ($handle = OPENDIR('/system/path/to/files')) { 
-    ECHO "Files:\n"; 
- 
-    // list out the files 
-    WHILE (FALSE !== ($file = READDIR($handle))) { 
-        ECHO "$file\n"; 
-    } 
- 
-    CLOSEDIR($handle); 
-} 
- 
-?> 
-#+end_src
-
 ** Check if a URL exists with cURL
 #+begin_src php
 function urlExists($url=NULL)
@@ -4762,51 +4708,6 @@ foo
 bar
 baz
 #+end_src 
-
-** Checking if a value is null or false (/best practice/)
-*Use the === operator to check for null and boolean false values.*
-
-PHP’s loose typing system offers many different ways of checking a variable’s
-value. However it also presents a lot of problems. Using == to check if a value
-is null or false can return false positives if the value is actually an empty
-string or 0. isset() checks whether a variable has a value that is not null, but
-doesn’t check against boolean false.
-
-The is_null() function accurately checks if a value is null, and the is_bool()
-function checks if it’s a boolean value (like false), but there’s an even better
-option: the === operator. === checks if the values are identical, which is not
-the same as equivalent in PHP’s loosely-typed world. It’s also slightly faster
-than is_null() and is_bool(), and looks nicer than using a function for
-comparison.
-#+begin_src php
-<?php
-$x = 0;
-$y = null;
- 
-// Is $x null?
-if($x == null)
-    print('Oops! $x is 0, not null!');
- 
-// Is $y null?
-if(is_null($y))
-    print('Great, but could be faster.');
- 
-if($y === null)
-    print('Perfect!');
- 
-// Does the string abc contain the character a?
-if(strpos('abc', 'a'))
-    // GOTCHA!  strpos returns 0, indicating it wishes to return the position of the first character.
-    // But PHP interpretes 0 as false, so we never reach this print statement!
-    print('Found it!');
- 
-//Solution: use !== (the opposite of ===) to see if strpos() returns 0, or boolean false.
-if(strpos('abc', 'a') !== false)
-    print('Found it for real this time!');
-?>
-#+end_src
-
- - When testing the return value of a function that can return either 0 or boolean false, like strpos(), always use === and !==, or you’ll run in to problems.
 
 * json
 ** json encode raw UTF?
@@ -5378,6 +5279,89 @@ FUNCTION emptyDir($path) {
 }
  
  
+#+end_src
+
+** List files in directory
+#+begin_src php
+<?PHP 
+ 
+IF ($handle = OPENDIR('/system/path/to/files')) { 
+    ECHO "Files:\n"; 
+ 
+    // list out the files 
+    WHILE (FALSE !== ($file = READDIR($handle))) { 
+        ECHO "$file\n"; 
+    } 
+ 
+    CLOSEDIR($handle); 
+} 
+ 
+?> 
+#+end_src
+
+** Test If File Is Included
+#+begin_src php
+<?PHP
+ 
+IF(__FILE__ == $_SERVER['SCRIPT_FILENAME'])
+    DIE("This file cannot be executed directly");
+ 
+?>
+#+end_src
+
+** Get all files into an Array
+
+#+begin_src php
+<?PHP
+ 
+$files = GLOB('/path/to/some/directory/*.*');
+ 
+PRINT_R($files);  
+ 
+?>
+#+end_src
+
+** Directory Listing
+#+begin_src php
+<?PHP
+ 
+//define the path as relative
+$path = "/home/yoursite/public_html/whatever";
+ 
+//using the opendir function
+$dir_handle = @OPENDIR($path) or DIE("Unable to open $path");
+ 
+ECHO "Directory Listing of $path<br/>";
+ 
+//running the while loop
+WHILE ($file = READDIR($dir_handle)) {
+        ECHO "<a href=$file>$file</a><br/>";
+}
+ 
+//closing the directory
+CLOSEDIR($dir_handle);
+ 
+?> 
+#+end_src
+
+** Directory Listing #2
+#+begin_src php
+<?PHP
+ 
+// No slash at the end
+$main_dir = 'path/to/dir'; 
+ 
+$dirs = GLOB("{$main_dir}/*", GLOB_ONLYDIR);
+$dirs = ARRAY_MAP('basename', $dirs);
+$dirs = ARRAY_FILTER($dirs, 'no_underscore');
+ 
+FUNCTION no_underscore($dirname){
+    RETURN $dirname[0] != '_';
+}
+ 
+ECHO '<pre>', PRINT_R($dirs, TRUE), '</pre>'; 
+ 
+?>
 #+end_src
 
 * lumen
