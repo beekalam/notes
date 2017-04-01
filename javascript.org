@@ -3538,11 +3538,11 @@ for (let x of collection) {
 
 Object destructuring syntax uses an object literal on the left side of an
 assignment operation. For example:
-#+begin_src javascript 
 
+#+begin_src javascript 
 let node = {
-type: "Identifier",
-name: "foo"
+  type: "Identifier",
+  name: "foo"
 };
 
 let { type, name } = node;
@@ -3717,7 +3717,15 @@ let colors = [ "red", [ "green", "lightgreen" ], "blue" ];
 let [ firstColor, [ secondColor ] ] = colors;
 console.log(firstColor); // "red"
 console.log(secondColor); // "green"
-#+end_src 
+#+end_src
+
+**** example #1
+#+begin_src javascript
+const user = [['Some', 'One'], 23];
+const [[firstName, surname], age] = user;
+const expected = 'Some One = 23 years';
+assert.equal(`${firstName} ${surname} = ${age} years`, expected);
+#+end_src
 
 *** Rest Items
 rest items use the ... syntax to assign
@@ -3769,6 +3777,13 @@ let {
 console.log(start.line); // 1
 console.log(start.column); // 1
 console.log(startIndex); // 0
+#+end_src
+
+*** chained assignments
+#+begin_src javascript
+let c, d;
+let [a, b] = [c, d] = [1, 2];
+assert.deepEqual([a, b, c, d], [1, 2, 1, 2]);
 #+end_src
 
 * Is javascript Functional or object-oriented?
@@ -5903,6 +5918,90 @@ $(":enabled");
 $(":checked");      //selects currenlty checked radio button
 #+end_src
 
+** Traversing DOM elements
+#+begin_src javascript
+
+//If a set of elements needs to be narrowed down to just one element identified
+//by its index, then you can use the .eq() method. 
+$("p").eq(1);
+
+// select all paragraphs and then filter out all but the ones with class foo
+$("p").filter(".foo");
+$("p").not(".foo"); // the inverse of .find() is .not()
+
+$("p").last();
+$("p").first();
+
+//To select an element that contains elements matching a certain pattern, you can use the .has() method.
+$("p").has("span");
+
+//select all paragraphs in your test document and then check if one has the class foo:
+$("p").is(".foo");// The result is a Boolean (true or false) answer:
+
+//To select all paragraphs and then limit the selection to the second and third paragraphs, use the
+//following code:
+$("p").slice(1,3);
+//To select the last two elements from the paragraph set, use the following:
+$("p").slice(-2);
+
+//To select all paragraphs and then change the selection to match all child elements of the paragraphs
+$("p").children();
+//To select all paragraphs and then find all children with a class foo, use the following:
+$("p").children(".foo");
+
+//The .closest() method is an easy way to find elements up the DOM tree
+$("span.foo").closest("p");
+
+//select the body tag and then find any contained span elements using the following:
+$("body").find("span");
+
+//To select a paragraph with class foo and then traverse to the next sibling element
+$("p.foo").next();
+
+//A selector can be passed to .next() as well, which allows developers
+//to determine which type of next sibling element should be matched:
+$("p.foo").next("#bar");
+
+//To select all paragraphs after the paragraph with the class foo, use the
+//following code:
+$(".foo").nextAll("p");
+
+//.nextUntil() method. As its name
+//suggests, this method will return all next elements until a selector is matched.
+$(".foo").nextUntil("#bar");
+
+//To select sibling elements on both sides of an element, use the .siblings() method.
+$("#bar").siblings("p");
+
+//The .parent() method returns a set of the immediate parent elements of the current selection.
+$(".foo").parent();
+
+//To match only paragraph elements that are parents of elements with class foo
+$(".foo").parent("p");
+
+//Unlike .parent(), .parents() will return all parent elements, 
+//with an optional selector passed to filter the
+//results.
+$(":checkbox").parents();
+
+//To select all paragraphs and then add the span with class foo to the object, use the following:
+$("p").add("span.foo");
+
+//The .add() method also allows you to create elements on the fly, like so:
+$("p").add('<span id="bat">This is a new span</span>');
+
+to match all paragraph elements and then find child spans, use the following code:
+$("p").find("span");
+This returns the spans in the document, but you’ve lost the paragraphs:
+To keep the paragraphs and match the spans, add a call to .andSelf() to the end of the code:
+$("p").find("span").andSelf();
+
+The .contents() method works similarly to the .children() method, except .contents() returns text
+nodes as well
+To find all contents of the span with class foo, use the following:
+$("span.foo").contents();
+
+#+end_src 
 
 ** get/set value of text box
 
@@ -6421,6 +6520,9 @@ $("#ajaxStart").click(function() {
 });
 #+end_src
 
+** useful resources
+http://api.jquery.com/
+
 * =HTML5= validation
 
 #+begin_src html
@@ -6463,4 +6565,6 @@ function urldecode(str) {
 
 https://github.com/kvz/locutus/blob/master/src/php/url/urldecode.js
 
-* references
+* useful resources
+
+http://es6katas.org/

@@ -6354,10 +6354,6 @@ field to readonly with jQuery as displayed in the code below.
 $('#input_92_31').attr('readonly','readonly');
 #+end_src
 
-** useful resources 
-
-https://html.spec.whatwg.org/multipage/index.html
-
 ** web application mobile icons
 
 #+begin_src html
@@ -6372,6 +6368,9 @@ https://html.spec.whatwg.org/multipage/index.html
 <link rel="shortcut icon" sizes="128x128" href="youricon.png">
 #+end_src 
 
+** useful resources 
+https://html.spec.whatwg.org/multipage/index.html
+https://xhr.spec.whatwg.org/ 
 * FatFreeFramework
 ** CSRF protection example
 
