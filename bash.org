@@ -367,6 +367,8 @@ do
 done
 #+end_src
 
-* references
+* usefule resources
+
 http://www.panix.com/~elflord/unix/bash-tute.html
 
+http://jvns.ca/blog/2017/03/26/bash-quirks/

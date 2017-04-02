@@ -1481,6 +1481,15 @@ $ curl -c 'http://example.com/'
 $ hile true; do curl -c - 'http://localhost/xbs/login' 1> /dev/null; done 
 #+end_src
 
+** set useragent string
+
+#+begin_src shell
+# To make curl look like Internet Explorer 5 on a Windows 2000 box:
+$ curl --user-agent "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)" [URL]
+#Or why not look like you're using Netscape 4.73 on an old Linux box:
+$ curl --user-agent "Mozilla/4.73 [en] (X11; U; Linux 2.2.15 i686)" [URL]
+#+end_src
+
 ** links
 
 https://curl.haxx.se/docs/httpscripting.html
@@ -3721,7 +3730,6 @@ client.quit();
 #+end_src 
 
 * useful resources
-  
 * references
 http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
 

@@ -106,6 +106,12 @@ for them by backtracking to the leaf’s parent.
 
 
  
-* good reads
-https://www.amazon.com/Best-Sellers-Books-Decision-Making-Problem-Solving/zgbs/books/2679
+* useful resources
+** good reads
+ https://www.amazon.com/Best-Sellers-Books-Decision-Making-Problem-Solving/zgbs/books/2679
 
+ https://www.linkedin.com/pulse/10-must-read-books-creative-thinking-innovation-ren%C3%A9-de-ruijter
+
+ https://www.quora.com/Can-anyone-name-some-good-books-for-problem-solving
+
+ https://www.ideaconnection.com/books/
