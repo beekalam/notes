@@ -5436,6 +5436,68 @@ favorite language and then attach your script to the daemon:
 
 ~websocketd --port=8001 my-script~
 
+** FileReader examples
+*** example #1
+
+#+begin_src 
+HTML 
+<input type="file" onchange="previewFile()"><br>
+<img src="" height="200" alt="Image preview..."> 
+
+JavaScript 
+function previewFile() {
+  var preview = document.querySelector('img');
+  var file    = document.querySelector('input[type=file]').files[0];
+  var reader  = new FileReader();
+
+  reader.addEventListener("load", function () {
+    preview.src = reader.result;
+  }, false);
+
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+}
+#+end_src  
+
+*** example #2
+#+begin_src
+Example reading multiple files 
+HTML 
+<input id="browse" type="file" onchange="previewFiles()" multiple>
+<div id="preview"></div> 
+JavaScript 
+function previewFiles() {
+
+  var preview = document.querySelector('#preview');
+  var files   = document.querySelector('input[type=file]').files;
+
+  function readAndPreview(file) {
+
+    // Make sure `file.name` matches our extensions criteria
+    if ( /\.(jpe?g|png|gif)$/i.test(file.name) ) {
+      var reader = new FileReader();
+
+      reader.addEventListener("load", function () {
+        var image = new Image();
+        image.height = 100;
+        image.title = file.name;
+        image.src = this.result;
+        preview.appendChild( image );
+      }, false);
+
+      reader.readAsDataURL(file);
+    }
+
+  }
+
+  if (files) {
+    [].forEach.call(files, readAndPreview);
+  }
+
+} 
+#+end_src
+
 * geolocation API
 #+begin_src javascript
   $(document).ready(function(){
