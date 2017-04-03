@@ -2636,6 +2636,26 @@ apachectl stop
 
 This shuts the server down immediately. Any existing connections are terminated at once.
 
+** What are Entity Tags?
+
+Entity tags, also commonly referred to as ETags, are cache validators which help
+the browser determine if it can retrieve the requested resource from local cache
+or if it must be retrieved from the server. This mechanism helps improve loading
+times since if the resource can be retrieved from local cache, the browser does
+not need to make an additional request to the server.
+
+A traditional ETag is comprised of three separate components which make it an
+unique identifier for each resource:
+
+ - INode
+ - MTime
+ - Size
+
+An example of what an ETag may resemble containing all three components would be
+similar to 13630e1-b438-524daace96280. However, this may change in structure
+depending upon the web server, if the ETag is using strong or weak validation,
+and if you configure entity tags (ETags).
+
 * redis
 ** using from command line
 

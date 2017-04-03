@@ -5989,7 +5989,7 @@ $obj->doitagain();  // Outputs: trick::doitagain
 #+end_src 
 
 ** Difference between __CLASS__, get_class() and get_called_class()
-~__CLASS__~ magic constant returns the same result as get_class() function called
+__CLASS__ magic constant returns the same result as get_class() function called
 without parameters and they both return the name of the class where it was
 defined (i.e. where you wrote the function call/constant name ).
 
