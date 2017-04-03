@@ -6582,6 +6582,11 @@ $("#ajaxStart").click(function() {
 });
 #+end_src
 
+** which radio button is selected
+#+begin_src javascript
+var selectedAction = $("input[name='actions']:checked").val();
+#+end_src
+
 ** useful resources
 http://api.jquery.com/
 
