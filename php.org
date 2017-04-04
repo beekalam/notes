@@ -1176,6 +1176,13 @@ password_verify('my super cool password', $hashedPassword); // true
  - Many sources will recommend that you also “salt” your password before hashing
    it. That’s a great idea, and password_hash() already salts your password for
    you. That means that you don’t have to salt it yourself.
+** random string
+#+begin_src php 
+function randString($l = 8) {
+		return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, $l);
+}
+#+end_src 
+
 * numbers
 ** Checking Whether a Variable Contains a Valid Number
 
@@ -4573,6 +4580,69 @@ protected static function getProtocol()
 } 
 #+end_src 
 
+** PHP/jQuery Ajax testing template
+#+begin_src php
+<?php
+ 
+if (isset($_GET['ajax'])) {
+    if (!isset($_POST['action'])) {
+        exit;
+    }
+ 
+    switch ($_POST['action']) {
+        case 'demo1':            
+            echo json_encode(array('test' => 'Hello world!'));
+            break;
+        default:
+            break;
+    }
+ 
+    exit;
+}
+ 
+?><!DOCTYPE html>
+ 
+<html>
+ 
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Ajax testing template</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+ 
+        <script type="text/javascript">
+ 
+            function ajaxCallDemo1()
+            {
+                $.ajax({
+                    type     : "POST",
+                    async    : true,
+                    url      : "?ajax",
+                    cache    : false,
+                    data     : {action      : 'demo1'},
+                    dataType : 'json',
+                    success: function(data) {
+                        $('#demo1').html(data['test']);
+                    },
+                    error: function() {
+                        alert("Something went wrong");
+                    }
+                });
+            }
+ 
+            $(document).ready(function() {                
+                ajaxCallDemo1();
+            });
+ 
+        </script>
+    </head>
+ 
+    <body>
+        <div id="demo1"></div>
+    </body>
+ 
+</html>
+#+end_src
+
 * json
 ** json encode raw UTF?
 
@@ -4939,18 +5009,22 @@ error_reporting(E_ALL);
 
 * exceptions
 ** Throwing Exceptions
+
 #+begin_src php
 // something has gone wrong
 throw new Exception('Meaningful error message string');
 #+end_src 
 
 ** Extending Exceptions
+
 #+begin_src php
 class HeavyParcelException extends Exception {}
 #+end_src 
+
 We can set any properties or add any methods we desire to this Exception class.
 
 ** Setting a Global Exception Handler
+
 To avoid seeing fatal errors where exceptions have been thrown and our code failed
 to catch them, we can set a default behavior for our application in this situation.
 To do this, we use a function called =set_exception_handler()= . This accepts a
@@ -5023,8 +5097,10 @@ file_put_contents('page.html', $page);
 #+end_src 
 
 ** Reading and writing parts of files
+
 use =file()= function to access each line of file.
 =file()= reads the whole file into an array and it is not good for large files.
+
 #+begin_src php
 foreach (file('people.txt') as $line) {
   $line = trim($line);
@@ -5176,6 +5252,7 @@ IF ($handle = OPENDIR('/system/path/to/files')) {
 #+end_src
 
 ** Test If File Is Included
+
 #+begin_src php
 <?PHP
  
@@ -5198,6 +5275,7 @@ PRINT_R($files);
 #+end_src
 
 ** Directory Listing
+
 #+begin_src php
 <?PHP
  
@@ -5221,6 +5299,7 @@ CLOSEDIR($dir_handle);
 #+end_src
 
 ** Directory Listing #2
+
 #+begin_src php
 <?PHP
  
@@ -5241,6 +5320,7 @@ ECHO '<pre>', PRINT_R($dirs, TRUE), '</pre>';
 #+end_src
 
 ** Copy File From Server
+
 #+begin_src php
 <?PHP
  
@@ -5266,6 +5346,7 @@ ECHO "Done.";
 #+end_src
 
 ** Count lines in file
+
 #+begin_src php
 <?PHP  
  
@@ -5277,6 +5358,7 @@ ECHO "There are $lines lines in $file";
 #+end_src
 
 ** Delete by date
+   
 #+begin_src php
 <?PHP
  
@@ -5298,6 +5380,7 @@ IF (IS_DIR("$path") ){
 #+end_src
 
 ** Delete by wildcard
+
 #+begin_src php
  <?PHP
  
@@ -5310,6 +5393,7 @@ FOREACH (GLOB("*.jpg") AS $filename) {
 #+end_src
 
 ** Download File To Client
+
 #+begin_src php
 <?PHP
  
