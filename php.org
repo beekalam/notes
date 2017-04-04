@@ -2286,6 +2286,26 @@ else {
 }
 #+end_src
 
+a more advanced version 
+
+#+begin_src php 
+function get_ip_address(){
+    //taken from
+    // http://stackoverflow.com/questions/1634782/what-is-the-most-accurate-way-to-retrieve-a-users-correct-ip-address-in-php
+    foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){
+        if (array_key_exists($key, $_SERVER) === true){
+            foreach (explode(',', $_SERVER[$key]) as $ip){
+                $ip = trim($ip); // just to be safe
+
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false){
+                    return $ip;
+                }
+            }
+        }
+    }
+}
+#+end_src 
+
 ** block ip address
 
 #+begin_src php
@@ -7406,6 +7426,57 @@ https://www.w3.org/TR/css3-selectors/
 http://www.w3.org/TR/css3-fonts/
 
 https://css-tricks.com/
+
+* monolog helper functions
+#+begin_src php
+$logger = new \Monolog\Logger('xbs-res');
+//$logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__.'/tmp/app.log',Logger::DEBUG));
+$logger->pushHandler(new \Monolog\Handler\BrowserConsoleHandler(), Logger::DEBUG);
+$logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(__DIR__.'/tmp/app',Logger::DEBUG));
+
+function dlog($message)
+{
+    global $logger;
+    global $logIP;
+    if(isset($logger)) {
+        if( !isset($logIP)) {
+            $logger->debug($message);
+        }else if ($logIP == $_SERVER['REMOTE_ADDR'])
+        {
+                $logger->debug("iplog is set");
+                $logger->debug($message);
+        }
+    }
+}
+function ilog($message)
+{
+    global $logger;
+    global $logIP;
+    if(isset($logger)) {
+        if( !isset($logIP)) {
+            $logger->info($message);
+        }else if ($logIP == $_SERVER['REMOTE_ADDR'])
+        {
+            $logger->info("iplog is set");
+            $logger->info($message);
+        }
+    }
+}
+function wlog($message)
+{
+    global $logger;
+    global $logIP;
+    if(isset($logger)) {
+        if( !isset($logIP)) {
+            $logger->warn($message);
+        }else if ($logIP == $_SERVER['REMOTE_ADDR'])
+        {
+            $logger->warn("iplog is set");
+            $logger->warn($message);
+        }
+    }
+}
+#+end_src 
 
 * useful resources
 ** php snippets
