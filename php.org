@@ -3001,26 +3001,6 @@ SETCOOKIE ("cookie[one]", "cookieone");
 ?>  
 #+end_src
   
-** Echo 'n' number of words
-#+begin_src php
-<?PHP
- 
-$the_string = "a very long string of words";
- 
-$space_offset = 0; 
-$space_num = 0; 
- 
-WHILE($space_num <= 250){
-$space_offset  = stripos($the_string, ' ',$space_offset + 1);
-$space_num++;
-} 
- 
-?>
- 
-// after the loop completes, $space_offset will have the offset 
-// of the space just before the 250th word.
-#+end_src
-
 ** Validate email address #1
 #+begin_src php
 <?PHP
