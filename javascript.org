@@ -6634,4 +6634,10 @@ https://github.com/kvz/locutus/blob/master/src/php/url/urldecode.js
 
 * useful resources
 
+** noname
+
 http://es6katas.org/
+
+** json style
+
+https://google.github.io/styleguide/jsoncstyleguide.xml
