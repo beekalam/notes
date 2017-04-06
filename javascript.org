@@ -6241,7 +6241,7 @@ var nofollow = $('a[rel="nofollow"]');
 #+end_src 
 
 ** creating DOM elements 
-
+   
 To dynamically add DOM elements to any part of the document, we can use the append() ,
 addAfter() , after() , addBefore() , and before() functions of jQuery. The functions
 after() and insertAfter() essentially perform the same action; the difference lies in
@@ -6520,6 +6520,48 @@ $('#square').prop("src", "images/red.png");
 
 #+end_src 
 
+** removing dom elements
+#+begin_src javascript 
+$(function(){
+  //Listen for a click on any of the remove buttons
+  $('.remove-btn').click(function(){
+  //When a remove button has been clicked
+  //Select this buttons parent (the li element) and remove it
+  $(this).parent().remove();
+  });
+});
+#+end_src 
+
+** Reusing DOM elements
+#+begin_src html
+<script>
+$(function(){
+            $.each(animals, function(index, obj){
+                //Clone the first element in the animal list
+                var listTemplate = $('#animal-list li').first().clone();
+                //Change its name to match this objects name
+                listTemplate.find('.name').html(obj.name);
+                //Changes its type to match this objects type
+                listTemplate.find('.type').html(obj.type);
+                //Remove all its current classes
+                listTemplate.removeClass();
+                //Add the class from this object
+                listTemplate.addClass(obj.class);
+                //Append the modified element to the end of the list
+                $('#animal-list').append(listTemplate);
+            });
+
+        });
+</script>
+</head>
+<body>
+<ul id="animal-list">
+    <li class='dinosaur'><strong><span class='name'>T-Rex</span></strong> <span class='type'>Dinosaur</span></li>
+</ul>
+</body>
+</html>
+#+end_src
+
 ** detecting button clicks
    
 #+begin_src javascript
@@ -6566,7 +6608,219 @@ $(function() {
 
 #+end_src
 
-** Disable Button while AJAX Request
+** detecting chanage
+#+begin_src html
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 2 :: jQuery Events</title>
+    <script src="jquery.min.js"></script>
+    <script>
+        $(function(){
+            $('#names').change(function(){
+                var newValue = $(this).val();
+                alert("Input value changed to: " + newValue);
+            });
+            $('#cat').change(function(){
+                var newValue = $(this).val();
+                alert("Input value changed to: " + newValue);
+            });
+        });
+    </script>
+</head>
+<body>
+<select id="names">
+    <option value="Leon">Leon</option>
+    <option value="Allyce">Allyce</option>
+    <option value="Jane">Jane</option>
+</select>
+<input type="text" value="The large cat sat on the mat" id="cat" />
+</body>
+</html>
+#+end_src
+
+using ~body.on~
+
+#+begin_src javascript 
+$('body').on("change", "#names", function(){
+  var newValue = $(this).val();
+  alert("Input value changed to: " + newValue);
+});
+#+end_src 
+
+** Updating content based on user input
+#+begin_src javascript
+<script>
+    $(function(){
+        $('#title').change(function(){
+            var titleText = "";
+            switch ($(this).val()) {
+                case "1":
+                    titleText = "This is the text for title 1";
+                    break;
+                case "2":
+                    titleText = "This is the text for title 2";
+                    break;
+                case "3":
+                    titleText = "This is the text for title 3";
+                    break;
+                default:
+                    titleText = "No Title";
+            }
+            $('#main-title').html(titleText);
+        });
+    });
+#+end_src 
+
+** detecting keypress events on inputs
+#+begin_src javascript
+ <script>
+        $(function(){
+            $('.myInput').keyup(function(){
+                $('#myList').append("<li>Key up!</li>");
+            });
+            $('.myInput').keydown(function(event){
+                $('#myList').append("<li>Key down!</li>");
+                if (event.which == 13) {
+                    $('#myList').append("<li>Enter key pressed!</li>");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<input type="text" class="myInput" />
+<ul id="myList"></ul>
+#+end_src
+
+** Restricting input character length
+#+begin_src javascript
+$(function(){
+        $('#names').change(function(){
+            var newValue = $(this).val();
+            alert("Input value changed to: " + newValue);
+        });
+        $('#cat').change(function(){
+            var newValue = $(this).val();
+            alert("Input value changed to: " + newValue);
+        });
+    });
+#+end_src 
+
+** Changing page elements on mouse hover
+#+begin_src html
+<html>
+<head>
+    <title>Chapter 2 :: jQuery Events</title>
+    <style type="text/css">
+        .info {
+            width: 530px;
+            border: solid 2px yellow;
+            padding: 10px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+    <script src="jquery.min.js"></script>
+    <script>
+        $(function(){
+            $('.hoverinfo').mouseover(function(){
+                $('.info').html($(this).attr("rel"));
+                $('.info').fadeIn();
+            }).mouseleave(function(){
+                $('.info').hide();
+            });
+        });
+    </script>
+</head>
+<body>
+<label>Your Name:</label>
+<input type="text" name="name" class="hoverinfo" rel="Please provide us with your name." />
+<label>Your Email:</label>
+<input type="text" name="email" class="hoverinfo" rel="Please provide us with your email address" />
+<button class="hoverinfo" rel="Click here to submit your information to us">Submit</button>
+<div class="info"></div>
+</body>
+</html>
+#+end_src 
+
+** Triggering events manually
+#+begin_src html
+<html>
+<head>
+    <title>Chapter 2 :: jQuery Events</title>
+    <script src="jquery.min.js"></script>
+    <script>
+        $(function(){
+            $('.submit-btn').on("click", function(){
+                alert("Submit the form!");
+            });
+            $('input[type="text"]').keypress(function(event){
+                if (event.which == 13) {
+                    $('.submit-btn').trigger("click");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<label>First Name:</label>
+<input type="text" name="firstname" />
+<label>Last Name:</label>
+<input type="text" name="lastname" />
+<label>Your Email:</label>
+<input type="text" name="email" />
+<button class="submit-btn">Submit</button>
+</body>
+</html>
+#+end_src 
+
+** Preventing event triggers
+#+begin_src javascript
+<script>
+$(function() {
+    $('.submit-btn').on("click", function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        var response = confirm("Are you sure you want to submit this form?");
+        if (response) {
+            $('#myForm').submit();
+        }
+    });
+});
+</script>
+#+end_src 
+
+** Creating a custom event
+#+begin_src html
+<html>
+<head>
+    <title>Chapter 2 :: jQuery Events</title>
+    <script src="jquery.min.js"></script>
+    <script>
+        $(function() {
+            $('.colourme').on("switchColour", function(event, colour, text){
+                $(this).html(text);
+                $(this).css("color", colour);
+            });
+            $("button").click(function(){
+                var colour = $(this).attr("rel");
+                $('.colourme').trigger("switchColour", [colour, colour + ' button pressed... ']);
+            });
+        });
+    </script>
+</head>
+<body>
+<button rel="green">Green</button>
+<button rel="blue">Blue</button>
+<p class="colourme"></p>
+</body>
+</html>
+#+end_src 
+
+** Ajax
+*** Disable Button while AJAX Request
 
 #+begin_src javascript 
 $("#ajaxStart").click(function() {
@@ -6581,6 +6835,123 @@ $("#ajaxStart").click(function() {
     });
 });
 #+end_src
+
+*** Using Ajax and handling server errors
+#+begin_src javascript
+$(function(){
+    $('#makeRequest').click(function() {
+        $.ajax({
+            url: 'i-do-not-exist.html',
+            type: 'GET'
+        }).done(function(data){
+            //Will not succeed as now file exists
+        });
+    });
+    $(document).ajaxError(function(event, request, settings) {
+        alert("Error trying to reach '" + settings.url + "'. ERROR CODE: " + request.status + " ERROR MESSAGE: " + request.statusText);
+    });
+});
+#+end_src 
+
+*** caching JSON and AJAX requests
+#+begin_src javascript
+var cache = [];
+$(function(){
+    $('.getPeople').click(function(){
+        if (cache.length == 0) {
+            $.ajax({
+                url: '/request-6.php',
+                type: 'GET',
+                async: false
+            }).done(function(data){
+                cache = data;
+            });
+        }
+        $('#peopleList').empty();
+        $.each(cache, function(key, value){
+            $('#peopleList').append("<li>#" + key + " " + value.firstname + " " + value.lastname  + "</li>");
+        });
+    });
+});
+#+end_src
+
+*** waiting for an AJAX response
+#+begin_src javascript 
+$(function(){
+    $('.load').click(function(){
+        $.when(call1(), call2()).done(function(c1, c2){
+            $('.info').append("Both AJAX requests complete!");
+        });
+    });
+});
+function call1() {
+    return $.ajax({
+        url: '/loading1.php',
+        type: 'GET'
+    }).success(function(data){
+        $('.info').append(data);
+    });
+}
+function call2() {
+    return $.ajax({
+        url: '/loading2.php',
+        type: 'GET'
+    }).success(function(data){
+        $('.info').append(data);
+    });
+}
+#+end_src 
+** Searching JavaScript objects
+#+begin_src javascript
+function findObjects(parameter, value, object) {
+    var matches = [];
+    for (var i in object) {
+        if (typeof object[i] == 'object') {
+            matches = matches.concat(findObjects(parameter, value, object[i]));
+        } else if (i == parameter && object[parameter] == value) {
+            matches.push(object);
+        }
+    }
+    return matches;
+}
+#+end_src 
+
+** sorting Javascript objects
+#+begin_src javascript 
+var people = [
+    {
+        title: "Mrs",
+        firstname: "Jane",
+        lastname: "Doe"
+    },
+    {
+        title: "Sir",
+        firstname: "Johnathan",
+        lastname: "Williams"
+    },
+    {
+        title: "Mr",
+        firstname: "John",
+        lastname: "Andrews"
+    },
+    {
+        title: "Sir",
+
+        firstname: "Edward",
+        lastname: "Tailor"
+    }
+];
+function sortObjectsByParam(param) {
+    return function(a, b) {
+        if (a[param] == b[param]) { return 0; }
+        if (a[param] > b[param]) { return 1; }
+        else { return -1; }
+    }
+}
+people.sort(sortObjectsByParam("lastname"));
+console.log(people);
+#+end_src
+
 
 ** which radio button is selected
 #+begin_src javascript
