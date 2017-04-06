@@ -2656,6 +2656,54 @@ similar to 13630e1-b438-524daace96280. However, this may change in structure
 depending upon the web server, if the ETag is using strong or weak validation,
 and if you configure entity tags (ETags).
 
+** Setting the Default Filename for a Directory or Entire Site
+You need to tell your web server the name of the default page for a given
+directory or all directories on your web site.
+
+Add or modify the DirectoryIndex enTRy in your httpd.conf file, or a specific direc-tory's .htaccess file. List the files that should be treated as default pages in the order you wish them to be served: 
+#+begin_src
+	DirectoryIndex index.php index.html index.htm index.php3 welcome.html
+#+end_src 
+
+** Making Sure Your Web Site Loads With and Without the "www" Prefix
+
+If your web server has the rewrite module enabled, you can create rules that
+tell Apache to seamlessly change the URL requested by the browser to something
+else. For example, requests for http://www.domain.com become http://domain.com.
+To do this, create or modify the .htaccess file in your web root directory with
+a rewrite rule to remove the "www." from browser requests to your web site.
+First, find or create an .htaccess file. Then copy into it the code shown below,
+replacing domain.com with your domain name:
+
+#+begin_src 
+	RewriteEngine On
+	RewriteCond %{HTTP_HOST} ^www\.domain\.com$ [NC]
+	RewriteRule ^(.*)$ http://domain.com/$1 [R=301,L]
+#+end_src 
+
+Create a directory at the top level of your hosting account home directoryin
+other words, at the same level as your current home page HTML file. Call the
+directory something obvious, such as www, web, or htdocs. I'm going to use
+htdocs for the example below. Now create or modify the .htaccess file in your
+home directory. Copy into it the following rules for redirecting requests to
+your domain name to files in the htdocs directory:
+
+#+begin_src 
+	RewriteEngine on
+	RewriteCond $1 !^htdocs/
+	RewriteRule (.*) / htdocs /$1 [L]
+	RewriteCond %{THE_REQUEST} ^[A-Z]+\ / htdocs /
+	RewriteRule .* - [F]
+#+end_src 
+
+The first line ensures that the Apache rewrite engine is on. Lines two and three
+invisibly redirect browser requests to files in the htdocs directory, but keep
+the rule from looping indefinitely. Because the rules in the .htaccess file
+apply to the directory the file is in as well as all the directories below
+itincluding our new htdocs directoryline 3 prevents Apache from appending an
+infinite number of htdocs to the browser request. Lines 4 and 5 prevent direct
+requests for files in the htdocs directory.
+
 * redis
 ** using from command line
 

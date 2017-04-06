@@ -712,6 +712,50 @@ console.log(clonedColors); // "[red,green,blue]"
 
 Although the concat() method is intended to concatenate two arrays, call-
 ing it without an argument returns a clone of the array.
+** Using an Associative Array to Store Form Element Names and Values
+#+begin_src html
+<html>
+<head>
+<title>Associative Array</title>
+</head>
+<body>
+<form id="picker">
+  <label>Value 1:</label> <input type="text" id="first" /><br />
+  <label>Value 2:</label> <input type="text" id="second" /><br />
+  <label>Value 3:</label> <input type="text" id="third"  /><br />
+  <label>Value 4:</label> <input type="text" id="four"  /><br />
+  <button id="validate">Validate</button>
+</form>
+<div id="result"></div>
+<script>
+
+  // get the form element names and values and validate
+  document.getElementById('validate').addEventListener('click',function (evnt) {
+     evnt.preventDefault();
+
+     // create array of element key/values
+     var elems = document.getElementById("picker").elements;
+     var elemArray = new Object();
+     for (var i = 0; i < elems.length; i++) {
+        if (elems[i].type == "text") elemArray[elems[i].id] = elems[i].value;
+     }
+
+     var str = '';
+     Object.keys(elemArray).forEach(function (key) {
+           var value = elemArray[key];
+           str+=key + '->' + value + '<br />';
+       });
+
+     document.getElementById("result").innerHTML = str;
+  }, false);
+
+</script>
+
+</body>
+</html>
+#+end_src
+
+
 * strings
 ** reverse string in javascript?
 
@@ -6901,6 +6945,7 @@ function call2() {
     });
 }
 #+end_src 
+
 ** Searching JavaScript objects
 #+begin_src javascript
 function findObjects(parameter, value, object) {
@@ -6952,11 +6997,13 @@ people.sort(sortObjectsByParam("lastname"));
 console.log(people);
 #+end_src
 
-
 ** which radio button is selected
 #+begin_src javascript
 var selectedAction = $("input[name='actions']:checked").val();
 #+end_src
+
+** form handling
+** Implementing basic form validation /tocontinue/
 
 ** useful resources
 http://api.jquery.com/
