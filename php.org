@@ -5851,7 +5851,7 @@ foreach(spl_classes() as  $k=>$v){
 ?>
 #+end_src
 
-* using =include_path= to manage larget projects
+* using =include_path= to manage large projects
 
 You can add include_path configuration option in the php.ini file. You
 can use include_path to define a list of directories that will be
