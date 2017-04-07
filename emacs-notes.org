@@ -380,5 +380,3 @@ C-u C-x C-i
 * References
 http://ehneilsen.net/notebook/orgExamples/org-examples.htm
 
-
-* tedsssZ
