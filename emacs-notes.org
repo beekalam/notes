@@ -190,16 +190,16 @@ C-s C-w
 M-p M-n
 
 * Query-replace
-To use query-replace, go to the beginning of the buffer using M-< and
-then type M-%.  The prompt Query replace: appears in the
+To use query-replace, go to the beginning of the buffer using ~M-<~ and
+then type ~M-%~. The prompt Query replace: appears in the
 minibuffer. Type the search string and press Enter. Now this appears:
 Query replace searchstring with:
 
 Type the replacement string and press Enter. So far, this procedure is
- almost identical to a replace-string operation; only the prompts are
- different.  Emacs now searches for the first occurrence of the search
- string. When it finds one, a new prompt appears: Query replacing
- searchstring with newstring.
+almost identical to a replace-string operation; only the prompts are
+different.  Emacs now searches for the first occurrence of the search
+string. When it finds one, a new prompt appears: Query replacing
+searchstring with newstring.
 
 
 Space or y 
