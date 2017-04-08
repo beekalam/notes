@@ -4,7 +4,13 @@
 ** DONE connection report
 *** DONE status icon
 ** TODO send ticket 
-** TODO reseller settings
+** TODO TOD reseller settings
+** userinfo
+*** upload picture
+*** comments
+*** don't show charts when not data available
+*** user address doesn't get update
+*** how to know person_type vs company
 * Done
 * Later
 ** grids calculate responsive width or scroll

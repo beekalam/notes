@@ -6719,6 +6719,17 @@ http://jsfiddle.net/surjithctly/ka8uW/
 
 http://www.tutorialrepublic.com/twitter-bootstrap-tutorial
 
+** Bootsterap table without stripes/borders
+#+begin_src html
+
+.borderless table {
+    border-top-style: none;
+    border-left-style: none;
+    border-right-style: none;
+    border-bottom-style: none;
+}
+#+end_src 
+
 * =datatables=
 ** filter for text inside a =<span>= or other html
 
