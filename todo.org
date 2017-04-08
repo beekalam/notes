@@ -1,5 +1,11 @@
 * Doing
 ** DONE آموزش
-** invoicelist
+** DONE invoicelist
+** DONE connection report
+*** DONE status icon
+** TODO send ticket 
+** TODO reseller settings
 * Done
 * Later
+** grids calculate responsive width or scroll
+** dynamic fragment for showing info in table like reseller settings

@@ -6807,6 +6807,7 @@ $('#input_92_31').attr('readonly','readonly');
 ** useful resources 
 https://html.spec.whatwg.org/multipage/index.html
 https://xhr.spec.whatwg.org/ 
+https://codepen.io/patterns/
 * FatFreeFramework
 ** CSRF protection example
 
