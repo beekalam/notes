@@ -66,28 +66,33 @@ iwconfig
  Bridge <ip>:<port> <fingerprint>
  #+end_src
  
-** use privoxy to http over socks
+** privoxy
+*** use privoxy to http over socks
 
-open =~/etc/privoxy/config/= and comment out the line
+ open =~/etc/privoxy/config/= and comment out the line
 
+ #+begin_src 
+ #        forward-socks5t             /     127.0.0.1:9050 .
+ #+end_src 
+
+ and maybe
+
+ #+begin_src 
+ #        forward         192.168.*.*/     .
+ #        forward            10.*.*.*/     .
+ #        forward           127.*.*.*/     .
+ #+end_src 
+
+ and
+
+ #+begin_src 
+ #        forward           localhost/     .
+ #+end_src 
+
+*** add exception to privoxy forward
 #+begin_src 
-#        forward-socks5t             /     127.0.0.1:9050 .
+forward .somesite.com  .
 #+end_src 
-
-and maybe
-
-#+begin_src 
-#        forward         192.168.*.*/     .
-#        forward            10.*.*.*/     .
-#        forward           127.*.*.*/     .
-#+end_src 
-
-and
-
-#+begin_src 
-#        forward           localhost/     .
-#+end_src 
-
 ** network open sockets by program name?
 
 #+begin_src 

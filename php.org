@@ -1460,13 +1460,6 @@ BREAK;
 ?>
 #+end_src
 
-** integer division
-
-#+begin_src php
-int intdiv ( int $dividend , int $divisor )
-#+end_src
-
-Returns the integer quotient of the division of dividend by divisor.
 * arrays
 ** check for empty array
 
