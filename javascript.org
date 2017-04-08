@@ -755,7 +755,6 @@ ing it without an argument returns a clone of the array.
 </html>
 #+end_src
 
-
 * strings
 ** reverse string in javascript?
 
@@ -2764,6 +2763,7 @@ var add = function (a, b) {
 #+end_src
  
 ** Invocation
+*** intro
 Invoking a function suspends the execution of the current function, passing control
 and parameters to the new function. In addition to the declared parameters, every
 function receives two additional parameters: this and arguments . The this parame-

@@ -101,6 +101,20 @@ else
 ?>
 #+end_src
 
+** Regex Matching Patterns
+#+begin_src php
+ 
+ 
+Social Security Number
+^(?!000)([0-6]\d{2}|7([0-6]\d|7[012]))([ -]?)(?!00)\d\d\3(?!0000)\d{4}$
+ 
+US phone with or without parentheses
+^\([0-9]{3}\)\s?[0-9]{3}(-|\s)?[0-9]{4}$|^[0-9]{3}-?[0-9]{3}-?[0-9]{4}$
+ 
+ISO Date (19th to 21st century only)
+^((18|19|20)\d\d)-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])$
+#+end_src
+
 * strings
 ** defining heredoc document
    
@@ -1291,6 +1305,168 @@ For instance, say you want to print out HTML color values:
 
 printf('#%02X%02X%02X', 0, 102, 204); // #0066CC
 
+** Rounded random numbers
+#+begin_src php
+$foo = ROUND(RAND(1, 1000));
+#+end_src
+
+** Weighted Random Choice
+#+begin_src php
+<?PHP
+ 
+// Give higher priorities to the users who pay the most.
+// Gives lowest-priced rows the highest priority:
+ 
+SELECT * FROM LINK ORDER BY RAND()*payPerClick/RAND();
+ 
+ 
+// Gives highest-priced rows the highest priority
+ 
+SELECT 'field' FROM 'table' WHERE 'ppc' > 0 ORDER BY RAND() / 'ppc' * RAND()
+ 
+// Running the query above 6000 times produces:
+// 3 cent: 402
+// 4 cent: 517
+// 5 cent: 615
+// 7 cent: 800
+// 9 cent: 1020
+// 11 cent: 1214
+// 13 cent: 1432
+ 
+ 
+// OR
+ 
+FUNCTION w_rand($weights) {
+    $r = MT_RAND(1,1000);
+    $offset = 0;
+    FOREACH ($weights AS $k => $w) {
+        $offset += $w*1000;
+        IF ($r <= $offset) {
+            RETURN $k;
+        }
+    }
+} 
+ 
+?>
+#+end_src
+
+** Base 64 Decode
+Description: I recently ran across a freeware web application written in PHP
+that utilized the following method to encrypt its source code. You can decode
+the encoded script with this PHP snippet.
+
+#+begin_src php
+<?PHP 
+ 
+// sample is encoded like this:
+// eval(gzinflate(base64_decode('encoded text'))); 
+ 
+ 
+ECHO "\nDECODE nested eval(gzinflate()) by DEBO Jurgen <jurgen@person.be>\n\n";
+ECHO "1. Reading coded.txt\n";
+$fp1 = FOPEN ("coded.txt", "r");
+$contents = FREAD ($fp1, FILESIZE ("coded.txt"));
+FCLOSE($fp1);
+ECHO "2. Decoding\n";
+WHILE (PREG_MATCH("/eval\(gzinflate/",$contents)) {
+  $contents=PREG_REPLACE("/< \?|\?>/", "", $contents);
+  EVAL(PREG_REPLACE("/eval/", "\$contents=", $contents));
+}
+ECHO "3. Writing decoded.txt\n";
+$fp2 = FOPEN("decoded.txt","w");
+FWRITE($fp2, TRIM($contents));
+FCLOSE($fp2);
+ 
+/*
+1.) Save the code you wish to decode in coded.txt
+2.) Save the above PHP snippet in file like decrypt.php
+3.) Create an empty text file called decoded.txt and it CHMOD it to 0666.
+4.) Run decrypt.php and open up decoded.txt to view the source code.
+*/
+ 
+?>
+#+end_src
+
+** Bad word filter
+#+begin_src php
+<?
+ 
+// BadWordFilter
+// This function does all the work. If $replace is 1 it will replace all bad words
+// with the wildcard replacements.  If $replace is 0 it will not replace anything.
+// In either case, it will return 1 if it found bad words or 0 otherwise.
+// Be sure to fill the $bads array with the bad words you want filtered.
+ 
+FUNCTION BadWordFilter(&$text, $replace){
+ 
+     // fill this array with the bad words you want to filter and their replacements
+     $bads = ARRAY (
+          ARRAY("butt","b***"),
+          ARRAY("poop","p***"),
+          ARRAY("crap","c***")
+     );
+ 
+     IF($replace==1) {                                        //we are replacing
+          $remember = $text;
+ 
+          FOR($i=0;$i<sizeof($bads);$i++) {               //go through each bad word
+               $text = EREGI_REPLACE($bads[$i][0],$bads[$i][1],$text); //replace it
+          }
+ 
+          IF($remember!=$text) RETURN 1;                     //if there are any changes, return 1
+ 
+     } ELSE {                                                  //we are just checking
+ 
+          FOR($i=0;$i<sizeof($bads);$i++) {               //go through each bad word
+               IF(EREGI($bads[$i][0],$text)) RETURN 1; //if we find any, return 1
+          }     
+     }
+}
+ 
+// this will replace all bad words with their replacements. $any is 1 if it found any
+$any = BadWordFilter($wordsToFilter,1); 
+ 
+// this will not repace any bad words. $any is 1 if it found any
+$any = BadWordFilter($wordsToFilter,0); 
+ 
+?>
+#+end_src
+
+** Ordinalize (Suffix) Numbers
+#+begin_src php
+<?PHP
+ 
+FUNCTION ordinalize($number) {
+ 
+IF (IN_ARRAY(($number % 100),RANGE(11,13))){
+     RETURN $number.'th';
+}ELSE{
+     SWITCH (($number % 10)) {
+CASE 1:
+     RETURN $number.'st';
+BREAK;
+     CASE 2:
+     RETURN $number.'nd';
+BREAK;
+CASE 3:
+     RETURN $number.'rd';
+DEFAULT:
+     RETURN $number.'th';
+BREAK;
+}
+}
+}
+ 
+?>
+#+end_src
+
+** integer division
+
+#+begin_src php
+int intdiv ( int $dividend , int $divisor )
+#+end_src
+
+Returns the integer quotient of the division of dividend by divisor.
 * arrays
 ** check for empty array
 
@@ -1447,6 +1623,19 @@ FUNCTION is_assoc_array($array){
  
 ?>
 #+end_src 
+
+** Pick Randomly from Array
+#+begin_src php
+ <?PHP
+ 
+// This method only works where the elements exist AND are 
+// sequentially numbered. If you unset() elements from the 
+// array, you may end up picking elements that no longer exist. 
+ 
+$quote = $quotes_array[RAND(0, COUNT($quotes_array) - 1)]; 
+ 
+?>
+#+end_src
 
 * Date and Time
 ** Finding the Current Date and Time
@@ -2266,13 +2455,6 @@ if ($_POST[location] == "") {
 define("ROOT",realpath(dirname(__FILE__)));
 #+end_src
 
-** integer division
-
-#+begin_src php
-int intdiv ( int $dividend , int $divisor )
-#+end_src
-
-Returns the integer quotient of the division of dividend by divisor.
 ** HTTP refresh with echo
 
 #+begin_src php 
@@ -2546,51 +2728,6 @@ EOPHP;
    $str = PREG_REPLACE('#(http://)([^\s]*)#e', $replace, $str);
    RETURN $str;
 }
- 
-?>
-#+end_src
-
-** Bad word filter
-#+begin_src php
-<?
- 
-// BadWordFilter
-// This function does all the work. If $replace is 1 it will replace all bad words
-// with the wildcard replacements.  If $replace is 0 it will not replace anything.
-// In either case, it will return 1 if it found bad words or 0 otherwise.
-// Be sure to fill the $bads array with the bad words you want filtered.
- 
-FUNCTION BadWordFilter(&$text, $replace){
- 
-     // fill this array with the bad words you want to filter and their replacements
-     $bads = ARRAY (
-          ARRAY("butt","b***"),
-          ARRAY("poop","p***"),
-          ARRAY("crap","c***")
-     );
- 
-     IF($replace==1) {                                        //we are replacing
-          $remember = $text;
- 
-          FOR($i=0;$i<sizeof($bads);$i++) {               //go through each bad word
-               $text = EREGI_REPLACE($bads[$i][0],$bads[$i][1],$text); //replace it
-          }
- 
-          IF($remember!=$text) RETURN 1;                     //if there are any changes, return 1
- 
-     } ELSE {                                                  //we are just checking
- 
-          FOR($i=0;$i<sizeof($bads);$i++) {               //go through each bad word
-               IF(EREGI($bads[$i][0],$text)) RETURN 1; //if we find any, return 1
-          }     
-     }
-}
- 
-// this will replace all bad words with their replacements. $any is 1 if it found any
-$any = BadWordFilter($wordsToFilter,1); 
- 
-// this will not repace any bad words. $any is 1 if it found any
-$any = BadWordFilter($wordsToFilter,0); 
  
 ?>
 #+end_src
@@ -3457,79 +3594,11 @@ FUNCTION check_email($email){
 ?>
 #+end_src
 
-** Weighted Random Choice
-#+begin_src php
-<?PHP
- 
-// Give higher priorities to the users who pay the most.
-// Gives lowest-priced rows the highest priority:
- 
-SELECT * FROM LINK ORDER BY RAND()*payPerClick/RAND();
- 
- 
-// Gives highest-priced rows the highest priority
- 
-SELECT 'field' FROM 'table' WHERE 'ppc' > 0 ORDER BY RAND() / 'ppc' * RAND()
- 
-// Running the query above 6000 times produces:
-// 3 cent: 402
-// 4 cent: 517
-// 5 cent: 615
-// 7 cent: 800
-// 9 cent: 1020
-// 11 cent: 1214
-// 13 cent: 1432
- 
- 
-// OR
- 
-FUNCTION w_rand($weights) {
-    $r = MT_RAND(1,1000);
-    $offset = 0;
-    FOREACH ($weights AS $k => $w) {
-        $offset += $w*1000;
-        IF ($r <= $offset) {
-            RETURN $k;
-        }
-    }
-} 
- 
-?>
-#+end_src
-
 ** Nice 'Read More...' links
 #+begin_src php
 <?PHP
  
 ECHO SUBSTR($entry['content'],0,STRPOS($entry['content'],".",200)+1)." <a href=\"your-link\">read more</a></p>\n";
- 
-?>
-#+end_src
-
-** Ordinalize (Suffix) Numbers
-#+begin_src php
-<?PHP
- 
-FUNCTION ordinalize($number) {
- 
-IF (IN_ARRAY(($number % 100),RANGE(11,13))){
-     RETURN $number.'th';
-}ELSE{
-     SWITCH (($number % 10)) {
-CASE 1:
-     RETURN $number.'st';
-BREAK;
-     CASE 2:
-     RETURN $number.'nd';
-BREAK;
-CASE 3:
-     RETURN $number.'rd';
-DEFAULT:
-     RETURN $number.'th';
-BREAK;
-}
-}
-}
  
 ?>
 #+end_src
@@ -3623,19 +3692,6 @@ FUNCTION generatePassword($length=9, $strength=0) {
     }
     RETURN $password;
 }
- 
-?>
-#+end_src
-
-** Pick Randomly from Array
-#+begin_src php
- <?PHP
- 
-// This method only works where the elements exist AND are 
-// sequentially numbered. If you unset() elements from the 
-// array, you may end up picking elements that no longer exist. 
- 
-$quote = $quotes_array[RAND(0, COUNT($quotes_array) - 1)]; 
  
 ?>
 #+end_src
@@ -3773,20 +3829,6 @@ FUNCTION auth_pwgen(){
 }
  
 ?>
-#+end_src
-
-** Regex Matching Patterns
-#+begin_src php
- 
- 
-Social Security Number
-^(?!000)([0-6]\d{2}|7([0-6]\d|7[012]))([ -]?)(?!00)\d\d\3(?!0000)\d{4}$
- 
-US phone with or without parentheses
-^\([0-9]{3}\)\s?[0-9]{3}(-|\s)?[0-9]{4}$|^[0-9]{3}-?[0-9]{3}-?[0-9]{4}$
- 
-ISO Date (19th to 21st century only)
-^((18|19|20)\d\d)-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])$
 #+end_src
 
 ** Unique Array function
@@ -4075,43 +4117,6 @@ FUNCTION param($Name)
 ?>
 #+end_src
 
-** Base 64 Decode
-Description: I recently ran across a freeware web application written in PHP
-that utilized the following method to encrypt its source code. You can decode
-the encoded script with this PHP snippet.
-
-#+begin_src php
-<?PHP 
- 
-// sample is encoded like this:
-// eval(gzinflate(base64_decode('encoded text'))); 
- 
- 
-ECHO "\nDECODE nested eval(gzinflate()) by DEBO Jurgen <jurgen@person.be>\n\n";
-ECHO "1. Reading coded.txt\n";
-$fp1 = FOPEN ("coded.txt", "r");
-$contents = FREAD ($fp1, FILESIZE ("coded.txt"));
-FCLOSE($fp1);
-ECHO "2. Decoding\n";
-WHILE (PREG_MATCH("/eval\(gzinflate/",$contents)) {
-$contents=PREG_REPLACE("/< \?|\?>/", "", $contents);
-EVAL(PREG_REPLACE("/eval/", "\$contents=", $contents));
-}
-ECHO "3. Writing decoded.txt\n";
-$fp2 = FOPEN("decoded.txt","w");
-FWRITE($fp2, TRIM($contents));
-FCLOSE($fp2);
- 
-/*
-1.) Save the code you wish to decode in coded.txt
-2.) Save the above PHP snippet in file like decrypt.php
-3.) Create an empty text file called decoded.txt and it CHMOD it to 0666.
-4.) Run decrypt.php and open up decoded.txt to view the source code.
-*/
- 
-?>
-#+end_src
-
 ** Heavy Duty URL validator
 #+begin_src php
 <?PHP
@@ -4141,11 +4146,6 @@ FUNCTION thumbnail($image_path,$thumb_path,$image_name,$thumb_width)
 } 
  
 ?>
-#+end_src
-
-** Rounded random numbers
-#+begin_src php
-$foo = ROUND(RAND(1, 1000));
 #+end_src
 
 ** Export table to Excel or MS Word file
