@@ -152,7 +152,7 @@ echo $user; // prints name
 #+end_src 
 
 ** Accessing Substrings
-
+   
 #+begin_src php
 <?php
 
@@ -1388,6 +1388,7 @@ FCLOSE($fp2);
 #+end_src
 
 ** Bad word filter
+   
 #+begin_src php
 <?
  
@@ -1433,30 +1434,30 @@ $any = BadWordFilter($wordsToFilter,0);
 #+end_src
 
 ** Ordinalize (Suffix) Numbers
+
 #+begin_src php
 <?PHP
  
 FUNCTION ordinalize($number) {
  
-IF (IN_ARRAY(($number % 100),RANGE(11,13))){
-     RETURN $number.'th';
-}ELSE{
-     SWITCH (($number % 10)) {
-CASE 1:
-     RETURN $number.'st';
-BREAK;
-     CASE 2:
-     RETURN $number.'nd';
-BREAK;
-CASE 3:
-     RETURN $number.'rd';
-DEFAULT:
-     RETURN $number.'th';
-BREAK;
+  IF (IN_ARRAY(($number % 100),RANGE(11,13))){
+      RETURN $number.'th';
+  }ELSE{
+      SWITCH (($number % 10)) {
+        CASE 1:
+            RETURN $number.'st';
+        BREAK;
+            CASE 2:
+            RETURN $number.'nd';
+        BREAK;
+        CASE 3:
+            RETURN $number.'rd';
+        DEFAULT:
+            RETURN $number.'th';
+        BREAK;
+      }
+    }
 }
-}
-}
- 
 ?>
 #+end_src
 

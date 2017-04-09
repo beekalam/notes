@@ -25,6 +25,11 @@
 ** buypackage
 ** connection report
 *** summary
+** listuser
+*** seach by user_id
+*** DONE search by username
+*** DONE search by familyname
+*** DONE search by name
 * Done
 * Later
 ** grids calculate responsive width or scroll
