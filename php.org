@@ -4980,6 +4980,17 @@ ini_set("display_errors","1");
 error_reporting(E_ALL);
 #+end_src
 
+** capture the result of ~var_dump()~ to string
+
+You may want to check out var_export — while it doesn't provide the same output
+as var_dump it does provide a second $return parameter which will cause it to
+return its output rather than print it:
+#+begin_src php 
+$debug = var_export($my_var, true);
+#+end_src 
+
+http://stackoverflow.com/questions/139474/how-can-i-capture-the-result-of-var-dump-to-a-string
+
 * exceptions
 ** Throwing Exceptions
 

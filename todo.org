@@ -3,15 +3,21 @@
 ** DONE invoicelist
 ** DONE connection report
 *** DONE status icon
-** TODO send ticket 
-** TODO TOD reseller settings
+** DONE send ticket
+** DONE reseller settings
+*** template select popup 
 ** userinfo
 *** upload picture
 *** comments
 *** don't show charts when not data available
 *** user address doesn't get update
 *** how to know person_type vs company
+** dashboard 
+*** reseller username in left hand side menu
+** DONE right menu select on click 
 * Done
 * Later
 ** grids calculate responsive width or scroll
 ** dynamic fragment for showing info in table like reseller settings
+* ask
+** how to know which buys are the reseller buys?
