@@ -7,16 +7,23 @@
 ** DONE reseller settings
 *** template select popup 
 ** userinfo
-*** upload picture
-*** comments
+*** DONE upload picture
+**** fixe user upload in javascript and userid when the user is new
+*** DONE comments
+**** updatign comments
 *** don't show charts when not data available
-*** user address doesn't get update
+*** select upload button not working
+*** technical info does not get update
+*** DONE user address doesn't get update
 *** how to know person_type vs company
-** dashboard 
-*** reseller username in left hand side menu
-*** remove status text and icon
+*** ras_info mahdy_service -nas_port_type
+** DONE dashboard 
+*** DONE reseller username in left hand side menu
+*** DONE remove status text and icon
 ** DONE right menu select on click
 ** buypackage
+** connection report
+*** summary
 * Done
 * Later
 ** grids calculate responsive width or scroll
