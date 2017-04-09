@@ -11,28 +11,31 @@
 *** DONE upload picture
 **** fixe user upload in javascript and userid when the user is new
 *** DONE comments
-**** updatign comments
+**** updating comments
 *** don't show charts when not data available
-*** select upload button not working
-*** technical info does not get update
+*** DONE select upload button not working
+*** DONE technical info does not get update
+**** radio info popup
 *** DONE user address doesn't get update
 *** how to know person_type vs company
 *** ras_info mahdy_service -nas_port_type
+*** DONE user_info gets other reseller user's data eg(102051 is moezi user)but works in test2 panel /BH/
 ** DONE dashboard 
 *** DONE reseller username in left hand side menu
 *** DONE remove status text and icon
 ** DONE right menu select on click
 ** buypackage
 ** connection report
-*** summary
+*** DONE summary /BH: wrong summary values/
 ** listuser
-*** seach by user_id
+*** TODO seach by user_id /BH user_id search not workign/
 *** DONE search by username
 *** DONE search by familyname
 *** DONE search by name
 * Done
 * Later
 ** grids calculate responsive width or scroll
+*** responsive jqgrid 
 ** dynamic fragment for showing info in table like reseller settings
 ** https://scotch.io/tutorials/write-api-tests-with-postman-and-newman
 * ask
