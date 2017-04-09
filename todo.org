@@ -1,5 +1,6 @@
 * Doing
 ** DONE آموزش
+*** links not working 
 ** DONE invoicelist
 ** DONE connection report
 *** DONE status icon
@@ -28,5 +29,7 @@
 * Later
 ** grids calculate responsive width or scroll
 ** dynamic fragment for showing info in table like reseller settings
+** https://scotch.io/tutorials/write-api-tests-with-postman-and-newman
 * ask
 ** how to know which buys are the reseller buys?
+** should sup user work with my account?
