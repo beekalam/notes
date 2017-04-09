@@ -2413,6 +2413,32 @@ function mean() {
 $mean = mean(96, 93, 97);
 #+end_src
 
+** returning anonymous functions
+#+begin_src php
+<?php
+function setData($user, $pass, $host){
+  return function() use ($user, $pass, $host){
+    return array($user, $pass, $host);
+  };
+}
+
+//set the data once
+$container = setData('test', 'password', 'localhost');
+//use the function without passing the data again (and it should be noted, you
+//can't set the data again)
+var_dump($container());
+And the output:
+
+array(3) {
+  [0]=>
+  string(4) "test"
+  [1]=>
+  string(8) "password"
+  [2]=>
+  string(9) "localhost"
+}
+#+end_src
+
 * Misc
 ** get results from eval
 use  ~return~ eg:
@@ -4932,6 +4958,61 @@ This function checks if the given property exists in the specified class.
 Note: As opposed with isset(), property_exists() returns TRUE even if the property has the value NULL.
 
 Returns TRUE if the property exists, FALSE if it doesn't exist or NULL in case of an error.
+
+** Verify that the contents of a variable can be called as a function
+#+begin_src php 
+//  How to check a variable to see if it can be called
+//  as a function.
+
+//
+//  Simple variable containing a function
+//
+
+function someFunction() 
+{
+}
+
+$functionVariable = 'someFunction';
+var_dump(is_callable($functionVariable, false, $callable_name));  // bool(true)
+echo $callable_name, "\n";  // someFunction
+
+//
+//  Array containing a method
+//
+
+class someClass {
+
+  function someMethod() 
+  {
+  }
+
+}
+
+$anObject = new someClass();
+$methodVariable = array($anObject, 'someMethod');
+var_dump(is_callable($methodVariable, true, $callable_name));  //  bool(true)
+echo $callable_name, "\n";  //  someClass::someMethod
+?>
+#+end_src 
+
+** call callback given as parameter
+#+begin_src php
+<?php
+error_reporting(E_ALL);
+function increment(&$var)
+{
+    $var++;
+}
+
+$a = 0;
+call_user_func('increment', $a);
+echo $a."\n";
+
+// You can use this instead
+call_user_func_array('increment', array(&$a));
+echo $a."\n";
+?>
+#+end_src 
 
 * Debug
 ** dump all variables?

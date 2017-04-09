@@ -14,7 +14,9 @@
 *** how to know person_type vs company
 ** dashboard 
 *** reseller username in left hand side menu
-** DONE right menu select on click 
+*** remove status text and icon
+** DONE right menu select on click
+** buypackage
 * Done
 * Later
 ** grids calculate responsive width or scroll
