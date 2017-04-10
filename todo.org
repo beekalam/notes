@@ -32,6 +32,11 @@
 *** DONE search by username
 *** DONE search by familyname
 *** DONE search by name
+** TODO sup login does not work
+*** sell chart does not work with user sup /BH/
+** DONE upload to 172
+** userpanel
+*** check if user is logged in with modem password
 * Done
 * Later
 ** grids calculate responsive width or scroll
