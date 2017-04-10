@@ -6821,6 +6821,27 @@ http://www.tutorialrepublic.com/twitter-bootstrap-tutorial
     border-right-style: none;
     border-bottom-style: none;
 }
+#+end_src
+
+** password show on text
+
+#+begin_src html
+<script src="https://use.fontawesome.com/fd9dba5260.js"></script>
+<script>
+$(document).ready(function(){
+    $("#password_show_button").mouseup(function(){
+        $("#password_show").attr("type", "password");
+    });
+    $("#password_show_button").mousedown(function(){
+        $("#password_show").attr("type", "text");
+    });
+});
+</script>
+
+<div class="input-group" style="width: 49%;">
+<input value="This my password" id="password_show" type="password" class="form-control">
+<span style="width:0%" id="password_show_button" class="input-group-addon"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>
+</div>
 #+end_src 
 
 * =datatables=
