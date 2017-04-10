@@ -7661,6 +7661,55 @@ function wlog($message)
 }
 #+end_src 
 
+* composer
+** update only one vendor
+#+begin_src shell
+$ composer update foo/bar
+#+end_src 
+
+** update ~composer.lock~ file has
+#+begin_src shell
+$ composer update --lock
+#+end_src 
+
+** Add a library without editing your composer.json
+
+#+begin_src shell
+$ composer require "foo/bar:1.0.0"
+# quickly start a new project.
+$ composer init --require="foo/bar:1.0.0" -n
+$ cat composer.json
+{
+    "require": {
+        "foo/bar": "1.0.0"
+    }
+}
+#+end_src 
+
+If you omit to specify the version Composer will fetch the last stable.
+
+** be ready for production
+ust a reminder, before deploying your code in production, don't forget to
+optimize the autoloader:
+
+#+begin_src shell 
+$ composer dump-autoload --optimize 
+#+end_src 
+
+This can also be used while installing
+packages with the --optimize-autoloader option. Without that optimization, you
+may notice a performance loss from 20 to 25%.
+
+** Autoloading
+basic autoload example
+#+begin_src php
+require __DIR__ . '/vendor/autoload.php';
+
+$log = new Monolog\Logger('name');
+$log->pushHandler(new Monolog\Handler\StreamHandler('app.log', Monolog\Logger::WARNING));
+$log->addWarning('Foo');
+#+end_src 
+
 * problems
 ** Functions Pipeline
 *** statement

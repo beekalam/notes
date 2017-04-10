@@ -1549,6 +1549,56 @@ function getDomain() {
 }
 #+end_src
 
+** pure Javascript equivalent to JQuery $.ready()
+
+The simplest thing to do in the absence of a framework that does all the
+cross-browser compatibility for you is to just put a call to your code at the
+end of the body. This is faster to execute than an onload handler because this
+waits only for the DOM to be ready, not for all images to load.
+
+#+begin_src html
+  <!-- http://stackoverflow.com/questions/9899372/pure-javascript-equivalent-to-jquerys-ready-how-to-call-a-function-when-the -->
+  <!--  https://github.com/jfriend00/docReady -->
+
+  <html>
+  <head>
+  </head>
+  <body>
+  Your HTML here
+
+  <script>
+  // self executing function here
+  (function() {
+     // your page initialization code here
+     // the DOM will be available here
+
+  })();
+  </script>
+  </body>
+  </html>
+#+end_src 
+
+** load/reload an iframe 
+  
+#+begin_src javascript 
+document.getElementById('some_frame_id').contentWindow.location.reload();
+#using jquery
+$('#your_iframe').attr('src', $('#your_iframe').attr('src'));
+#+end_src 
+
+** ~setTimeout~ loop
+#+begin_src javascript
+function timeout() {
+    setTimeout(function () {
+        // Do Something Here
+        // Then recall the parent function to
+        // create a recursive loop.
+        timeout();
+    }, 1000);
+}
+
+#+end_src 
+
 * code conventions, styles
 http://javascript.crockford.com/code.html
 https://github.com/ryanmcdermott/clean-code-javascript
