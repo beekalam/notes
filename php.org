@@ -7640,6 +7640,35 @@ function wlog($message)
 }
 #+end_src 
 
+* problems
+** Functions Pipeline
+*** statement
+The task: build a function pipe() that takes any number of callables as arguments and returns a new callable.
+The returned callable passes any arguments to the first callable, then the result of that to the next callable, and so on, and will return the final result.
+So the processing order is left to right.
+Example:
+
+#+begin_src php 
+// first apply strtolower(), then apply ucwords second.
+$f = pipe('strtolower', 'ucwords');
+$f('FOO BAR') === ucwords(strtolower('FOO BAR'));
+#+end_src 
+
+*** my solution
+#+begin_src php 
+
+function pipe(...$params){
+    return function($input) use($params){
+        foreach($params as $p){
+            $input = call_user_func($p,$input);
+        }
+        return $input;
+    };
+}
+$f = pipe('strtolower','ucwords','strtolower','strtoupper');
+echo $f('FOO BAR');
+
+#+end_src 
 * useful resources
 ** php snippets
 
