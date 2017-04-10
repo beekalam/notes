@@ -7743,6 +7743,8 @@ echo $f('FOO BAR');
 ** php snippets
 
 http://psoug.org/browse.htm?cid=2
+** website performance tips
+https://gtmetrix.com/
 ** other
 
 https://github.com/ziadoz/awesome-php
