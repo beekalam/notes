@@ -7847,6 +7847,240 @@ move the method. When we are in trouble, the strategy is always the same—extra
 move everyone in your class.
 **** Move method
 **** Extract method
+*** Primitive Obsession
+Many programming languages, including PHP, provide two basic data types—the primitive type and
+structured type, which we represent with associative arrays in PHP. The structured data is used when
+none of the system primitives provided can properly represent certain data. A very common example is a
+record in a database, or a matrix. These data types are often duplicated within our code and, as we have
+seen before, are not good, because the duplicated code is the first bad smell. In this case the objects are
+the solution to our problem. The object itself is just the right compromise between primitive data and
+structured data.
+
+To implement this type of class, the strategy that we can use is to replace data value with an object,
+but if we find type code that is an alias for a structured data, we can replace it with a class or subclass it
+represents. If we have a condition that depends on the type of a given data, we can replace type code
+with a subclass or with a state/strategy pattern.
+In the following example we retrieve a record from a database, fetching it with array hydration mode.
+
+#+begin_src php 
+
+$id = 0;
+$db = new PDO('mysql:dbname=mytest', 'root');
+$stmt = $db->prepare('SELECT * FROM user WHERe id = :id');
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->execute();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+echo $user['firstname'], ' ', $user['lastname'], PHP_EOL;
+Instead we can define a User class and use it to hydrate query result.
+class User
+{
+  protected $firstname;
+    protected $lastname;
+  public function __toString()
+  {
+    return $this->firstname. ' '. $this->lastname;
+  }
+}
+...
+$stmt->execute();
+$user = $stmt->fetchObject('User');
+echo $user, PHP_EOL;
+#+end_src 
+
+**** Refactoring Strategies
+**** Replace data value with object
+**** Replace type code with class
+**** Replace type code with subclasses
+**** Replace type code with state/strategy
+*** Switch statements
+**** intro
+Another widespread bad smell is the use of repeated and duplicate switches. The switch control
+structure usually seeks to change the behavior or the state of an object based on one or more
+parameters. Using switches in this way, we forget that in object-oriented programming this type of
+behavior has the name “polymorphism” and is a property of objects themselves.
+
+Through the polymorphism property we can remove conditional logic, since the change occurs
+according to the type of the object itself, not because someone knows how to choose based on the value
+of a given parameter. The strategy that we implement to remove the switches is as follows:
+
+1. Extract the switch in a method.
+2. Move the newly extracted method in a class more accountable to the knowledge
+   of polymorphism.
+3. Decide whether to replace the type code executed by the switch with a
+   subclass, or a state/strategy pattern.
+4. After setting the structure of inheritance, we can use the replace
+   conditional with the polymorphism strategy.
+
+Sometimes the polymorphism may not be the appropriate solution. In this case we can simply
+replace the condition code with the methods, and in cases where the condition must return null, we can
+think of introducing a NullObject.
+
+#+begin_src php 
+
+class User
+{
+  ...
+  public function initCredentials()
+  {
+    switch($this->type)
+    {
+      case 'admin':
+      $this->addCredential('admin');
+      break;
+      case 'premium':
+      $this->addCredential('premium');
+      break;
+      case 'base':
+      $this->addCredential('base');
+      break;
+      default:
+      throw new Exception('Error: type is not valid');
+      break;
+  }
+}
+...
+}
+#+end_src 
+
+**** Extract method
+**** Move method
+**** Replace type code with subclass
+**** Replace typecode with state/strategy
+**** Replace conditional with polymorphism
+**** Introducing NullObject
+*** Lazy class
+**** intro
+
+All classes or subclasses that we make must have a reason to exist. If you think a class is not doing
+enough and is not very useful, it must be removed, because it costs a lot to maintain. If a subclass is not
+used in a class, we can collapse the inheritance hierarchy. If an attribute is an instance of a class of
+which we use only a single attribute or a single method, let’s make it a class inline into the referred class.
+
+**** Refactoring Strategies
+**** Collapse hierarchy
+**** Inline class
+*** Speculative Generality
+**** intro
+Developers often commit the sin of pride, thinking that they can predict the future. How many times
+have we decided to continue with the amount of code produced because we believed that someday it
+would be useful, for example, to have one abstract class, or a certain method, or that particular interface,
+only to find that such a day never arrives? Unfortunately, we must accept that we cannot predict the
+future. To have a good-smelling code, we must remove all the speculative code, such as code that
+nobody uses except for a test case. We must think only about what we need today, not tomorrow.
+For this bad smell, the strategies are similar to bad smells we have already discussed. In fact, we can
+use the strategy of collapse hierarchy for those subclasses that are not used, or the inline class to remove
+delegations from classes that are not really useful. We can also remove parameters from methods that
+never use them, and rename all the methods that are not sufficiently expressive.
+As previously suggested, a nice way to find this kind of speculation is when we realize that the only
+users of these methods are the test cases. So, remove the method and the associated test cases.
+
+**** Collapse hierarchy
+**** Inline class
+**** Remove parameter
+**** Rename method
+*** Temporary Field
+In object-oriented programming, all the attributes of a certain class should characterize that object in
+any context. Often when we implement our code, it happens that some of the attributes are used only in
+one context and the others in another context, perhaps chosen by a given parameter. This type of
+behavior is wrong because it introduces a lot of unnecessary conditional logic within our code. Instead
+we can safely extract a subclass that better characterizes the object in that kind of context.
+
+Therefore, the strategy is to extract a subclass and add the attributes that in a certain context do not
+represent the object. If the condition allows no object if the variable is null, we can introduce a
+NullObject to handle this case.
+
+#+begin_src php 
+class Customer
+{
+  protected $company_name;
+  protected $first_name;
+  protected $last_name;
+  protected $is_company;
+  public function getFullName()
+  {
+    if ($this->is_company)
+    {
+      return $this->getCompanyName();
+    }
+    return $this->getFirstName() . ' ' . $this->getLastName();
+  }
+}
+#+end_src 
+
+In the previous class we have a $first_name and $last_name that are temporary properties of our
+class. They are used only when Customer is not a company, so they are context-dependent. We can
+remove this double behavior, extracting two subclasses and making Customer an abstract class.
+
+#+begin_src php 
+abstract class Customer
+{
+  abstract public function getFullName();
+}
+class Person extends Customer
+{
+  protected $first_name;
+  protected $last_name;
+  public function getFullName()
+  {
+    return $this->getFirstName(), ' ', $this->getLastName();
+  }
+}
+
+class Company extends Customer
+{
+  protected $company_name;
+  public function getFullName()
+  {
+    return $this->getCompanyName();
+  }
+}
+
+#+end_src 
+**** Extract subclass
+**** Introduce NullObject
+*** Data class
+**** intro
+The data classes are all those classes that only have to set and get a set of their attributes, without having
+some business logic. They are also called setter/getter classes. Usually these classes, when born, publicly
+expose all their attributes, and this behavior may be too brash. When the class is small and we have it
+under control, the problem will be minimal, but when these classes grow, if we are not careful, we risk
+exposing too much. These classes are like children—while they are growing, they must assume some
+responsibility.
+
+The first suggestion is to set all the attributes of those classes to private or protected, and create a
+series of getter and setter that may provide public access to these attributes. This strategy is known as
+encapsulation field. When an attribute is a collection of objects or structured data, we must do the same
+thing because the collection can’t be changed all at once—only one item at a time. This strategy is called
+encapsulate the collection. Moreover, if we have attributes that should never be modified outside, we
+should not remove setting methods that modify them. If there is an object that uses the setter on the
+attributes that should not be changed, extract the external method into our data class and related
+external object to it, so that the change is internal.
+
+**** Encapsulate field
+**** Encapsulate collection
+**** Remove setting method
+*** Comments
+**** intro
+When we say that comments are a source of bad smells, hordes of programmers may become angry. In
+our opinion, as that of Martin Fowler, the point is that a comment is not a bad smell, but when the
+comment is inline to code and it is used to explain what the code does, this is a bad smell. All method or
+class comments are important and should be used to explain how something works, but not what it
+does. To remove this bad smell, you can implement the following strategy whenever you want to write a
+comment to a block of code:
+
+1. Instead of the comment, write a method where the method name expresses
+   exactly the same concept of the comment.
+2. Extract the block of code that we wanted to comment in the method.
+3. Invoke the method where we wanted to put the comment.
+
+But if we want to write a comment about what a certain call to method does because it isn’t clear,
+rename the method with a more expressive name and reduce the list of parameters passed, introducing
+a parameter object or preserving the whole object via parameters or creating objects of any object. If
+you need to remember some rules required by the system in a certain context, instead of writing the
+comment, introduce a method that tests the assertion rule.
+**** Extract method
+**** Preserve whole object
+**** Introduce parameter object
 * useful resources
 ** php snippets
 
