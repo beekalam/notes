@@ -7739,6 +7739,114 @@ $f = pipe('strtolower','ucwords','strtolower','strtoupper');
 echo $f('FOO BAR');
 
 #+end_src 
+* refactoring
+** by smell
+*** Duplicate code strategies
+**** Extract method
+**** Pull up field
+**** form template method
+**** substitude algoirthm
+*** Long method
+**** intro
+The most common strategy to refactor this type of software is the *extract method*. We find pieces of
+code that go great together and put them in an external method. One heuristic method that we can use
+to correctly separate the code is to follow the comments. Since reading long code is very difficult,
+diligent programmers often comment on blocks of code that explain what they do. Here, every time we
+encounter a comment, we can
+
+  1. Write a new method in the same class (the name should represent what the
+     code does)
+
+  2. Move the block of code under the comment from the routine to the new method
+
+  3. Add a comment that explains not what method does but how it does it.
+
+We can also create new methods that contain only a single line of code, if the
+name of the new method explains better what the code does. The key to this
+strategy is not so much the length of the method, but the semantic distance
+between what the method does and how it does it.
+
+**** extract method
+**** move method
+*** Large class
+**** intro
+A class that tries to do too many things can be easily distinguished by the number of attributes it
+possesses. When a class has too many attributes, it is very easy to create duplicate code, making it
+difficult to maintain and read.
+The two best strategies are to combine the attributes that go well together, such as attributes with
+the same prefixes or suffixes, e.g., home_address and office_address, or fax_number and
+phone_number, and extract new classes that include these similar attributes. If the attributes belong
+strongly to class and can’t be merged, but they are used differently in different instances of the same
+class, we can extract subclasses and divide these attributes in these subclasses.
+
+**** extract class
+**** extract subclass
+*** Long parameter list
+**** intro
+With procedural programming we often use lots of long lists of parameters passed to functions.
+Unfortunately, this method used to be mandatory, since the only alternative was to use global variables,
+which, we know, are evil. With object-oriented programming, luckily, we no longer need long lists of
+parameters, for two main reasons:
+
+ 1. There are objects.
+ 2. A class method knows all private, protected, and public parameters of the
+    class where it’s implemented and all protected and public parameters of the
+    inherit class.
+
+Moreover, when we have parameters that can be grouped into a single object we can introduce a
+parameter object and pass it directly to the method rather than individual parameters. Instead, if we are
+passing the individual attributes of the same object, we can preserve the whole object and pass the
+object directly. If we invoke a method and then pass the result directly to another method, we can
+replace the parameter with the method and call it directly into the later-invoked method.
+The only exception for which these strategies can’t be applied is when we don’t want to create
+dependency between object and class. In this case we can pass all the attributes separately, but we must
+be aware of what this means. Before making this decision we have to review the design of our
+application to understand whether we can improve it to avoid a bad smell.
+
+**** Replace parameter with method
+**** Preserve whole object
+**** introduce parameter object
+*** Divergent Change
+**** intro
+When we change a certain feature in software that is truly moldable, we should be able to make the
+change in a single clear point of our system. When this doesn’t happen, and, instead, we must change
+multiple methods of the same class to make different changes, then we have done something wrong.
+
+For example, if we have to modify two methods of the same class to change the database
+connection, and we have to change four methods to add a new graphical interface to a particular
+component in the same class, it is probably better to split this class into two classes, so as to isolate the
+change in a single point. The strategy applied is the extract class. We create a new class; we extract the
+common methods in the new class and let it communicate in some way.
+**** Extract class
+*** Shotgun Surgery
+**** intro
+This bad smell is the perfect opposite of the previous divergent change. In
+practice, when we have to modify many classes to make a single change, this
+means that we have a design overhead.
+
+When we have to change two different methods of two different classes, we can
+move the method in the most representative class. If we instead have to change
+attributes of different classes, we can move only attributes in the most
+representative class. Sometimes we might remove all classes and move all
+attributes within the class that uses it. This strategy takes the name of inline
+class.
+
+**** Move method
+**** Move field
+**** inline class
+*** Feature Envy 
+**** intro
+When we write our software, we must never forget that an object is a set of data and processes that
+compute these data. This thought should help us to identify all the methods that do not process the data
+in our class, but data of the other classes, invoking only external methods. As you can imagine, these
+methods are in the wrong position. To resolve this situation we can simply move the method from one
+class to another.
+If only a part of the code must be moved, first extract it in a new method and then move it. If our
+code actually invokes methods of different classes, it can sometimes be complex to figure out where to
+move the method. When we are in trouble, the strategy is always the same—extract more methods and
+move everyone in your class.
+**** Move method
+**** Extract method
 * useful resources
 ** php snippets
 
