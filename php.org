@@ -7739,6 +7739,7 @@ $f = pipe('strtolower','ucwords','strtolower','strtoupper');
 echo $f('FOO BAR');
 
 #+end_src 
+
 * refactoring
 ** by smell
 *** Duplicate code strategies
