@@ -134,6 +134,8 @@ $ sudo nmap -sS -p- 172.30.42.1
 $ sudo namp -sU
 # operating system scan
 $ sudo nmap -sS -O 172.30.42.1
+# scan one port 
+$ sudo nmap -sV -p 22,53 <ip>
 
 #+end_src 
 

@@ -7883,6 +7883,7 @@ Make a separate temporary variable for each assignment.
   final double area = _height * _width;
   System.out.println (area);
 #+end_src 
+
 ** Replace Method with Method Object
 
 You have a long method that uses local variables in such a way that you cannot apply Extract Method
