@@ -7740,7 +7740,198 @@ echo $f('FOO BAR');
 
 #+end_src 
 
+*** my solution #2
+     
+#+begin_src php
+function pipe(){
+    // get all function arguments
+    $numArgs = func_num_args();
+    if($numArgs < 2){
+        throw InvalidArgumentException('pipe takes 2 or more arguments');
+    }
+    // assume first argument is the input
+    $input = func_get_arg(0);
+    // loop in all functions
+    $ret = $input;
+    for($i=1; $i < $numArgs; $i++){
+        $ret = func_get_arg($i)($input);
+    }
+    //return the results
+    return $ret;
+}
+
+$f = pipe("test",'strtoupper','strtolower','ucwords');
+echo $f;
+#+end_src 
+
 * refactoring
+  
+** Replace Temp with Query
+
+You are using a temporary variable to hold the result of an expression.
+
+Extract the expression into a method. Replace all references to the temp with
+the expression. The new method can then be used in other methods.
+
+** Inline Method
+
+A method's body is just as clear as its name.
+
+Put the method's body into the body of its callers and remove the method.
+
+#+begin_src java
+int getRating() {
+  return (moreThanFiveLateDeliveries()) ? 2 : 1;
+}
+boolean moreThanFiveLateDeliveries() {
+  return _numberOfLateDeliveries > 5;
+}
+
+//refactored
+int getRating() {
+  return (_numberOfLateDeliveries > 5) ? 2 : 1;
+}
+#+end_src 
+
+inverse of Extract Method
+
+** Inline Temp
+
+You have a temp that is assigned to once with a simple expression, and the temp
+is getting in the way of other refactorings.
+
+Replace all references to that temp with the expression.
+
+#+begin_src java
+double basePrice = anOrder.basePrice();
+return (basePrice > 1000)
+
+//refactored
+return (anOrder.basePrice() > 1000)
+#+end_src 
+
+** Replace Temp with Query
+
+You are using a temporary variable to hold the result of an expression.
+
+Extract the expression into a method. Replace all references to the temp with
+the expression. The new method can then be used in other methods.
+
+#+begin_src java
+double basePrice = _quantity * _itemPrice;
+if (basePrice > 1000)
+  return basePrice * 0.95;
+else
+  return basePrice * 0.98;
+
+// refactored
+if (basePrice() > 1000)
+  return basePrice() * 0.95;
+else
+  return basePrice() * 0.98;
+...
+double basePrice() {
+  return _quantity * _itemPrice;
+}
+#+end_src 
+
+** Extract Variable
+You have a complicated expression.
+
+Put the result of the expression, or parts of the expression, in a temporary
+variable with a name that explains the purpose.
+
+#+begin_src java
+if ( (platform.toUpperCase().indexOf("MAC") > -1) &&
+     (browser.toUpperCase().indexOf("IE") > -1) &&
+      wasInitialized() && resize > 0 )
+{
+  // do something
+}
+
+//refactored
+final boolean isMacOs     = platform.toUpperCase().indexOf("MAC") > -1;
+final boolean isIEBrowser = browser.toUpperCase().indexOf("IE")  > -1;
+final boolean wasResized  = resize > 0;
+
+if (isMacOs && isIEBrowser && wasInitialized() && wasResized)
+{
+  // do something
+}
+#+end_src 
+
+inverse of Inline Temp
+
+** Split Temporary Variable
+
+You have a temporary variable assigned to more than once, but is not a loop
+variable nor a collecting temporary variable.
+
+Make a separate temporary variable for each assignment.
+
+#+begin_src java
+  double temp = 2 * (_height + _width);
+  System.out.println (temp);
+  temp = _height * _width;
+  System.out.println (temp);
+
+//refactored
+  final double perimeter = 2 * (_height + _width);
+  System.out.println (perimeter);
+  final double area = _height * _width;
+  System.out.println (area);
+#+end_src 
+** Replace Method with Method Object
+
+You have a long method that uses local variables in such a way that you cannot apply Extract Method
+
+Turn the method into its own object so that all the local variables become
+fields on that object. You can then decompose the method into other methods on
+the same object.
+
+#+begin_src java
+class Order...
+double price() {
+  double primaryBasePrice;
+  double secondaryBasePrice;
+  double tertiaryBasePrice;
+  // long computation;
+  ...
+}
+#+end_src 
+
+** Substitute Algorithm
+
+You want to replace an algorithm with one that is clearer.
+
+Replace the body of the method with the new algorithm.
+
+#+begin_src java
+String foundPerson(String[] people){
+  for (int i = 0; i < people.length; i++) {
+    if (people[i].equals ("Don")){
+      return "Don";
+    }
+    if (people[i].equals ("John")){
+      return "John";
+    }
+    if (people[i].equals ("Kent")){
+      return "Kent";
+    }
+  }
+  return "";
+}
+
+//refactored
+String foundPerson(String[] people){
+  List candidates = Arrays.asList(new String[] {"Don", "John", "Kent"});
+  for (int i=0; i<people.length; i++)
+    if (candidates.contains(people[i]))
+      return people[i];
+  return "";
+}
+#+end_src 
+
 ** by smell
 *** Duplicate code strategies
 **** Extract method
@@ -8082,6 +8273,8 @@ comment, introduce a method that tests the assertion rule.
 **** Extract method
 **** Preserve whole object
 **** Introduce parameter object
+* Defensive programming
+
 * useful resources
 ** php snippets
 
