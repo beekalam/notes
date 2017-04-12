@@ -4895,6 +4895,8 @@ class foo
 $obj = new foo();
 $obj->print_func();      // Returns: print_func
 $obj->print_method();    // Returns: foo::print_method
+//using namespace
+class_exists("\\Whoops\\Exception\\ErrorException");
 #+end_src
 http://www.php.net/manual/en/language.constants.predefined.php
 ** get type of variable 
