@@ -104,8 +104,438 @@ problem. If a single solution suffices, the algorithm stops; if other
 solutions need to be searched for, the algorithm continues searching
 for them by backtracking to the leaf’s parent.
 
+* TRIZ
+** Inventive Principle 1: Segmentation
 
- 
+    Divide an object into independent parts
+        Flat-pack furniture
+        Segmented tent poles
+        Sales teams have different markets/geographical areas
+    Make an object easy to take apart
+        Quick-release bicycle wheels
+        Use contract workers instead of permanent employees
+    Make the object even more fragmented or segmented
+        Many small, local offices rather than one large HQ
+        Telecommute: employees work from home
+
+** Inventive Principle 2: Taking Out
+
+    Take out a problem
+        Air conditioning in the room, noise elsewhere
+        Light pipes: get light where needed without heat
+    Only get what you need
+        Scarecrow
+        Buy-in expertise
+        No-frills hotel
+
+** Inventive Principle 3: Local Quality
+
+    Change an object from uniform to non-uniform
+        Ergonomic knife handles
+        Offer different products or use different marketing strategies for different geographical markets
+    Change the environment from uniform to non-uniform.
+        Working hours phased to accommodate people working on international, shifted time-zone projects
+    Make each part of an object function in conditions most suitable for its operation
+        Night-time adjustment on rear-view mirror
+    Make each part of an object fulfil a different and useful function
+        Hammer with nail-puller
+
+** Inventive Principle 4: Asymmetry
+
+    Change the shape of an object from symmetrical to asymmetrical
+        Funnel with off-set exit for faster flow rate
+        Use a different marketing approach for different types of clients
+    Change the shape of an object to suit external asymmetries
+        Ergonomic running shoes
+    If an object is asymmetrical, make it more asymmetrical
+        Different running shoes to suit users’ running styles
+
+** Inventive Principle 5: Merging
+
+    Join objects or operations together
+        Bi-focal lenses
+        Crew members in McDonalds
+    Join parallel operations in time
+        Include your customers and suppliers in design phase
+        Work on a project in parallel rather than in series
+
+** Inventive Principle 6: Multi-Function
+
+    Make an object perform multiple functions; eliminate the need for other objects.
+        Swiss Army Knife
+        ‘One-stop shopping’ – supermarkets sell insurance, banking services, fuel, newspapers and so on.
+
+** Inventive Principle 7: Nested Doll
+
+    One object is placed inside another; which, in turn, is inside another, and so on.
+        Shopping centres/malls
+        Nested tables
+        Measuring cups or spoons
+    One object passes through another
+        Telescopic car aerial
+        Tape measure
+
+** Inventive Principle 8: Counterweight
+
+    Compensate for the weight of an object by joining it with another object which provides lift.
+        Hot-air balloons
+        Kayaks with integrated foam floats
+        Build teams of different personality types
+    Compensate for the weight of an object by making it interact with the environment
+        Maglev trains use magnetic levitation to create lift and propulsion, reducing friction and allowing for higher speeds
+        Use renewable energy to reduce a company’s carbon footprint
+        Boost popularity by connecting with popular causes; for example, charities
+
+** Inventive Principle 9: Prior Counteraction
+
+    Add a counteraction to manage a downside
+        Make clay pigeons out of ice or clay
+        Off-set carbon emissions
+        Give generous severance packages when making redundancies
+    Create beforehand stresses in an object that will oppose known undesirable working stresses later on
+        Pre-stressed concrete compensates for concrete’s weakness in tension
+        Ergonomically assess workstations
+
+** Inventive Principle 10: Prior Action
+
+    Do a required action in advance
+        Practise emergency procedures in advance of crisis
+        Agree meeting agendas in advance
+        Arrange objects conveniently so they can go into action without loss of time
+        Just-In-Time production
+        In-store bakeries
+
+** Inventive Principle 11: Cushion in Advance
+
+    Prepare emergency means beforehand to compensate for the relatively low reliability of an object
+        Back up computer data
+        Contingency planning
+        Have more than one person trained in skills critical to the company
+
+** Inventive Principle 12: Equal Potential
+
+    Change the conditions of work so that an object doesn’t need to be raised or lowered
+        Mechanic’s pit in garage (car isn’t lifted)
+        Grow the job rather than promote the person
+
+** Inventive Principle 13: The Other Way Round
+
+    Do the opposite action
+        Cash-back in stores: customers take money away instead of security firms
+    Make movable parts fixed, and fixed parts movable
+        Home-shopping
+        Treadmills
+        Wind tunnels
+    Turn the object upside down
+        Customers create their own product, for example, radio listeners dialling in for talk shows or to give traffic updates
+        Tomato sauce bottle with opening on the bottom
+
+** Inventive Principle 14: Spheres and Curves
+
+    Switch from flat surfaces to spherical ones; from parts shaped as cubes or rectangles to ball-shaped structures
+        Mezzaluna (knife shaped as a half-moon)
+        Arches and domes for strength in architecture
+        360-degree appraisals
+    Use rollers, balls, spirals, domes
+        Rotary pizza cutter
+        Ballpoint pens
+        Archimedes screw
+        Make repeat purchases easy (such as direct debits, subscriptions)
+    Go from linear to rotary motion, use centrifugal forces
+        Push–pull to rotary switches (for example, lighting dimmer switches)
+        Loyalty schemes
+
+** Inventive Principle 15: Dynamism
+
+    Change the object or environment to work the best at every stage of work
+        Adjustable steering wheel (or seat, back support, mirror position and so on)
+        Different price and positioning for products throughout their life
+    Divide an object into parts that can move relative to each other
+        Bifurcated bicycle saddles
+        Folding chairs
+    If an object is rigid, make it movable
+        Bendy drinking straw
+        Hot-desking
+        Virtual 360-degree tours online
+
+** Inventive Principle 16: Partial or Excessive Action
+
+    If it’s difficult to get 100 per cent of an action, go for more or less
+        Overfill bottles on production line
+        Overspray when painting, then remove the excess
+        Ensure happy customers by providing exceptional customer service
+        Show products and services online even if it’s not possible to purchase online
+
+** Inventive Principle 17: Another Dimension
+
+    Move to another dimension: from one to two or three dimensions
+        Coiled telephone wire/garden hose
+    Go from a single layer to multi-layers
+        Multi-storey car park
+        Hierarchy of command
+    Tilt an object or turn it on its side
+        Cars on road transporter inclined to save space
+    Use the other side of an object
+        Print on both sides of paper
+        Electronic components mounted on both sides of circuit board
+
+** Inventive Principle 18: Mechanical Vibration
+
+    Make an object vibrate
+        Electric toothbrushes
+    Increase the frequency of vibration (up to ultrasonic)
+        Sonic toothbrushes
+        Sonic facial brushes
+    Use an object's resonant frequency
+        Break up kidney stones with ultrasound
+        Tuning fork
+        Use piezoelectric vibrators instead of mechanical ones
+        Quartz watches
+    Use combined ultrasonic and electromagnetic field oscillations together
+        Ultrasonic and electromagnetic pest repellers deter both mice and insects
+
+** Inventive Principle 19: Periodic Action
+
+    Go from continuous action to periodic or pulsating actions
+        ABS brakes
+        Flashing bicycle lights
+        Change leadership: many university heads of department only lead for a year, senior academics rotate leadership
+    If an action is already periodic, change the rate or level of change
+        Appraise performance more regularly than annual reviews
+    Use pauses between actions to perform a different action
+        Perform maintenance work during slow periods
+        Inkjet printer cleans head between passes
+
+** Inventive Principle 20: Continuous Useful Action
+
+    Carry out work without a break
+        24-hour manufacturing
+        Hospital emergency departments
+    Remove idle or intermittent actions
+        Kayaks use double-ended paddle to utilise recovery stroke
+        Multi-skill workforce to enable them to perform other tasks when their core job has quiet periods
+
+** Inventive Principle 21: Rushing Through
+
+    Do a process, or certain stages (which are harmful or dangerous) at high speed
+        Cut plastic faster than heat can propagate in the material, to avoid deforming the shape
+        Immediate dismissal
+
+** Inventive Principle 22: Blessing in Disguise
+
+    Use harmful factors (particularly, harmful effects of the environment) to get something good
+        Pain can be useful feedback to stop doing something; for example, walk on broken ankle
+    Remove a harmful action by adding another harmful action
+        Reduce traffic in cities by introducing a congestion charge
+    Increase a harmful factor so much that it is no longer harmful
+        Restrict supply of goods to create scarcity value (such as designer handbags)
+
+Inventive Principle 23: Feedback
+
+    Introduce feedback
+        Customer surveys
+        Feedback forms after training
+        Exercise apps that inform you of distance run, average speed, calories burned
+    If feedback is already used, make it more effective
+        Go from paper feedback forms to interviews or online surveys
+        Share information from exercise apps on social media
+
+** Inventive Principle 24: Intermediary
+
+    Use an intermediary object to pass on an action
+        Play guitar with a plectrum
+        Marriage counsellor
+        Travel agent
+    Temporarily join an object with another (easily removable)
+        Oven gloves for hot dishes
+        Bridging loans
+        ‘The A-Team’
+
+** Inventive Principle 25: Self-service
+
+    An object services, maintains and repairs itself
+        Self-cleaning ovens
+        Wikipedia
+        Customer loyalty reward schemes (such as Nectar cards) collect information about individual’s purchasing decisions to target services and products
+        Bicycle tyres filled with gel to seal punctures instantly
+    Use waste (or lost) resources, energy or substances.
+        Use heat from a process to generate electricity (co-generation)
+        Use travel time to work
+
+** Inventive Principle 26: Copying
+
+    Replace unavailable, expensive, complicated, fragile objects with cheap, simple copies
+        Scan rare, historic books and documents, so they are accessible to all and the original remains protected
+    Replace an object, or process with optical copies
+        Measure an object from a photograph
+        Product manuals as PDFs rather than printed booklets
+        Online training instead of classroom training
+    If visible optical copies are used, move to infrared or ultraviolet; use unusual ways of seeing/viewing situations
+        Police helicopters use infrared to track suspects
+        Evaluate customer satisfaction in multiple ways, for example, interviews, questionnaires, observing customers use product
+
+** Inventive Principle 27: Cheap, Short-Living Objects
+
+    Replace an expensive object with many inexpensive objects that don’t last as long
+        Disposable serviettes, napkins, cups, cameras
+        Automate work procedures and have low-skilled, low-paid staff who are easily replaceable
+        Make product cheap and easily replaceable instead of reusable, for example, contact lenses, nappies, low-cost clothes
+
+** Inventive Principle 28: Replace Mechanical System
+
+    Replace a mechanical system with a sensory one (optical, acoustic, taste or smell)
+        Lights and bells rather than secure barriers at rail crossings
+        Smell of baking bread to entice shoppers
+        Security systems
+    Use electric, magnetic and electromagnetic fields to interact with the object; use influence instead of rules
+        Magnetic bearings
+        TV remote control
+        Use staff loyalty to encourage good behaviour
+    Replace stationary fields with moving unstructured fields; replace unstructured fields with structured ones
+        Hot desking
+        GPS sensors inform central control point of location of delivery vans, taxis
+    Use fields in conjunction with field-activated (such as ferromagnetic) particles
+        Ultrasonic welding
+
+** Inventive Principle 29: Pneumatics and Hydraulics
+
+    Use gas and liquid parts of an object instead of solid parts (for example, inflatable, filled with liquids, air cushion, hydrostatic, hydro-reactive); use flexible influences instead of solid rules
+        Inflatable mattresses
+        Hovercraft
+        Use guidelines, not rules
+        Create a ‘health and safety culture’ instead of a long list of rules
+
+** Inventive Principle 30: Flexible Membranes and Thin Films
+
+    Use flexible shells and thin films instead of three-dimensional structures
+        Tarpaulin car cover instead of garage
+        Open-plan offices
+    Isolate the object from the external environment using flexible shells and thin films
+        Bubble-wrap
+        Bandages and plasters
+        Offices with cubicles
+
+** Inventive Principle 31: Porous Materials
+
+    Make an object porous or add porous elements (inserts, coatings and so on)
+        Cavity wall insulation
+        Foam metals
+        ‘Open door’ management policies
+    If an object is already porous, use the pores to introduce a useful substance or function
+        Medicated dressings
+        Train customer service teams to sell additional products and services (for example, at shop tills)
+
+** Inventive Principle 32: Colour Change
+
+    Change the colour of an object or its surroundings
+        Colour-changing paint or sun cream
+        Light-sensitive glasses
+    Change the transparency of an object or its surroundings
+        Make organisation’s objectives and decision-making processes clear to everyone
+        Transparent solar cells (make every window/screen a photovoltaic solar cell)
+    Observe objects or processes that are hard to see by using coloured additives
+        Use opposing colours to increase visibility (for example, butchers use green decoration to make meat look redder)
+    If additives are already used, monitor things that are hard to see by adding luminescence/other markers
+        UV marker pens to identify stolen goods (only seen under ultraviolet light)
+        Get potential customers to register interest with special offers
+
+** Inventive Principle 33: Uniform Material
+
+    Objects interacting with the main object should be made of the same material (or one with similar properties)
+        Ice cubes made of drink they are cooling (such as lemonade)
+        Wood dowel joints for joining wooden components
+        Make sure all your employees can understand and sell your products
+        ‘Mirror’ someone’s body language to facilitate easy communication
+
+** Inventive Principle 34: Discarding and Recovering
+
+    Make objects (or part of them) that have fulfilled their useful functions go away (discard by dissolving, evaporating and so on) or modify them directly during operation
+        Dissolving capsules for vitamins and medicine
+        Bio-degradable containers and bags
+        Take on temporary staff to manage busy periods, such as in shops over Christmas
+    Restore consumable parts of an object during operation
+        Sell on to ‘used up’ customer: for example, transfer student bank accounts to graduate bank accounts when they finish their course; dentists refer patients to dental hygienists
+        Self-sharpening blades
+        Mechanical pencil
+
+** Inventive Principle 35: Parameter Change
+
+    Change the physical state (for example, to a gas, liquid or solid)
+        Transport gases as liquids
+        Liquid soap instead of soap bar
+        Deodorant as a liquid, solid stick or aerosol spray
+        Virtual organisations
+        Customer service offered remotely (by phone or chat box online) instead of face to face
+    Change the concentration or density
+        Change number of staff
+        Fire briquettes: low density for lighting fires, high density for burning all night
+        Move from local to centralised distribution (or vice versa)
+    Change the degree of flexibility
+        Vulcanised rubber is less flexible and stronger
+        Hot-desking
+        Flexi-time
+    Change the temperature or volume
+        ‘Fire up’ and motivate employees
+        Increase individual’s scope of responsibility
+        Heated butter knives and ice cream scoops
+        Butter knives with built-in grater to soften cold butter
+    Change the pressure
+        Pressure cooking is faster
+        Manipulate stress levels (increase near deadlines)
+    Change other parameters
+        Semco: staff set their own wages, production targets, working hours
+        Thixotropic paints are viscous so they don’t drip, but become runny when shear force is applied by the brush against the surface being painted.
+
+** Inventive Principle 36: Phase Changes
+
+    Use phenomena occurring during phase changes (volume changes, loss of absorption of heat and so on)
+        Latent heat effects in melting or boiling
+        Break rocks by soaking in water and then freezing
+        Individuals try harder when proving themselves; for example, graduates, new to the post, newly promoted: use these people for difficult projects/those requiring long hours
+
+** Inventive Principle 37: Thermal Expansion
+
+    Use expansion (or contraction) of materials by heat; responsiveness to circumstances
+        Be very responsive to change; for example, have extra staff available for busy periods
+        Emergency services available to deal with crises
+        Shape memory materials
+        Shrink-wrapping
+    Use multiple materials with different coefficients of thermal expansion; use multiple and different systems that respond to circumstances differently
+        Bi-metallic strips used in thermostats
+        Different emergency services offer different expertise in major car crashes, for example, police create safe space on road and prevent other crashes; fire service to cut people out of cars; ambulance knows how to move injured people.
+
+** Inventive Principle 38: Boosted Interactions
+
+    Enrich the atmosphere
+        Create a competitive atmosphere to motivate sales team
+        Oxygen tent for asthmatic patients
+        Nitrous oxide injection for power boost in engines
+        Create the right atmosphere for different working environments: places with buzz for team working and discussing ideas; quiet zones for independent working
+    Create a highly enriched atmosphere
+        Use highly charismatic leaders to engage the workforce
+        Irradiation of food to extend shelf life
+    Enrich the atmosphere with unstable elements
+        Staff charged with energy through uncertainty: such as fear (threat of redundancy) or rewards (bonuses/promotion)
+        Use ozone to destroy micro-organisms
+
+** Inventive Principle 39: Inert Atmosphere
+
+    Replace a normal environment with an inert one
+        Libraries’ quiet environment creates a good environment to work, read and study
+        Corporate away days
+        Foam to separate a fire from oxygen
+    Add neutral parts or inert additives to an object
+        Use contractors and external consultants
+        Fire retardant additives
+
+** Inventive Principle 40: Composite Structures
+
+    Change from uniform to layered/composite (multiple) structures
+        Teams with diverse team members bring different skills and perspectives
+        Use different delivery methods in training (lectures, exercises, follow-up reading)
+        Fibre-reinforced composite materials in Boeing 787 wing and fuselage
+        Concrete aggregate
+
 * useful resources
 ** good reads
  https://www.amazon.com/Best-Sellers-Books-Decision-Making-Problem-Solving/zgbs/books/2679
