@@ -1197,6 +1197,26 @@ function randString($l = 8) {
 }
 #+end_src 
 
+** Generate random UUID
+#+begin_src php 
+/**
+ * Generate a random UUID (version 4).
+ *
+ * @since 4.7.0
+ *
+ * @return string UUID.
+ */
+function wp_generate_uuid4() {
+	return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+		mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+		mt_rand( 0, 0xffff ),
+		mt_rand( 0, 0x0fff ) | 0x4000,
+		mt_rand( 0, 0x3fff ) | 0x8000,
+		mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+	);
+}
+#+end_src 
+
 * numbers
 ** Checking Whether a Variable Contains a Valid Number
 
@@ -1631,6 +1651,23 @@ $quote = $quotes_array[RAND(0, COUNT($quotes_array) - 1)];
 ?>
 #+end_src
 
+** Determine if the variable is a numeric-indexed array.
+#+begin_src php 
+ /*
+ * @param mixed $data Variable to check.
+ * @return bool Whether the variable is a list.
+ */
+function wp_is_numeric_array( $data ) {
+	if ( ! is_array( $data ) ) {
+		return false;
+	}
+
+	$keys = array_keys( $data );
+	$string_keys = array_filter( $keys, 'is_string' );
+	return count( $string_keys ) === 0;
+}
+#+end_src 
+
 * Date and Time
 ** Finding the Current Date and Time
 Use strftime() or date() for a formatted time string, as in Example 3-2.
@@ -1928,6 +1965,15 @@ Array
 ** next month
 #+begin_src php
 $next_month = getDate(mktime(1, 1, 1, $date['mon'] + 1, $date["mday"], $date["year"];));
+#+end_src 
+
+** next day
+#+begin_src php
+function nextDay(DateTime $date)
+{
+  $next_day = clone $date;
+  return $next_day->modify('+1 day');
+}
 #+end_src 
 
 ** PHP date validation
@@ -2439,6 +2485,80 @@ array(3) {
   string(9) "localhost"
 }
 #+end_src
+
+** creating dynamic functions
+Use the closure syntax to define a function and store it in a variable:
+
+#+begin_src php 
+$increment = 7;
+$add = function($i, $j) use ($increment) { return $i + $j + $increment; };
+$sum = $add(1, 2);
+#+end_src 
+
+$sum is now 10. If you are using a version of PHP earlier than 5.3.0, use create_function()
+instead:
+
+#+begin_src php
+$increment = 7;
+$add = create_function('$i,$j', 'return $i+$j + ' . $increment. ';');
+$sum = $add(1, 2);
+#+end_src 
+
+A frequent use for anonymous functions is to create custom sorting functions for
+usort() or array_walk() :
+#+begin_src php 
+$files = array('ziggy.txt', '10steps.doc', '11pants.org', "frank.mov");
+// sort files in reverse natural order
+usort($files, function($a, $b) { return strnatcmp($b, $a); });
+// Now $files is
+// array('ziggy.txt', 'frank.mov','11pants.org','10steps.doc')
+#+end_src 
+
+** Using Named Parameters
+Problem
+You want to specify your arguments to a function by name, instead of simply their
+position in the function invocation.
+
+Solution
+PHP doesn’t have language-level named parameter support like some other languages
+do. However, you can emulate it by having a function use one parameter and making
+that parameter an associative array:
+#+begin_src php 
+function image($img) {
+  $tag = '<img src="' . $img['src'] . '" ';
+  $tag .= 'alt="' . (isset($img['alt']) ? $img['alt'] : '') .'"/>';
+  return $tag;
+}
+// $image1 is '<img src="cow.png" alt="cows say moo"/>'
+$image1 = image(array('src' => 'cow.png', 'alt' => 'cows say moo'));
+// $image2 is '<img src="pig.jpeg" alt=""/>'
+$image2 = image(array('src' => 'pig.jpeg'));
+#+end_src 
+
+** Returning Values by Reference
+Problem
+You want to return a value by reference, not by value. This allows you to avoid making
+a duplicate copy of a variable.
+
+Solution
+The syntax for returning a variable by reference is similar to passing it by reference.
+However, instead of placing an & before the parameter, place it before the name of the
+function:
+#+begin_src php 
+function &array_find_value($needle, &$haystack) {
+  foreach ($haystack as $key => $value) {
+    if ($needle == $value) {
+      return $haystack[$key];
+    }
+  }
+}
+#+end_src 
+
+Also, you must use the =& assignment operator instead of plain = when invoking the
+function:
+#+begin_src php 
+$band =& array_find_value('The Doors', $artists);
+#+end_src 
 
 * Misc
 ** get results from eval
@@ -5546,6 +5666,38 @@ You'll want the Content-Length header for file size, or $data[6].
 ?>
 #+end_src
  
+** Test if a give filesystem path is absolute.
+#+begin_src php 
+function path_is_absolute( $path ) {
+	/*
+	 * This is definitive if true but fails if $path does not exist or contains
+	 * a symbolic link.
+	 */
+	if ( realpath($path) == $path )
+		return true;
+
+	if ( strlen($path) == 0 || $path[0] == '.' )
+		return false;
+
+	// Windows allows absolute paths like this.
+	if ( preg_match('#^[a-zA-Z]:\\\\#', $path) )
+		return true;
+
+	// A path starting with / or \ is absolute; anything else is relative.
+	return ( $path[0] == '/' || $path[0] == '\\' );
+}
+#+end_src 
+
+** Join two filesystem paths together.
+#+begin_src php 
+function path_join( $base, $path ) {
+	if ( path_is_absolute($path) )
+		return $path;
+
+	return rtrim($base, '/') . '/' . ltrim($path, '/');
+}
+#+end_src
+
 * lumen
 ** lumen on apache
 install a lumen app in */var/www*
@@ -7935,6 +8087,95 @@ String foundPerson(String[] people){
 }
 #+end_src 
 
+** Move Method
+
+A method is, or will be, using or used by more features of another class than the class on which it is defined.
+
+Create a new method with a similar body in the class it uses most. Either turn
+the old method into a simple delegation, or remove it altogether.
+Additions
+
+Marian Vittek sent an example for moving a method to a method argument.
+
+#+begin_src  java
+class Project {
+  Person[] participants;
+}
+
+class Person {
+  int id;
+  boolean participate(Project p) {
+    for(int i=0; i<p.participants.length; i++) {
+	  if (p.participants[i].id == id) return(true);
+    }
+    return(false);
+  }   
+}
+
+... if (x.participate(p)) ...
+
+After applying the move you end up with
+
+class Project {
+  Person[] participants;
+  boolean participate(Person x) {
+    for(int i=0; i<participants.length; i++) {
+	  if (participants[i].id == x.id) return(true);
+    }
+    return(false);
+  }   
+}
+
+class Person {
+  int id;
+}
+
+... if (p.participate(x)) ...
+#+end_src 
+
+** Move Field
+
+A field is, or will be, used by another class more than the class on which it is defined.
+
+Create a new field in the target class, and change all its users.
+** Extract Class
+
+You have one class doing work that should be done by two.
+
+Create a new class and move the relevant fields and methods from the old class into the new class.
+** Inline Class
+
+A class isn't doing very much.
+
+Move all its features into another class and delete it.
+
+** Hide Delegate
+
+A client is calling a delegate class of an object.
+
+Create methods on the server to hide the delegate.
+
+** Remove Middle Man
+
+A class is doing too much simple delegation.
+
+Get the client to call the delegate directly.
+** Introduce Foreign Method
+
+A server class you are using needs an additional method, but you can't modify the class.
+
+Create a method in the client class with an instance of the server class as its first argument.
+#+begin_src java
+Date newStart = new Date (previousEnd.getYear(),
+previousEnd.getMonth(), previousEnd.getDate() + 1);
+
+Date newStart = nextDay(previousEnd);
+
+private static Date nextDay(Date arg) {
+  return new Date (arg.getYear(),arg.getMonth(), arg.getDate() + 1);
+}
+#+end_src 
+
 ** by smell
 *** Duplicate code strategies
 **** Extract method
@@ -8276,6 +8517,7 @@ comment, introduce a method that tests the assertion rule.
 **** Extract method
 **** Preserve whole object
 **** Introduce parameter object
+     
 * Defensive programming
 
 * useful resources
