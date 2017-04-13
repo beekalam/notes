@@ -93,6 +93,7 @@ iwconfig
 #+begin_src 
 forward .somesite.com  .
 #+end_src 
+
 ** network open sockets by program name?
 
 #+begin_src 
@@ -143,6 +144,29 @@ $ sudo nmcli connection modify wired-home ipv4.dns "192.168.0.3 8.8.8.8"
 # We can now display the properties with the following command:
 $ nmcli -p connection show wired-home
 #+end_src 
+
+** SAMBA
+*** Listing available smb shares on a network through the command line in linux
+#+begin_src shell 
+#This command is a very little known secret of Samba. It returns IP adresses of
+#all Samba servers in one's own broadcast domain:
+
+$ nmblookup __SAMBA__
+
+#This one returns a list of all NetBIOS names and their aliases of all Samba
+#servers in the neighbourhood (it does a 'node status query'):
+
+$ nmblookup -S __SAMBA__
+
+#This one returns a list of all IP adresses of SMB servers (that is,
+#Linux+Unix/Samba or Windows) in the neighbourhood:
+
+$ nmblookup '*'
+
+#Finally, all NetBIOS names and their aliases of all SMB servers (Linux+Unix/Samba or Windows):
+
+$ nmblookup -S '*'
+#+end_src
 
 * ssh
 ** installation
