@@ -1507,7 +1507,7 @@ curl --tr-encoding -X POST -v -# -o output -T filename.dat  http://example.com/r
 #+begin_src shell
 $ curl -c 'http://example.com/'
 # session flood
-$ hile true; do curl -c - 'http://localhost/xbs/login' 1> /dev/null; done 
+$ while true; do curl -c - 'http://localhost/xbs/login' 1> /dev/null; done 
 #+end_src
 
 ** set useragent string
