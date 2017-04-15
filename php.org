@@ -8306,6 +8306,12 @@ yet the steps are different.
 Get the steps into methods with the same signature, so that the original methods
 become the same. Then you can pull them up.
 
+** extract class 
+You have one class doing work that should be done by two.
+
+Create a new class and move the relevant fields and methods from the old class
+into the new class.
+
 ** by smell
 *** Duplicate code strategies
 **** Extract method
