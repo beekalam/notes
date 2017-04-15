@@ -8312,6 +8312,61 @@ You have one class doing work that should be done by two.
 Create a new class and move the relevant fields and methods from the old class
 into the new class.
 
+** Extract Subclass
+
+A class has features that are used only in some instances.
+
+Create a subclass for that subset of features.
+
+** Extract Superclass
+
+You have two classes with similar features.
+
+Create a superclass and move the common features to the superclass.
+
+inverse of Collapse Hierarchy
+
+** Inline Class
+
+A class isn't doing very much.
+
+Move all its features into another class and delete it.
+
+** Introduce Class Annotation
+
+You have a method whose implementation steps are so common that they can safely
+be hidden away.
+
+Declare the behavior by calling a class method from the class definition.
+
+** Replace Record with Data Class
+
+You need to interface with a record structure in a traditional programming
+environment.
+
+Make a dumb data object for the record.
+
+** Replace Subclass with Fields
+
+You have subclasses that vary only in methods that return constant data.
+
+Change the methods to superclass fields and eliminate the subclasses.
+
+** Replace Type Code with Class
+
+A class has a numeric type code that does not affect its behavior.
+
+Replace the number with a new class.
+
+** Replace Type Code with Subclasses
+
+You have an immutable type code that affects the behavior of a class.
+
+Replace the type code with subclasses.
+
+
+
+
 ** by smell
 *** Duplicate code strategies
 **** Extract method
