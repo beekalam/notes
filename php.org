@@ -6057,7 +6057,7 @@ session_start() !== false or die('could not start session');
 #+end_src
 
 ** ending a session
-   
+*** intro   
 use =session_destroy()= function.  
 
 Keep in mind that ending a session
@@ -6078,6 +6078,19 @@ echo "Now the value of username is blank: ".$_SESSION['username'];
 ?>
 #+end_src
 
+*** example #1
+#+begin_src php
+function closeSession()
+{
+//this empties the $_SESSION[] array
+$_SESSION = array();
+//find the name of current session (if there is one), and then remove it
+//from user's computer
+if (session_id() != "" || isset($_COOKIE[session_name()] ))
+  setcookie(session_name(), '', time() - 3600, '/');
+session_destroy();
+}
+#+end_src 
 ** Exposed Session Data 
    
  #+begin_src php
@@ -6142,6 +6155,20 @@ To remove a specific variable from the session use:
 session_unregister('variableName');
 # or
 unset($_SESSION['variableName']);
+#+end_src
+
+** session security
+*** using user's IP and USER_AGENT
+#+begin_src php
+$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
+$_SESSION['ua'] = $_SERVER['HTTP_USER_AGENT'];
+// now each time you load session variables, perform a quick security at the same time
+session_start();
+if($_SESSION['ip'] != $_SERVER['REMOTE_ADDR']  ||
+    $_SESSION['ua']  != $_SERVER['HTTP_USER_AGENT'])
+{
+  closeSession();
+}
 #+end_src 
 
 * SPL
