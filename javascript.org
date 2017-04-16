@@ -2412,8 +2412,6 @@ $(elementOrSelector).bind('event', handlerFx)
 $(elements).bind('event', handlerFx)
 #+end_src 
 
-** Stop listening.
-
 * Simple Inheritance in JavaScript
 Grossly simplified, JavaScript clones objects to extend them, while
 PHP, Ruby, Python and Java use and extend classes.  In JavaScript you
@@ -2493,8 +2491,8 @@ The || operator can be used to fill in default values:
 var middle = stooge["middle-name"] || "(none)";
 var status = flight.status || "unknown";
 
-Attempting to retrieve values from undefined will throw a TypeError exception. This
-can be guarded against with the && operator:
+//Attempting to retrieve values from undefined will throw a TypeError exception. This
+//can be guarded against with the && operator:
 
 flight.equipment // undefined
 flight.equipment.model // throw "TypeError"
