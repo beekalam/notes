@@ -70,8 +70,10 @@ To make function names available in defined functions, we can use the labels com
 
  * Misc
  ** display string
- 
+
  We can display a string using a function called princ:
 > (princ "Tutti Frutti")
  Tutti Frutti
  "Tutti Frutti"
+
+ 
