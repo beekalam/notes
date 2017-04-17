@@ -1,0 +1,77 @@
+* defining global variables
+
+A variable that is defined globally in Lisp is called a top-level definition. We can create new top-level definitions with the defparameter function:
+> (defparameter *small* 1)
+*SMALL*
+> (defparameter *big* 100)
+*BIG*
+
+** defparameter vs defvar
+
+When you set the value of a global variable using defparameter, any value previously stored in the variable will be overwritten:
+> (defparameter *foo* 5)
+FOO
+> *foo*
+5
+> (defparameter *foo* 6)
+FOO
+> *foo*
+6
+
+As you can see, when we redefine the variable *foo*, its value changes.
+
+Another command that you can use for declaring global variables, called defvar, won’t overwrite previous values of a global variable:
+> (defvar *foo* 5)
+FOO
+> *foo*
+5
+> (defvar *foo* 6)
+FOO
+> *foo*
+5
+
+* Defining Local Variables in Lisp 
+
+> (let ((a 5)
+         (b 6))
+     (+ a b))
+  11
+
+* Defining Local Functions in Lisp 
+We define local functions using the flet command. The flet command has the following structure:
+
+ (flet ((function_name (arguments)
+          ...function body...))
+   ...body...)
+
+Here is an example:
+ > (flet ((f (n)
+             (+ n 10)))
+     (f 5))
+  15
+
+A single flet command can be used to declare multiple local functions at once. Simply add multiple function declarations in the first part of the command:
+
+ > (flet ((f (n)
+            (+ n 10))
+          (g (n)
+            (- n 3)))
+    (g (f 5)))
+  12
+
+To make function names available in defined functions, we can use the labels command. It’s identical in its basic structure to the flet command. Here’s an example:
+
+ > (labels ((a (n)
+              (+ n 5))
+            (b (n)
+               (+ (a n) 6)))
+    (b 10))
+  21
+
+ * Misc
+ ** display string
+ 
+ We can display a string using a function called princ:
+> (princ "Tutti Frutti")
+ Tutti Frutti
+ "Tutti Frutti"
