@@ -1,14 +1,19 @@
 * defining global variables
 
 A variable that is defined globally in Lisp is called a top-level definition. We can create new top-level definitions with the defparameter function:
+
+#+begin_src 
 > (defparameter *small* 1)
 *SMALL*
 > (defparameter *big* 100)
 *BIG*
+#+end_src 
 
-** defparameter vs defvar
+* defparameter vs defvar
 
 When you set the value of a global variable using defparameter, any value previously stored in the variable will be overwritten:
+
+#+begin_src 
 > (defparameter *foo* 5)
 FOO
 > *foo*
@@ -17,10 +22,13 @@ FOO
 FOO
 > *foo*
 6
+#+end_src 
 
 As you can see, when we redefine the variable *foo*, its value changes.
 
 Another command that you can use for declaring global variables, called defvar, won’t overwrite previous values of a global variable:
+
+#+begin_src 
 > (defvar *foo* 5)
 FOO
 > *foo*
@@ -29,52 +37,130 @@ FOO
 FOO
 > *foo*
 5
+#+end_src
 
 * Defining Local Variables in Lisp 
+
+#+begin_src 
 
 > (let ((a 5)
          (b 6))
      (+ a b))
   11
+#+end_src 
 
 * Defining Local Functions in Lisp 
 We define local functions using the flet command. The flet command has the following structure:
-
+#+begin_src 
  (flet ((function_name (arguments)
           ...function body...))
    ...body...)
+#+end_src 
 
 Here is an example:
+#+begin_src 
  > (flet ((f (n)
              (+ n 10)))
      (f 5))
   15
+#+end_src 
 
 A single flet command can be used to declare multiple local functions at once. Simply add multiple function declarations in the first part of the command:
 
+#+begin_src 
  > (flet ((f (n)
             (+ n 10))
           (g (n)
             (- n 3)))
     (g (f 5)))
   12
+#+end_src 
 
 To make function names available in defined functions, we can use the labels command. It’s identical in its basic structure to the flet command. Here’s an example:
-
+#+begin_src 
  > (labels ((a (n)
               (+ n 5))
             (b (n)
                (+ (a n) 6)))
     (b 10))
   21
+#+end_src 
 
- 
- * Misc
- ** display string
+* List functions
+** The cons function
+If you want to link any two pieces of data in your Lisp program (regardless of type), the usual way to do that is with the cons function.
 
- We can display a string using a function called princ:
+#+begin_src 
+> (cons 'chicken 'cat)
+(CHICKEN . CAT)
+#+end_src 
+
+As you can see, cons returns a single object, the cons cell, represented by
+parentheses and a dot between the two connected items. Don’t confuse this with a
+regular list. The dot in the middle makes this a cons cell, just linking those
+two items together.
+
+If instead of another piece of data, we attach the symbol nil on the right side
+of the list, something special happens:
+
+#+begin_src 
+> (cons 'chicken 'nil)
+(CHICKEN)
+The previous example can also be written like this:
+> (cons 'chicken ())
+(CHICKEN)
+#+end_src 
+
+** The car and cdr Functions 
+Lists are just long chains of two-item cells.
+
+#+begin_src 
+The car function is used for getting the thing out of the first slot of a cell:
+> (car '(pork beef chicken))
+PORK
+#+end_src 
+
+The cdr function is used to grab the value out of the second slot, or the remainder of a list:
+
+#+begin_src 
+> (cdr '(pork beef chicken))
+(BEEF CHICKEN)
+#+end_src 
+
+** The list Function 
+For convenience, Common Lisp has many functions built on top of the basic
+three—cons, car, and cdr. A useful one is the list function, which does the
+dirty work of creating all the cons cells and builds our list all at once:
+
+#+begin_src 
+> (list 'pork 'beef 'chicken)
+(PORK BEEF CHICKEN)
+#+end_src 
+
+* Misc
+** display string
+
+We can display a string using a function called princ:
+
+#+begin_src 
 > (princ "Tutti Frutti")
  Tutti Frutti
  "Tutti Frutti"
+#+end_src
 
- 
+** code mode vs data mode
+Whenever you type something into the Lisp REPL, the compiler assumes that you’re
+entering a command you want to execute. In other words, Lisp always assumes that
+you’re writing code and defaults to code mode.
+
+
+As you might imagine, any stuff written in data mode is treated as data. This
+means the computer will not try to “execute” it, which allows us to have
+information in our code that’s just plain old data.
+
+Let’s take a look at data mode in action. We’ll enter the same form that we
+entered in code mode in the previous example, with one difference:
+#+begin_src 
+> '(expt 2 3)
+(expt 2 3)
+#+end_src 
