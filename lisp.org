@@ -50,7 +50,9 @@ FOO
 #+end_src 
 
 * Defining Local Functions in Lisp 
-We define local functions using the flet command. The flet command has the following structure:
+We define local functions using the flet command. The flet command has the
+following structure:
+
 #+begin_src 
  (flet ((function_name (arguments)
           ...function body...))
@@ -65,7 +67,8 @@ Here is an example:
   15
 #+end_src 
 
-A single flet command can be used to declare multiple local functions at once. Simply add multiple function declarations in the first part of the command:
+A single flet command can be used to declare multiple local functions at once.
+Simply add multiple function declarations in the first part of the command:
 
 #+begin_src 
  > (flet ((f (n)
@@ -76,7 +79,10 @@ A single flet command can be used to declare multiple local functions at once. S
   12
 #+end_src 
 
-To make function names available in defined functions, we can use the labels command. It’s identical in its basic structure to the flet command. Here’s an example:
+To make function names available in defined functions, we can use the labels
+command. It’s identical in its basic structure to the flet command. Here’s an
+example:
+
 #+begin_src 
  > (labels ((a (n)
               (+ n 5))
@@ -88,7 +94,8 @@ To make function names available in defined functions, we can use the labels com
 
 * List functions
 ** The cons function
-If you want to link any two pieces of data in your Lisp program (regardless of type), the usual way to do that is with the cons function.
+If you want to link any two pieces of data in your Lisp program (regardless of
+type), the usual way to do that is with the cons function.
 
 #+begin_src 
 > (cons 'chicken 'cat)
@@ -120,7 +127,8 @@ The car function is used for getting the thing out of the first slot of a cell:
 PORK
 #+end_src 
 
-The cdr function is used to grab the value out of the second slot, or the remainder of a list:
+The cdr function is used to grab the value out of the second slot, or the
+remainder of a list:
 
 #+begin_src 
 > (cdr '(pork beef chicken))
@@ -135,6 +143,34 @@ dirty work of creating all the cons cells and builds our list all at once:
 #+begin_src 
 > (list 'pork 'beef 'chicken)
 (PORK BEEF CHICKEN)
+#+end_src
+
+** building lists
+#+begin_src lisp
+>(cons 'a '(b c d))
+(A B C D)
+; we build up lists by consing new elements onto an empty list.
+> (cons 'a (cons 'b nil))
+(A B)
+
+; the list function is just a more convenient way of consing
+; several things onto nil
+> (list 'a 'b)
+(A B)
+#+end_src
+
+* Truth
+In Common lisp , the symbol t is the default representation of truth.
+#+begin_src lisp
+> (listp '(a b c))
+T
+#+end_src 
+
+Falsity in Common Lisp is represented by nil, the empty list.
+
+#+begin_src lisp
+> (listp 27)
+NIL
 #+end_src 
 
 * Misc
@@ -164,3 +200,4 @@ entered in code mode in the previous example, with one difference:
 > '(expt 2 3)
 (expt 2 3)
 #+end_src 
+
