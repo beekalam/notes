@@ -201,3 +201,58 @@ entered in code mode in the previous example, with one difference:
 (expt 2 3)
 #+end_src 
 
+** assignment
+In Common Lisp the most general assignment operator is setf.
+
+#+begin_src lisp
+> (setf *glob* 98)
+98
+> (let ((n 10))
+       (setf n 2)
+       n)
+2
+#+end_src 
+
+When, the first argument to setf is symbol that is not the name of
+a local variable, it is taken  to be a global variable:
+
+#+begin_src lisp
+> (setf x (list 'a 'b 'c))
+(A B C)
+#+end_src 
+
+The first argument to setf can be an expression as well as variable name.
+In such cases, the value of the second argument is inserted in the place
+referred to by the first:
+#+begin_src lisp
+> (setf (car x) 'n)
+N
+> x
+(N B C)
+#+end_src 
+
+You can give any number of arguments to setf.
+
+#+begin_src lisp
+(setf a b
+      c d
+      e f)
+; is equivalent to three separate calls to setf in sequence:
+(setf a b)
+(setf c d)
+(setf e f)
+#+end_src 
+
+* example
+** ~member~ function implementation
+   The Common Lisp function member tests whether something is an
+element of a list.
+
+#+begin_src lisp
+(defun our-member(obj lst)
+	   (if (null lst)
+	       nil
+	       (if (eql (car lst) obj)
+		   lst
+		   (our-member obj (cdr lst)))))
+#+end_src 
