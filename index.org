@@ -29,6 +29,8 @@
 
 [[file:network.org][networking]]
 
+[[file:lisp.org][lisp]]
+
 [[file:books-excerpt.org][book excerpts]]
 
 [[file:ceh.org][penetration testing]]

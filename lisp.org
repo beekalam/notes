@@ -159,6 +159,36 @@ dirty work of creating all the cons cells and builds our list all at once:
 (A B)
 #+end_src
 
+** remove from lists
+The function remove, takes an object and  a list
+and returns a new list containing everything butt
+that object:
+#+begin_src lisp
+> (setf lst '(c a r a t))
+(C A R A T)
+> (remove 'a lst)
+(C R T)
+; the original list is untouched
+> lst
+(C A R A T)
+#+end_src
+
+** iteration 
+#+begin_src lisp
+(defun our-length (lst)
+  (let ((len 0))
+    (dolist (obj lst)
+      (setf len (+ len 1)))
+    len))
+
+(our-length (list 'a 'b 'c 'd)) ;4
+
+#+end_src 
+Here ~dolist~ takes an argument of the form (variable expresion),
+followed by a body of expressions. The body will be evaluated  with
+variable bound to successive elements of the list returned by expression.
+so the loop above says, for each obj in lst, increment len.
+
 * Truth
 In Common lisp , the symbol t is the default representation of truth.
 #+begin_src lisp
