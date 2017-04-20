@@ -1,6 +1,7 @@
 * defining global variables
 
-A variable that is defined globally in Lisp is called a top-level definition. We can create new top-level definitions with the defparameter function:
+A variable that is defined globally in Lisp is called a top-level definition. We
+can create new top-level definitions with the defparameter function:
 
 #+begin_src 
 > (defparameter *small* 1)
@@ -11,7 +12,8 @@ A variable that is defined globally in Lisp is called a top-level definition. We
 
 * defparameter vs defvar
 
-When you set the value of a global variable using defparameter, any value previously stored in the variable will be overwritten:
+When you set the value of a global variable using defparameter, any value
+previously stored in the variable will be overwritten:
 
 #+begin_src 
 > (defparameter *foo* 5)
@@ -26,7 +28,8 @@ FOO
 
 As you can see, when we redefine the variable *foo*, its value changes.
 
-Another command that you can use for declaring global variables, called defvar, won’t overwrite previous values of a global variable:
+Another command that you can use for declaring global variables, called defvar,
+won’t overwrite previous values of a global variable:
 
 #+begin_src 
 > (defvar *foo* 5)
@@ -190,6 +193,7 @@ variable bound to successive elements of the list returned by expression.
 so the loop above says, for each obj in lst, increment len.
 
 * Truth
+** intro
 In Common lisp , the symbol t is the default representation of truth.
 #+begin_src lisp
 > (listp '(a b c))
@@ -201,6 +205,136 @@ Falsity in Common Lisp is represented by nil, the empty list.
 #+begin_src lisp
 > (listp 27)
 NIL
+#+end_src
+** the four disguises of ()
+Not only does the empty list evaluate to false, but it is the only false value
+in Common Lisp. Any value not equivalent to an empty list will be considered a
+true value.
+ 
+
+#+begin_src lisp
+(eq '() nil)  ==> T  ;; 1
+(eq '() ())   ==> T  ;; 2
+(eq '() 'nil) ==> T  ;; 3
+#+end_src 
+
+ 1. There is a constant named ~nil~ that evaluates to itself and allows you to
+omit the quotation mark.
+ 2. The second case is a natural by-product of how Common Lisp parses an empty form.
+ 3. is due to a requirement in the Common Lisp spec that says that () and nil 
+should be treated the same.
+
+* conditionals
+** if
+*** intro
+
+#+begin_src lisp
+
+> (if (= (+ 1 2) 3)
+      'yup
+      'nope)
+YUP
+
+> (if (= (+ 1 2) 4)
+      'yup
+      'nope)
+NOPE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+> (if '(1)
+      'the-list-has-stuff-in-it
+      'the-list-is-empty)
+THE-LIST-HAS-STUFF-IN-IT
+
+> (if '()
+      'the-list-has-stuff-in-it
+      'the-list-is-empty)
+
+THE-LIST-IS-EMPTY
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+> (if (oddp 5)
+      'odd-number
+      'even-number)
+ODD-NUMBER
+#+end_src
+
+*** evalua multiple expressions in ~if~
+ for cases when you really want to do more than one thing, you can use a special
+ command, progn, to wedge in extra commands in a single expression. With progn,
+ only the last evaluation is returned as the value of the full expression. In
+ this next example, for instance, we use the command to set a special global
+ variable directly inside our conditional branch.
+
+#+begin_src lisp
+
+> (defvar *number-was-odd* nil)
+
+> (if (oddp 5)
+      (progn (setf *number-was-odd* t)
+             'odd-number)
+      'even-number)
+
+ODD-NUMBER
+
+> *number-was-odd*
+T
+#+end_src
+** The ~when~ and ~unless~ alternatives
+ Since it’s kind of a pain to use progn every time you want to do multiple things
+ inside an if, Lisp has several other commands that include an implicit progn.
+ The most basic of these are when and unless:
+ #+begin_src lisp
+ > (defvar *number-is-odd* nil)
+ > (when (oddp 5)
+         (setf *number-is-odd* t)
+         'odd-number)
+ ODD-NUMBER
+
+ > *number-is-odd*
+ T
+
+ > (unless (oddp 4)
+           (setf *number-is-odd* nil)
+           'even-number)
+ EVEN-NUMBER
+
+ > *number-is-odd*
+ NIL
+ #+end_src 
+
+ With when, all the enclosed expressions are evaluated when the condition is
+ true. With unless, all the enclosed expressions are evaluated when the condition
+ is false.
+** cond
+The cond form is the classic way to do branching in Lisp. Through the liberal
+use of parentheses, it allows for an implicit progn, can handle more than one
+branch, and can even evaluate several conditions in succession.
+
+#+begin_src lisp
+> (defvar *arch-enemy* nil)
+ > (defun pudding-eater (person)
+        (cond ((eq person 'henry) (setf *arch-enemy* 'stupid-lisp-alien)
+                                   '(curse you lisp alien - you ate my pudding))
+               ((eq person 'johnny) (setf *arch-enemy* 'useless-old-johnny)
+                                   '(i hope you choked on my pudding johnny))
+               (t                  '(why you eat my pudding stranger ?))))
+
+
+  > (pudding-eater 'johnny)
+  (I HOPE YOU CHOKED ON MY PUDDING JOHNNY)
+  > *arch-enemy*
+  JOHNNY
+  > (pudding-eater 'george-clooney)
+  (WHY YOU EAT MY PUDDING STRANGER ?)
+#+end_src
+** branching with case
+#+begin_src lisp
+> (defun pudding-eater (person)
+         (case person
+              ((henry)   (setf *arch-enemy* 'stupid-lisp-alien)
+                         '(curse you lisp alien - you ate my pudding))
+              ((johnny)  (setf *arch-enemy* 'useless-old-johnny)
+                         '(i hope you choked on my pudding johnny))
+              (otherwise '(why you eat my pudding stranger ?))))
 #+end_src 
 
 * Misc
@@ -285,6 +419,17 @@ element of a list.
 	       (if (eql (car lst) obj)
 		   lst
 		   (our-member obj (cdr lst)))))
-#+end_src 
+#+end_src
 
+** list size
+
+#+begin_src lisp
+> (defun my-length (list)
+     (if list
+         (1+ (my-length (cdr list)))
+         0))
+
+> (my-length '(list with four symbols))
+4
+#+end_src 
 

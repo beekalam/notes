@@ -1047,7 +1047,6 @@ var cnum = +num;
 ** next month
 
 #+begin_src javascript
-
     var nextmonth = function(x){
     if (x.getMonth() == 11) {
         var x = new Date(x.getFullYear() + 1, 0, 1);
@@ -1061,22 +1060,20 @@ var cnum = +num;
 ** next day
 
 #+begin_src javascript
-
-  var nextday = function(x){
+var nextday = function(x){
     x.setDate(x.getDate() + 1);
     return x;
-  }
+}
 #+end_src
 
 ** add days
 
 #+begin_src javascript
-
-   function addDays(days) {
-        var result = new Date("2016-01-01");
-        result.setDate(result.getDate() + days);
-        return result.toISOString().split("T")[0];
-    }
+function addDays(days) {
+      var result = new Date("2016-01-01");
+      result.setDate(result.getDate() + days);
+      return result.toISOString().split("T")[0];
+}
 #+end_src
 
 ** How can I compare two time strings in the format HH:MM:SS?
@@ -1599,9 +1596,6 @@ function timeout() {
 
 #+end_src 
 
-* code conventions, styles
-http://javascript.crockford.com/code.html
-https://github.com/ryanmcdermott/clean-code-javascript
 * this
 ** understanding 'this'
 
@@ -2353,7 +2347,7 @@ repeat(3, 'So should IE7...'); // => 3 IE7 alert boxes
     repeat({ times: 2, rant: 'Flash must die!' }); // 2 Flash alert boxes
 #+end_src
  
-* obtaining references to DOM elements.
+# * obtaining references to DOM elements.
 ** Grab an element by its ID.
 #+begin_src javascript
 document.getElementById('elementId')  //plain W3C DOM
@@ -2734,6 +2728,31 @@ bar.length = 10; // TypeError: "length" is read-only
 By the way, if you want to get rid of the property accessor in the object,
 you can simply remove the property:
 ~delete bar.length;~
+
+** Prototypal inheritance
+There are a few types of inheritance patterns in Javascript
+ - Classical
+ - Pseudoclassical
+ - Funtional
+
+This is an example of the functional inheritance pattern:
+#+begin_src javascript
+var user = function (ops) {
+  return { firstName: ops.name || 'John'
+          , lastName: ops.name || 'Doe'
+          , email: ops.email || 'test@test.com'
+          , name: function() { return this.firstName + this.lastName}
+          }
+}
+ 
+var agency = function(ops) {
+  ops = ops || {}
+  var agency = user(ops)
+  agency.customers = ops.customers || 0
+  agency.isAgency = true
+  return agency
+}
+#+end_src 
 
 ** Accessors in ES6 <<Accessors in ES6 classes>>
 
@@ -5641,7 +5660,7 @@ $ npm ls -g
 #+end_src 
 
 *** Intalling packages
-
+    
 #+begin_src javascript 
 
 # Installing the Latest Version of the commander Package Using npm
@@ -5734,6 +5753,22 @@ process.on("uncaughtException", function(error) {
   console.log("The exception was caught!")
 });
 #+end_src
+
+** misc
+*** lauching Node.js scripts
+#+begin_src shell
+# run a file
+$ node program.js
+# statements in shell
+$ node -e "console.log(new Date());"
+#+end_src
+*** Node.js Globals and reserved keywords
+ - process
+ - global
+ - module.exports and exports
+*** Node.js process information
+developers can access useful process information in code with the
+process object =(e.g., node -e "console.log(process.pid)")=.
 
 * webgl
 ** blank canvas
@@ -7052,7 +7087,7 @@ var selectedAction = $("input[name='actions']:checked").val();
 
 ** form handling
 ** Implementing basic form validation /tocontinue/
-
+   
 ** useful resources
 http://api.jquery.com/
 
@@ -7107,3 +7142,6 @@ http://es6katas.org/
 ** json style
 
 https://google.github.io/styleguide/jsoncstyleguide.xml
+** code conventions, styles
+http://javascript.crockford.com/code.html
+https://github.com/ryanmcdermott/clean-code-javascript
