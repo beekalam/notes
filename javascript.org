@@ -5754,6 +5754,47 @@ process.on("uncaughtException", function(error) {
 });
 #+end_src
 
+** exporting and importing modules
+
+To export an object in Node.js, use exports.name = object;. An example follows:
+
+#+begin_src javascript  
+var messages = {
+find: function(req, res, next) {
+...
+},
+add: function(req, res, next) {
+...
+},
+format: 'title | date | author'
+}
+exports.messages = messages;
+#+end_src 
+
+While in the file where we import the aforementioned script (assuming the path
+and the file name is route/messages.js), write the following:
+#+begin_src javascript  
+var messages = require('./routes/messages.js');
+#+end_src 
+However, sometimes it’s more fitting to invoke a constructor, such as when we
+attach properties to the Express.js app.
+#+begin_src javascript 
+module.exports = function(app) {
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+return app;
+}
+ 
+//In the file that includes the previous sample module, write
+ 
+...
+var app = express();
+var config = require('./config/index.js');
+app = config(app);
+...
+#+end_src 
+
 ** misc
 *** lauching Node.js scripts
 #+begin_src shell
@@ -5769,6 +5810,43 @@ $ node -e "console.log(new Date());"
 *** Node.js process information
 developers can access useful process information in code with the
 process object =(e.g., node -e "console.log(process.pid)")=.
+*** __dirname vs. process.cwd
+~__dirname~ is an absolute path to the file in which the global variable is
+called, whereas process.cwd is an absolute path to the process that runs the
+script.
+
+*** Reading to and Writing from the File System in Node.js
+Reading from files is done via the core fs module
+(http://nodejs.org/api/fs.html). There are two sets of reading methods: async
+and sync. In most cases, developers should use async methods, such as
+fs.readFile:
+#+begin_src javascript  
+var fs = require('fs');
+var path = require('path');
+fs.readFile(path.join(__dirname, '/data/customers.csv'), {encoding: 'utf-8'}, function (err, data) {
+  if (err) throw err;
+  console.log(data);
+});
+ 
+//To write to the file, execute the following:
+ 
+var fs = require('fs');
+fs.writeFile('message.txt', 'Hello World!', function (err) {
+  if (err) throw err;
+  console.log('Writing is done.');
+});
+#+end_src 
+
+*** Hello World Server with HTTP Node.js Module
+
+#+begin_src javascript 
+var http = require('http');
+  http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World\n');
+}).listen(1337, '127.0.0.1');
+console.log('Server running at http://127.0.0.1:1337/');
+#+end_src 
 
 * webgl
 ** blank canvas
