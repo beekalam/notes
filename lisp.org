@@ -278,6 +278,7 @@ ODD-NUMBER
 > *number-was-odd*
 T
 #+end_src
+
 ** The ~when~ and ~unless~ alternatives
  Since it’s kind of a pain to use progn every time you want to do multiple things
  inside an if, Lisp has several other commands that include an implicit progn.
@@ -310,6 +311,7 @@ use of parentheses, it allows for an implicit progn, can handle more than one
 branch, and can even evaluate several conditions in succession.
 
 #+begin_src lisp
+
 > (defvar *arch-enemy* nil)
  > (defun pudding-eater (person)
         (cond ((eq person 'henry) (setf *arch-enemy* 'stupid-lisp-alien)
@@ -326,6 +328,7 @@ branch, and can even evaluate several conditions in succession.
   > (pudding-eater 'george-clooney)
   (WHY YOU EAT MY PUDDING STRANGER ?)
 #+end_src
+
 ** branching with case
 #+begin_src lisp
 > (defun pudding-eater (person)
