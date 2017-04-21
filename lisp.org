@@ -93,104 +93,119 @@ example:
                (+ (a n) 6)))
     (b 10))
   21
-#+end_src 
-
-* List functions
-** The cons function
-If you want to link any two pieces of data in your Lisp program (regardless of
-type), the usual way to do that is with the cons function.
-
-#+begin_src 
-> (cons 'chicken 'cat)
-(CHICKEN . CAT)
-#+end_src 
-
-As you can see, cons returns a single object, the cons cell, represented by
-parentheses and a dot between the two connected items. Don’t confuse this with a
-regular list. The dot in the middle makes this a cons cell, just linking those
-two items together.
-
-If instead of another piece of data, we attach the symbol nil on the right side
-of the list, something special happens:
-
-#+begin_src 
-> (cons 'chicken 'nil)
-(CHICKEN)
-The previous example can also be written like this:
-> (cons 'chicken ())
-(CHICKEN)
-#+end_src 
-
-** The car and cdr Functions 
-Lists are just long chains of two-item cells.
-
-#+begin_src 
-The car function is used for getting the thing out of the first slot of a cell:
-> (car '(pork beef chicken))
-PORK
-#+end_src 
-
-The cdr function is used to grab the value out of the second slot, or the
-remainder of a list:
-
-#+begin_src 
-> (cdr '(pork beef chicken))
-(BEEF CHICKEN)
-#+end_src 
-
-** The list Function 
-For convenience, Common Lisp has many functions built on top of the basic
-three—cons, car, and cdr. A useful one is the list function, which does the
-dirty work of creating all the cons cells and builds our list all at once:
-
-#+begin_src 
-> (list 'pork 'beef 'chicken)
-(PORK BEEF CHICKEN)
 #+end_src
 
-** building lists
+* Lists
+** property lists
+A plist is a list where every other element, starting with the first, is a
+symbol that describes what the next element in the list is.
+
 #+begin_src lisp
->(cons 'a '(b c d))
-(A B C D)
-; we build up lists by consing new elements onto an empty list.
-> (cons 'a (cons 'b nil))
-(A B)
-
-; the list function is just a more convenient way of consing
-; several things onto nil
-> (list 'a 'b)
-(A B)
-#+end_src
-
-** remove from lists
-The function remove, takes an object and  a list
-and returns a new list containing everything butt
-that object:
-#+begin_src lisp
-> (setf lst '(c a r a t))
-(C A R A T)
-> (remove 'a lst)
-(C R T)
-; the original list is untouched
-> lst
-(C A R A T)
-#+end_src
-
-** iteration 
-#+begin_src lisp
-(defun our-length (lst)
-  (let ((len 0))
-    (dolist (obj lst)
-      (setf len (+ len 1)))
-    len))
-
-(our-length (list 'a 'b 'c 'd)) ;4
-
+CL-USER> (list :a 1 :b 2 :c 3)
+(:A 1 :B 2 :C 3)
+;; using GETF to return the value in a plist
+CL-USER> (getf (list :a 1 :b 2 :c 3) :a)
+1
+CL-USER> (getf (list :a 1 :b 2 :c 3) :c)
+3
 #+end_src 
-Here ~dolist~ takes an argument of the form (variable expresion),
-followed by a body of expressions. The body will be evaluated  with
-variable bound to successive elements of the list returned by expression.
-so the loop above says, for each obj in lst, increment len.
+
+** List functions
+*** The cons function
+ If you want to link any two pieces of data in your Lisp program (regardless of
+ type), the usual way to do that is with the cons function.
+
+ #+begin_src 
+ > (cons 'chicken 'cat)
+ (CHICKEN . CAT)
+ #+end_src 
+
+ As you can see, cons returns a single object, the cons cell, represented by
+ parentheses and a dot between the two connected items. Don’t confuse this with a
+ regular list. The dot in the middle makes this a cons cell, just linking those
+ two items together.
+
+ If instead of another piece of data, we attach the symbol nil on the right side
+ of the list, something special happens:
+
+ #+begin_src 
+ > (cons 'chicken 'nil)
+ (CHICKEN)
+ The previous example can also be written like this:
+ > (cons 'chicken ())
+ (CHICKEN)
+ #+end_src 
+
+*** The car and cdr Functions 
+ Lists are just long chains of two-item cells.
+
+ #+begin_src 
+ The car function is used for getting the thing out of the first slot of a cell:
+ > (car '(pork beef chicken))
+ PORK
+ #+end_src 
+
+ The cdr function is used to grab the value out of the second slot, or the
+ remainder of a list:
+
+ #+begin_src 
+ > (cdr '(pork beef chicken))
+ (BEEF CHICKEN)
+ #+end_src 
+
+*** The list Function 
+ For convenience, Common Lisp has many functions built on top of the basic
+ three—cons, car, and cdr. A useful one is the list function, which does the
+ dirty work of creating all the cons cells and builds our list all at once:
+
+ #+begin_src 
+ > (list 'pork 'beef 'chicken)
+ (PORK BEEF CHICKEN)
+ #+end_src
+
+*** building lists
+ #+begin_src lisp
+ >(cons 'a '(b c d))
+ (A B C D)
+ ; we build up lists by consing new elements onto an empty list.
+ > (cons 'a (cons 'b nil))
+ (A B)
+
+ ; the list function is just a more convenient way of consing
+ ; several things onto nil
+ > (list 'a 'b)
+ (A B)
+ #+end_src
+
+*** remove from lists
+ The function remove, takes an object and  a list
+ and returns a new list containing everything butt
+ that object:
+ #+begin_src lisp
+ > (setf lst '(c a r a t))
+ (C A R A T)
+ > (remove 'a lst)
+ (C R T)
+ ; the original list is untouched
+ > lst
+ (C A R A T)
+ #+end_src
+
+*** iteration 
+ #+begin_src lisp
+ (defun our-length (lst)
+   (let ((len 0))
+     (dolist (obj lst)
+       (setf len (+ len 1)))
+     len))
+
+ (our-length (list 'a 'b 'c 'd)) ;4
+
+ #+end_src 
+ Here ~dolist~ takes an argument of the form (variable expresion),
+ followed by a body of expressions. The body will be evaluated  with
+ variable bound to successive elements of the list returned by expression.
+ so the loop above says, for each obj in lst, increment len.
 
 * Truth
 ** intro
@@ -434,5 +449,24 @@ element of a list.
 
 > (my-length '(list with four symbols))
 4
+#+end_src
+
+** format
+
+#+begin_src lisp
+  ;The ~a directive is the aesthetic directive; it means to
+  ;consume one argument and output it in a human-readable form.
+  CL-USER> (format t "~a" "Dixie Chicks")
+  Dixie Chicks
+  NIL
+
+  ;;The ~t directive is for tabulating. The ~10t tells FORMAT to emit enough
+  ;;spaces to move to the tenth column before processing the next ~a. A ~t doesn't
+  ;;consume any arguments.
+
+  CL-USER> (format t "~a:~10t~a" :artist "Dixie Chicks")
+  ARTIST:   Dixie Chicks
+  NIL
+
 #+end_src 
 
