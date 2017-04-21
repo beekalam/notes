@@ -2,8 +2,8 @@
 #+AUTHOR:  Mohammad Reza Mansouri
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
 #+HTML_HEAD: <script src="js/org-info.js"></script>
-#+HTML_HEAD: <script src="js/ganalytics.js" async></script>
 #+STATUP: overview
+#+HTML_HEAD: <script src="js/ganalytics.js" async></script>
 
 * operators
 ** ~typeof~
@@ -755,7 +755,7 @@ ing it without an argument returns a clone of the array.
 </html>
 #+end_src
 
-* strings
+** strings
 ** reverse string in javascript?
 
 #+begin_src javascript
@@ -7183,7 +7183,14 @@ http://api.jquery.com/
 <input type="email" name="email" id="email" 
   required="required" pattern="[^ @]*@[^ @]*\.[a-zA-Z]{2,}" 
   title="test@test.com">
-#+end_src  
+#+end_src
+
+* =custombox= get content of input box, etc
+custombox copies the content of the target div
+#+begin_src javascript
+//use custombox-content class to access the duplicated dialog
+$(".custombox-content #textbox").val();
+#+end_src
 
 * URL
 ** decode/encode URL
