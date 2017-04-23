@@ -353,6 +353,92 @@ branch, and can even evaluate several conditions in succession.
               ((johnny)  (setf *arch-enemy* 'useless-old-johnny)
                          '(i hope you choked on my pudding johnny))
               (otherwise '(why you eat my pudding stranger ?))))
+#+end_src
+
+* comparing
+** EQ function
+ Symbols should always be compared to other symbols with eq:
+
+ #+begin_src lisp 
+ > (defparameter *fruit* 'apple)
+
+ *FRUIT*
+
+ > (cond ((eq *fruit* 'apple) 'its-an-apple)
+         ((eq *fruit* 'orange) 'its-an-orange))
+
+ ITS-AN-APPLE
+ #+end_src 
+
+ The eq function is the simplest of all the Lisp comparison functions, and it’s also very fast.
+** EQUAL
+
+ If you’re not dealing with two symbols, just use equal. This command will tell
+ you when two things are isomorphic, meaning they “look the same.” It works for
+ the whole suite of basic Lisp datatypes, as shown here:
+
+ #+begin_src lisp
+ ;;comparing symbols
+ > (equal 'apple 'apple)
+ T
+
+ ;;comparing lists
+ T
+
+ ;;Identical lists created in different ways still compare as the same
+ > (equal '(1 2 3) (cons 1 (cons 2 (cons 3))))
+ T
+
+ ;;comparing integers
+ > (equal 5 5)
+ T
+
+ ;;comparing floating point numbers
+ > (equal 2.5 2.5)
+ T
+
+ ;;comparing strings
+ > (equal "foo" "foo")
+ T
+
+ ;;comparing characters
+ > (equal #\a #\a)
+ T
+ #+end_src 
+
+ As you can see, most items in Lisp can be effectively compared with equal,
+ including strings and characters (which are discussed in the next chapter).
+** EQL
+ The eql command is similar to the eq command, but unlike eq, it also handles
+ comparisons of numbers and characters:
+
+ #+begin_src lisp
+ ;;comparing symbols
+ > (eql 'foo 'foo)
+ T
+
+ ;;comparing numbers
+ > (eql 3.4 3.4)
+ T
+
+ ;;comparing characters
+ > (eql #\a #\a)
+ T
+ #+end_src
+
+** EQLP
+The equalp command is essentially the same as the equal command, except that it
+can handle some difficult comparison cases with a bit of extra sophistication.
+For instance, it can compare strings with different capitalizations and can
+compare integers against floating-point numbers:
+
+#+begin_src lisp
+;;comparing strings with different CAPS
+> (equalp "Bob Smith" "bob smith")
+T
+;;comparing integers against floating point numbers
+> (equalp 0 0.0)
+T
 #+end_src 
 
 * Misc
