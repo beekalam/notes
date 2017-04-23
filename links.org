@@ -170,6 +170,10 @@ http://devdocs.io/lodash~4/
   https://www.testdome.com/Questions
   https://code.google.com/codejam/
   https://www.freecodecamp.com
+  https://www.reddit.com/r/dailyprogrammer/
+* practice programming projects
+http://inventwithpython.com/blog/2012/02/20/i-need-practice-programming-49-ideas-for-game-clones-to-code/
+
 * network
   http://packetlife.net/
   https://wiki.wireshark.org/FrontPage

@@ -5803,6 +5803,7 @@ $ node program.js
 # statements in shell
 $ node -e "console.log(new Date());"
 #+end_src
+
 *** Node.js Globals and reserved keywords
  - process
  - global
@@ -5847,6 +5848,130 @@ var http = require('http');
 }).listen(1337, '127.0.0.1');
 console.log('Server running at http://127.0.0.1:1337/');
 #+end_src
+
+** tcp client and server example  
+#+begin_src javascript 
+// server
+var net = require('net');
+
+var server = net.createServer(function(connectionListener){
+    console.log('connected');
+
+    //get the configured address for the server
+    console.log(this.address());
+
+    //get connections takes callback function
+    this.getConnections(function(err, count){
+        if(err){
+            console.log("Error getting connections");
+        }else{
+            console.log("connections count: " + count);
+        }
+    });
+
+    connectionListener.on('end', function(){
+        console.log("disconnected");
+    });
+    //write to the connected socket
+    connectionListener.write('heyy\r\n');
+
+});
+
+server.on('error', function(err){
+    console.log('Server error: ' + err);
+});
+
+server.on('data', function(data){
+    console.log(data.toString());
+});
+/*
+ listen()
+ */
+server.listen(8181, function(){
+    console.log('server is listening');
+});
+
+//client
+var net = require('net');
+//create connection
+var connection = net.createConnection(
+    {port:8181, host:'127.0.0.1'},
+    //connectionListner callback
+    function(){
+        console.log('connection successful');
+    }
+);
+#+end_src
+
+** echo server and client example
+#+begin_src javascript
+// server
+var net = require('net');
+
+var server = net.createServer(function(connectionListener){
+    //get connection count
+    this.getConnections(function(err, count){
+        if(err){
+            console.log('Error getting connections');
+        }else{
+            //send out info for this socket
+            connectionListener.write('connections to server: ' +  count + '\n');
+        }
+    });
+
+    connectionListener.on('end', function(){
+        console.log('disconnected');
+    });
+
+    //Make sure there is somethig happeing
+    connectionListener.write("heyo\r\n");
+
+    connectionListener.on('data', function(data){
+        console.log('message for you sir: ' + data);
+    });
+
+    //Handle connection errors
+    connectionListener.on('error', function(err){
+        console.log('server error: ' + err);
+    });
+});
+
+server.on('error', function(err){
+    console.log('Server error: ' + err);
+});
+
+server.on('error', function(err){
+    console.log(data.toString());
+});
+
+
+server.listen(8181, function(){
+    console.log('server is listening');
+});
+
+// client
+var net = require('net');
+
+//createConnection
+var connection = net.createConnection({port:8181, host:'127.0.0.1'},
+//connectionListener callback
+function(){
+    console.log('connection successful');
+    this.write('hello');
+});
+
+connection.on('data', function(data){
+    console.log(data.toString());
+});
+
+connection.on('error', function(error){
+    console.log(error);
+});
+
+connection.on('end', function(){
+    console.log('connection ended');
+});
+#+end_src 
 
 ** Express.js
 
