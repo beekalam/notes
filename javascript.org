@@ -7167,7 +7167,39 @@ var selectedAction = $("input[name='actions']:checked").val();
 
 ** form handling
 ** Implementing basic form validation /tocontinue/
-   
+** select
+*** empty the content of select
+#+begin_src javascript
+$("#selectbox").empty()
+#+end_src 
+
+*** load content on select option change
+
+#+begin_src javascript
+$('#nas-ippools').on('change', function() {
+    $("#ippool-ips").empty();
+    $("#ippool-ips").append("<option selected='selected' disabled='true'>--Please Select --</option>");
+    
+    $.ajax({
+        url: 'someurl',
+        type: 'GET'
+    }).done(function (data) {
+        data = JSON.parse(data);
+        
+        for (var k in data) {
+            $("#ippool-ips").append("<option value='" + data[k] + "'>" + data[k] + "</option>");
+        }
+        $("#ippool-ips").LoadingOverlay("hide",true);
+    });
+
+});//
+#+end_src        
+
+*** select please select option
+#+begin_src html
+<option selected='selected' disabled='true'>--Please Select --</option>
+#+end_src 
+
 ** useful resources
 http://api.jquery.com/
 
