@@ -1289,11 +1289,12 @@ $final = round($total, 2);   // $final = 56.94
 
 ** Converting between bases
 Use the base_convert() function:
-
+#+begin_src php
 $hex = 'a1';                           // hexadecimal number (base 16)
 
 // convert from base 16 to base 10
 $decimal = base_convert($hex, 16, 10); // $decimal is now 161
+#+end_src 
 
 The base_convert() function changes a string in one base to the
 correct string in another. It works for all bases from 2 to 36
@@ -1306,6 +1307,7 @@ base 10 and the most commonly used other bases of 2, 8,
 and 16. They’re bindec() and decbin(), octdec() and decoct(), and
 hexdec() and dechex() :
 
+#+begin_src php
 // convert to base 10
 print bindec(11011); // 27
 print octdec(33);    // 27
@@ -1315,6 +1317,7 @@ print hexdec('1b');  // 27
 print decbin(27);    // 11011
 print decoct(27);    // 33
 print dechex(27);    // 1b
+#+end_src 
 
 Another alternative is to use printf(), which allows you to convert
 decimal numbers to binary, octal, and hexadecimal numbers with a wide
@@ -1322,8 +1325,9 @@ range of formatting, such as leading zeros and a choice between upper-
 and lowercase letters for hexadecimal numbers.
 
 For instance, say you want to print out HTML color values:
-
+#+begin_src php
 printf('#%02X%02X%02X', 0, 102, 204); // #0066CC
+#+end_src 
 
 ** Rounded random numbers
 #+begin_src php
