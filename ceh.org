@@ -222,7 +222,8 @@ $ arping [ip address]
  $ useradd –g root bob
  #+end_src 
 
-* sample python flood script
+* sample python flood scriptf
+
 
 #+begin_src python
 import socket
@@ -239,6 +240,58 @@ while 1:
 	print "Sent %s amount of packets to %s at port %s: " % (sent,ip, port)
 	sent = sent + 1
 #+end_src 
+
+* Cracking Linux Password Hashes with Hashcat 
+
+** Getting Hashcat 2.00
+
+Hashcat updated to 3.00 and it won't run in a virtual machine anymore. The simplest solution is to use the old version.
+In a Terminal window, execute these commands:
+#+begin_src shell
+cd
+mkdir hash
+cd hash
+wget https://hashcat.net/files_legacy/hashcat-2.00.7z
+7z e hashcat-2.00.7z
+./hashcat-cli32.bin -V
+#+end_src 
+
+#+begin_src shell
+# get the hash for a username
+$ cat /etc/shadow
+
+# Finding the salt value
+# The $6$ value indicates a type 6 password hash (SHA-512).
+# The characters after $6$, up to the next $,  are the SALT.
+$ cat /etc/show
+root:$6$QYVo1xui$JS7zZtJ857Ti5nKYjTAcVUKqe.87yZvUXgehw2irI5k.0NzhI8PLkga8pz3uR7b8V.lF9qpxZtACqIBNKM.yB0:17235:0:99999:7:::
+
+# Hash algorithm?
+# the hash algorithm is defined in the file /etc/login.defs.
+$ grep -A 18 ENCRYPT_METHOD /etc/login.defs
+
+# Making a Hash File
+# add the hashed password to a file
+# and remove the last part for the above hash value delete everything after the yB0
+# and the username 
+
+# make a wordlist
+$ curl http://www.scovetta.com/download/500_passwords.txt > 500_passwords.txt
+head 500_passwords.txt
+
+# Cracking the Hash
+$ ./hashcat-cli32.bin -m 1800 -a 0 -o found1.txt --remove crack1.hash 500_passwords.txt
+$ cat found1.txt
+
+# Unix type 6 password hashes (-m 1800)
+# Using a dictionary attack (-a 0)
+# Putting output in the file found1.txt
+# Removing each hash as it is found
+# Getting hashes from crack1.hash
+# Using the dictionary 500_passwords.txt
+#+end_src 
+
+https://samsclass.info/123/proj10/p12-hashcat.htm
 
 * metasploit
 ** init

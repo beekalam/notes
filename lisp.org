@@ -439,7 +439,35 @@ T
 ;;comparing integers against floating point numbers
 > (equalp 0 0.0)
 T
-#+end_src 
+#+end_src
+
+* printing
+#+begin_src lisp
+> (progn (print "this")
+         (print "is")
+         (print "a")
+         (print "test"))
+
+"this"
+"is"
+"a"
+"test"
+
+;The print function causes each item to be printed on a separate line. Now, let’s
+;try prin1:
+
+> (progn (prin1 "this")
+         (prin1 "is")
+         (prin1 "a")
+         (prin1 "test"))
+"this""is""a""test"
+#+begin_src 
+
+As you can see, prin1 does not put the printed items on separate lines. To be
+precise, the print and prin1 commands are the same in every way, except that
+print will start a new line before printing a value. Additionally, print places
+a space character at the end of the printed value.
+
 
 * Misc
 ** display string
