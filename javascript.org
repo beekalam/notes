@@ -258,17 +258,17 @@ Array.prototype.size = function() {
 ** Count the number of occurences of a character in a string in Javascript
 
 #+begin_src javascript
-    console.log(("str1,str2,str3,str4".match(/,/g) || []).length); //logs 3
-    console.log(("str1,str2,str3,str4".match(new RegExp("str", "g")) || []).length); //logs 4
+console.log(("str1,str2,str3,str4".match(/,/g) || []).length); //logs 3
+console.log(("str1,str2,str3,str4".match(new RegExp("str", "g")) || []).length); //logs 4
 
-    function str_count(str, char){
-         let escapeChars = "\|+$^*?[]()./ ";
-         if(escapeChars.lastIndexOf(char) !== -1){
-            char = "\\" + char;
-         }
-        
-        return (str.match(new RegExp(char, "g")) || []).length;
-    }
+function str_count(str, char){
+      let escapeChars = "\|+$^*?[]()./ ";
+      if(escapeChars.lastIndexOf(char) !== -1){
+        char = "\\" + char;
+      }
+
+    return (str.match(new RegExp(char, "g")) || []).length;
+}
 #+end_src
 
 #+begin_src javascript
@@ -403,53 +403,50 @@ console.log(newArray); // ["bb", "cd", "cc", "dd"]
 
 ** Validating Array Contents
 
-Problem
-
 You want to ensure that array contents meet certain criteria.
 
-
-Use the Array every() method to check that every element passes a given criterion.
- For instance, the following code checks to ensure that every element in the array consists of alphabetical characters:
+Use the Array every() method to check that every element passes a given
+criterion. For instance, the following code checks to ensure that every element
+in the array consists of alphabetical characters:
 #+begin_src javascript
+// testing function
+function testValue (element,index,array) {
+  var textExp = /^[a-zA-Z]+$/;
+  return textExp.test(element);
+}
 
-    // testing function
-    function testValue (element,index,array) {
-      var textExp = /^[a-zA-Z]+$/;
-      return textExp.test(element);
-    }
+var elemSet = ["**",123,"aaa","abc","-",46,"AAA"];
 
-    var elemSet = ["**",123,"aaa","abc","-",46,"AAA"];
+// run test
+var result = elemSet.every(testValue);
 
+console.log(result); // false
 
-    // run test
-    var result = elemSet.every(testValue);
+var elemSet2 = ["elephant","lion","cat","dog"];
 
-    console.log(result); // false
+result = elemSet2.every(testValue);
 
-    var elemSet2 = ["elephant","lion","cat","dog"];
-
-    result = elemSet2.every(testValue);
-
-    console.log(result); // true
+console.log(result); // true
 #+end_src
 
+Or use the Array some() method to ensure that one or more of the elements pass
+the criteria. As an example, the following code checks to ensure that at least
+some of the array elements are alphabetical strings:
 
-Or use the Array some() method to ensure that one or more of the elements pass the criteria.
- As an example, the following code checks to ensure that at least some of the array elements are alphabetical strings:
 #+begin_src javascript
 
-    var elemSet = new Array("**",123,"aaa","abc","-",46,"AAA");
+var elemSet = new Array("**",123,"aaa","abc","-",46,"AAA");
 
-    // testing function
-    function testValue (element) {
-       var textExp = /^[a-zA-Z]+$/;
-       return textExp.test(element);
-    }
+// testing function
+function testValue (element) {
+    var textExp = /^[a-zA-Z]+$/;
+    return textExp.test(element);
+}
 
-    // run test
-    var result = elemSet.some(testValue);
+// run test
+var result = elemSet.some(testValue);
 
-    console.log(result); // true
+console.log(result); // true
 #+end_src
 
 ** count elements of an array by value
@@ -507,6 +504,7 @@ it, then all is well. But if you are implementing algorithms that assume that ev
 ment starts with a known value (such as 0), then you must prep the array yourself.
 JavaScript should have provided some form of an Array.dim method to do this, but
 we can easily correct this oversight:
+
 #+begin_src javascript 
 Array.dim = function (dimension, initial) {
    var a = [], i;
@@ -601,9 +599,9 @@ function copy(arr1, arr2) {
 #+end_src
 
 ** string representation
-There are two functions that return string representations of an array: join() and
-toString() . Both functions return a string containing the elements of the array de‐
-limited by commas. Here are some examples:
+There are two functions that return string representations of an array: join()
+and toString() . Both functions return a string containing the elements of the
+array de‐ limited by commas. Here are some examples:
 
 #+begin_src javascript
 
@@ -624,7 +622,6 @@ function shuffle(array) {
 
   // While there remain elements to shuffle…
   while (n) {
-
     // Pick a remaining element…
     i = Math.floor(Math.random() * array.length);
 
@@ -755,7 +752,7 @@ ing it without an argument returns a clone of the array.
 </html>
 #+end_src
 
-** strings
+* strings
 ** reverse string in javascript?
 
 #+begin_src javascript
@@ -779,7 +776,7 @@ function reverse(s){
 ** Checking for an Existing, Nonempty String
 
 #+begin_src javascript
-    if (((typeof unknownVariable != 'undefined' && unknownVariable) &&
+if (((typeof unknownVariable != 'undefined' && unknownVariable) &&
     unknownVariable.length() > 0) &&
     typeof unknownVariable.valueOf() == 'string') ...
 #+end_src
@@ -787,13 +784,13 @@ function reverse(s){
 ** convert a string in base 2 to decimal
 
 #+begin_src javascript
-  parseInt("1111", 2);
+parseInt("1111", 2);
 #+end_src
 
 ** replace all non-digit characters
 
 #+begin_src javascript
-   str.replace(/\D/g,' ');
+str.replace(/\D/g,' ');
 #+end_src 
 
 ** split a string by one or more spaces
@@ -859,18 +856,17 @@ For the caller, just use caller.toString().
 ** Finding and Highlighting All Instances of a Pattern
 
 #+begin_src javascript
+var searchString = "Now is the time and this is the time and that is the time";
+var pattern = /t\w*e/g;
+var matchArray;
 
-    var searchString = "Now is the time and this is the time and that is the time";
-    var pattern = /t\w*e/g;
-    var matchArray;
+var str = "";
 
-    var str = "";
-
-    // check for pattern with regexp exec, if not null, process
-    while((matchArray = pattern.exec(searchString)) != null) {
-      str+="at " + matchArray.index + " we found " + matchArray[0] + "\n";
-    }
-    console.log(str);
+// check for pattern with regexp exec, if not null, process
+while((matchArray = pattern.exec(searchString)) != null) {
+  str+="at " + matchArray.index + " we found " + matchArray[0] + "\n";
+}
+console.log(str);
 #+end_src
 
 The results are:
@@ -886,10 +882,11 @@ The results are:
 
 ** Traversing the Results from querySelectorAll() with forEach() and call()
 
-You want to use forEach() on the nodeList returned from a call to querySelectorAll().
+You want to use forEach() on the nodeList returned from a call to
+querySelectorAll().
 
-ou can coerce forEach() into working with a NodeList (the collection returned by querySelectorAll()) 
-using the following:
+ou can coerce forEach() into working with a NodeList (the collection returned by
+querySelectorAll()) using the following:
 
 #+begin_src javascript
 // use querySelector to find all second table cells
@@ -902,7 +899,8 @@ var cells = document.querySelectorAll("td + td");
 
 ** Using a Destructuring Assignment to Simplify Code
 
-You want to assign array element values to several variables, but you really don’t want to have assign each, individually.
+You want to assign array element values to several variables, but you really
+don’t want to have assign each, individually.
 
 Use ECMAScript 6’s destructuring assignment to simplify array assignment:
 
@@ -916,7 +914,8 @@ console.log(Missouri); // 144
 
 Converting Function Arguments into an Array
 
-Use Array.prototype.slice() and then the function call() method to convert the arguments collection into an array:
+Use Array.prototype.slice() and then the function call() method to convert the
+arguments collection into an array:
 
 #+begin_src javascript
 
