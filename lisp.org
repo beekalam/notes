@@ -221,6 +221,7 @@ Falsity in Common Lisp is represented by nil, the empty list.
 > (listp 27)
 NIL
 #+end_src
+
 ** the four disguises of ()
 Not only does the empty list evaluate to false, but it is the only false value
 in Common Lisp. Any value not equivalent to an empty list will be considered a
@@ -442,6 +443,7 @@ T
 #+end_src
 
 * printing
+** print and prin1  
 #+begin_src lisp
 > (progn (print "this")
          (print "is")
@@ -461,13 +463,39 @@ T
          (prin1 "a")
          (prin1 "test"))
 "this""is""a""test"
-#+begin_src 
+#+end_src 
 
 As you can see, prin1 does not put the printed items on separate lines. To be
 precise, the print and prin1 commands are the same in every way, except that
 print will start a new line before printing a value. Additionally, print places
 a space character at the end of the printed value.
+** princ
+*** intro
 
+Lisp has a command that can print pieces of data in a way that is appealing to
+humans. The princ function can take any piece of Lisp data, and it tries to
+print that data in a way humans would prefer. Here are some examples:
+
+#+begin_src 
+(princ '3)     => 3
+(princ '3.4)   => 3.4
+(princ 'foo)   => FOO
+(princ '"foo") => foo
+(princ '#\a)   => a
+#+end_src
+
+*** example #1
+#+begin_src lisp
+> (defun say-hello ()
+      (princ "Please type your name:")
+      (let ((name (read-line)))
+          (princ "Nice to meet you, ")
+          (princ name)))
+SAY-HELLO
+> (say-hello)
+Please type your name: Bob O'Malley
+Nice to meet you, Bob O'Malley
+#+end_src 
 
 * Misc
 ** display string
@@ -537,6 +565,15 @@ You can give any number of arguments to setf.
 (setf a b)
 (setf c d)
 (setf e f)
+#+end_src
+
+** evaluating
+#+begin_src lisp
+> (defparameter *foo* '(+ 1 2))
+*FOO*
+
+> (eval *foo*)
+3
 #+end_src 
 
 * example

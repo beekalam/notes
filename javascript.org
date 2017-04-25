@@ -1594,7 +1594,237 @@ function timeout() {
     }, 1000);
 }
 
-#+end_src 
+#+end_src
+
+** creating and using literals
+#+begin_src javascript
+'this is a string'; // A String literal (using Single Quotes)
+"this is another string"; // A String literal (using Double Quotes)
+true; // A Boolean literal
+false; // A Boolean literal
+3; // A Number literal
+3.1415926; // Another Number literal
+0b0101; // A Binary Number literal
+0xFFF; // A Hexadecimal Number literal
+0o888; // An Octal Number literal
+[]; // An (empty) Array literal
+[ 1, 2, 3, ]; // An Array literal populated with 3 Number literals
+[ 'hello', 'world']; // An Array literal populated with 2 String literals
+{}; // An (empty) Object literal
+{ first: 1, second: 2 }; // An Object literal populated with 2 Number literals, named
+"first" and "second"
+/abc/; // A Regular Expression literal
+/^\w{3,4}$/g; // A more complex Regular Expression literal
+function () {}; // A Function literal
+function foo() {}; // A named Function literal
+null; // The null literal
+undefined; // The undefined literal
+`this is a template string`; // A Template String literal
+`Hello #{name}
+How are you?`; // A more complex Template String literal
+#+end_src
+
+** creating types using their constructors
+#+begin_src javascript
+'hello'; // A String literal (using Single Quotes)
+new String('hello'); // A String created from its constructor
+[ 1, 2, 3 ]; // An Array literal with 3 Number literal values
+new Array(1,2,3); // An Array created from its constructor
+new Array(5); // An Array populated with 5 undefined values
+/abc/; // A Regular Expression literal
+new RegExp('abc'); // A Regular Expression created from its constructor
+/^\w{3,4}$/g; // A more complex Regular Expression literal
+new RegExp('^\\w{3,4}$', 'g'); // A more complex Regular Expression literal created from its
+constructor
+function () { return 1 }; // A Function literal
+new Function('return 1'); // A Function created from its constructor
+{}; // An empty Object literal
+new Object(); // An empty Object created from its constructor
+#+end_src
+
+** Determine if a variable has been defined using an equality operator
+#+begin_src javascript
+var a; //the variable "a" has been declared but it hasn't been assigned
+if(a === undefined){
+    console.log("Variable 'a' is undefined");
+}
+// prints "Variable 'a' is undefined"
+#+end_src
+
+** Determining If a Variable Has Been Declared Using typeof( )
+The typeof operator can be used to determine if a type is undefined. It returns
+a string indicating the type of the operand, but does not throw an error if the
+variable has never been declared.
+#+begin_src javascript
+var a, b = 4;
+if (typeof a === 'undefined'){
+    console.log("Variable 'a' is undefined");
+}
+#+end_src
+
+** Test the return value of a function
+#+begin_src javascript
+// A function with an empty return-statement
+// returns undefined
+function function1() {
+         return;
+}
+// A function with no return-statement
+// returns undefined
+function function2() {
+}
+function function3() {
+         return 2 + 2;
+}
+var fn1 = function1();
+console.log("Function1 returns: " + fn1);         // undefined
+var fn2 = function2();
+console.log("Function2 returns: " + fn2);         // undefined
+var fn3 = function3();
+console.log("Function3 returns: " + fn3);         // 4
+if ( function1() === undefined ) { 
+           console.log( "Function 1 returns undefined." );
+}
+#+end_src
+
+** What’s the Difference Between Null and Undefined?
+A variable is undefined only when the variable is declared but not assigned a
+value, or the variable has been explicitly assigned the undefined value. A
+variable is null only when it has been assigned the null value.
+#+begin_src javascript
+var a;
+var b = null;
+if ( typeof a === 'undefined' ) { 
+          console.log( "Variable a is undefined" );
+}
+if ( a === null ){
+          console.log( "Variable a is null" );
+}
+if ( typeof b === 'undefined' ) {
+          console.log( "Variable b is undefined" );
+}
+if ( b === null ) { 
+          console.log( "Variable b is null" );
+}
+//The output is:
+//Variable a is undefined
+//Variable b is null
+#+end_src
+
+** Coercing a Boolean Variable Using a Boolean Constructor
+#+begin_src javascript
+console.log(Boolean(-0) ); // logs false
+console.log(Boolean(0) ); // logs false
+console.log(Boolean(new Number(0)) ); // logs true
+console.log(Boolean(1) ); // logs true
+console.log(Boolean(NaN) ); // logs false
+console.log(Boolean(-1) ); // logs true
+console.log( Boolean(false) ); // logs false
+console.log( Boolean(true) ); // logs true
+console.log( Boolean(undefined) ); // logs false
+console.log( Boolean(null) ); // logs false
+console.log( Boolean(new String()) ); // logs true
+console.log(Boolean("") ); // logs false
+console.log(Boolean('a string') ); // logs true
+console.log(Boolean("true") ); // logs true
+console.log(Boolean("false") ); // logs true
+console.log( Boolean(function () {}) ); // logs true
+console.log( Boolean({}) ); // logs true
+console.log( Boolean([]) ); // logs true
+#+end_src
+
+** determining if a boolean variable has is initialized
+using typeof operator, we can determine the datatype of a variable.
+If the variable is a Boolean value, typeof will return the string 'Boolean'.
+
+#+begin_src javascript
+var a = Boolean(true);
+var b = false;
+var c = "";
+var d = new Date();
+console.log(typeof a === 'boolean')   // true
+console.log(typeof b === 'boolean')   //logs true
+console.log(typeof c === 'boolean')   //logs false
+console.log(typeof d === 'boolean')  //logs false
+#+end_src
+
+** valid representations of the False and True values
+#+begin_src javascript
+if (0) {console.log( "0 is true");} else {console.log("0 is false");}
+if (-0) {console.log( "-0 is true" );} else {console.log("-0 is false");}
+if (null) {console.log( "null is true" );} else {console.log("null is false");}
+if (false) {console.log( "false is true" );} else {console.log("false is false");}
+if (NaN) {console.log( "NaN is true" );} else {console.log("NaN is false");}
+if (undefined) {console.log( "undefined is true" );} else {console.log("undefined is false");}
+if ("") {console.log( "Empty String is true" );} else {console.log("Empty String is false");}
+// Variable b holds the outcome of the comparison
+// between Variable 'a' and the number 1.
+var a = 1;
+b = (a === 1);   // true
+if ( b ) {console.log("Variable b is true");} else {console.log("Variable b is false");}
+// Examples of conditional or comparative expressions
+var c = 1 + 2;
+var d = null;
+var e = a - 3;
+var f = undefined;
+if (c) {console.log("Variable c is true");} else {console.log("Variable c is false");}
+if (d) {console.log("Variable d is true");} else {console.log("Variable d is false");}
+if (e) {console.log("Variable e is true");} else {console.log("Variable e is false");}
+if (f) {console.log("Variable f is true");} else {console.log("Variable f is false");}
+/* the output is:
+0 is false
+-0 is false
+null is false
+false is false
+NaN is false
+undefined is false
+Empty String is false
+Variable b is true
+Variable c is true
+Variable d is false
+Variable e is true
+Variable f is false
+*/
+#+end_src
+
+** Coercing a String Using the String Constructor
+#+begin_src javascript 
+String("hello world"); // The String "hello world"
+String(1); // The String "1"
+String(false); // The String "false"
+String(true); // The String "true"
+String({}); // The String "[object Object]"
+String([1,2,3]); // The String "1,2,3"
+String(function foo() {}); // The String "function foo() {}"String(0b0101); // The String "5"
+String(/abc/); // The String "/abc/"
+String(undefined); // The String "undefined"
+String(null); // The String "null"
+// String casting can be overridden by providing the toString() method
+String({ toString: function () { return 'hi!'; } }); // The String "hi!"
+String({ toString: function () { return false; } }); // The String "false"
+#+end_src
+
+** Determining If a Variable Is a String
+Using the typeof operator, we can determine the datatype of a variable. If the
+variable is a string value, typeof will return the string "string".
+
+#+begin_src javascript
+var a = String("I'm a String Object");
+var b = "I'm a string literal";
+var c= 7;
+var d = new Date();
+if ( typeof a === 'string' ) {console.log("a is a String");} else {console.log("a is not a String");}
+if ( typeof b === 'string' ) {console.log("b is a String");} else {console.log("b is not a String");}
+if ( typeof c === 'string' ) {console.log("c is a String");} else {console.log("c is not a String");}
+if ( typeof d === 'string' ) {console.log("d is a String");} else {console.log("d is not a String");}
+/*
+The output is:
+a is a String
+b is not a String
+c is not a String
+d is not a String
+*/
+#+end_src
 
 * this
 ** understanding 'this'

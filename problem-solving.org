@@ -105,6 +105,7 @@ solutions need to be searched for, the algorithm continues searching
 for them by backtracking to the leaf’s parent.
 
 * TRIZ
+
 ** Inventive Principle 1: Segmentation
 
     Divide an object into independent parts
@@ -536,6 +537,52 @@ Inventive Principle 23: Feedback
         Fibre-reinforced composite materials in Boeing 787 wing and fuselage
         Concrete aggregate
 
+* strategies for effective problem solving
+** GETTING IN THE RIGHT FRAME OF MIND
+People who are effective problem solvers develop mind sets and habits
+which aid them in dealing with difficult problems. Stephen Covey's research on
+highly effective people revealed that there are certain habits these people practice.
+The seven habits you should consider developing are shown in the table below.
+
+*Habit 1 Be Proactive.* Take the initiative and make things happen. Aggressively seek
+new ideas and innovations. Don't let a negative environment affect your
+behavior and decisions. Work on things that you can do something about. If
+you make a mistake, acknowledge it and learn from it.
+
+*Habit 2 Begin with the End in Mind.* Know where you are going and make sure all
+the steps you take are in the right direction. First determine the right things
+to accomplish and then how to best accomplish them. Write a personal mission
+statement describing where you want to go and what you want to be and how
+to accomplish these things.
+
+*Habit 3 Put First Things First.* List your top priorities each day for the upcoming
+week and schedule time to work on them. Continually review and prioritize
+your goals. Say NO to doing unimportant tasks. Focus on the important tasks,
+the ones that will have impact if carefully thought out and planned.
+
+*Habit 4 Think Win/Win.* Win/Win is the frame of mind that seeks mutual benefits
+for all people involved in solutions and agreements. Identify the key issues
+and results that would constitute a fully acceptable solution to all. Make all
+involved in the decision feel good about the decision and committed to a plan
+of action.
+
+*Habit 5 Seek First to Understand, Then to Be Understood.* Learn as much as you
+can about the situation. "Listen, listen, listen." Try to see the problem from
+the other person's perspective. Be willing to be adaptable in seeking to be
+understood. Present things logically, not emotionally. Be credible, empathetic,
+and logical.
+
+*Habit 6 Synergize*. Make the whole greater than the sum of its parts. Value the
+differences in the people you work with. Foster open and honest
+communication. Help everyone bring out the best in everyone else.
+
+*Habit 7 Renewal*. Renew the four dimensions of your nature:
+ - Physical: Exercise, nutrition, stress management.
+ - Mental: Reading, thinking, visualizing, planning, writing.
+ - Spiritual: Value clarification and commitment, study and meditation.
+ - Social/Emotional: Service, empathy, self-esteem, synergy.
+
+   
 * useful resources
 ** good reads
  https://www.amazon.com/Best-Sellers-Books-Decision-Making-Problem-Solving/zgbs/books/2679
