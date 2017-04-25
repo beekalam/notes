@@ -5618,7 +5618,7 @@ Received from the server: Object { time="Tue, 25 Aug 2015 10:32:02 +0200"}
 #+end_src
 
 ** Web Sockets
-
+   
 Well, with XHR/Fetch we communicate from client to server. With SSE,
 we do this in the opposite direction. But can we have communication
 both ways at once? Another HTML5 goody called Web Sockets provides
