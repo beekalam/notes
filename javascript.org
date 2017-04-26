@@ -1825,6 +1825,227 @@ d is not a String
 */
 #+end_src
 
+** creating numeric value using Number literals
+#+begin_src javascript
+// Basic arithmetic
+var a = 1 + 1;
+console.log( typeof a );                                            // number
+console.log( "1 + 1 = " + a );                                      // 1 + 1 = 2
+console.log(10 - 5.52 );                                            // 4.48
+console.log(3.49 / .52 );                                           // 6.711538461538462
+console.log(95.78 * 627 );                                          / 60054.06
+// Comparing integer and floating-point values
+console.log( 1 === 1.000 );                                         // true
+console.log( typeof 1 === typeof 1.000 );                           // true
+// Scientific Notation
+console.log( 1e1 );                                                 // 10
+console.log( 1e3 );                                                 // 1000
+console.log(1.51e-6 );                                              // 0.00000151
+console.log( 1.7985e19 );                                            // 17985000000000000000
+// Hexadecimal Notation
+console.log( 0x01 );                                              // 26
+console.log( 0x1a );                                              // 188
+console.log( 0xbc );                                              // 255
+console.log( 0xff );                                              // 1
+
+// Octal Notation
+console.log( 0o1 );                                               // 26
+console.log( 0o32 );                                              // 188
+console.log( 0o274 );                                             // 255
+console.log( 0o377 );                                             // 1
+// Octal Notation
+console.log( 0b1 );                                               // 26
+console.log( 0b11010 );                                           // 2134592
+console.log( 0o10111100 );                                        // 2396745
+console.log( 0o11111111 );                                        // 1
+#+end_src
+
+** Determining If a Defined Variable Is a Number
+Using the typeof operator, you can determine the datatype of a variable. If the
+variable is a Number value, typeof will return the string "number".
+** Dealing with NaN and Infinity
+Number.isNaN() and Number.isFinite() are ES6 features.
+
+The number constructor has two static methods (functions attached directly to the number constructor),
+Number.isNaN and Number.isFinite. Both return Booleans determining if the passed parameter is NaN or
+±Infinity, respectively.
+
+#+begin_src javascript
+var a = NaN;
+var b = Infinity;
+var c = -Infinity;
+var d = 3
+if ( Number.isNaN(a) ) {console.log("a is a NaN (not a number)");
+} else {console.log("a is a real Number, not NaN");}
+
+if ( Number.isFinite(b) ) {console.log("b is a finite Number");
+} else {console.log("b is not a finite Number, it is either +Infinity or -Infinity");}
+
+if ( Number.isFinite(c) ) {console.log("c is a finite Number");
+} else {console.log("c is not a finite Number, it is either +Infinity or -Infinity");}
+
+if ( Number.isNaN(d) ) {console.log("d is a NaN (not a number)");
+} else {console.log("d is a real Number, not NaN");}
+
+if ( Number.isFinite(d) ) {console.log("d is a finite Number");
+} else {console.log("d is not a finite Number, it is either +Infinity or -Infinity");}
+
+The output is:
+a is NaN (not a number)
+b is not a finite Number, it is either +Infinity or -Infinity
+c not a finite Number, it is either +Infinity or -Infinity
+d is a real Number, not NaN
+d is a finite Number
+#+end_src
+
+NaN and ±Infinity are Number objects, which makes dealing with them difficult to detect; however, the two
+methods Number.isNaN() and Number.isFinite() are specifically built to detect these two edge cases. They
+are also available on the global object, meaning one can write, for example window.isNaN() or more simply
+isNaN(). It is especially important when taking user input as numbers, to check if the number is NaN.
+** Generating a Date Using the Date Object
+#+begin_src javascript
+// The current date and time
+// Wed Apr 10 2013 15:01:06 GMT-0400 (Eastern Daylight Time)
+var today = new Date();
+console.log(today);
+// Thu Mar 14 2013 03:14:15 GMT-0400 (Eastern Daylight Time)
+var dateOne = new Date("March 14, 2013 03:14:15");
+console.log(dateOne);
+// Wed Apr 10 2013 00:00:00 GMT-0400 (Eastern Daylight Time)
+var dateTwo = new Date(2013,03,10);
+console.log(dateTwo);
+// Thu Mar 14 2013 03:14:15 GMT-0400 (Eastern Daylight Time)
+var dateThree = new Date(2013,02,14,3,14,15);
+console.log(dateThree);
+// Working with Date components
+var date = today.getDate();                                             // 13
+var month = today.getMonth();                                           // 3
+var year = today.getFullYear();                                         // 2013
+console.log(date + "/" + month + "/" + year);
+// Determine the duration of an event
+var start = Date.now();
+alert("Wait a few seconds then click OK");
+var time = Date.now() - start;
+console.log( "The operation took " + time + " milliseconds" );
+The output is:
+//Sun Dec 15 2013 23:46:08 GMT+0000 (GMT) // (this output may be different based on your timezone!)
+//Thu Mar 14 2013 03:14:15 GMT+0000 (GMT)
+//Wed Apr 10 2013 00:00:00 GMT+0100 (BST) // (this output may be different based on your timezone!)
+//Thu Mar 14 2013 03:14:15 GMT+0000 (GMT)
+//15/11/2013 // (this output may be different based on your locale!)
+//The operation took 1326 milliseconds
+#+end_src
+** Generating a Date with a Date String
+#+begin_src javascript
+var myDateString = "January 16, 1975 17:07:00";
+var myDate = new Date(myDateString);
+myDate.setMonth(2);
+myDate.setHours(10);
+myDate.setMinutes(51);
+myDate.setSeconds(59);
+var myDateString = "1985-04-12T23:20:50.52Z";
+var myDate = new Date(myDateString);
+myDate.setMonth(2);
+myDate.setHours(10);
+myDate.setMinutes(51);
+myDate.setSeconds(59);
+#+end_src
+** Determining If a Defined Variable Is a Date
+We can’t use the typeof operator to return the variable’s type because typeof
+will return the string "object" for a Date instance (as it is not a literal).
+Instead we’ll use the instanceof operator to determine if a variable is an
+instance of the Date object.
+
+#+begin_src javascript
+var a = new Date();
+var b = 3.14;
+var c = "I'm a string";
+if (a instanceof Date) {console.log("a is a Date");
+} else {console.log("a is not a Date");}
+
+if (b instanceof Date) {console.log("b is a Date");
+} else {console.log("b is not a Date");}
+
+if (c instanceof Date) {console.log("c is a Date");}
+else {console.log("c is not a Date");}
+
+//The output is:
+//a is a Date
+//b is not a Date
+//c is not a Date
+#+end_src
+** Determining If a Defined Variable Is an Object
+Using the typeof operator, we can determine the datatype of a variable. If the
+variable is an object, typeof will return the string "object".
+** Determining If an Object Is an Instance
+Problem 
+You need to determine if an object, such as a Date object, is an
+instance of a constructor, or an instance of the Object constructor; however,
+typeof returns the "object" value for all of these.
+
+Solution
+
+If you have an object, such as a Date object, and using typeof returns "object",
+but you still want to assert that the object is an instance of a constructor you
+can use the instanceof keyword.
+
+The instanceof operator is a useful tool for detecting instances of
+constructors, especially when you want to determine the finer points of an
+objects inheritance. It is vitally important to remember that instanceof will
+not work on any literals, such as number literals or string literals. As a rule
+of thumb, instanceof only works on values that have a typeof of ”object”, so you
+could be ultra cautious by checking the typeof a value, followed by checking
+instanceof the object, only if the typeof is ”object”.
+** Determining an Object’s Direct Instance with the Constructor Property
+Problem
+
+Some objects are created from the result of a constructor (such as Date), but
+they also inherit from their parent constructor objects. For example, a Date
+object will return true for instanceof Date, but will also return true for
+instanceof Object. This becomes a problem when trying to find the direct
+descendant of an object.
+
+Solution
+
+Every object that has a constructor and can be created by using the new keyword
+will have a constructor property. This is set to the constructor function, so
+for example new Date()`s constructor property is Date.
+
+#+begin_src javascript
+var date = new Date();
+var error = new Error();
+var blob =  new Blob();
+var object = {};
+if ( date.constructor === Date ) {
+    console.log("date is a Date instance");
+} else if ( date.constructor === Error ) {
+    console.log("date is an Error instance");
+} else if ( date.constructor === Blob ) {
+    console.log("date is a Blob instance");
+} else {
+    console.log("date is an unknown instance");
+ }
+#+end_src
+
+** Determining If Something Is a Plain Object
+
+You want to be able to assert that an object is not a descendant of a resulting
+constructor function, and instead asserting that an object is a plain object—one
+that was created using new Object() or an object literal ({}). instanceof will
+assert that the object is an instance of the object constructor. instanceof also
+asserts on any descendants of the object’s constructor such as the Date
+instances.
+
+determining the direct descendant of an object should use the .constructor
+property. Determining if an object is a “plain” object (e.g., is not an instance
+of another constructor, such as date) requires the same process, even for object
+literals ({}).
+
+This is another important example of how the constructor property can sometimes
+be more useful than instanceof. The instanceof property will “walk the prototype
+chain”; that is, it will check not only the direct descendant, but the
+descendant of that, and that, and that, and so on.
+
 * this
 ** understanding 'this'
 
