@@ -2226,7 +2226,7 @@ FOREACH($dates AS $value) ECHO $value."<br />";
 ?>
 #+end_src
 
-* variables
+*** variables
 ** Establishing a Default Value
 Use isset() to assign a default to a variable that may already have a value:
 #+begin_src php

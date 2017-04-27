@@ -207,6 +207,89 @@ CL-USER> (getf (list :a 1 :b 2 :c 3) :c)
  variable bound to successive elements of the list returned by expression.
  so the loop above says, for each obj in lst, increment len.
 
+** dotted lists
+*** intro
+#+begin_src lisp
+> (cons 1 (cons 2 3))
+(1 2 . 3)
+#+end_src
+
+To indicate that the final item in the list wasn’t found in the proper location
+for a nil-terminated list, Lisp places a dot in front of this final item. This
+dot is basically Lisp’s way of saying, “I tried to print this structure you
+entered using list notation, but the last item in the list didn’t contain the
+usual nil I expected; instead, it contained 3.”
+
+Another way of thinking about this dot notation is to consider it as simply an
+alternate syntax for the cons command, used in data mode. In fact, if we wanted
+to make life hard for ourselves, we could even create regular, proper lists
+using the dot notation, like this:
+
+#+begin_src lisp
+> '(1 . (2 . (3 . nil)))
+(1 2 3)
+#+end_src
+
+*** pairs
+One common and practical use for dotted lists in Lisp programs is to elegantly
+represent pairs. For instance, suppose we wanted to represent a pair of the
+numbers 2 and 3. One way to do this would be to cons together these two numbers:
+#+begin_src lisp
+> (cons 2 3)
+(2 . 3)
+#+end_src 
+
+Essentially, all we’re doing here is creating a dotted list of length two. As
+expected, Lisp uses dot notation to display this pair.
+
+Creating pairs in this manner in Lisp is very convenient and efficient. It’s
+convenient because we can extract members from the pair using the standard car
+and cdr commands. It’s relatively efficient because the Lisp environment needs
+to allocate only a single cons cell to connect the two items.
+
+** circular lists
+But before you experiment with circular lists in any Common Lisp environment,
+you should run this command:
+#+begin_src lisp
+(setf *print-circle* t)
+> (defparameter foo '(1 2 3))
+FOO
+> (setf (cdddr foo) foo)
+#1=(1 2 3 . #1#)
+#+end_src 
+In this example, we’ve created an infinite list of '(1 2 3 1 2 3 1 2 3 ...) by
+replacing the nil at the end of a simple list with a reference to the list
+itself.
+
+** Association Lists 
+One particularly useful data structure that can be created out of cons cells is
+an association list, or alist for short. An alist consists of key/value pairs
+stored in a list.
+
+#+begin_src lisp
+> (defparameter *drink-order* '((bill . double-espresso)
+                              (lisa . small-drip-coffee)
+                              (john . medium-latte)))
+
+;To look up the order for a given person, use the function assoc:
+> (assoc 'lisa *drink-order*)
+(LISA . SMALL-DRIP-COFFEE)
+
+> (push '(lisa . large-mocha-with-whipped-cream) *drink-order*)
+((LISA . LARGE-MOCHA-WITH-WHIPPED-CREAM)
+ (BILL . DOUBLE-ESPRESSO)
+ (LISA . SMALL-DRIP-COFFEE)
+ (JOHN . MEDIUM-LATTE))
+
+;This function simply adds a new item to the front of an existing list.
+
+;Because, by default, the first reference to a key in an association list takes
+;precedence over later references to the same key, the order Lisa placed for a
+;small drip coffee is superseded by her more recent order: 
+> (assoc 'lisa *drink-order*) (LISA . LARGE-MOCHA-WITH-WHIPPED-CREAM)
+
+#+end_src 
+
 * Truth
 ** intro
 In Common lisp , the symbol t is the default representation of truth.
