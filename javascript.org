@@ -111,10 +111,26 @@ Designation exists: false
 #+end_src
 
 ** ~instanceof~
+*** intro
 instanceof operator is used to check whether an object is an instance
 of the specified object. It returns true if an object is an instance
 of a particular object else returns false.
 
+JavaScript’s prototype allows objects to inherit properties and methods from
+constructors. Constructors define a .prototype property that is an object of
+properties and functions to assign to new objects. When a constructor gets
+called with the new keyword (e.g., new Date()), it creates a new object, whose
+__proto__ property is set to a reference of the constructor’s .prototype
+property. instanceof essentially asserts that the left hand operand’s __proto__
+property is equal to the right hand’s .prototype property. But it goes further
+than that, because instanceof will also check the constructor’s __proto__
+property, and that constructor’s __proto__ property, and so on. This is called
+the “prototype chain,” and it means that you can assert against an object’s
+ancestry. As a side note, all non-literal values have an ancestry starting with
+object, which is why all constructors and instances will assert that they are
+instances of object.
+
+*** example #1
 #+begin_src html
 <!DOCTYPE html>
 <html>
@@ -1040,6 +1056,11 @@ function ourRandomRange(ourMin, ourMax) {
 #+begin_src javascript
 var num='1234';
 var cnum = +num;
+#+end_src
+
+** base 16 using ~parseInt~ 
+#+begin_src javascript
+var val = parseInt(rgb, 16);
 #+end_src
 
 * date time
@@ -2045,6 +2066,89 @@ This is another important example of how the constructor property can sometimes
 be more useful than instanceof. The instanceof property will “walk the prototype
 chain”; that is, it will check not only the direct descendant, but the
 descendant of that, and that, and that, and so on.
+
+** Deleting an Object, Property, or Array Element with the Delete Operator
+The delete unary operator (that is, it only has one operand) is the way to
+remove properties from objects or arrays.
+
+#+begin_src javascript
+var house = { floors: 3, bedrooms: 4, garden: true };
+console.log( 'House has', house.floors , 'floors' );
+console.log( delete house.floors ); // delete returns true
+console.log( delete house.floors ); // delete returns true
+console.log( 'House has', house.floors , 'floors' ); //logs House has undefined floors
+console.log( delete house ); //logs false
+
+var primes = [ 2, 3, 5, 7, 11 ];
+console.log([ 2, 3, 5, 7, 11 ];
+console.log(delete primes[11] ); // delete returns false
+console.log(delete primes[2] ); // delete returns true
+console.log(primes );
+console.log(delete primes ); false // You may see true here if using eval() or using a console that uses it (for example Firefox's)
+#+end_src
+
+delete works by removing a property from an object or array. It is important to
+note that delete does not work on variables or declared functions—that is, it
+cannot delete things that are not properties of objects or arrays. A common
+misconception around delete is that it is useful for freeing up memory. Delete
+does not free up any memory as a direct result of its operation. For example, if
+you have an object that is referenced elsewhere in your code, as well as in an
+object you are deleting from, then the object still has a hard reference, and
+therefore will not be freed. The only way delete will ever appear to be freeing
+memory is if the deleted property was the only hard reference to an object,
+function, or array.
+
+** Evaluating an Expression Without a Return Value with the Void Operator
+The void operator is another unary operator (that is, it only has one operand),
+which allows you to evaluate an expression and explicitly return undefined from
+the expression. Simply prefix any expression with void and the expression will
+return undefined.
+#+begin_src javascript
+console.log( void( 0 ) ); // returns Undefined
+var object = { one: 1, two: 2 };
+delete object.one; // returns true
+console.log( void( delete object.one ) ); // returns Undefined
+console.log( object.two ); // returns the Number 2
+console.log( void( object.two ) ); // returns Undefined
+function addNumbers(a, b) {
+    return a + b
+}
+console.log( addNumbers(1, 2) ); // returns 3
+console.log( void( addNumbers(1, 2) ) ); // returns Undefined
+#+end_src
+The JavaScript interpreter reads the void keyword and executes the expression
+after it. It explicitly always returns undefined, unless of course the remaining
+expression throws an Error.
+
+Another example of real-world usage you may frequently see are developers using
+void 0 in place of undefined. This is due to a bug in the ES3 spec (and
+therefore older browsers) allowing the undefined literal value to be overridden.
+Because undefined was not guaranteed to be the undefined literal value, some
+developers chose to program defensively, and use void 0 as a syntactical
+replacement, which is guaranteed to be undefined. Generally this should be
+avoided, as today almost all browsers follow the ES6 or ES5 spec, which
+explicitly tell implementers that the undefined value is not writable
+** Determining the Type of a Variable with the typeof Operator
+#+begin_src javascript
+
+console.log(typeof 0 ); // "number"
+console.log(typeof Infinity ); // "number"
+console.log(typeof NaN ); // "number"
+console.log(typeof 'Hi' ); // "string"
+console.log(typeof "Hi" ); // "string"
+console.log(typeof true ); // "boolean"
+console.log(typeof false ); // "boolean"
+console.log(typeof undefined ); // "undefined"
+console.log(typeof new Symbol() ); // "symbol" - (careful, only in ES6)
+console.log(typeof {} ); // "object"
+console.log(typeof [] ); // "object"
+console.log(typeof new Date() ); // "object"
+console.log(typeof /^$/ ); // "object"
+console.log(typeof null ); // "object"
+console.log(typeof new String() ); // "object"
+console.log(typeof new Number() ); // "object"
+console.log(typeof typeof {} ); // "string"
+#+end_src
 
 * this
 ** understanding 'this'
