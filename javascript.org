@@ -768,6 +768,19 @@ ing it without an argument returns a clone of the array.
 </html>
 #+end_src
 
+** extract unique elements from array using ~Set~
+#+begin_src javascript
+var arr = [1,2,1,1,3,2];
+var s = new Set(arr);
+arr = Array.from(s);   // [1, 2, 3]
+#+end_src
+
+** flatten 2 dimensional array using ... operator
+#+begin_src javascript
+var arr=[[1,2],[3,4]];
+var b =[].concat(...arr);
+#+end_src
+
 * strings
 ** reverse string in javascript?
 
@@ -7937,9 +7950,19 @@ $('#nas-ippools').on('change', function() {
 *** select please select option
 #+begin_src html
 <option selected='selected' disabled='true'>--Please Select --</option>
-#+end_src 
+#+end_src
+
+** only send non empty fields on submit
+#+begin_src javascript
+$('body').on('submit','#form-id',function () {
+    $(this).find('input[name]').filter(function () {
+                return !this.value;
+    }).prop('name', '');
+});
+#+end_src
 
 ** useful resources
+
 http://api.jquery.com/
 
 * =HTML5= validation
