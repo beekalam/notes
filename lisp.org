@@ -356,7 +356,7 @@ THE-LIST-IS-EMPTY
 ODD-NUMBER
 #+end_src
 
-*** evalua multiple expressions in ~if~
+*** evaluate multiple expressions in ~if~
  for cases when you really want to do more than one thing, you can use a special
  command, progn, to wedge in extra commands in a single expression. With progn,
  only the last evaluation is returned as the value of the full expression. In
