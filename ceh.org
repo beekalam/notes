@@ -136,8 +136,25 @@ $ sudo namp -sU
 $ sudo nmap -sS -O 172.30.42.1
 # scan one port 
 $ sudo nmap -sV -p 22,53 <ip>
+# TCP full connection scan
+$ nmap -sT -vvv -p 80 192.168.195.0/24
+# SYN scan
+$ nmap -sS -vvv -p 80 192.168.195.0/24
+# ACK scan
+$ nmap -sA -vvv -p80 192.168.195.0/24
+# UDP scan
+$ nmap -sU -vvv -p161 192.168.195.0/24
+# combined UDP and TCP scan
+$ nmap -sS -sU -vvv -p U:161,139 T:8080,21 192.168.195.0/24
 
 #+end_src 
+
+** scanning default gateways
+#+begin_src shell
+for i in `seq 1 255`; do ping -c 1 192.168.$1.1 | tr \\n ' ' | awk '/1
+received/ {print $2}'; done
+#+end_src
+
 
 * banner grabbing
 use telnet for TCP and nc for UPD connections.

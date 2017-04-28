@@ -1003,6 +1003,51 @@ str.replace(/[^0-9]/g, '')
 
 http://stackoverflow.com/questions/10003683/javascript-get-number-from-string
 
+** understanding unicode strings
+javaScript uses the Unicode standard of encoding characters. In JavaScript Unicode, character points can
+be manually expressed using the \uXXXX (Unicode code unit format) or \u{XXXXX} (Unicode code point
+format). Unicode code point format only works in ES6 compatible browsers.
+#+begin_src javascript 
+console.log('\u0068\u0065\u006c\u006c\u006f'); //hello
+console.log('\u{68}\u{65}\u{6c}\u{6c}\u{6f}'); // hello
+console.log('\u0061\u0041\u0062\u0042\u0063\u0043'); // aAbBcC
+console.log('you can mix \u0075nicode escape codes'); // you can mix unicode escape codes
+#+end_src 
+
+JavaScript strings are actually a collection of 16-bit integers; the underlying
+language does not have a concept of characters like A, B or C like we do. It
+uses these 16-bit integers in combination with the Unicode UTF-16 encoding
+format, which tells JavaScript interpreters how to represent these 16-bit
+integers.
+
+The character set in UTF that spans from \u0000 to \uFFFF is called the Basic
+Multilingual Plane or BMP, and it covers the Latin Alphabet (for example, \u0061
+is the Latin Small Case A "A"), and many, many others, including Japanese
+Katakana Character characters (for example \u30C1 is the Japanese Katakana
+Letter Ti "チ"). In fact the BMP covers most languages’ alphabets and
+syllabaries, and includes special ranges, such as the Unicode Private Use Area
+(\uE00 to \uF8FF), which is specifically unspecified and designed for users of
+Unicode to define for themselves. There is another specific range worth
+mentioning inside the BMP, and that is the Surrogates range (\uD800 to \uDFFF).
+
+To extend the Unicode range past the initial 65,535 characters that can be
+expressed in a four-digit Hexadecimal, there are other planes (17 in total,
+including the BMP) that extend the character set from 16 bits to 24 bits, such
+as the SMP (Supplementary Multilingual Plane), which contains more esoteric
+blocks such as Byzantine Musical Symbols, Domino Tiles. and Alchemical Symbols,
+as well as the popular Emoticons range of characters. To access the extra
+characters on these planes in JavaScript, you have to use the Surrogate Pairs
+special range in the BMP.
+
+Surrogates Pairs are special Unicode characters that on their own do not
+represent a single character. When a High Surrogate (\uD800 to \uDBFF) is
+combined with a Low Surrogate (\uDC00 to \uDFFF), the resulting 32-bit character
+may represent a single character; this is known as a Surrogate Pair. Some parts
+of the High Surrogate range are used as shortcuts to denote character blocks on
+different planes, such as the SMP. When a Unicode aware program such as a
+JavaScript interpreter sees the High Surrogate code unit, it knows to expect a
+Low Surrogate code unit afterward.
+
 * numbers
 ** isNumber
 
