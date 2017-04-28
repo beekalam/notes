@@ -275,6 +275,16 @@ abstract superclass—a class that expects parts of its behavior to be provided 
 its subclasses. If an expected method is not defined in a subclass, Python
 raises an undefined name exception when the inheritance search fails.
 
+* importing
+** inform user of not installed modules
+#+begin_src php
+import sys
+try:
+import nmap
+except:
+sys.exit("[!] Install the nmap library: pip install python- nmap")
+#+end_src
+
 * Arguments and options
 
 #+begin_src python 
