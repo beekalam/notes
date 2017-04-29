@@ -288,7 +288,47 @@ stored in a list.
 ;small drip coffee is superseded by her more recent order: 
 > (assoc 'lisa *drink-order*) (LISA . LARGE-MOCHA-WITH-WHIPPED-CREAM)
 
+#+end_src
+
+* Arrays 
+To create a new array, use the make-array command, specifying the array’s size:
+#+begin_src lisp
+> (make-array 3)
+#(NIL NIL NIL)
 #+end_src 
+
+This creates an array of length 3. In order to indicate that the value created
+is not just a list, Common Lisp prepends a hash mark (#) in front of the array.
+
+To get and set items in an array, use the aref function. For example, here’s how
+we get the item at index 1:
+
+#+begin_src lisp
+> (defparameter x (make-array 3))
+#(NIL NIL NIL)
+> (aref x 1)
+NIL
+#+end_src 
+
+Of course, our array is just filled with nils right now, so there’s not much
+worth getting. To set items in the array to more interesting values, use aref in
+conjunction with the setf command:
+#+begin_src lisp
+> (defparameter x (make-array 3))
+#(NIL NIL NIL)
+> (setf (aref x 1) 'foo)
+FOO
+> x
+#(NIL FOO NIL)
+> (aref x 1)
+FOO
+#+end_src 
+
+Although aref is usually a command used to get a value out of an array, when
+used in this special way indicated in the example, it lets us set a value in an
+array, instead. This ability to use the setf and aref commands together shows
+off a feature in Common Lisp: its support for generic programming. Let’s take a
+closer look at the setf command to learn more about how this feature works.
 
 * Truth
 ** intro

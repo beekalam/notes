@@ -282,3 +282,29 @@ what is your name
 route add -net 172.16.11.0/24 172.16.12.141
 * 
 * 
+howManyBees = function(hive) {
+  var res = 0;
+  for(var k in hive){
+    var row = hive[k];
+    var rev = row.split('').reverse().join('');
+    res += (row.match(/bee/g) || []).length;
+    res += (rev.match(/bee/g) || []).length;
+  }
+  var cols = [];
+  for(var i = 0; i < hive.length; ++i){
+    var col='';
+    for(var j = 0; j< hive.length; ++j){
+      col += hive[i][j];
+    }
+    cols.push(col);
+  }
+  
+  for(var k in cols){
+    var row = cols[k];
+    var rev = row.split('').reverse().join('');
+    res += (row.match(/bee/g) || []).length;
+    res += (rev.match(/bee/g) || []).length;
+  }
+  
+  return res;
+}
