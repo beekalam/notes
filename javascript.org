@@ -1632,32 +1632,32 @@ end of the body. This is faster to execute than an onload handler because this
 waits only for the DOM to be ready, not for all images to load.
 
 #+begin_src html
-  <!-- http://stackoverflow.com/questions/9899372/pure-javascript-equivalent-to-jquerys-ready-how-to-call-a-function-when-the -->
-  <!--  https://github.com/jfriend00/docReady -->
+<!-- http://stackoverflow.com/questions/9899372/pure-javascript-equivalent-to-jquerys-ready-how-to-call-a-function-when-the -->
+<!--  https://github.com/jfriend00/docReady -->
 
-  <html>
-  <head>
-  </head>
-  <body>
-  Your HTML here
+<html>
+<head>
+</head>
+<body>
+Your HTML here
 
-  <script>
-  // self executing function here
-  (function() {
-     // your page initialization code here
-     // the DOM will be available here
+<script>
+// self executing function here
+(function() {
+    // your page initialization code here
+    // the DOM will be available here
 
-  })();
-  </script>
-  </body>
-  </html>
+})();
+</script>
+</body>
+</html>
 #+end_src 
 
 ** load/reload an iframe 
   
 #+begin_src javascript 
 document.getElementById('some_frame_id').contentWindow.location.reload();
-#using jquery
+// using jquery
 $('#your_iframe').attr('src', $('#your_iframe').attr('src'));
 #+end_src 
 
@@ -2014,6 +2014,7 @@ The output is:
 //15/11/2013 // (this output may be different based on your locale!)
 //The operation took 1326 milliseconds
 #+end_src
+
 ** Generating a Date with a Date String
 #+begin_src javascript
 var myDateString = "January 16, 1975 17:07:00";
@@ -2029,6 +2030,7 @@ myDate.setHours(10);
 myDate.setMinutes(51);
 myDate.setSeconds(59);
 #+end_src
+
 ** Determining If a Defined Variable Is a Date
 We can’t use the typeof operator to return the variable’s type because typeof
 will return the string "object" for a Date instance (as it is not a literal).
@@ -2053,6 +2055,7 @@ else {console.log("c is not a Date");}
 //b is not a Date
 //c is not a Date
 #+end_src
+
 ** Determining If a Defined Variable Is an Object
 Using the typeof operator, we can determine the datatype of a variable. If the
 variable is an object, typeof will return the string "object".
@@ -2188,7 +2191,6 @@ avoided, as today almost all browsers follow the ES6 or ES5 spec, which
 explicitly tell implementers that the undefined value is not writable
 ** Determining the Type of a Variable with the typeof Operator
 #+begin_src javascript
-
 console.log(typeof 0 ); // "number"
 console.log(typeof Infinity ); // "number"
 console.log(typeof NaN ); // "number"
