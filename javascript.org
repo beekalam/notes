@@ -2210,6 +2210,53 @@ console.log(typeof new Number() ); // "object"
 console.log(typeof typeof {} ); // "string"
 #+end_src
 
+* Math
+** GCD
+#+begin_src javascript
+// recursive #1
+var gcd = function(a, b) {
+    if ( ! b) {
+        return a;
+    }
+
+    return gcd(b, a % b);
+};
+
+//Recursive #2
+
+function gcd_rec(a, b) {
+    if (b) {
+        return gcd_rec(b, a % b);
+    } else {
+        return Math.abs(a);
+    }
+}
+
+//Iterative:
+
+function gcd(a,b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    if (b > a) {var temp = a; a = b; b = temp;}
+    while (true) {
+        if (b == 0) return a;
+        a %= b;
+        if (a == 0) return b;
+        b %= a;
+    }
+}
+#+end_src
+
+** LCM(Least Common multiple)
+
+lcm(a,b) = ab / gcd(a,b)
+
+#+begin_src javascript
+var lcm = function(a,b){ 
+     return (a*b) / gcd(a,b); 
+};
+#+end_src 
+
 * this
 ** understanding 'this'
 
