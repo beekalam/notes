@@ -1048,6 +1048,172 @@ different planes, such as the SMP. When a Unicode aware program such as a
 JavaScript interpreter sees the High Surrogate code unit, it knows to expect a
 Low Surrogate code unit afterward.
 
+** Determining the Type of a Variable with the typeof Operator
+#+begin_src javascript
+console.log(typeof 0 ); // "number"
+console.log(typeof Infinity ); // "number"
+console.log(typeof NaN ); // "number"
+console.log(typeof 'Hi' ); // "string"
+console.log(typeof "Hi" ); // "string"
+console.log(typeof true ); // "boolean"
+console.log(typeof false ); // "boolean"
+console.log(typeof undefined ); // "undefined"
+console.log(typeof new Symbol() ); // "symbol" - (careful, only in ES6)
+console.log(typeof {} ); // "object"
+console.log(typeof [] ); // "object"
+console.log(typeof new Date() ); // "object"
+console.log(typeof /^$/ ); // "object"
+console.log(typeof null ); // "object"
+console.log(typeof new String() ); // "object"
+console.log(typeof new Number() ); // "object"
+console.log(typeof typeof {} ); // "string"
+#+end_src
+
+** Creating a String of UTF Character Code Units with fromCharCode( )
+You want to be able to create a string using number-based character codes as
+input. String literals with Unicode escaping (e.g., \u0061) will not suffice.
+
+Unicode escape characters, as mentioned, will only work when you hard-code
+strings. String. fromCharCode(), however, can be used to make strings
+programmatically using character codes. String. fromCharCode() takes numbers as
+arguments and turns them into UTF string characters. It takes unlimited
+arguments and returns a combined string of each character code.
+
+#+begin_src javascript
+console.log(String.fromCharCode(0x61) );
+console.log(String.fromCharCode(0x61) + String.fromCharCode(0x61) );
+console.log(String.fromCharCode(0x68, 0x65, 0x6C, 0x6C, 0x6F) );
+console.log(String.fromCharCode(119, 111, 114, 108, 100) );
+console.log(String.fromCharCode('0x61') ); // note this is a String of a hexadecimal
+console.log(String.fromCharCode(0xD83D, 0xDCD6) ); // Open Book Emoticon
+console.log(String.fromCharCode(0x10102) ); // Number > 16 bits
+/*
+A
+aa
+hello
+world
+a
+•• (UTF character "Open Book")
+Ă
+*/
+#+end_src
+
+you can also use UTF-16 Surrogate Pairs within String.fromCharCode(), meaning
+the archetypal Open Book Emoticon is able to be successfully rendered in the example.
+** Creating a String of UTF Code Points with fromCodePoint( )
+String.fromCodePoint() works almost the same as String.fromCharCode(), with the
+exception that it can handle numbers (or Hexadecimal numbers) larger than 8
+bits. This makes it ideal for creating strings using the upper planes of
+Unicode, such as Emoticons. String.fromCodePoint() takes numbers as arguments
+and turns them into UTF string characters. It takes unlimited arguments and
+returns a combined string of each character code.
+
+#+begin_src javascript
+console.log(String.fromCodePoint(0x61) );
+console.log(String.fromCodePoint(0x61) + String.fromCodePoint(0x61) );
+console.log(String.fromCodePoint(0x68, 0x65, 0x6C, 0x6C, 0x6F) );
+console.log(String.fromCodePoint(119, 111, 114, 108, 100) );
+console.log(String.fromCodePoint('0x61') ); // note this is a String of a hexadecimal
+console.log(String.fromCodePoint(0xD83D, 0xDCD6) ); // Open Book Emoticon
+console.log(String.fromCodePoint(0x1F4D6) ); // Open Book Emoticon
+console.log(String.fromCodePoint(0x10102) ); // Number > 16 bits
+/* output
+A
+aa
+hello
+world
+a
+••
+••
+••
+*/
+#+end_src
+
+** Getting a Single Character’s UTF Code Unit from a String with charCodeAt( )
+String.prototype.charCodeAt() works similarly to String.prototype.charAt() discussed previously and
+it’s a method that exists on all string objects and primitives. It takes one argument, which is a number index
+value that corresponds to the character code unit you want to retrieve. It always returns a number, relating to
+the Unicode code unit, or NaN if the index you supply is out of range (longer than the length of the string).
+#+begin_src javascript 
+console.log('a'.charCodeAt(0) ); // 97
+console.log('aa'.charCodeAt(1) ); // 97 
+console.log('abc'.charCodeAt(4) ); // NaN
+console.log('hello'.charCodeAt(4) ); // 111
+console.log('a'.charCodeAt(0) ); // 97
+console.log('\uD83D\uDCD6'.charCodeAt(0) ); // 55357
+console.log('\uD83D\uDCD6'.charCodeAt(1) ); // 56534
+console.log('\u{1F4D6}'.charCodeAt(1) ); // 56534
+#+end_src
+
+** Getting a Single Character’s UTF Code Point from a string with codePointAt( )
+#+begin_src javascript
+console.log('a'.codePointAt(0) ); // 97
+console.log('aa'.codePointAt(1) ); // 97
+console.log('hello'.codePointAt(4) ); // 111
+console.log('abc'.codePointAt(4) ); // undefined
+console.log('\uD83D\uDCD6'.codePointAt(0) ); // 128214
+console.log('\uD83D\uDCD6'.codePointAt(1) ); // 56534
+console.log( '\u{1F4D6}'.codePointAt(1) ); // 56534
+#+end_src
+
+** Iterating Over a String’s code Units Using for...in
+#+begin_src javascript
+var myString = 'abc';
+for(var i in myString) {
+    console.log('Character at position ' + i + ' is ' + myString[i]);
+}
+/*
+The output is:
+Character at position 0 is a
+Character at position 1 is b
+Character at position 2 is c
+*/
+#+end_src
+
+** Iterating Over a String’s Code Points Using for...of
+#+begin_src javascript
+var myString = 'abc\uD83D\uDCD6';
+for(var v of myString) {
+    console.log(v);
+}
+/*
+The output is:
+"a"
+"b"
+"c"
+⍰  
+*/
+#+end_src
+for...of works surprisingly different than for...in (described previously). for...in simply iterates
+over enumerable keys of the right hand operand (in this case a string), but for...of uses the right hand
+operand’s [Symbol.iterator] method and calls it for each iteration until it has no more iterations left.
+
+** Determining If a String Contains a Smaller String Using contains( ) 
+String.prototype.contains() is a method that exists on all string objects and
+primitives, used to search for a substring inside of a string value. It takes
+two arguments: the first is a string to search for (the substring or “needle” to
+the parent string’s “haystack”), the second is an optional argument that
+determines the start position to search from which defaults to 0. It returns a
+Boolean that indicates if the string was found (true) or not (false).
+
+** Finding Many Matches of a Substring with match( )
+#+begin_src javascript
+Finding Many Matches of a Substring with match() Using Firefox
+console.log('/var/www/javascriptrecipes/'.match('/'));
+console.log('/var/www/javascriptrecipes/'.match('/var/www/'));
+console.log('/var/www/javascriptrecipes/'.match(/\//g));
+console.log('/var/www/javascriptrecipes/'.match(/[^\/]+/g));
+console.log('There are ' + 'javascript'.match('a').length + ' letter "a"s in the word javascript');
+/*
+The output is:
+["/"]
+["/var/www/"]
+["/", "/", "/", "/"]
+["var", "www", "javascriptrecipes"]
+There are 1 letter "a"s in the word javascript
+*/
+#+end_src
+
 * numbers
 ** isNumber
 
@@ -2189,27 +2355,6 @@ developers chose to program defensively, and use void 0 as a syntactical
 replacement, which is guaranteed to be undefined. Generally this should be
 avoided, as today almost all browsers follow the ES6 or ES5 spec, which
 explicitly tell implementers that the undefined value is not writable
-** Determining the Type of a Variable with the typeof Operator
-#+begin_src javascript
-console.log(typeof 0 ); // "number"
-console.log(typeof Infinity ); // "number"
-console.log(typeof NaN ); // "number"
-console.log(typeof 'Hi' ); // "string"
-console.log(typeof "Hi" ); // "string"
-console.log(typeof true ); // "boolean"
-console.log(typeof false ); // "boolean"
-console.log(typeof undefined ); // "undefined"
-console.log(typeof new Symbol() ); // "symbol" - (careful, only in ES6)
-console.log(typeof {} ); // "object"
-console.log(typeof [] ); // "object"
-console.log(typeof new Date() ); // "object"
-console.log(typeof /^$/ ); // "object"
-console.log(typeof null ); // "object"
-console.log(typeof new String() ); // "object"
-console.log(typeof new Number() ); // "object"
-console.log(typeof typeof {} ); // "string"
-#+end_src
-
 * Math
 ** GCD
 #+begin_src javascript
@@ -3133,9 +3278,6 @@ console.log(finalObj.b); //outputs "i am a lonely function"
  
 You can get pretty deep into the subject of inheritance in JavaScript but the beautiful thing here again
 is that you really don't have to due to the immense power and flexibility of the language.
-
-* Asynchronous JS
-http://sporto.github.io/blog/2012/12/09/callbacks-listeners-promises/
 
 * Objects
 ** retrieval
@@ -8120,3 +8262,5 @@ https://google.github.io/styleguide/jsoncstyleguide.xml
 ** code conventions, styles
 http://javascript.crockford.com/code.html
 https://github.com/ryanmcdermott/clean-code-javascript
+** Asynchronous JS
+ http://sporto.github.io/blog/2012/12/09/callbacks-listeners-promises/
