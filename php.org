@@ -1495,8 +1495,8 @@ empty([]) // true
 ** sum of items in an array
 
 #+begin_src php
-  $scores  = array(98, 76, 56, 80);
-  $total   = array_sum($scores);    // $total = 310
+$scores  = array(98, 76, 56, 80);
+$total   = array_sum($scores);    // $total = 310
 #+end_src
 
 ** Specifying an Array Not Beginning at Element 0
@@ -3341,12 +3341,11 @@ FUNCTION isValidEmail( $email = NULL ){
 
 ** EVAL a file
 #+begin_src php
- <?PHP
+<?PHP
  
 $str = compile('file_to_process');
- 
 $str = do_more_things_with($str);
- 
+
 ECHO $str;
  
 FUNCTION compile($file) {
@@ -4097,7 +4096,7 @@ ECHO Split_String($text);
 
 ** Split URL into parts #1
 #+begin_src php
- <?PHP
+<?PHP
  
 $fullurl = "http://www.domain.com/cgi-bin/printurl.cgi?url=http://test.com&email=foobar@reserved.com";
  
@@ -4248,27 +4247,28 @@ FUNCTION get_javascript_array($phpArray, $jsArrayName, &$html = '') {
 #+end_src
 
 ** Universal parameter reading
+
 #+begin_src php
 <?PHP
  
 FUNCTION param($Name)
-         {
-         GLOBAL $HTTP_GET_VARS;
-         GLOBAL $HTTP_POST_VARS;
-         GLOBAL $HTTP_COOKIE_VARS;
- 
-         IF(ISSET($HTTP_GET_VARS[$Name]))
-            RETURN($HTTP_GET_VARS[$Name]);
- 
-         IF(ISSET($HTTP_POST_VARS[$Name]))
-            RETURN($HTTP_POST_VARS[$Name]);
- 
-         IF(ISSET($HTTP_COOKIE_VARS[$Name]))
-            RETURN($HTTP_COOKIE_VARS[$Name]);
- 
-         RETURN("");
-         }                
- 
+{
+  GLOBAL $HTTP_GET_VARS;
+  GLOBAL $HTTP_POST_VARS;
+  GLOBAL $HTTP_COOKIE_VARS;
+
+  IF(ISSET($HTTP_GET_VARS[$Name]))
+    RETURN($HTTP_GET_VARS[$Name]);
+
+  IF(ISSET($HTTP_POST_VARS[$Name]))
+    RETURN($HTTP_POST_VARS[$Name]);
+
+  IF(ISSET($HTTP_COOKIE_VARS[$Name]))
+    RETURN($HTTP_COOKIE_VARS[$Name]);
+
+  RETURN("");
+}                
+
 ?>
 #+end_src
 
@@ -4542,7 +4542,7 @@ FOREACH($_COOKIE AS $key => $value) {
 <?PHP
  
 FUNCTION getCurrentPage() {
-        $thedomain .= "http://";
+     $thedomain .= "http://";
      $thedomain .= $_SERVER['HTTP_HOST'];
      $thedomain .= $_SERVER['REQUEST_URI'];
      RETURN $thedomain ;
