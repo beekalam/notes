@@ -1,0 +1,100 @@
+* code organization
+** Making Sure a Header File Gets Included Only Once
+
+#define a macro in your header file, and include only the contents of the header
+file if the macro hasn't already been defined. You can use this combination of
+the #ifndef, #define, and #endif preprocessor directives, as I did in Example:
+
+#+begin_src cpp
+#ifndef MYCLASS_H_  _ // #include guards
+#define MYCLASS_H_  _
+// Put everything here...
+#endif // MYCLASS_H_  
+#+end_src
+
+** Ensuring You Have Only One Instance of a Variable Across Multiple Source Files
+
+Declare and define the variable in a single implementation file in the usual
+manner, and use the extern keyword in other implementation files where you
+require access to that variable at runtime. Often, this means including the
+extern declarations in a header file that is used by all implementation files
+that need access to the global variable.
+
+#+begin_src cpp
+// global.h
+#ifndef GLOBAL_H__ // See Recipe 2.0
+#define GLOBAL_H__
+#include <string>
+extern int x;
+extern std::string s;
+#endif
+// global.cpp
+#include <string>
+int x = 7;
+std::string s = "Kangaroo";
+// main.cpp
+#include <iostream>
+#include "global.h"
+using namespace std; 
+int main( ) {
+   cout << "x = " << x << endl;
+   cout << "s = " << s << endl;
+}
+#+end_src
+
+The extern keyword is a way of telling the compiler that the actual storage for
+a variable is allocated somewhere else. extern tells the linker that the
+variable it qualifies is somewhere in another object file, and that the linker
+needs to go find it when creating the final executable or library. If the linker
+never finds the extern variable you have declared, or it finds more than one of
+definition for it, you will get a link error.
+
+** Reducing #includes with Forward Class Declarations
+Use forward class declarations where possible to avoid unnecessary compilation
+dependencies.
+#+begin_src cpp
+// myheader.h
+#ifndef MYHEADER_H_  _
+#define MYHEADER_H_  _
+class A; // No need to include A's header
+class B {
+   public:
+      void f(const A& a);
+   // ...
+   private:
+      A* a_;
+};
+#endif
+#+end_src
+A forward class declaration is a way to ignore details that you don't need to be concerned with.
+
+Sadly, you can't always use forward declarations. The class B in Example 2-4
+only uses pointers or references to A, so I can get away with a forward
+declaration. However, if I use an A member function or variable, or if I have an
+object of type A--and not just a pointer or reference to onein my definition for
+the class B, suddenly my forward declaration is insufficient.
+
+
+* conditional compilation using predifined macros
+
+#+begin_src cpp
+#ifdef _WIN32
+# include <windows.h>
+#else // Not Windows - assume we're on Unix
+# include <sys/stat.h>
+#endif
+bool is_directory(const char* path)
+{
+#ifdef _WIN32
+      // Windows implementation
+#else
+      // Unix implementation
+#endif
+}
+#+end_src
+
+On Windows, all the toolsets except the Cygwin port of GCC define the macro
+_WIN32; macros defined automatically in this way are known as predefined macros.
+
+
+
