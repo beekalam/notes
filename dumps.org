@@ -506,4 +506,6 @@ exit
 log file /var/log/zebra/ospfd.log
 Unfortunately zebra's ospf looses the md5 key -> ppp0 binding if ppp0 goes down, so it is not possible to use authentication with ospf on the ppp link. And unfortunately zebra's ospf needs the name of the ppp link device. If there is only one tunnel at any time then it is ppp0. If there are multiple tunnels then ospfd must be reconfigured dynamically as part of the ppp-up process by passing the appropriate commands to vtysh.
 http://nsd.dyndns.org/pppossh/
-* 
+* hajimi
+https://security.rapiditynetworks.com/publications/2016-10-16/hajime.pdf
+https://github.com/beekalam/Mirai-Source-Code
