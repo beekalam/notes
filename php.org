@@ -6939,6 +6939,8 @@ $.ajaxSetup({ cache: false });
 SELECT s,md5 from huge_data_table limit 10;
 #+END_SRC 
 
+#+RESULTS:
+
 #+name: my-query
 #+header: :engine postgresql
 #+header: :dbhost 127.0.0.1

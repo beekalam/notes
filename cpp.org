@@ -74,6 +74,120 @@ declaration. However, if I use an A member function or variable, or if I have an
 object of type A--and not just a pointer or reference to onein my definition for
 the class B, suddenly my forward declaration is insufficient.
 
+* numbers
+** Converting a String to a Numeric Type
+The functions strtol, strtod, and strtoul, defined in <cstdlib>, convert a
+null-terminated character string to a long int, double, or unsigned long.
+
+#+begin_src cpp
+#include <iostream>
+#include <string>
+#include <cstdlib>
+using namespace std;
+long hex2int(const string& hexStr) {
+   char *offset;
+   if (hexStr.length( ) > 2) {
+      if (hexStr[0] == '0' && hexStr[1] == 'x') {
+         return strtol(hexStr.c_str( ), &offset, 0);
+      }
+   }
+   return strtol(hexStr.c_str( ), &offset, 16);
+}
+int main( ) {
+   string str1 = "0x12AB";
+   cout << hex2int(str1) << endl;
+   string str2 = "12AB";
+   cout << hex2int(str2) << endl;
+   string str3 = "QAFG";
+   cout << hex2int(str3) << endl;
+}
+#+end_src
+
+The strtol function is a bit odd in that it allows you to use two different
+methods for specifying a base of 16; you can either pass 16 as a third parameter
+to the function; or, you can pass 0 for the base while preceding your string
+with the characters 0x (just as you would do for specifying hexadecimal
+constants in your code; however, remember that with strtol, you're passing a
+string).
+
+using boost
+#+begin_src cpp
+#include <iostream>
+#include <string>
+#include <boost/lexical_cast.hpp>
+using namespace std;
+int main( ) {
+   string str1 = "750";
+   string str2 = "2.71";
+   string str3 = "0x7FFF";
+   try {
+      cout << boost::lexical_cast<int>(str1) << endl;
+      cout << boost::lexical_cast<double>(str2) << endl;
+      cout << boost::lexical_cast<int>(str3) << endl;
+   }
+   catch (boost::bad_lexical_cast& e) {
+      cerr << "Bad cast: " << e.what( ) << endl;
+   }
+}
+#+end_src
+** Converting Numbers to Strings
+#+begin_src cpp
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <sstream>
+using namespace std;
+int main( ) {
+   stringstream ss;
+   ss << "There are " << 9 << " apples in my cart.";
+   cout << ss.str( ) << endl;  // stringstream::str( ) returns a string
+                              // with the contents
+   ss.str("");                   // Empty the string
+   ss << showbase << hex << 16;  // Show the base in hexadecimal
+   cout << "ss = " << ss.str( ) << endl;
+   ss.str("");
+   ss << 3.14;
+   cout << "ss = " << ss.str( ) << endl;
+}
+
+//The output of Example 3-3 looks like this: 
+//There are 9 apples in my cart.
+//ss = 0x10
+//ss = 3.14
+#+end_src 
+
+using boost
+#+begin_src cpp
+#include <iostream>
+#include <boost/format.hpp>
+using namespace std;
+using boost::format;
+using boost::io::str;
+using boost::io::format_error;
+int main( ) {
+   try {
+      format f("There are %1% ways %2% %3% %4%");
+      f % 3;
+      f % "to" % "do" % "this.";
+      cout << f << endl;
+      f.clear( ); // Clear buffers to format something else
+      f.parse("Those cost $%d.");
+      f % 50;
+      cout << f << endl;
+      int x = 11256099;
+      string strx = str(format("%x") % x);
+      cout << strx << endl;
+   }
+   catch (format_error &e) {
+      cout << e.what( ) << endl;
+   }
+}
+
+//Here's what you see when you run this program: 
+//There are 3 ways to do this.
+//Those cost $50.
+//abc123
+#+end_src 
 
 * conditional compilation using predifined macros
 
