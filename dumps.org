@@ -281,7 +281,7 @@ make install
 what is your name
 route add -net 172.16.11.0/24 172.16.12.141
 * 
-* 
+** 
 howManyBees = function(hive) {
   var res = 0;
   for(var k in hive){
@@ -308,3 +308,202 @@ howManyBees = function(hive) {
   
   return res;
 }
+* PPP over SSH with linux
+PPP over SSH with linux
+
+What?
+
+PPP is an IP point-to-point link protocol that operates over terminals. Usually the terminal is a modem, but any tty will do. SSH creates secure ttys. SSH also has the advantage that it uses a single client->server TCP connection, and thereby NATs cleanly. These properties make it pass easily through firewalls and NAT routers. PPP over SSH is a poor man's VPN.
+
+Why?
+
+Because it can be done. And because sometimes it's quickest way to get the job done. One place it is useful is securing wireless connections. ppp over ssh over 802.11.
+
+How?
+
+PPP over SSH needs to be resilient. The SSH connection needs to connect and reconnect on its own when the connection is lost. To achieve this use SSH's public key authentication method and manually add the key to ssh-agent on the client side before connecting. Then configure ppp to "dial" using ssh, and to redial when the connection is lost. With this configuration SSH will reconnect as long as the client machine does not loose power. This is good enough in most cases; a UPS will make it even more reliable.
+
+SSH will need a login and a public key. For safety this should be a new login on the server, and normal login should be disabled (A '*' in place of the password in /etc/shadow). If the client will be connecting from a static address, use of the public key should be restricted to that address. And that key does not need X11 forwarding, nor ssh agent forwarding. These also should be disabled for that key.
+
+Because the PPP is tunneled over SSH you could use plaintext PPP passwords, but since CHAP is just as easy, do it.
+
+Lastly if the client is in fact a router, IP routes should be setup at either end to point throught the tunnel. These can be hand configured in /etc/network/interfaces or with "/sbin/ip route add ..." commands in ppp-up. But running a routing daemon at both ends of the ppp link works much better. OSPF works well for this.
+
+HOWTO
+
+First configure ssh. Create a new user for SSH to login to.
+
+root@server # adduser --disabled-password ppp-link
+Create an ssh key pair on the client.
+
+user@client > ssh-keygen -t rsa -f $HOME/.ssh/ppp_rsa
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/user/.ssh/ppp_rsa.
+Your public key has been saved in /home/user/.ssh/ppp_rsa.pub.
+The key fingerprint is:
+04:32:f5:c5:0f:94:4b:46:37:d4:00:ab:45:4d:66:ae user@client
+Copy the public key (ppp_rsa.pub) to ~ppp-link/.ssh/authorized_keys on the server. Then add options to the line in authorized_keys to restrict how it can be used. For example:
+
+ppp-link@server > cat $HOME/.ssh/authorized_keys
+from="192.168.168.*",no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa AAAB...5+TCM= user@client
+removes all the capabilities that aren't needed (port & X11 and ssh-agent forwarding), and restricts the source IP so that the client must connect from the 192.168.168.0/24 IP subnet. Restricting the client's IP address is a good thing, especially if this is a public ssh server. See the AUTHORIZED_KEYS FILE FORMAT section of the sshd manpage for more ways 'from' can be configured.
+
+At this point ssh should be working. Test it:
+
+user@client > ssh -l ppp-link -i $HOME/.ssh/ppp_rsa server
+Enter passphrase for key '/home/user/.ssh/ppp_rsa':
+ppp-link@server > exit
+logout
+Connection to server closed.
+Then configure ppp. First add secrets for the chap authentication and IP addresses for the endpoints of the ppp link. You can use a different secret in each direction. This way the ppp client can authenticate the ppp server. In this example the client machine has been called "client" and the server "server". They should be replaced with the actual hostnames (or whatever PPP is configured to use for names).
+
+root@server # echo >>/etc/ppp/chap-secrets <<EOF
+client          server  secret1          10.1.1.1
+server          client  secret2          10.1.1.2
+EOF
+Add the same secrets to the chap-secrets file on the client.
+
+root@client # echo >>/etc/ppp/chap-secrets <<EOF
+client          server  secret1          10.1.1.1
+server          client  secret2          10.1.1.2
+EOF
+And lastly create a ppp peer configuration file on the client. The name of the file will be the name ppp will be told to call.
+
+root@client # echo >>/etc/ppp/peers/server <<EOF
+
+# use a seperate log file
+logfile /var/log/ppp/server.log
+
+# names to use in secret lookup
+name client
+remotename server
+
+# other side must authenticate to us
+auth
+
+# don't allow pap out of paranoia (actually in case we mess up and don't use ssh)
+require-chap
+
+# don't accept the default route from the other end. This is useful if we are using
+# ppp-over-ssh to reach only certain hosts, since it prevents us from sending everything
+# through the ppp link. But if everything should go through the link then "nodefaultroute"
+# should be commented out, and the "defaultroute" and "replacedefaultroute" lines uncommented.
+nodefaultroute
+#defaultroute
+#replacedefaultroute
+
+# to switch DNS servers to what server specifies, uncomment "usepeerdns"
+# depending on your distribution, you might also have to copy /etc/ppp/resolv.conf 
+# to /etc/resolv.conf as part of ppp-up
+#usepeerdns
+
+# the magic line: "dial" with ssh. blowfish is faster than 3DES.
+pty "/usr/bin/ssh -e none -c blowfish -t -l ppp-link server /usr/sbin/pppd passive"
+
+# give ssh+remote pppd up to 30 seconds to start ppp'ing
+connect-delay 30000
+
+# make sure we fit in a single ethernet packet after ssh-encryption/tcp/ip headers
+mtu 1200
+mru 1200
+
+# after we connect, detach from shell and run in background
+updetach
+
+# reconnect if we get disconnected
+persist
+holdoff 60
+
+# keep trying to connect forever
+maxfail 0
+
+EOF
+On debian users must be part of the dip group so they can execute pppd
+
+root@client # usermod -G dip user
+root@server # usermod -G dip ppp-link
+And the log directory needs to be created if it doesn't already exist
+
+root@client # mkdir /var/log/ppp
+Now everything is ready. Starting up an ssh-agent (note well: back-ticks, not single-quotes), and adding the public key to ssh-agent keeps ssh from prompting for a passphrase each time ppp (re)connects.
+
+user@client > eval `ssh-agent`
+Agent pid 12345
+user@client > ssh-add $HOME/.ssh/ppp_rsa
+Enter passphrase for /home/user/.ssh/ppp_rsa:
+Identity added: /home/user/.ssh/ppp_rsa (/home/user/.ssh/ppp_rsa)
+user@client > pppd call server
+Check that the connection took place and is working as it should
+
+user@client > tail /var/log/ppp/server.log
+Using interface ppp0
+Connect: ppp0 <--> /dev/pts/10
+CHAP peer authentication succeeded for server
+Remote message: Welcome to server.
+Deflate (15) compression enabled
+local  IP address 10.1.1.1
+remote IP address 10.1.1.2
+user@client > /sbin/ip addr
+1: lo:  mtu 16436 qdisc noqueue
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    127.0.0.1/8 brd 127.255.255.255 scope host lo
+2: eth0:  mtu 1500 qdisc pfifo_fast qlen 100
+    link/ether 00:01:02:b1:12:5b brd ff:ff:ff:ff:ff:ff
+    inet 192.168.168.2/24 brd 192.168.168.255 scope global eth0
+3: ppp0:  mtu 1200 qdisc pfifo_fast qlen 3
+    link/ppp
+    inet 10.1.1.1 peer 10.1.1.2/32 scope global ppp0
+user@client > ping -c3 10.1.1.2
+PING 10.10.10.2 (10.1.1.2) from 10.1.1.1 : 56(84) bytes of data.
+64 bytes from 10.1.1.2: icmp_seq=1 ttl=255 time=50.7 ms
+64 bytes from 10.1.1.2: icmp_seq=2 ttl=255 time=26.7 ms
+64 bytes from 10.1.1.2: icmp_seq=3 ttl=255 time=29.2 ms
+
+--- 10.1.1.2 ping statistics ---
+3 packets transmitted, 3 received, 0% loss, time 2023ms
+rtt min/avg/max/mdev = 26.795/35.617/50.768/10.762 ms
+Looks good!
+
+tunneling the default route
+
+If the ppp-over-ssh link is being used to create a link to the internet (for example when securing a wireless link) then the default route must point through the tunnel. Two things must be true for this to happen: 'nodefaultroute' must be changed to 'defaultroute' in the ppp peer's configuration, and if there exists a default route before ppp connects then 'replacedefaultroute' must also be in the peer's configuration. Without this pppd will not replace the existing default route. Instead it will log a message to that effect: "not replacing default route to eth0 [192.168.168.1]". As an added niceity, ppp will restore the default route when the ppp link is torn down.
+
+In the case of a wireless connection, client usually gets its IP address and route table from the DHCP server in the wireless router. That DHCP server cannot be configured not to advertise itself as the default gateway. So both 'defaultroute' and 'replacedefaultroute' are needed.
+
+The DNS server address(es) might also have to be altered if the router also advertised itself as the DNS server. Again the cleanest way to do this is to pass the DNS address(es) to client as part of the ppp connection parameters. 'usepeerdns' on the client's peer configuration, and 'ms-dns' in the server's options configuration file /etc/ppp/options.
+
+OSPF
+
+If other computers need to use client's ppp link, client will be acting as a router. In this case it is most dynamic to run a routing daemon on client and server and have then exchange routes over the ppp link. I prefer OSPF for this since it doesn't send much traffic when no routes change. OSPF can also advertise a default route, which removes the need to add it manually. Here is a typical configurations for zebra's ospfd
+
+root@server # cat /etc/zebra/ospfd.conf
+hostname server
+
+# ospf on the local LAN
+interface eth0
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 secret_phrase_for_lan
+exit
+
+# ospf through the ppp tunnel
+interface ppp0
+ ip ospf network point-to-point
+ # binding of key to ppp0 gets lost after ppp0 goes and comes back, so don't use auth
+ #ip ospf authentication message-digest
+ #ip ospf message-digest-key 1 md5 secret_phrase_for_ppp
+exit
+
+router ospf
+ ospf router-id 192.168.168.1
+ redistribute connected
+ #redistribute static
+ network 192.168.168.0/24 area 0
+ network 10.1.1.1/32 area 0
+exit
+
+log file /var/log/zebra/ospfd.log
+Unfortunately zebra's ospf looses the md5 key -> ppp0 binding if ppp0 goes down, so it is not possible to use authentication with ospf on the ppp link. And unfortunately zebra's ospf needs the name of the ppp link device. If there is only one tunnel at any time then it is ppp0. If there are multiple tunnels then ospfd must be reconfigured dynamically as part of the ppp-up process by passing the appropriate commands to vtysh.
+http://nsd.dyndns.org/pppossh/
+* 
