@@ -238,7 +238,15 @@ $ arping [ip address]
  $ nc 192.168.0.11 31337
  # Adding a local user and placing into the root group
  $ useradd –g root bob
- #+end_src 
+ #+end_src
+
+** send receive syslog
+#+begin_src shell
+# How to send log message to remote server?
+$ nc -w0 -u 192.168.1.1 514 <<< "logging from remote"
+# listen for messages
+$ nc -l -u 512
+#+end_src 
 
 * sample python flood scriptf
 
