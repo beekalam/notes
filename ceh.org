@@ -372,6 +372,108 @@ connectivity comes and goes, ARP problems may be the cause.
 $ arp -a
 #+end_src
 
+** traceroute
+#+begin_src shell
+# use -n to disable name resolution
+$ traceroute -n 
+
+#+end_src
+
+** iperf
+
+#+begin_src shell
+# starting server
+$ iperf -s -p3000
+
+#client
+$ iperf -c205.153.60.236 -p3000
+#+end_src
+
+** tcpdump
+#+begin_src shell
+# capture 100 packets and terminate
+$ tcpdump -c100
+
+# dump traffic of specific interface
+$ tcpdump -i eth0
+
+# disable name resolution
+$ tcpdump -n
+
+#address filtering
+#This command captures all traffic to and from the host with the IP address 205.153.63.30.
+$ tcpdump host 205.153.63.30
+
+# Here is an example that uses the Ethernet address of a computer to select traffic
+$ tcpdump ether host 0:10:5a:e3:37:c
+
+# a filter that collects traffic sent to the host at 205.153.63.30 but not from i
+$ tcpdump dst 205.153.63.30
+
+# capture to packets coming from or going to the 205.153.60.0 network
+$ tcpdump net 205.153.60
+
+#The following command does the same thing:
+$ tcpdump net 205.153.60.0 mask 255.255.255.0
+
+#restricts the traffic captured to IP traffic
+# IP traffic will include TCP traffic, UDP traffic, and so on
+$ tcpdump ip
+
+#To capture just TCP traffic, you would use:
+# Recognized keywords include ip, igmp, tcp, udp, and icmp.
+$ tcpdump tcp
+
+
+#There are many transport-level services that do not have recognized keywords. In this case, you can
+#use the keywords proto or ip proto followed by either the name of the protocol found in the
+#/etc/protocols file or the corresponding protocol number. For example, either of the following will
+#look for OSPF packets:
+$ tcpdump ip proto ospf
+
+#For higher-level services, services built on top of the underlying protocols, you must use the keyword
+#port.
+#the keyword domain is resolved by looking in /etc/services.
+$ tcpdump port domain
+$ tcpdump port 53
+
+#This will capture DNS name lookups using UDP but not DNS zone transfers using TCP.
+$ tcpdump udp port domain
+
+#This command collects packets longer than 200 bytes.
+$ tcpdump greater 200
+
+# proto[expr:size] is the general syntax.
+# proto indicates which header to look into -ip;tcp & ...
+# expr gives an offset into the header indexed from 0
+
+
+# looks into the IP header at the tenth byte, the protocol field, for a value of 6.
+$ tcpdump "ip[9] = 6"     #the same as $tcpdump tcp
+
+#This will match multicast and broadcast packets.
+$ tcpdump 'ether[0] & 1 != 0'
+
+#This filter skips the first 13 bytes in the TCP header, extracting the flag byte. The mask 0x03 selects
+#the first and second bits, which are the FIN and SYN bits.
+$ tcpdump "tcp[13] & 0x03 != 0"
+
+# compound filters
+$ tcpdump host 205.153.63.30 and ip
+#all traffic to the host except IP traffic
+$ tcpdump host 205.153.63.30 and not ip
+
+#captures all UDP or ARP traffic to or from lxn1.
+$ tcpdump "host lnx1 and (udp or arp)"
+
+#suppose you are interested in capturing traffic on the host lnx1, you are logged onto the
+#host bsd1, and you are using telnet to connect from bsd1 to lnx1. To capture all the traffic at lnx1,
+#excluding the Telnet traffic between bsd1 and lnx1, the following command will probably work
+#adequately in most cases:
+lnx1# tcpdump -n "not (tcp port telnet and host lnx1 and host bsd1)"
+
+#+end_src
+
 * smurf attack
 
 In a Smurf Attack, ICMP ECHO_REQUEST packets are sent to the broadcast address
