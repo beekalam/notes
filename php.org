@@ -1618,9 +1618,8 @@ $array = array('apple', 'banana', 'coconut');
 // grow to five
 $array = array_pad($array, 5, '');
 
-Now, count($array) is 5, and the last two elements, $array[3] and $array[4], contain the empty string.
-
-To reduce an array, you can use array_splice():
+//Now, count($array) is 5, and the last two elements, $array[3] and $array[4], contain the empty string.
+//To reduce an array, you can use array_splice():
 
 // no assignment to $array
 array_splice($array, 2);

@@ -192,7 +192,101 @@ False
 True
 >>> 1.4142135623730951.is_integer()
 False
+#+end_src
+** convert number to base 2
+#+begin_src python
+bin(num)
+#+end_src
+** Fraction calculations
+When we're doing calculations that have exact fraction values, we can use the fractions module.
+#+begin_src python
+>>> from fractions import Fraction
+
+>>> sugar_cups = Fraction('2.5')
+
+>>> scale_factor = Fraction(5/8)
+
+>>> sugar_cups * scale_factor
+
+Fraction(25, 16)
 #+end_src 
+
+** Doing floor division
+When we are doing the div-mod kind of calculations, we might use floor division,
+// , and modulus, % . Or, we might use the divmod() function.
+
+ We'll divide the number of seconds by 3600 to get the value of hours ; the
+ modulus, or remainder, can be converted separately to minutes and seconds :
+
+#+begin_src python
+>>> total_seconds = 7385
+>>> hours = total_seconds//3600
+>>> remaining_seconds = total_seconds % 3600
+
+# Again, using remaining values, we'll divide the number of seconds by 60 to get
+# minutes ; the remainder is a number of seconds less than 60:
+
+>>> minutes = remaining_seconds//60
+>>> seconds = remaining_seconds % 60
+>>> hours, minutes, seconds
+    (2, 3, 5)
+
+# Here's the alternative, using the divmod() function:
+# Compute quotient and remainder at the same time:
+
+>>> total_seconds = 7385
+
+>>> hours, remaining_seconds = divmod(total_seconds, 3600)
+
+# Compute quotient and remainder again:
+
+>>> minutes, seconds = divmod(remaining_seconds, 60)
+
+>>> hours, minutes, seconds
+
+(2, 3, 5)
+#+end_src 
+
+** Doing true division
+
+A true value calculation gives as a floating-point approximation. For example,
+about how many hours is 7386 seconds? Divide using the true division operator:
+#+begin_src python
+>>> total_seconds = 7385
+
+>>> hours = total_seconds / 3600
+
+>>> round(hours,4)
+
+2.0514
+#+end_src 
+
+** Python 3.0 division operators
+Python 3 has two division operators.
+
+The / true division operator always tries to produce a true, floating-point
+result. It does this even when the two operands are integers. This is an unusual
+operator in this respect. All other operators try to preserve the type of the
+data. The true division operation - when applied to integers - produces a float
+result.
+
+The // truncated division operator always tries to produce a truncated result.
+For two integer operands, this is the truncated quotient. For two floating-point
+operands, this is a truncated floating-point result:
+#+begin_src 
+>>> 7358.0 // 3600.0
+    2.0
+#+end_src 
+
+By default, Python 2 only has one division operator. For programmers still using
+Python 2, we can start using these new division operators with this:
+
+#+begin_src 
+>>> from __future__ import division
+#+end_src 
+
+
+
 
 * classes
 ** calling Superclass constructors
@@ -341,5 +435,348 @@ delivers to its subscribers dozens of new and interesting Python packages and
 resources every week
 
 
+* Updating a string with a replacement
+#+begin_src python
+>>> post_colon_text = post_colon_text.replace(' ', '_')
+>>> post_colon_text = post_colon_text.replace(',', '_')
+>>> post_colon_text
+'_Rewriting__and_the_Immutable_String'
+#+end_src 
 
+* Making a string all lowercase
+>>> post_colon_text = post_colon_text.lower()
+
+* Removing extra punctuation marks
+>>> post_colon_text = post_colon_text.strip('_')
+
+* check if a string is all digits
+#+begin_src python
+>>> 'some word'.isnumeric()
+
+False
+
+>>> '1298'.isnumeric()
+True
+#+end_src 
+
+* regular expressions
+** example
+To write and use regular expressions, we often do this:
+
+Generalize the example. In our case, we have something that we can generalize as:
+
+    (ingredient words): (amount digits) (unit words)
+
+Rewrite the pattern into Regular Expression ( RE ) notation:
+
+>>> pattern_text = r'(?P<ingredient>\w+):\s+(?P<amount>\d+)\s+(?P<unit>\w+)'
+
+For each of the fields of data, we've used ?P<name> to provide a name that
+identifies the data we want to extract. We didn't do this around the colon or
+the spaces because we don't want those characters.
+
+Compile the pattern:
+
+#+begin_src python
+>>> pattern = re.compile(pattern_text)
+
+#Match the pattern against input text. If the input matches the pattern, we'll
+#get a match object that shows details of the matching:
+
+>>> match = pattern.match(ingredient)
+
+>>> match is None
+
+False
+
+>>> match.groups()
+
+('Kumquat', '2', 'cups')
+#+end_src 
+
+Extract the named groups of characters from the match object:
+
+#+begin_src python
+>>> match.group('ingredient')
+'Kumquat'
+>>> match.group('amount')
+'2'
+>>> match.group('unit')
+'cups'
+#+end_src 
+
+
+
+** trick  to represent long regular expressions
+A long regular expression can be awkward to read. We have a clever Pythonic
+trick for presenting an expression in a way that's much easier to read:
+
+#+begin_src python
+>>> ingredient_pattern = re.compile(
+
+... r'(?P<ingredient>\w+):\s+' # name of the ingredient up to the ":"
+... r'(?P<amount>\d+)\s+'      # amount, all digits up to a space
+... r'(?P<unit>\w+)'           # units, alphanumeric characters
+... )
+
+#+end_src 
+
+This leverages three syntax rules:
+
+    A statement isn't finished until the () characters match
+    Adjacent string literals are silently concatenated into a single long string
+    Anything between # and the end of the line is a comment, and is ignored
+
+* Building complex strings with "template".format()
+#+begin_src python
+>>> id = "IAD"
+>>> location = "Dulles Intl Airport"
+>>> max_temp = 32
+>>> min_temp = 13
+>>> precipitation = 0.4
+#+end_src 
+
+And we'd like a line that looks like this:
+
+IAD : Dulles Intl Airport : 32 / 13 / 0.40
+
+
+Create a template string from the result, replacing all of the data items with
+{} placeholders. Inside each placeholder, put the name of the data item.
+
+'{id} : {location} : {max_temp} / {min_temp} / {precipitation}'
+
+For each data item, append :data type information to the placeholders in the template string. The basic data type codes are:
+        s for string
+        d for decimal number
+        f for floating-point number
+
+It would look like this:
+
+     '{id:s}  : {location:s} : {max_temp:d} / {min_temp:d} / {precipitation:f}'
+
+
+Add length information where required. Length is not always required, and in
+some cases, it's not even desirable. In this example, though, the length
+information assures that each message has a consistent format. For strings and
+decimal numbers, prefix the format with the length like this: 19s or 3d . For
+floating-point numbers use a two part prefix like this: 5.2f to specify the
+total length of five characters with two to the right of the decimal point.
+Here's the whole format:
+
+
+    '{id:3d}  : {location:19s} : {max_temp:3d} / {min_temp:3d} / {precipitation:5.2f}'
+
+
+Use the format() method of this string to create the final string:
+#+begin_src python
+>>> '{id:3s}  : {location:19s} :  {max_temp:3d} / {min_temp:3d} / {precipitation:5.2f}'.format(
+
+    ... id=id, location=location, max_temp=max_temp,
+
+    ... min_temp=min_temp, precipitation=precipitation
+
+    ... )
+
+    'IAD  : Dulles Intl Airport :   32 /  13 /  0.40'
+#+end_src 
+
+We've provided all of the variables by name in the format() method of the
+template string. This can get tedious. In some cases, we might want to build a
+dictionary object with the variables. In that case, we can use the format_map()
+method:
+
+#+begin_src python
+>>> data = dict(
+
+... id=id, location=location, max_temp=max_temp,
+
+... min_temp=min_temp, precipitation=precipitation
+
+... )
+
+
+>>> '{id:3s}  : {location:19s} :  {max_temp:3d} / {min_temp:3d} / {precipitation:5.2f}'.format_map(data)
+
+'IAD  : Dulles Intl Airport :   32 /  13 /  0.40'
+
+We'll return to dictionaries in Chapter 4 , Build-in Data Structures – list, set, dict .
+
+The built-in vars() function builds a dictionary of all of the local variables for us:
+
+
+>>> '{id:3s}  : {location:19s} :  {max_temp:3d} / {min_temp:3d} / {precipitation:5.2f}'.format_map(
+
+...    vars()
+
+... )
+
+'IAD  : Dulles Intl Airport :   32 /  13 /  0.40'
+#+end_src 
+
+The vars() function is very handy for building a dictionary automatically.
+
+The basic feature is to interpolate data into a string based on names of keyword
+arguments or keys in a dictionary. Variables can also be interpolated by
+position—we can provide position numbers instead of names. We can use a format
+specification like {0:3s} to use the first positional argument to format() .
+
+We've seen three of the formatting conversions—s , d , f —there are many others.
+Details are in Section 6.1.3 of the Python Standard Library . Here are some of
+the format conversions we might use:
+
+    b is for binary, base 2.
+    c is for Unicode character. The value must be a number, which is converted to a character. Often, we use hexadecimal numbers for this so you might want to try values such as 0x2661 through 0x2666 for fun.
+    d is for decimal numbers.
+    E and e are for scientific notations. 6.626E-34 or 6.626e-34 depending on which E or e character is used.
+    F and f are for floating-point. For not a number the f format shows lowercase nan ; the F format shows uppercase NAN .
+    G and g are for general. This switches automatically between E and F (or e and f ,) to keep the output in the given sized field. For a format of 20.5G , up to 20-digit numbers will be displayed using F formatting. Larger numbers will use E formatting.
+    n is for locale-specific decimal numbers. This will insert , or . characters depending on the current locale settings. The default locale may not have a thousand separators defined. For more information, see the locale module.
+    o is for octal, base 8.
+    s is for string.
+    X and x is for hexadecimal, base 16. The digits include uppercase A-F and lowercase a-f , depending on which X or x format character is used.
+    % is for percentage. The number is multiplied by 100 and includes the % .
+
+We have a number of prefixes we can use for these different types. The most
+common one is the length. We might use {name:5d} to put in a 5-digit number.
+There are several prefixes for the preceding types:
+
+    Fill and alignment : We can specify a specific filler character (space is the default) and an alignment. Numbers are generally aligned to the right and strings to the left. We can change that using < , > , or ^ . This forces left alignment, right alignment, or centering. There's a peculiar = alignment that's used to put padding after a leading sign.
+    Sign : The default rule is a leading negative sign where needed. We can use + to put a sign on all numbers, - to put a sign only on negative numbers, and a space to use a space instead of a plus for positive numbers. In scientific output, we must use {value: 5.3f} . The space makes sure that room is left for the sign, assuring that all the decimal points line up nicely.
+    Alternate form : We can use the # to get an alternate form. We might have something like {0:#x} , {0:#o} , {0:#b} to get a prefix on hexadecimal, octal, or binary values. With a prefix, the numbers will look like 0xnnn , 0onnn , or 0bnnn . The default is to omit the two character prefix.
+    Leading zero : We can include 0 to get leading zeros to fill in the front of a number. Something like {code:08x ) will produce a hexadecimal value with leading zeroes to pad it out to eight characters.
+    Width and precision : For integer values and strings, we only provide the width. For floating-point values we often provide width.precision .
+
+There are some times when we won't use a {name:format} specification. Sometimes
+we'll need to use a {name!conversion} specification. There are only three
+conversions available.
+
+    {name!r} shows the representation that would be produced by repr(name)
+    {name!s} shows the string value that would be produced by str(name)
+    {name!a} shows the ASCII value that would be produced by ascii(name)
+
+
+** debugging hack with vars()
+#+begin_src python
+print("some_variable={some_variable!r}".format_map(vars()))
+#+end_src 
+
+The vars() function—with no arguments—collects all of the local variables into a
+mapping. We provide that mapping for format_map() . The format template can use
+lots of {variable_name!r} to display details about various objects we have in
+local variables.
+
+Inside a class definition we can use techniques such as vars(self) . This looks
+forward to Chapter 6 , Basics of Classes and Objects :
+
+#+begin_src python
+>>> class Summary:
+
+...     def __init__(self, id, location, min_temp, max_temp, precipitation):
+
+...         self.id= id
+
+...         self.location= location
+
+...         self.min_temp= min_temp
+
+...         self.max_temp= max_temp
+...         self.precipitation= precipitation
+
+...     def __str__(self):
+
+...         return '{id:3s}  : {location:19s} :  {max_temp:3d} / {min_temp:3d} / {precipitation:5.2f}'.format_map(
+
+...             vars(self)
+
+...         )
+
+>>> s= Summary('IAD', 'Dulles Intl Airport', 13, 32, 0.4)
+
+>>> print(s)
+
+IAD  : Dulles Intl Airport :   32 /  13 /  0.40
+#+end_src 
+
+
+* Building complex strings from lists of characters
+Here's a string that we'd like to rearrange:
+#+begin_src python
+>>> title = "Recipe 5: Rewriting an Immutable String"
+#+end_src 
+
+
+
+We'd like to do two transformations:
+
+    Remove the part before the :
+    Replace the punctuation with _ , and make all the characters lowercase
+
+#+begin_src python
+
+>>> from string import whitespace, punctuation
+
+    #Explode the string into a list object:
+
+    >>> title_list = list(title)
+
+    # Find the partition character. The index() method for a list has the same
+    # semantics as the index() method for a list. It locates the position with the
+    # given value:
+
+    >>> colon_position = title_list.index(':')
+
+    # Delete the characters no longer needed. The del statement can remove items
+    # from a list. Lists are a mutable data structures:
+
+
+    >>> del title_list[:colon_position+1]
+
+    # We don't need to carefully work with the useful piece of the original
+    # string. We can remove items from a list. Replace punctuation by stepping
+    # through each position. In this case, we'll use a for statement to visit
+    # every index in the string:
+
+    >>> for position in range(len(title_list)):
+
+    ...    if title_list[position] in whitespace+punctuation:
+
+    ...        title_list[position]= '_'
+
+
+    # The expression range(len(title_list)) generates all of the values between
+    # 0 and len(title_list)-1 . This assures us that the value of position will
+    # be each value index in the list. Join the list of characters to create a
+    # new string. It seems a little odd to use zero-length string, '' , as a
+    # separator when concatenating strings together. However, it works
+    # perfectly:
+
+    >>> title = ''.join(title_list)
+
+    >>> title
+
+    '_Rewriting_an_Immutable_String'
+
+#+end_src
+
+* open file with unicode support
+#+begin_src python
+>>> with open('some_file.txt', 'w', encoding='utf-8') as output:
+
+...     print( 'You drew \U0001F000', file=output )
+
+>>> with open('some_file.txt', 'r', encoding='utf-8') as input:
+
+...     text = input.read()
+
+>>> text
+'You drew �'
+#+end_src 
+
+* manually encode strings to utf-8
+#+begin_src python
+>>> string_bytes = 'You drew \U0001F000'.encode('utf-8')
+>>> string_bytes
+b'You drew \xf0\x9f\x80\x80'
+#+end_src 
 
