@@ -582,7 +582,463 @@ communication. Help everyone bring out the best in everyone else.
  - Spiritual: Value clarification and commitment, study and meditation.
  - Social/Emotional: Service, empathy, self-esteem, synergy.
 
+* Stop Guessing 
+** "Stop Guessing "
+*** intro
+"Truly solving the problem involves understanding what’s wrong and why it
+happened, through investigation and understanding—not by spending days or weeks
+testing different guesses until, hopefully, one works."
+
+*** "WHY GUESSING FAILS "
+
+"Through both nature and nurture, guessing has become a foundation of our
+problem-solving skill set. And guessing helps us resolve many of our problems,
+but only the easy ones. "
+
+"Then you’ve got hard problems. These are the kinds of problems that might
+have hundreds or thousands of potential causes. "
+
+"When you’re facing a problem of moderate difficulty, there may be something
+like 50 potential root causes. "
+
+"Any time you “come up with” many things to check that could be the cause, you
+are guessing"
+
+"First, you’ve reinforced the habit of guessing in your mind or in your
+organization, fooled yourself into thinking it’s a good strategy and is going to
+work again"
+
+"Second, you haven’t developed a deeper understanding of whatever you’re trying
+to fix, whether it’s yourself, a process, or a machine. Instead of spending time
+building some knowl- edge of the fundamentals that you can use in the future—new
+problems are popping up all the time—you’ve spent your time guessing and
+checking. So next time there’s a problem, you’re back to square one. "
+
+*** "THE CURSE OF LUCK"
+
+"let’s say you guess, and you get lucky: You found a solution and implemented it
+effectively. You may or may not have spent a lot of time and resources on it.
+Unfortunately, some bad side effects come with this rare victory."
+
+"Third, and perhaps most importantly, you’re not becoming a better
+problem-solver. While guessing might eventually get the job done for problems of
+moderate difficulty (although at great cost), you rob yourself or your team of
+critical skills development. "
+
+" When you get to truly hard problems, you’re going to need all of the skill you
+can get: If you don’t practice using the right behaviors and method to solve
+moderate problems then you will never master them, and you’re going to get
+shellacked when you try to tackle the hard ones. "
+
+*** "GUESSING IN POPULAR PROBLEM-SOLVING METHODS "
+
+"When you look at most popular problem-solving approaches, you’ll find that they
+devolve into structured-guessing at some point. Many have steps such as,
+“develop possible root causes” or “deduce probable causes.” Whenever we develop
+some list of possible root causes, we’re guessing, even if it’s structured
+guessing. Some of these guessing steps are disguised as “forming hypotheses” or
+other seemingly scientific approaches. Many of these methods are designed to
+focus on simple problems quickly, where one needs to just organize guesses—Five
+Whys is great for this. For hard problems, though, the likelihood that you’ll
+include the true root cause in the list of “possible root causes” that you guess
+is tiny. "
+
+*** "DEALING WITH GUESSING "
+
+"If you or your team seem are distracted by guessing, I’ve found it useful not
+to suppress it but to write it down and get it out of your system. Put it in an
+envelope and ignore it. If"
+
+"Great problem-solvers resist the temptation to guess at every stage of the
+process. Guessing is a tough habit to break, so get started! "
+
+*** "IT’S NATURAL TO GUESS, AND YOU CAN STOP "
+
+** "Smell the Problem "
+
+*** "HOW TO SMELL WELL "
+
+"Early on you’ll want to smell the problem to develop a pattern of failure.
+Where possible, understanding where the problem does and doesn’t happen, when
+the problem started, and how often the problem occurs will generate critical
+insights for the problem-solving effort. For easy or fairly moderate problems,
+this pattern of failure can lead to the key insight that solves the problem or
+puts you just one step away. "
+
+"Table 2.1: Questions to ask when smelling the problem. What does the problem
+look like? If you look closely, is it always the same every time? When did you
+first see the problem? What pattern do you notice if you look at the problem
+over time? Where might you expect to see the same problem but don’t? "
+
+*** "DEVELOPING A PATTERN OF FAILURE "
+
+"There are problem-solving methods that can help us add rigor and practice. They
+ask thought-provoking questions that guide you to collect information and look
+for very specific patterns, rather than shotgunning and looking at everything in
+the system. "
+
+"I can provide some basic guidance on where to get started in developing a
+strong pattern of failure (see Table 2.1). Most gen- erally, describe in detail
+the conditions in which a problem does and does not occur."
+
+"Great problem-solvers will overcome barriers to getting the specific
+information they need. If a machine is moving too quickly for a problem-solver
+to see a pattern with their own eyes, a great problem-solver will get a camera
+to record it, and then slow it down. If a manufacturing line doesn’t
+automatically count units produced, great problem-solvers get out there and do
+the counting. They work closely with those who best understand the system or
+process to find where to look to answer each ques- tion and find the clearest
+information"
+
+"All of the questions in Table 2.1 are guides, not directions. Look at one
+occurrence and many together, when possible, and see what you discover. Again,
+you are not trying to guess the solution. You are simply trying to understand
+the facts of how the failure manifests. "
+
+"smelling: You’ll have new understanding to ask new questions. This isn’t a
+step: It’s a behavior. Smell the problem to answer questions about it that
+arise."
+
+*** "HOW MUCH IS ENOUGH? "
+
+"Developing a thorough problem description and pattern of failure is not a
+matter of gathering reams of data and burying yourself with them"
+
+"Great problem solvers develop the questions that they want to answer before
+they go about collecting information and data, rather than depending on whatever
+data streams they see. They grab the signal, not the noise."
+
+"But when are you done with describing the problem or develop- ing a pattern of
+failure? In short: never. As you develop insight and dig into the fundamentals,
+you’ll be coming back iteratively to keep "
+
+** "Embrace Your Ignorance"
+*** intro
+"and that when they walk into a new situation they must be more focused on
+learning what they do not yet know than demonstrating the knowledge they already
+have. They ask questions others might think are stupid, and challenge what
+“everyone knows” to make sure they have the facts."
+
+"Embracing one’s ignorance isn’t easy. In many cases we already know 90% of what
+is required to solve a problem, so it’s reason- able to start from a position of
+knowledge rather than ignorance: People are asking you to solve the problem
+because of what you know, rather than what you don’t. However, it is the last
+10% that lies between you and an elegant solution. "
+
+"Great problem-solvers know that they must become masters of the unique problem
+and the process it affects, "
+
+*** "EMBRACE YOUR IGNORANCE, THEN SLAY IT "
+
+"A great problem-solver will gently challenge the organiza- tion rather than
+individuals, and have the humility to lead by example, by demonstrating their
+ignorance. "
+
+"Moving towards the true cause of a problem is going to require fresh eyes that
+want to learn. This is why outside problem-solv- ers sometimes have an advantage
+with hard problems over those familiar with the system: A common cognitive bias
+is the “curse of knowledge,” where our brains assume that the problem we’re
+looking at is similar to something we’ve seen in the past. "
+
+"Great problem-solvers aren’t afraid of their ignorance, and they’re not afraid
+of others seeing it. Great questions shatter assumptions, provoke new insight,
+and position those"
+
+"that do know about the process or system to contribute their expertise. Great
+problem-solvers build confidence and don’t need to position themselves as
+all-knowing "
+
+"But great problem-solvers don’t just admit their igno- rance. They embrace it.
+They understand that introducing a little bit of smart ignorance into a
+problem-solving effort will get people asking questions for which they assumed
+they already had answers. "
+
+** "Know What Problem You’re Solving "
+*** intro
+"Successfully solving hard problems requires knowing what problem you’re
+solving. You should put great care into defin- ing the problem in an accurate
+and precise way, as a direct and measurable observation of the problem. It must
+be clear how solving it translates directly to your goals. And it must abso-
+lutely not be an assumption or jump-to-conclusion. "
+
+*** "THE DANGER OF BAD PROBLEM DEFINITIONS "
+
+"Great problem-solvers avoid being trapped into solving the wrong problem by
+defining the problem without prejudice or assumption (see Table 4.1). They
+define the problem that they see, and in the scope of the measurable or tangible
+thing that they want. "
+
+*** "DEFINING THE PROBLEM AS A VARIABLE "
+
+"Perhaps the most useful approach for defining the problem well is structuring
+it as a measurable variable. With this, we view the problem as something we can
+measure objectively, and we remove the guessed solution and a lot of emotion. We
+know that we have a problem when this variable is not in the range we want (that
+is, “out of spec”), and we don’t have a problem once it’s brought into a range
+that’s acceptable (“in spec”). "
+
+*** "KEEPING IN YOUR SCOPE "
+
+"I’ve frequently seen teams define problems as too broad or out of their scope.
+Doing so will confuse the problem-solver or team, and cause delays in one of
+three ways: • They consider and study a range of variables that is too wide •
+They work on problems that are outside of their power, skills, or authority •
+They’re actually running away from the problem in some way "
+
+*** "AVOIDING ASSUMPTIONS "
+
+"One of the most dangerous—and most pervasive—mistakes when creating a problem
+definition is letting some assumption about the key drivers sneak in before
+really understanding the full scope of the problem. "
+
+"Always check that you are operating at the right level and get the facts to
+confirm that, even when you are not invited to do so! "
+
+*** "NOW: KNOW WHAT PROBLEM YOU’RE SOLVING "
+
+"It’s time to go back to the problem you’re working on and make sure you really
+know what it is. Clear your mind of prejudices and assumptions, and look to
+define the problem as something you can objectively measure to determine whether
+the problem is happening or not. Ask yourself these questions when considering
+your problem definition: "
+
+"• Is it defined as a measurable variable? • Does it clearly translate to your
+higher-level goals? • Is it within your sphere of influence, or are you
+overreach- ing and need help? • Does your definition include any assumptions
+about what is causing the problem?"
+
+** "Dig Into the Fundamentals"
+*** intro   
+"When a system isn’t working right, someone has to understand how it’s meant to
+work, at the right depth, in order to fix it. Your job as a problem-solver is to
+dig deep enough into the fundamen- tals of the specific parts of the system that
+affect the problem so you can solve it in a methodical, step-by-step way. This
+is true for machines, mortgage processing systems, and our brains. So whether
+it’s your toilet, your inventory system, or your achy left shoulder,
+understanding the fundamentals behind it is going to help you. For solving hard
+problems, it’s a critical factor to success. "
+
+*** "UNDERSTANDING WHAT CONTROLS THE PRIMARY VARIABLE "
+
+"For a hard problem in a complex system, you’re going to get quickly overwhelmed
+if you try to dig into everything at once. "
+
+"A great problem-solver won’t attempt to learn everything: To do so will waste
+tremendous time without making progress. "
+
+" Instead, they’ll dig into what’s relevant. The relevant parts of the system
+are those that impact the primary variable "
+
+" You want to understand the fundamentals of the small portion of the system
+that directly controls your primary variable, rather than trying to understand
+the whole thing. "
+
+"Second, sometimes you can’t see what’s going on. I call this the “it’s dark
+down there” problem. When my team was helping with an unproductive oil well
+hundreds of feet below the surface, there was precious little data about the
+conditions in the well. They solved the problem by mastering the well map and
+studying the geological science. "
+
+"Third, sometimes the problem is unique or only happened once."
+
+*** "WHY PATTERN OF FAILURE ALONE IS INSUFFICIENT "
+
+"Finally, the variable you need to fix may not change, so it doesn’t create a
+pattern. "
+
+"you can sometimes solve prob- lems by finding the pattern of failure. This can
+be a valid approach to start with, but with hard problems it is unlikely to
+resolve the issue. "
+
+"First, correlation is not causation."
+
+*** "NOW: DIG INTO THE FUNDAMENTALS "
+
+"Time to practice digging into the fundamentals! If you have a cur- rent
+problem, go figure out how the system works: make direct observations, flick
+through the manual, do research online. Just make sure you’re understanding the
+highest-level variables, rather than learning everything about it. "
+
+** "Don’t Rely on Experts "
+*** "NOW: DON’T RELY ON EXPERTS 
+Before you engage your next expert, decide what questions you want to ask them.
+Each of these questions should: 1. Be related to smelling the problem or digging
+into the fundamentals. 2. Not be asking for an opinion or solution, but instead
+for simple facts. Set expectations with the expert up-front that you aren’t
+asking them to solve the problem, but that you’ll be frequently asking for
+clarifications of unclear terms that they use. "
+
+** "Believe in a Simple Solution"
+*** intro
+    "If you don’t believe in a simple solution, you are very unlikely to find it,
+whether it is there or not. And usually, it’s there. So if you want to become a
+great problem-solver, you need to develop the belief, and therefore adopt the
+behaviors, that there is a simple solution. The only way to do this is to go
+find evidence for yourself. "
+
+*** "NOW: BELIEVE IN A SIMPLE SOLUTION Remind
+    yourself of a situation where you solved a problem and it was a lot simpler than
+you had thought it would be. Perhaps you had an issue with someone and thought
+they were going to “explode” when you raised it with them. It actually turned
+out okay. Keep that story in mind as you search for other simple solu- tions to
+the problems you’re tackling."
+
+** "Make Fact-Based Decisions "
+*** "GOOD AND BAD FACT-FINDING "
+
+"Digging up information that yields insight and decision is the backbone of any
+problem-solving effort: You’re there to learn the necessary facts to understand
+what to change or fix. The right efforts to find facts will yield tangible steps
+down the path towards the root cause; poor fact-finding will confuse you and
+lead you astray."
+
+*** "DIGGING INTO THE DATA "
+
+"you’ll need to verify that the information you’re gather- ing is actually
+representative of reality. Particularly in data-rich environments, great
+problem-solvers will challenge whether sen- sor streams, studies, and so on are
+providing facts. Often prob- lem-solvers face “data” that has been highly
+processed and may no longer represent the relevant reality on the ground. "
+
+*** "CHECKING FOR RELEVANCE "
+
+"The facts you seek should also be highly relevant to your problem. "
+
+"So what is a relevant fact? It’s a fact that’s going to answer the question
+you’re asking that takes you to the next step in your problem-solving process.
+When you’ve reached a certain variable, you need to get the facts to accurately
+understand its behavior, and what controls it. Don’t get distracted running
+about trying to measure everything you see. "
+
+*** "AVOIDING CONFIRMATION BIAS "
+
+"The last major risk to getting good facts is our own prejudices. While we may
+not always test a solution based on our opinions or assumptions about what’s
+causing the problem, confirmation bias can plague any problem-solving effort."
+
+*** "NOW: MAKE FACT-BASED DECISIONS 
+Pick a hard problem you face, or may actually be working on. Write down the
+relevant facts you know and also write a list of opinions that you see floating
+around—perhaps in your own mind. Now challenge your “facts” and see if some of
+them are really just your opinion or the result of confirmation bias. If you are
+brave enough, try this with a political issue and share it with some other
+people so they can help you review it."
+
+** "Stay on Target "
+*** "THE PROBLEMS OF EXPANSIVENESS "
+"What great problem-solvers do is find the root cause in a methodical way, using
+what they learn along this path to eliminate vast swaths of possible root causes
+and avenues of inquiry without actually hav- ing to study them directly. I"
+
+"expansive thinking is wonderful when you’re creating new things. But when
+you’re solving a practical problem, it’s completely unhelpful. Great
+problem-solvers instead reduce and eliminate possibilities in order to stay on
+target. They are masters of simplifying. "
+
+*** "STAYING ON TARGET "
+"our job is to efficiently find the root cause. So instead of expanding each
+variable, we want to see if we can eliminate some of the “high level” variables
+right at the start. Each one we get rid of has many subvariables that sit below
+it and we can then ignore. "
+
+"By elim- inating the variables closest to the primary variable, we imme-
+diately eliminate many potential root causes, and we can avoid collecting data
+about or looking deeply into most of the process or system. "
+
+*** "THETHE POWER OF SIMPLIFYING "
+
+"This iterative behavior of digging in, and then simplifying, is the on-target
+path to root cause. You’ll know that you’ve found the root cause when you
+identify, understand, and measure the off-spec variable that is directly in your
+control to change"
+
+*** "NOW: STAY ON TARGET "
+
+"Things in life are always distracting you from the task at hand. Pay attention
+to this in the next day or so. Look for situations when someone is having a
+conversation about a topic, and people get distracted and end up talking about
+something completely different. Notice how you’re taking care of one task and
+then find something else that needs fixing—such as loading the dishwasher and
+you notice the floor needs to be swept, and then moments later you’re
+rearranging the closet. Noticing and eliminating dis- tractions will enable you
+to stay on target when you’re facing down your next complex problem. "
+
+** "How to Choose Your Method "
+*** "CRITERIA FOR PICKING YOUR METHOD "
+
+"Here is some guidance on what to look out for if you want to be able to solve
+hard problems. "
+
+"First and foremost, make sure the method you’re choosing does not encourage
+guessing during its root cause analysis phase."
+
+"Second, look for a method that starts by focusing on the problem. This will
+guide you to spend time getting close to the actual problem, understand what’s
+really going on, and establish a pattern of failure."
+
+"In the end, ask yourself whether the problem-solving method you’re looking at
+is designed to encourage you to effectively use all of the problem-solving
+behaviors that you’ve learned. "
+
+*** "VARIABLE ANALYSIS "
+1. *Define the problem.*
+ - What problem are you trying to solve?
+ - Determine the primary variable
+  - Closely inspect the point of failure or failed output
+  - What measurable property do you want to change?
+  - Is it possible to define the problem using a more specific variable?
+
+2. *Describe the problem: describe the problem in detail.*
+ - What does the problem look like? 
+ - When did the problem start? 
+ - How often does the problem occur? 
+ - Where does the problem first occur? 
+ - When where don’t you see the problem? "
    
+3. *Create a variable tree: develop each layer of sub-variables by understanding how the process works*
+ - How is the process designed to control the primary variable?
+ - What else determines the value of the primary variable?
+ - Can we combine any of the sub-variables?
+  
+4. *Eliminate sub-variables from the tree*
+ - What should the value of each sub-variable be to prevent the problem from occurring? 
+   - What is the relationship between each sub-variable and the primary variable?
+
+ - Eliminate sub-variables that do not contribute to the problem 
+   - What is the actual value of the sub-variable during failure? During non-failure? 
+   - What tests could you use to eliminate variables that are difficult to measure? 
+   - What does the pattern of failure tell you? 
+
+ - Expand sub-variables that have not been eliminated (iterating step 3)
+
+ - Start with sub-variables that the pattern-of-failure suggests are most likely to contribute to the problem"
+
+ - Continue to expand and eliminate sub-variables until you have found the out-of-spec variable(s) that are directly in your control 
+   - Can you explain exactly how the out-of-spec sub-variable(s) contribute(s) directly to the problem? 
+
+ - If you get stuck. . . 
+   - Have you eliminated a sub-variable that you should not have?
+   - Have you missed a sub-variable?
+     
+5. *Implement the solution*
+ - Implement the solution 
+ - Verify the solution "
+
+"the process works a. How is the process designed to control the primary
+variable? b. What else determines the value of the primary variable? c. Can we
+combine any of the sub-variables?"
+
+*** "NOW: CHOOSE YOUR METHOD "
+
+"If you have a method that you currently use, decide now whether it’s robust
+enough to help you solve hard problems. If it is, won- derful! Keep going and
+practice those behaviors. If the method you use isn’t strong enough, or you
+don’t have a method at all, do a bit of research to find a method you like.
+Perhaps ask around with your friends to see what they find useful, and evaluate
+that."
+
+"Go Solve Some Problems "
+  
 * useful resources
 ** good reads
  https://www.amazon.com/Best-Sellers-Books-Decision-Making-Problem-Solving/zgbs/books/2679
