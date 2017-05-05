@@ -250,8 +250,7 @@ $ nc -l -u 512
 #+end_src 
 
 * sample python flood scriptf
-
-
+  
 #+begin_src python
 import socket
 import random
@@ -364,12 +363,6 @@ $ lsof -i@sloan.lander.edu
 
 #+end_src
 
-** ifconfig
-#+begin_src shell
-#show only interfaces that are UP
-$ lsof -au
-#+end_src
-
 ** ARP
 If some machines on your network are reachable but others aren't, or
 connectivity comes and goes, ARP problems may be the cause.
@@ -380,9 +373,17 @@ $ arp -a
 #+end_src
 
 * smurf attack
+
 In a Smurf Attack, ICMP ECHO_REQUEST packets are sent to the broadcast address
 of a network. Depending on how hosts are configured on the network, some may
 attempt to reply to the ECHO_REQUEST.
 
+* network troubleshooting
+
+If some machines on your network are reachable but others aren't, or connectivity comes and goes,
+ARP problems may be the cause.
+
+
 * useful resources
 http://ftp.ntua.gr/mirror/technotronic/
+/media/moh/59920B8A5B5D077A/mybase/reilly/(O'Reilly System Administration) Joseph D Sloan-Network Troubleshooting Tools-O'Reilly Media (2001).pdf
