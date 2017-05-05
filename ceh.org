@@ -156,7 +156,6 @@ for i in `seq 1 255`; do ping -c 1 192.168.$1.1 | tr \\n ' ' | awk '/1
 received/ {print $2}'; done
 #+end_src
 
-
 * banner grabbing
 use telnet for TCP and nc for UPD connections.
 
@@ -166,9 +165,11 @@ $ nc -u <host> <port>
 #+end_src
 
 * host discovery with =arping=
-  
+arping uses ARP requests and replies instead of ICMP packets.
 #+begin_src shell 
 $ arping [ip address]
+# I've used the MAC address, but the IP address could also be used.
+$ arping -v -c3 00:10:7b:66:f7:62
 #+end_src 
 
 * netcat
@@ -268,7 +269,7 @@ while 1:
 #+end_src 
 
 * Cracking Linux Password Hashes with Hashcat 
-
+  
 ** Getting Hashcat 2.00
 
 Hashcat updated to 3.00 and it won't run in a virtual machine anymore. The simplest solution is to use the old version.
@@ -367,4 +368,21 @@ $ lsof -i@sloan.lander.edu
 #+begin_src shell
 #show only interfaces that are UP
 $ lsof -au
-#+end_src 
+#+end_src
+
+** ARP
+If some machines on your network are reachable but others aren't, or
+connectivity comes and goes, ARP problems may be the cause.
+
+#+begin_src shell
+# show arp cache table
+$ arp -a
+#+end_src
+
+* smurf attack
+In a Smurf Attack, ICMP ECHO_REQUEST packets are sent to the broadcast address
+of a network. Depending on how hosts are configured on the network, some may
+attempt to reply to the ECHO_REQUEST.
+
+* useful resources
+http://ftp.ntua.gr/mirror/technotronic/
