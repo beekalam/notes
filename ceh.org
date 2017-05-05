@@ -333,6 +333,38 @@ msf > show options
 # setting RHOST
 msf > set RHOST 192.168.20.10
 msf > exploit
+#+end_src
+
+* network
+** netstat
+#+begin_src shell
+
+# routing table
+$ netstat -rn
+#+end_src
+
+** lsof
+
+#+begin_src shell
+# internet connections
+# unlike netstat lsof will not report connections that do not have open files.
+$ lsof -i
+
+# open files by process name
+$ lsof -cemacs24
+
+#open files by pid
+$ lsof -p `pidof emacs24`
+
+# specify and address (lsof)
+# only files related to the address will be showed.
+$ lsof -i@sloan.lander.edu
+
+
+#+end_src
+
+** ifconfig
+#+begin_src shell
+#show only interfaces that are UP
+$ lsof -au
 #+end_src 
-
-
