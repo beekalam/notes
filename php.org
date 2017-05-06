@@ -7186,7 +7186,23 @@ var table = $('#datatable-packages').DataTable({
             },
 //..
 }]
-#+end_src 
+#+end_src
+
+** responsive table
+#+begin_src javascript
+    var holdedtable =$("#holded-packages").DataTable({
+        "responsive": true,
+        "searching":false,
+        "ordering": false,
+        "bInfo" : false,
+        "paging" : false,
+        "language": {
+            "zeroRecords": "هیچ رکوردی یافت نشد."
+        }
+    });
+//
+    holdedtable.responsive.recalc();
+#+end_src
 
 * HTML
 ** How do you disable browser Autocomplete on web form field / input tag?
