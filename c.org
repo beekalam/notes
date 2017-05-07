@@ -896,6 +896,155 @@ The restrict keyword enhances computational support by giving the compiler permi
 to optimize certain kinds of code. It can be applied only to pointers, and it indicates that a
 pointer is the sole initial means of accessing a data object.
 
+* File Input/Output
+** mode
+To bring some regularity to the handling of text files, C provides two ways of accessing a
+file: binary mode and text mode.
+
+** Levels of I/O
+In addition to selecting the view of a file, you can, in most cases, choose between two levels of
+I/O (that is, between two levels of handling access to files). Low-level I/O uses the fundamental
+I/O services provided by the operating system. Standard high-level I/O uses a standard package
+of C library functions and stdio.h header file definitions. The C standard supports only the
+standard I/O package because there is no way to guarantee that all operating systems can be
+represented by the same low-level I/O model.
+
+** getc and putc functions
+The two functions getc() and putc() work very much like getchar() and putchar() . The
+difference is that you must tell these newcomers which file to use. So the following old standby
+means “get a character from the standard input”:
+ch = getchar();
+However, this statement means “get a character from the file identified by fp ”:
+ch = getc(fp);
+Similarly, this statement means “put the character ch into the file identified by the FILE
+pointer fpout ”:
+putc(ch, fpout);
+
+** End of File
+A program reading data from a file needs to stop when it reaches the end of the file. How can
+a program tell if it has reached the end? The getc() function returns the special value EOF if it
+tries to read a character and discovers it has reached the end of the file.
+#+begin_src c
+// good design #1
+int ch;
+// int to hold EOF
+FILE * fp;
+fp = fopen("wacky.txt", "r");
+ch = getc(fp);
+// get initial input
+while (ch != EOF)
+{
+  putchar(ch);
+  // process input
+  ch = getc(fp); // get next input
+}
+#+end_src
+
+** The fclose() Function
+The fclose(fp) function closes the file identified by fp , flushing buffers as needed. For a
+program less casual than this one, you would check to see whether the file had been closed
+successfully. The function fclose() returns a value of 0 if successful, and EOF if not:
+#+begin_src c
+if (fclose(fp) != 0)
+printf("Error in closing file %s\n", argv[1]);
+#+end_src 
+
+** fseek() and ftell()
+The fseek() function enables you to treat a file like an array and move directly to any partic-
+ular byte in a file opened by fopen() .
+
+The first of the three arguments to fseek() is a FILE pointer to the file being searched. The
+file should have been opened by using fopen() .
+The second argument to fseek() is called the offset . This argument tells how far to move from
+the starting point (see the following list of mode starting points). The argument must be a long
+value. It can be positive (move forward), negative (move backward), or zero (stay put).
+
+#+begin_src c
+/* reverse.c -- displays a file in reverse order */
+#include <stdio.h>
+#include <stdlib.h>
+#define CNTL_Z '\032'
+/* eof marker in DOS text files */
+#define SLEN 81
+int main(void)
+{
+  char file[SLEN];
+  char ch;
+  FILE *fp;
+  long count, last;
+  puts("Enter the name of the file to be processed:");
+  scanf("%80s", file);
+  if ((fp = fopen(file,"rb")) == NULL)
+  {
+    /* read-only mode */
+    printf("reverse can't open %s\n", file);
+    exit(EXIT_FAILURE);
+  }
+  fseek(fp, 0L, SEEK_END);
+  /* go to end of file */
+  last = ftell(fp);
+  for (count = 1L; count <= last; count++)
+  {
+    fseek(fp, -count, SEEK_END); /* go backward */
+    ch = getc(fp);
+    if (ch != CNTL_Z && ch != '\r') /* MS-DOS files */
+      putchar(ch);
+  }
+  putchar('\n');
+  fclose(fp);
+  return 0;
+}
+#+end_src 
+
+The first of the three arguments to fseek() is a FILE pointer to the file being searched. The
+file should have been opened by using fopen() .
+The second argument to fseek() is called the offset . This argument tells how far to move from
+the starting point (see the following list of mode starting points). The argument must be a long
+value. It can be positive (move forward), negative (move backward), or zero (stay put).
+
+The third argument is the mode, and it identifies the starting point. Since the ANSI standard,
+the stdio.h header file specifies the following manifest constants for the mode:
+
+| Mode     | Measures  | Offset   | From |
+|----------+-----------+----------+------|
+| SEEK_SET | Beginning | of       | file |
+| SEEK_CUR | Current   | position |      |
+| SEEK_END | End       | of       | file |
+
+
+** examples
+*** count the number of characters in a file
+#+begin_src c
+/* count.c -- using standard I/O */
+#include <stdio.h>
+#include <stdlib.h> // exit() prototype
+int main(int argc, char *argv[])
+{
+  int ch;
+  // place to store each character as read
+  FILE *fp;
+  // "file pointer"
+  unsigned long count = 0;
+  if (argc != 2)
+  {
+    printf("Usage: %s filename\n", argv[0]);
+    exit(EXIT_FAILURE);
+  }
+  if ((fp = fopen(argv[1], "r")) == NULL)
+  {
+    printf("Can't open %s\n", argv[1]);
+    exit(EXIT_FAILURE);
+  }
+  while ((ch = getc(fp)) != EOF)
+  {
+    putc(ch,stdout); // same as putchar(ch);
+    count++;
+  }
+  fclose(fp);
+  printf("File %s has %lu characters\n", argv[1], count);
+  return 0;
+}
+#+end_src 
 
 * libusb example
 
