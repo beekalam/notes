@@ -897,6 +897,7 @@ to optimize certain kinds of code. It can be applied only to pointers, and it in
 pointer is the sole initial means of accessing a data object.
 
 * File Input/Output
+
 ** mode
 To bring some regularity to the handling of text files, C provides two ways of accessing a
 file: binary mode and text mode.
@@ -1011,6 +1012,29 @@ the stdio.h header file specifies the following manifest constants for the mode:
 | SEEK_CUR | Current   | position |      |
 | SEEK_END | End       | of       | file |
 
+Here are some sample function calls, where fp is a file pointer:
+
+#+begin_src c
+fseek(fp, 0L, SEEK_SET); // go to the beginning of the file
+fseek(fp, 10L, SEEK_SET); // go 10 bytes into the file
+fseek(fp, 2L, SEEK_CUR); // advance 2 bytes from the current position
+fseek(fp, 0L, SEEK_END); // go to the end of the file
+fseek(fp, -10L, SEEK_END); // back up 10 bytes from the end of the file
+#+end_src 
+The value returned by fseek() is 0 if everything is okay, and -1 if there is an error, such as
+attempting to move past the bounds of the file.
+The ftell() function is type long , and it returns the current file location. Under ANSI C, it is
+declared in stdio.h . As originally implemented in Unix, ftell() specifies the file position by
+returning the number of bytes from the beginning, with the first byte being byte 0, and so on.
+
+| Function call                      | Effect                                                    |
+|------------------------------------+-----------------------------------------------------------|
+| fseek(file , 0L        ,SEEK_SET)  | Go to the beginning of the file.                          |
+| fseek(file , 0L        , SEEK_CUR) | Stay at the current position.                             |
+| fseek(file , 0L        , SEEK_END) | Go to the file’s end.                                     |
+| fseek(file , 0L        , SEEK_END) | Go to the file’s end.pos is a value returned by ftell() . |
+
+@page@583
 
 ** examples
 *** count the number of characters in a file
@@ -1045,6 +1069,7 @@ int main(int argc, char *argv[])
   return 0;
 }
 #+end_src 
+
 
 * libusb example
 
