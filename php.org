@@ -5303,6 +5303,34 @@ function toLog($msg)
 ?>
 #+end_src
 
+** Making Assertions
+To disable assert( ) calls, use this line of code: 
+#+begin_src php
+    assert_options(ASSERT_ACTIVE, 0);
+#+end_src 
+
+And to make PHP end script execution rather than just issue a warning, we can use this line of code: 
+#+begin_src php 
+    assert_options(ASSERT_BAIL, 1);
+#+end_src 
+
+ASSERT_CALLBACK is a useful option, as it allows you to write an error handler
+for when your code fails an assertion.
+
+#+begin_src php
+function assert_failed($file, $line, $expr) {
+        print "Assertion failed in $file on line $line: $expr\n";
+}
+assert_options(ASSERT_CALLBACK, 'assert_failed');
+assert_options(ASSERT_WARNING, 0);
+$foo = 10;
+$bar = 11;
+assert($foo > $bar);
+#+end_src
+
+ASSERT_WARNING is also disabled, which stops PHP from outputting a warning as well as running the callback function. 
+
+
 * exceptions
 ** Throwing Exceptions
 
