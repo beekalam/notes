@@ -63,6 +63,11 @@ $ vim /etc/NetworkManager.conf
 $ vim /etc/ssh/sshd_config
 #  change line PermitRootLogin without-password
 #  PermitRootLogin yes
+#+end_src
+
+** set ssh to start at every bood
+#+begin_src shell
+$ update-rc.d -f ssh enable 2 3 4 5
 #+end_src 
 
 * google search operators
