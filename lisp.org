@@ -11,7 +11,7 @@ can create new top-level definitions with the defparameter function:
 #+end_src 
 
 * defparameter vs defvar
-
+  
 When you set the value of a global variable using defparameter, any value
 previously stored in the variable will be overwritten:
 
@@ -179,7 +179,7 @@ CL-USER> (getf (list :a 1 :b 2 :c 3) :c)
 
 *** remove from lists
  The function remove, takes an object and  a list
- and returns a new list containing everything butt
+ and returns a new list containing everything but
  that object:
  #+begin_src lisp
  > (setf lst '(c a r a t))
