@@ -240,7 +240,20 @@ $ taskset -pc 0 `pidof recoll`
 #+end_src 
 
 ** recoll
+#+begin_src 
 kchmviewer --url %i %F
+#+end_src 
+
+** display current date and time
+#+begin_src shell
+$ cat /etc/timezone
+$ grep UTC /etc/default/rcS
+$ date
+# hardware clock
+$ sudo hwclock --show
+$ timedatectl
+#+end_src
+
 * groups
 *** Add a New Group
 
@@ -1294,6 +1307,12 @@ With tr, use the squeeze repeat option:
 $ tr -s " " < file
 #+end_src
 
+** remove empty lines
+#+begin_src shell
+$ sed '/^\s*$/d'
+$ awk 'NF' file
+#+end_src
+
 * processes
 ** checking the priority of a process?
 
@@ -1618,10 +1637,10 @@ $ cat some.json | python -m json.tool
 ** other useful php modules
 
 #+begin_src shell 
- $ sudo apt-get install php-soap
- $ sudo apt-get install php-ssh2
- $ sudo apt-get install php-cli
- $ sudo apt-get install php-mbstring
+$ sudo apt-get install php-soap
+$ sudo apt-get install php-ssh2
+$ sudo apt-get install php-cli
+$ sudo apt-get install php-mbstring
 #+end_src 
 
 ** starting windows in safe mode from grub
@@ -1632,7 +1651,7 @@ item.
 ** making windows usb boot in ubuntu
 
 #+begin_src shell
- $ sudo apt-get install unetbootin
+$ sudo apt-get install unetbootin
 #+end_src 
 
 ** ubuntu installation
