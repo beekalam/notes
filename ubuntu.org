@@ -1307,6 +1307,12 @@ With tr, use the squeeze repeat option:
 $ tr -s " " < file
 #+end_src
 
+** sed
+*** useful resources
+http://sed.sourceforge.net/
+
+http://sed.sourceforge.net/sed1line.txt
+
 ** remove empty lines
 #+begin_src shell
 $ sed '/^\s*$/d'
