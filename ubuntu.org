@@ -865,12 +865,12 @@ $ cd /var/www && sudo tar czf ~/www_backups/$(date +%Y%m%d-%H%M%S).tar.gz .
 *** Extract
 
  #+begin_src shell
- # tar -tzf home.tgz               # look inside the archive without extracting (list)
- # tar -xf home.tar                # extract the archive here (x for extract)
- # tar -xzf home.tgz             # same with zip compression (-xjf for bzip2 compression)
-                                 # remove leading path gallery2 and extract into gallery
- # tar --strip-components 1 -zxvf gallery2.tgz -C gallery/
- # tar -xjf home.tbz home/colin/file.txt    # Restore a single file
+$ tar -tzf home.tgz               # look inside the archive without extracting (list)
+$ tar -xf home.tar                # extract the archive here (x for extract)
+$ tar -xzf home.tgz             # same with zip compression (-xjf for bzip2 compression)
+                                # remove leading path gallery2 and extract into gallery
+$ tar --strip-components 1 -zxvf gallery2.tgz -C gallery/
+$ tar -xjf home.tbz home/colin/file.txt    # Restore a single file
  #+end_src
  
 *** More advanced
