@@ -704,6 +704,21 @@ int main (void)
 }
 #+end_src
 
+** duplicate string(glibc 6)
+
+#+begin_src c
+char *
+__strdup (const char *s)
+{
+  size_t len = strlen (s) + 1;
+  void *new = malloc (len);
+
+  if (new == NULL)
+    return NULL;
+
+  return (char *) memcpy (new, s, len);
+}
+#+end_src
 
 * storage classes, Linkage & memory management
 ** Storage classes

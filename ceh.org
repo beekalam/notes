@@ -585,6 +585,7 @@ prints a summary:
 # use this to show up hosts only
 $ fping -c1 -sdg 192.168.1.0/25 2>&1 | egrep -v "ICMP|xmt"
 #+end_src
+
 **** with nmap
 
 If all you want to do is to discover all the up hosts on your network, Nmap is
@@ -598,11 +599,82 @@ faster and less verbose:
 	Host uberpc.alrac.net (192.168.1.76) appears to be up.
 	MAC Address: 00:14:2A:54:67:D6 (Elitegroup Computer System Co.)
 	Nmap finished: 256 IP addresses (3 hosts up) scanned in 4.879 seconds
+#+end_src
+
+**  Finding Duplicate IP Addresses with arping
+Use arping, like this:
+#+begin_src 
+	$ arping -D 192.168.1.76
+	ARPING 192.168.1.76 from 0.0.0.0 eth0
+	Unicast reply from 192.168.1.76 [00:14:2A:54:67:D6] for 192.168.1.76 [00:14:2A:54:67:
+	D6] 0.605ms
+	Sent 1 probes (1 broadcast(s))
+	Received 1 response(s)
 #+end_src 
+
+Received 1 response(s) means that this address is already in use, and arping
+even gives you the MAC address. You may also test with a hostname:
+
+#+begin_src 
+	$ arping -D uberpc
+	ARPING 192.168.1.76 from 0.0.0.0 eth0
+	Unicast reply from 192.168.1.76 [00:14:2A:54:67:D6] for 192.168.1.76 [00:14:2A:54:67:
+	D6] 0.590ms
+	Sent 1 probes (1 broadcast(s))
+	Received 1 response(s)
+#+end_src
+
+** Testing HTTP Throughput and Latency with httping
+
+#+begin_src shell
+# head request
+$ httping -c4 -g http://www.oreilly.com
+# get request
+$ httping -c4 -Gg http://www.oreilly.com
+
+# The -r switch tells httping to resolve the hostname only once, to remove DNS
+# latency from its measurements:
+
+$ httping -c4 -Grg http://www.oreilly.com
+
+# You can test SSL-enabled sites with the -l switch:
+
+$ httping -c4 -lGg https://www.fictionalsslsite.org
+
+# To specify an alternate port, append it to the URL:
+
+$ httping -c4 -Gg http://www.fictionalsslsite.org:8080
+
+# httping will report the roundtrip time with the -b switch in kilobytes per second (not kilobits):
+
+$ httping -c4 -Gbg http://www.fictionalsslsite.org
+PING www.fictionalsslsite.org:80 (http://www.fictionalsslsite.org):
+connected to www.fictionalsslsite.org:80, seq=0 time=2553.96 ms 43KB/s
+
+# Use the -s switch to display return codes. Put it all together, and this is what you get:
+
+$ httping -c4 -Gsbrg http://www.oreilly.com
+PING www.oreilly.com:80 (http://www.oreilly.com):
+  75KB/sed to www.oreilly.com:80, seq=0 time=1567.91 ms 200 OK
+  72KB/sed to www.oreilly.com:80, seq=1 time=1618.20 ms 200 OK
+  18KB/sed to www.oreilly.com:80, seq=2 time=5869.12 ms 200 OK
+  58KB/sed to www.oreilly.com:80, seq=3 time=1979.43 ms 200 OK
+--- http://www.oreilly.com ping statistics ---
+4 connects, 4 ok, 0.00% failed
+round-trip min/avg/max = 1567.9/2758.7/5869.1 ms
+Transfer speed: min/avg/max = 18/56/75 KB
+
+# You can test a local server by specifying the hostname and port instead of the URL:
+$ httping -c4 -h xena -p 80
+
+#+end_src 
+
 
 * useful resources
 http://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml
-
+http://oss.oetiker.ch/smokeping-demo
+https://www.vanheusden.com/httping/
+https://www.vanheusden.com/Linux/index.php
 * temp
 If some machines on your network are reachable but others aren't, or connectivity comes and goes,
 ARP problems may be the cause.
