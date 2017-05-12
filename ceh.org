@@ -68,7 +68,17 @@ $ vim /etc/ssh/sshd_config
 ** set ssh to start at every bood
 #+begin_src shell
 $ update-rc.d -f ssh enable 2 3 4 5
-#+end_src 
+#+end_src
+
+** disably password delay
+#+begin_src
+# at /etc/pam.d find pam_filedelay and change delay to 1
+auth       optional   pam_faildelay.so  delay=3000000
+
+# at /etc/pam.d find common-auth  and add nodelay like this
+# could be system-auth
+auth            sufficient      pam_unix.so try_first_pass nullok nodelay
+#+end_src
 
 * google search operators
 |            |                                                                                                |
@@ -428,7 +438,35 @@ $ tcpdump ip
 #To capture just TCP traffic, you would use:
 # Recognized keywords include ip, igmp, tcp, udp, and icmp.
 $ tcpdump tcp
+#capture more than one protocol
+$ tcpdump -pi eth0  tcp or udp or icmp
 
+#capture specific port
+$ tcpdump -pi eth0 port 110
+
+# Capture several ports:
+$ tcpdump -pi eth0 port 25 or port 80 or port 110
+
+#Capture a port range:
+$ tcpdump -pi eth0 portrange 3000-4000
+
+# Watch traffic leaving a port:
+$ tcpdump -pi eth0 src port 110
+
+#Watch traffic entering a port:
+$ tcpdump -pi eth0 dst port 110
+
+#Look for packets smaller than the specified size:
+$ tcpdump -pi eth0 less 512
+
+#Look for packets larger than the specified size:
+$ tcpdump -pi eth0 greater 512
+
+#Watch SSH connections from certain hosts:
+$ tcpdump -pi eth0 src host uberpc or stinkpad and dst port 22
+
+#Watch for traffic leaving one network and entering two other networks:
+$ tcpdump -pi eth0 src net 192.168.1.0/16 and dst net 10.0.0.0/8 or 172.16.0.0/16
 
 #There are many transport-level services that do not have recognized keywords. In this case, you can
 #use the keywords proto or ip proto followed by either the name of the protocol found in the
@@ -451,7 +489,6 @@ $ tcpdump greater 200
 # proto[expr:size] is the general syntax.
 # proto indicates which header to look into -ip;tcp & ...
 # expr gives an offset into the header indexed from 0
-
 
 # looks into the IP header at the tenth byte, the protocol field, for a value of 6.
 $ tcpdump "ip[9] = 6"     #the same as $tcpdump tcp
@@ -477,6 +514,45 @@ $ tcpdump "host lnx1 and (udp or arp)"
 #adequately in most cases:
 lnx1# tcpdump -n "not (tcp port telnet and host lnx1 and host bsd1)"
 
+
+#The -X switch reads the data payload, but the default is to only read 68 bytes, 
+#so -s0 displays the whole data payload, as this example from an IRC conversation shows:
+$ tcpdump -X -s0 -pi eth0
+
+# see the live capture and store it in a file.
+# tcpdump -pXi eth0 -s0 host stinkpad -l | tee tcpdumpfile
+#This is a good way to catch infected hosts that are sending out spam because nobody should 
+#be sending anything from port 25 except your official mail servers:
+#The -n switch turns off name resolution.
+$ tcpdump -pni eth0 dst port 25 and not src host mailserver1
+
+#you might want to use the -c switch to limit the number of packets captured:
+
+$ tcpdump -c 1000 -pXi eth0 -w tcpdumpfile -s0
+#+end_src
+
+*** capturing TCP flags 
+#+begin_src shell
+#Capture all SYN packets:
+$ tcpdump 'tcp[13] & 2 != 0'
+
+#Capture all ACK packets:
+$ tcpdump 'tcp[13] & 16 != 0'
+
+#Capture all SYN-ACK packets:
+$ tcpdump 'tcp[13] = 18'
+
+#Capture all FIN packets:
+$ tcpdump 'tcp[13] & 1 != 0'
+
+#Capture all URG packets:
+$ tcpdump 'tcp[13] & 32 != 0'
+
+#Capture all PSH packets:
+$ tcpdump 'tcp[13] & 8 != 0'
+
+#Capture all RST packets:
+$ tcpdump 'tcp[13] & 4 != 0'
 #+end_src
 
 * smurf attack
@@ -601,7 +677,7 @@ faster and less verbose:
 	Nmap finished: 256 IP addresses (3 hosts up) scanned in 4.879 seconds
 #+end_src
 
-**  Finding Duplicate IP Addresses with arping
+** Finding Duplicate IP Addresses with arping
 Use arping, like this:
 #+begin_src 
 	$ arping -D 192.168.1.76
