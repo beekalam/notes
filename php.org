@@ -8797,8 +8797,34 @@ comment, introduce a method that tests the assertion rule.
 **** Extract method
 **** Preserve whole object
 **** Introduce parameter object
-     
+
 * Defensive programming
+** premature optimization
+*** symptoms
+**** Readability
+One of the most common indicators of premature optimization is poor code
+readability. The majority of optimizations are more complicated solutions and
+therefore harder to read and understand than a simpler but less optimal
+solution.
+**** Dependency
+Optimization must sometimes cross encapsulation boundaries, leading to greater
+dependency between classes or modules that can reduce the robustness of the
+code. These dependencies make changes more difficult by causing each change to
+affect more of the code base than would otherwise be necessary.
+
+**** Constraints
+Another indicator of premature optimization is overly constrained data input,
+leading to an inflexibility that will not allow changes later in development. If
+a more general solution is evident, then it is likely that the code was written
+to be optimized rather than robust.
+
+*** Performance Tradeoffs
+At this point you might be thinking, “Well, sure these optimizations lead to
+code that is harder to read and modify, but aren’t the performance improvements
+worth the tradeoff?” The answer is “not usually.” The fastest way to understand
+why is to profile the entire application and find out what percentage of time is
+spent in each of the different algorithms and modules.
+
 
 * useful resources
 ** php snippets

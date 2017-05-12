@@ -871,6 +871,8 @@ $ tar -xzf home.tgz             # same with zip compression (-xjf for bzip2 comp
                                 # remove leading path gallery2 and extract into gallery
 $ tar --strip-components 1 -zxvf gallery2.tgz -C gallery/
 $ tar -xjf home.tbz home/colin/file.txt    # Restore a single file
+# extracting bz2
+$ tar xvjf file.tar.tbz 
  #+end_src
  
 *** More advanced
