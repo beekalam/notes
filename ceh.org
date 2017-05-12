@@ -1,5 +1,5 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
-* footpringint
+* footprinting
 ** website footprinting
  - operating system used.
  - subdirectories and parameters
@@ -487,6 +487,123 @@ attempt to reply to the ECHO_REQUEST.
 
 * network troubleshooting
 
+** Testing Connectivity with ping Problem
+*** check network interface is up and running
+#+begin_src shell 
+$ ping localhost
+#+end_src
+*** confirm local networking is working properly
+**** intro
+#+begin_src shell
+$ ping -c10 uberpc
+#+end_src
+The output from that simple command gives you several useful pieces of
+information, including that name resolution is working and you have a good,
+clean, fast connection.
+**** check hostname
+
+#+begin_src shell
+$ ping -c10 uberpc
+#ping: unknown host uberpc
+#+end_src 
+
+This means you entered the wrong hostname, DNS is broken, routing is goofed up,
+or the remote host is not connected to the network. So, your next step is to
+ping the IP address:
+
+#+begin_src shell
+$ ping -c10 192.168.1.76
+PING 192.168.1.76 (192.168.1.76) 56(84) bytes of data.
+From 192.168.1.10 icmp_seq=1 Destination Host Unreachable
+[...]
+From 192.168.1.10 icmp_seq=10 Destination Host Unreachable
+
+--- 192.168.1.76 ping statistics ---
+10 packets transmitted, 0 received, +9 errors, 100% packet loss, time 9011ms
+, pipe 3
+#+end_src 
+
+This shows that you entered the wrong IP address or the host is down, but you
+got as far as a router on the host's network. You know this because the router
+sent you the "Destination Host Unreachable" message.
+
+If pingingr the IP address had succeeded, then that would point to a DNS problem.
+**** check connection to network
+This is what it looks like when your own PC is not connected to the network:
+
+#+begin_src shell
+$ ping -c10 192.168.1.76
+connect: Network is unreachable
+#+end_src
+
+**** check connection to remote network
+This is what you see when the whole remote network is unreachable:
+
+#+begin_src shell
+$ ping -c10 alrac.net
+PING alrac.net(11.22.33.44) 56(84) bytes of data.
+--- alrac.net ping statistics ---
+10 packets transmitted, 0 received, 100% packet loss, time 10007ms
+#+end_src
+
+** profiling
+*** ping whole subnet
+**** with Fping
+FPing pings all the addresses in a range in sequence. This example pings a
+subnet once, reports which hosts are alive, queries DNS for the hostnames, and
+prints a summary:
+
+#+begin_src 
+	$ fping -c1 -sdg 192.168.1.0/24
+	xena.alrac.net    : [0], 84 bytes, 0.04 ms (0.04 avg, 0% loss)
+	pyramid.alrac.net : [0], 84 bytes, 0.45 ms (0.45 avg, 0% loss)
+	uberpc.alrac.net  : [0], 84 bytes, 0.11 ms (0.11 avg, 0% loss)
+	ICMP Host Unreachable from 192.168.1.10 for ICMP Echo sent to 192.168.1.2
+	ICMP Host Unreachable from 192.168.1.10 for ICMP Echo sent to 192.168.1.3
+	ICMP Host Unreachable from 192.168.1.10 for ICMP Echo sent to 192.168.1.4
+	[...]
+
+	192.168.1.9       :  xmt/rcv/%loss = 1/0/100%
+	xena.alrac.net    :  xmt/rcv/%loss = 1/1/0%, min/avg/max = 0.04/0.04/0.04
+	192.168.1.11      :  xmt/rcv/%loss = 1/0/100%
+	[...]
+	     128 targets
+	       3 alive
+	     126 unreachable
+	       0 unknown addresses
+
+	       0 timeouts (waiting for response)
+	     127 ICMP Echos sent
+	       3 ICMP Echo Replies received
+	     102 other ICMP received
+
+	 0.04 ms (min round trip time)
+	 1.02 ms (avg round trip time)
+	 2.58 ms (max round trip time)
+	        6.753 sec (elapsed real time)
+
+# use this to show up hosts only
+$ fping -c1 -sdg 192.168.1.0/25 2>&1 | egrep -v "ICMP|xmt"
+#+end_src
+**** with nmap
+
+If all you want to do is to discover all the up hosts on your network, Nmap is
+faster and less verbose:
+#+begin_src shell
+	# nmap -sP 192.168.1.0/24
+	Starting Nmap 4.20 ( http://insecure.org ) at 2007-06-08 15:53 PDT
+	Host xena.alrac.net (192.168.1.10) appears to be up.
+	Host pyramid.alrac.net (192.168.1.50) appears to be up.
+	MAC Address: 00:0D:B9:05:25:B4 (PC Engines GmbH)
+	Host uberpc.alrac.net (192.168.1.76) appears to be up.
+	MAC Address: 00:14:2A:54:67:D6 (Elitegroup Computer System Co.)
+	Nmap finished: 256 IP addresses (3 hosts up) scanned in 4.879 seconds
+#+end_src 
+
+* useful resources
+http://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml
+
+* temp
 If some machines on your network are reachable but others aren't, or connectivity comes and goes,
 ARP problems may be the cause.
 

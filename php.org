@@ -8817,6 +8817,36 @@ Another indicator of premature optimization is overly constrained data input,
 leading to an inflexibility that will not allow changes later in development. If
 a more general solution is evident, then it is likely that the code was written
 to be optimized rather than robust.
+*** prevention
+**** Do not optimize
+Resist the temptations, and wait until the end of development. 
+
+Then, only optimize to achieve your performance goals; otherwise, you will be
+wasting time and money when the application could be in use already. This is an
+easy goal to say, but much harder to realize. The best tool at your disposal for
+achieving this goal is discipline. Think about every algorithm in terms of
+flexibility and clarity, and then decide whether you have accidentally
+considered performance.
+**** K.I.S.S. (Keep It Simple, Stupid)
+When it comes to optimization, keeping it simple means waiting until the end of
+development to add the complications inherent in most optimizations. Avoiding
+complicated code serves two purposes. The obvious effect is improved development
+speed and flexibility
+**** use High-Level Languages
+**** Encapsulation and Abstraction
+Surprisingly, one of the most important coding practices for proper optimization
+can have a negative impact on application speed. Encapsulation is the collection
+of related code into a single unit such as a class or module, which can then use
+abstraction to hide the details of the data and implementation behind an
+interface that is subjected to fewer changes than the internals.
+**** Strategy Pattern
+One of the most useful methods of encapsulation and abstraction for optimization
+purposes is the Strategy Design Pattern [GoF95]. The basic idea of the Strategy
+Pattern is to abstract the interface to an algorithm so that multiple algorithms
+for the same functionality can be encapsulated in interchangeable objects.
+
+
+
 
 *** Performance Tradeoffs
 At this point you might be thinking, “Well, sure these optimizations lead to
@@ -8824,7 +8854,45 @@ code that is harder to read and modify, but aren’t the performance improvement
 worth the tradeoff?” The answer is “not usually.” The fastest way to understand
 why is to profile the entire application and find out what percentage of time is
 spent in each of the different algorithms and modules.
+** CAP epidemic
+*** The symptoms of a CAP Epidemic are 
+ - Bugs that keep reappearing in different code locations. 
 
+ - The heavy use of search and replace for editing code. 
+
+ - Nonsensical comments and names due to a change in context of the copied code. 
+
+ - Strange bugs caused by forgetting small changes to copied code. 
+
+ - Complex procedures required for updating a single piece of information. 
+
+ - Duplicate occurrences of any human-editable information. 
+
+*** To prevent a CAP Epidemic 
+
+ - Know what project code is available for reuse. 
+
+ - Know what external libraries are available for use in place of implementing the functionality internally. 
+
+ - Use high-level languages and their features such as functions, objects,
+   templates, preprocessors, generic programming techniques, and aspect-oriented
+   programming techniques.
+
+ - Automate any unavoidable information duplication using scripting and other automation tools. 
+
+ - Code to avoid the need for asset duplication. 
+
+ - Keep up to date on new programming technologies such as Intentional Programming and Generative Programming. 
+
+*** To cure the effects of a CAP Epidemic 
+
+ - Use refactoring to parameterize duplicate code and subsequently move it to a single location. 
+
+ - Take advantage of refactoring tools. 
+
+ - Keep up to date on the advancements in automating refactoring. 
+
+ - Test often to ensure that the refactoring does not change the behavior. 
 
 * useful resources
 ** php snippets
