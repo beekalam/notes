@@ -1682,6 +1682,21 @@ function wp_is_numeric_array( $data ) {
 }
 #+end_src 
 
+** ARRAY KEY WHITELIST AND BLACKLIST
+#+begin_src php
+function whitelist(array $array, array $whitelist)
+{
+    return array_intersect_key($array, array_flip($whitelist));
+}
+
+$filtered = whitelist($array, ['good1', 'good2', ... ]);
+function blacklist(array $array, array $blacklist)
+{
+    return array_diff_key($array, array_flip($blacklist));
+}
+
+$filtered = blacklist($array, ['bad1', 'bad2', ...]);
+#+end_src
 * Date and Time
 ** Finding the Current Date and Time
 Use strftime() or date() for a formatted time string, as in Example 3-2.
@@ -5310,6 +5325,7 @@ assert_options(ASSERT_ACTIVE, 0);
 #+end_src 
 
 And to make PHP end script execution rather than just issue a warning, we can use this line of code: 
+
 #+begin_src php 
 assert_options(ASSERT_BAIL, 1);
 #+end_src 
@@ -5329,6 +5345,58 @@ assert($foo > $bar);
 #+end_src
 
 ASSERT_WARNING is also disabled, which stops PHP from outputting a warning as well as running the callback function. 
+
+** enabling assertions for php 7
+change =assert.active= in  =/etc/php/apache2/php.ini= to On.
+Assertions are OFF out of the box on 7.0.
+#+begin_src 
+assert.active = On
+#+end_src 
+
+** CATCH ALL EXCEPTIONS AND ERRORS IN A NORMALIZED AND CONSISTENT MATTER
+#+begin_src php
+error_reporting(ENV === 'dev' ? E_ALL : 0);
+
+set_error_handler("error_handler");
+set_exception_handler("error_handler");
+register_shutdown_function("error_handler");
+
+function error_handler()
+{
+    // Check for unhandled errors (fatal shutdown)
+    $e = error_get_last();
+
+    // If none, check function args (error handler)
+    if($e === null)
+        $e = func_get_args();
+
+    // Return if no error
+    if(empty($e))
+        return;
+
+    // "Normalize" exceptions (exception handler)
+    if($e[0] instanceof Exception)
+    {
+        call_user_func_array(__FUNCTION__, array(
+            $e[0]->getCode(),
+            $e[0]->getMessage(),
+            $e[0]->getFile(),
+            $e[0]->getLine(),
+            $e[0]));
+        return;
+    }
+
+    $e = array_combine(array('number', 'message', 'file', 'line', 'context'), array_pad($e, 5, null));
+    
+    var_dump($e);
+    exit;
+}
+#+end_src
+This way the only irregularity should be the last property, context. In cases of
+errors this will be an array with variables in the context where the error
+occurred, while for exceptions I’m setting it to the Exception itself. Normally
+you’d then pass $e to something that would format the information nicely to the
+user, do some logging or whatever.
 
 * exceptions
 ** Throwing Exceptions
@@ -5830,6 +5898,67 @@ function path_join( $base, $path ) {
 		return $path;
 
 	return rtrim($base, '/') . '/' . ltrim($path, '/');
+}
+#+end_src
+
+** simple directory recursion
+#+begin_src php 
+// This should return false if there is something you want excluded
+function filter($file, $key, $iterator)
+{
+    $exclude = array('.git');
+    return ! in_array($file->getFilename(), $exclude);
+}
+
+// Recursive directory iterator for current directory, ignoring dots
+$it = new RecursiveDirectoryIterator('.', FilesystemIterator::SKIP_DOTS);
+// Wrapped by a filtering iterator with our filter function
+$it = new RecursiveCallbackFilterIterator($it, 'filter');
+// Wrapped by an iterator which automatically traverses children for us
+$it = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::SELF_FIRST);
+
+// And then just loop :)
+foreach($it as $file)
+{
+    echo str_repeat("\t", $it->getDepth())
+        . $file->getRealPath()
+        . PHP_EOL;
+}
+#+end_src 
+** delete directory recursively
+#+begin_src php
+function delete_directory($dir)
+{
+    if( ! file_exists($dir))
+        return;
+
+    $it = new RecursiveDirectoryIterator($dir);
+    $it = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+
+    foreach($it as $file)
+        if($file->isDir())
+            @rmdir($file->getRealPath());
+        else
+            @unlink($file->getRealPath());
+}
+#+end_src 
+
+** STREAM A FILE LINE-BY-LINE USING A GENERATOR 
+#+begin_src php
+function read($file)
+{
+    $fp = fopen($file, 'rb');
+
+    while(($line = fgets($fp)) !== false)
+        yield rtrim($line, "\r\n");
+
+    fclose($fp);
+}
+
+// Usage
+foreach(read('http://example.com') as $line)
+{
+    var_dump($line);
 }
 #+end_src
 
@@ -8127,10 +8256,251 @@ function pipe(){
 
 $f = pipe("test",'strtoupper','strtolower','ucwords');
 echo $f;
-#+end_src 
+#+end_src
+
+* tail with php
+** #1
+#+begin_src php
+<?php
+// full path to text file
+define("TEXT_FILE", "/home/www/default-error.log");
+// number of lines to read from the end of file
+define("LINES_COUNT", 10);
+ 
+ 
+function read_file($file, $lines) {
+    //global $fsize;
+    $handle = fopen($file, "r");
+    $linecounter = $lines;
+    $pos = -2;
+    $beginning = false;
+    $text = array();
+    while ($linecounter > 0) {
+        $t = " ";
+        while ($t != "\n") {
+            if(fseek($handle, $pos, SEEK_END) == -1) {
+                $beginning = true; 
+                break; 
+            }
+            $t = fgetc($handle);
+            $pos --;
+        }
+        $linecounter --;
+        if ($beginning) {
+            rewind($handle);
+        }
+        $text[$lines-$linecounter-1] = fgets($handle);
+        if ($beginning) break;
+    }
+    fclose ($handle);
+    return array_reverse($text);
+}
+ 
+$fsize = round(filesize(TEXT_FILE)/1024/1024,2);
+ 
+echo "<strong>".TEXT_FILE."</strong>\n\n";
+echo "File size is {$fsize} megabytes\n\n";
+echo "Last ".LINES_COUNT." lines of the file:\n\n";
+ 
+$lines = read_file(TEXT_FILE, LINES_COUNT);
+foreach ($lines as $line) {
+    echo $line;
+}
+?>
+#+end_src
+
+** #2
+#+begin_src php
+<?php
+
+	$tests = array(
+		'1K'   => 'logs/test.1K.log',
+		'10K'  => 'logs/test.10K.log',
+		'100K' => 'logs/test.100K.log',
+		'1M'   => 'logs/test.1M.log',
+		'10M'  => 'logs/test.10M.log',
+		'100M' => 'logs/test.100M.log'
+	);
+
+	function tailCustom($filepath, $lines = 1, $adaptive = true) {
+
+		// Open file
+		$f = @fopen($filepath, "rb");
+		if ($f === false) return false;
+
+		// Sets buffer size
+		if (!$adaptive) $buffer = 4096;
+		else $buffer = ($lines < 2 ? 64 : ($lines < 10 ? 512 : 4096));
+
+		// Jump to last character
+		fseek($f, -1, SEEK_END);
+
+		// Read it and adjust line number if necessary
+		// (Otherwise the result would be wrong if file doesn't end with a blank line)
+		if (fread($f, 1) != "\n") $lines -= 1;
+		
+		// Start reading
+		$output = '';
+		$chunk = '';
+
+		// While we would like more
+		while (ftell($f) > 0 && $lines >= 0) {
+
+			// Figure out how far back we should jump
+			$seek = min(ftell($f), $buffer);
+
+			// Do the jump (backwards, relative to where we are)
+			fseek($f, -$seek, SEEK_CUR);
+
+			// Read a chunk and prepend it to our output
+			$output = ($chunk = fread($f, $seek)) . $output;
+
+			// Jump back to where we started reading
+			fseek($f, -mb_strlen($chunk, '8bit'), SEEK_CUR);
+
+			// Decrease our line counter
+			$lines -= substr_count($chunk, "\n");
+
+		}
+
+		// While we have too many lines
+		// (Because of buffer size we might have read too many)
+		while ($lines++ < 0) {
+
+			// Find first newline and remove all text before that
+			$output = substr($output, strpos($output, "\n") + 1);
+
+		}
+
+		// Close file and return
+		fclose($f);
+		return trim($output);
+
+	}
+
+	function tailSingleByte($file, $lines = 1) {
+		$handle = fopen($file, "r");
+		$linecounter = $lines;
+		$pos = -2;
+		$beginning = false;
+		$text = array();
+		while ($linecounter > 0) {
+			$t = " ";
+			while ($t != "\n") {
+				if (fseek($handle, $pos, SEEK_END) == -1) {
+					$beginning = true; 
+					break; 
+				}
+				$t = fgetc($handle);
+				$pos --;
+			}
+			$linecounter --;
+			if ($beginning) rewind($handle);
+			$text[$lines-$linecounter-1] = fgets($handle);
+			if ($beginning) break;
+		}
+		fclose ($handle);
+		return trim(implode("", array_reverse($text))); // array_reverse is optional: you can also just return the $text array which consists of the file's lines.
+	}
+
+	function tailFile($filepath, $lines = 1) {
+		return trim(implode("", array_slice(file($filepath), -$lines)));
+	}
+
+	function tailShell($filepath, $lines = 1) {
+		ob_start();
+		passthru('tail -'  . $lines . ' ' . escapeshellarg($filepath));
+		return trim(ob_get_clean());
+	}
+
+	function display($string) {
+		echo nl2br(str_replace("\n", "#N\n", $string));
+	}
+
+	function measureStart() {
+		return microtime(true);
+	}
+
+	function measureEnd($m) {
+		return number_format(microtime(true) - $m, 10);
+	}
+
+	foreach ($tests as $k => $test) {
+		$l = 1;
+		while ($l <= 1000) {
+
+			for ($j = 0; $j < 10; $j++) {
+
+				$m = measureStart();
+				tailCustom($test, $l);
+				$m = measureEnd($m);
+				echo implode(',', array('custom', $k, $l, $m)) . "\n";
+
+				$m = measureStart();
+				tailCustom($test, $l, false);
+				$m = measureEnd($m);
+				echo implode(',', array('customfb', $k, $l, $m)) . "\n";
+				
+				$m = measureStart();
+				tailSingleByte($test, $l);
+				$m = measureEnd($m);
+				echo implode(',', array('singlebyte', $k, $l, $m)) . "\n";
+				
+				if ($k != '100M') {
+					$m = measureStart();
+					tailFile($test, $l);
+					$m = measureEnd($m);
+					echo implode(',', array('file', $k, $l, $m)) . "\n";
+				}
+
+				$m = measureStart();
+				tailShell($test, $l);
+				$m = measureEnd($m);
+				echo implode(',', array('shell', $k, $l, $m)) . "\n";
+
+			}
+
+			if ($l >= 100) $l += 100;
+			elseif ($l >= 10) $l += 10;
+			else $l++;
+
+		}
+	}
+
+?>
+#+end_src
+
+** sources
+http://tekkie.flashbit.net/php/tail-functionality-in-php
+https://gist.github.com/beekalam/ff1f6e930deb9f00e0fbc98cd8387f90
+http://code.google.com/p/php-tail/
+https://gist.github.com/lorenzos/1711e81a9162320fde20
+http://stackoverflow.com/questions/15025875/what-is-the-best-way-in-php-to-read-last-lines-from-a-file
+http://www.geekality.net/2011/05/28/php-tail-tackling-large-files/
+* output number of bytes in human readable format
+#+begin_src php
+function make_pretty($bytes)
+{
+    $symbols = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
+
+    if($bytes == 0)
+        return sprintf('%.2f '.$symbols[0], 0);
+
+    $exp = floor(log(abs($bytes)) / log(1024));
+
+    return sprintf('%.2f '.$symbols[$exp], $bytes/pow(1024, floor($exp)));
+}
+//example
+//echo make_pretty(167892598784); //  156.36 GiB
+//echo make_pretty(719267016);    //  685.95 MiB
+//echo make_pretty(114893);       //  112.20 KiB
+//echo make_pretty(6218);         //  6.07 KiB
+//echo make_pretty(42);           //  42.00 B
+//echo make_pretty(0);            //  0.00 B
+//echo make_pretty(-50);          // -50.00 B
+#+end_src
 
 * refactoring
-  
 ** Replace Temp with Query
 
 You are using a temporary variable to hold the result of an expression.
@@ -8910,3 +9280,5 @@ https://github.com/ziadoz/awesome-php
 
 https://stackoverflow.com/documentation/php/topics
 
+https://github.com/Svish/TimerPHP/blob/master/src/Timer.php
+http://www.geekality.net/2011/05/01/php-how-to-proportionally-resize-an-uploaded-image/#more-1564
