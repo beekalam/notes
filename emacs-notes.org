@@ -85,7 +85,7 @@ hit ctrl-c twice.
 | 8 | 9 |  17 |     1.125 |
 #+TBLFM: $3=$1+$2
 #+TBLFM: $4=$2/$1
-** 
+
 * tasks
 ** DONE todo start new org file for tutorial
    CLOSED: [2016-12-06 Tue 20:39]
