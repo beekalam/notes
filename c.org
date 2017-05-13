@@ -720,6 +720,190 @@ __strdup (const char *s)
 }
 #+end_src
 
+** lowercase
+#+begin_src c
+void lowercase (str)
+    char *str;
+{
+    char ch;
+
+    while (ch = *str) {
+        if ((ch >= 'A') && (ch <= 'Z'))
+            ch += 040;
+        *str++ = ch;
+    }
+}
+#+end_src
+
+** null string
+#+begin_src c
+/*
+ * null
+ * check for null string
+ */
+
+boolean null (s)
+    register char *s;
+{
+    register char c;
+
+    if (!s)
+	return(FALSE);
+    while ((c = *s++) != '\0')
+	if ((c != ' ') && (c != '\t'))
+	    return(FALSE);
+    return(TRUE);
+}
+#+end_src
+
+** parse unsigned
+#+begin_src c
+
+/*
+ * parse_unsigned
+ * Parse an unsigned number.
+ * If number starts with '0x', interpret as hexadecimal.
+ * If number starts with '0', interpret as octal.
+ * Anything else is assigned to be unsigned decimal.
+ * Returns -1 on error.
+ */
+
+ulong parse_unsigned(buff)
+    register char *buff;
+{
+    register char c;
+    register ulong num;
+    char *startptr;
+
+    buff = (char *) deblank(buff);
+    num = 0;
+    c = *buff++;
+    if (c == '0') {
+
+	/*
+	 * If '0x', we've parsed a hexadecimal number
+	 */
+	if ((*buff == 'x') || (*buff == 'X')) {
+	    buff++;
+	    c = cvu(*buff++);
+	    startptr = buff;
+	    while (((c >= '0') && (c <= '9')) || ((c >= 'A') && (c <= 'F'))) {
+		if ((c >= '0') && (c <= '9')) 
+		    num = num*16 + (c - '0');
+		else
+		    num = num*16 + (c - '7');
+		c = cvu(*buff++);
+	    }
+	    if ((buff == startptr) || (term_char(c) == FALSE))
+		return(-1);
+	    return(num);
+	}
+	
+	/*
+	 * Check for an octal number, or just zero.
+	 */
+	startptr = buff-1;
+	while ((c >= '0') && (c <= '7')) {
+	    num = num*8 + (c - '0');
+	    c = *buff++;
+	}
+	if (buff == startptr || (term_char(c) == FALSE))
+	    return(-1);
+	return(num);
+    }
+
+    /*
+     * No leading zero, looks like a positive decimal number.
+     */
+    startptr = buff;
+    while ((c >= '0') && (c <= '9')) {
+	num = num*10 + (c - '0');
+	c = *buff++;
+    }
+    if ((buff == startptr) || (term_char(c) == FALSE))
+	return(-1);
+    return(num);
+}
+#+end_src
+
+** strtoupper
+#+begin_src c
+/*
+ * Upper case a string
+ */
+void strtoupper(source)
+    char *source;
+{
+    char *c;
+
+    for (c = source; *c; c++)
+	if (islower(*c))
+	    *c = toupper(*c);
+}
+#+end_src
+
+** strncat
+#+begin_src c
+void strncat (char *s1, char const *s2, ulong max)
+{
+     while (*s1)
+         s1++;
+     while ((max-- > 1) && (*s2)) {
+         *s1 = *s2;
+         s1++;
+         s2++;
+     }
+     *s1 = 0;
+}
+#+end_src
+
+** strcmp
+
+#+begin_src c
+/*
+ * strcmp
+ * case sensitive string match
+ * returns an integer <,=,> 0 depending on whether s1 is <,=,> s2
+ */
+
+int strcmp (const char *s1, const char *s2)
+{
+    if ((!s1 && s2) || (s1 && !s2)) /* no match if only one ptr is NULL */
+	return (int) (s1 - s2);	/* if one of these is NULL it will be the
+				   lesser of the two values and therefore
+				   we'll get the proper sign in the int */
+
+    if (s1 == s2)		/* match if both ptrs the same (e.g. NULL) */
+	return 0;
+
+    while (*s1 == *s2++)
+	if (*s1++ == '\0')
+	     return 0;
+
+    return *(unsigned char *)s1 - *(unsigned char *)--s2;
+}
+#+end_src
+
+** strncpy
+#+begin_src c
+/*
+ * copy at most 'max - 1' characters, always null terminate
+ */
+void strncpy (dst, src, max)
+    char *dst;
+    char *src;
+    ulong max;
+{
+    while ((max-- > 1) && (*src)) {
+	*dst = *src;
+	dst++;
+	src++;
+    }
+    *dst = '\0';
+}
+#+end_src
+
+
 * storage classes, Linkage & memory management
 ** Storage classes
  C provides several different models, or storage classes , for storing data in memory.

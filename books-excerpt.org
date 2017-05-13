@@ -133,13 +133,11 @@ feel the interior shape of the moves. "
 
 ** "TIP #3 STEAL WITHOUT APOLOGY"
 
-
 "We are often told that talented people acquire their skill by
 following their “natural instincts.” This sounds nice, but in fact it
 is baloney. All improvement is about absorbing and applying new
 information, and the best source of information is top performers. So
 steal it."
-
 
 "When you steal, focus on specifics, not general impressions. Capture
 concrete facts: the angle of a golfer’s left elbow at the top of the
@@ -154,11 +152,9 @@ yourself:"
 
 ** "TIP #4 BUY A NOTEBOOK"
 
-
 "A high percentage of top performers keeps some form of daily
 performance journal. Tennis champion Serena Williams and former World
 Series MVP Curt Schilling use notebooks;"
-
 
 "What matters is that you write stuff down and reflect on it. Results
 from today. Ideas for tomorrow. Goals for next week. A notebook works
@@ -167,7 +163,6 @@ like a map: It creates clarity."
 
 ** "TIP #5 BE WILLING TO BE STUPID"
 
-
 "Whatever the strategy, the goal is always the same: to encourage
 reaching, and to reinterpret mistakes so that they’re not verdicts,
 but the information you use to navigate to the correct move."
@@ -175,9 +170,7 @@ but the information you use to navigate to the correct move."
 
 ** "TIP #6 CHOOSE SPARTAN OVER LUXURIOUS"
 
-
 "Simple, humble spaces help focus attention on the deep-practice task at hand"
-
 
 "reaching and repeating and struggling. When given the choice between luxurious and spartan, choose spartan. "
 
@@ -187,14 +180,12 @@ but the information you use to navigate to the correct move."
 
 "Every skill falls into one of two categories: hard skills and soft skills."
 
-
 "HARD, HIGH-PRECISION SKILLS are actions that are performed as
 correctly and consistently as possible, every time. They are skills
 that have one path to an ideal result; skills that you could imagine
 being performed by a reliable robot. Hard skills are about repeatable
 precision, and tend to be found in specialized pursuits, particularly
 physical ones."
-
 
 "SOFT, HIGH-FLEXIBILITY SKILLS, on the other hand, are those that have
 many paths to a good result, not just one. These skills aren’t about
@@ -207,10 +198,8 @@ communication"
 
 ** "TIP #8 TO BUILD HARD SKILLS, WORK LIKE A CAREFUL CARPENTER"
 
-
 "To develop reliable hard skills, you need to connect the right wires
 in your brain."
-
 
 "When you learn hard skills, be precise and measured. Go slowly. Make
 one simple move at a time, repeating and perfecting it before you move
@@ -218,7 +207,6 @@ on. Pay attention to errors, and fix them, particularly at the start"
 
 
 ** "TIP #9 TO BUILD SOFT SKILLS, PLAY LIKE A SKATEBOARDER"
-
 
 "While hard skills are best put together with measured precision (see
 Tip #8), soft skills are built by playing and exploring inside
@@ -1104,7 +1092,6 @@ teachers.
 In my experience the greatest of artists and competitors are masters of
 navigating their own psychologies, playing on their strengths, controlling the
 tone of battle so that it fits with their personalities.
-
 
 * what are the best situations to use pros/cons solving method?
 I think when you want to choose between two options.

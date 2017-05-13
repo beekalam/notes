@@ -405,6 +405,7 @@ $ iperf -c205.153.60.236 -p3000
 #+end_src
 
 ** tcpdump
+*** intro
 #+begin_src shell
 # capture 100 packets and terminate
 $ tcpdump -c100
@@ -530,7 +531,6 @@ $ tcpdump -pni eth0 dst port 25 and not src host mailserver1
 
 $ tcpdump -c 1000 -pXi eth0 -w tcpdumpfile -s0
 #+end_src
-
 *** capturing TCP flags 
 #+begin_src shell
 #Capture all SYN packets:
@@ -743,8 +743,10 @@ Transfer speed: min/avg/max = 18/56/75 KB
 # You can test a local server by specifying the hostname and port instead of the URL:
 $ httping -c4 -h xena -p 80
 
-#+end_src 
+#+end_src
 
+** Measuring Throughput, Jitter, and Packet Loss with iperf
+ 
 
 * useful resources
 http://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml

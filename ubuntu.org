@@ -2693,7 +2693,7 @@ apachectl stop
 This shuts the server down immediately. Any existing connections are terminated at once.
 
 ** What are Entity Tags?
-
+   
 Entity tags, also commonly referred to as ETags, are cache validators which help
 the browser determine if it can retrieve the requested resource from local cache
 or if it must be retrieved from the server. This mechanism helps improve loading
