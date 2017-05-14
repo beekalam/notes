@@ -254,6 +254,16 @@ $ sudo hwclock --show
 $ timedatectl
 #+end_src
 
+** mercurial download big repository
+#+begin_src shell
+$ hg clone --rev 100 <remote URL> <local path>
+$ cd <local path>
+$ hg pull --rev 200
+$ hg pull --rev 300
+# use pull update in order to get the pullied tip into your working directory
+$ hg  update
+#+end_src
+
 * groups
 *** Add a New Group
 
