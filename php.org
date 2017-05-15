@@ -7286,10 +7286,6 @@ style it like ~.modal.custom~.
 
 http://jsfiddle.net/surjithctly/ka8uW/
 
-** useful resources
-
-http://www.tutorialrepublic.com/twitter-bootstrap-tutorial
-
 ** Bootsterap table without stripes/borders
 #+begin_src html
 
@@ -7321,6 +7317,10 @@ $(document).ready(function(){
 <span style="width:0%" id="password_show_button" class="input-group-addon"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>
 </div>
 #+end_src 
+
+** useful resources
+
+http://www.tutorialrepublic.com/twitter-bootstrap-tutorial
 
 * =datatables=
 ** filter for text inside a =<span>= or other html
