@@ -1582,7 +1582,7 @@ console.log(replacement); // Now is the place, this is the place
 #+end_src
 
 ** Finding  All Instances of a Pattern
-
+   
 Use the RegExp exec method and the global flag (g) in a loop to locate
 all instances of a pattern, such as any word that begins with t and
 ends with e, with any number of characters in between:
