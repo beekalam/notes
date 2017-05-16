@@ -6291,6 +6291,7 @@ if (session_id() != "" || isset($_COOKIE[session_name()] ))
 session_destroy();
 }
 #+end_src 
+
 ** Exposed Session Data 
    
  #+begin_src php
@@ -6376,6 +6377,9 @@ if($_SESSION['ip'] != $_SERVER['REMOTE_ADDR']  ||
 <?php
 ini_set('session.gc_maxlifetime',600'); // 600 seconds =  = ten minutes
 session_start( );
+
+// If you wish to know what the current timeout period is, you can display it using the following:
+echo ini_get('session.gc_maxlifetime');
 ?>
 #+end_src 
 
@@ -9192,6 +9196,49 @@ comment, introduce a method that tests the assertion rule.
 **** Extract method
 **** Preserve whole object
 **** Introduce parameter object
+
+* preventing session hijacking
+
+When SSL is not a possibility, you can further authenticate users by storing
+their IP address along with their other details. Do this by adding a line such
+as the following when you store a user’s session:
+
+#+begin_src php
+$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
+#+end_src 
+
+Then, as an extra check, whenever any page loads and a session is available,
+perform the following check. It calls the function different_user if the stored
+IP address doesn’t match the current one:
+
+#+begin_src php
+if ($_SESSION['ip'] != $_SERVER['REMOTE_ADDR']) different_user();
+#+end_src 
+
+Of course, you need to be aware that users on the same proxy server, or sharing
+the same IP address on a home or business network, will have the same IP
+address. Again, if this is a problem for you, use SSL. You can also store a copy
+of the browser’s user agent string (a string that developers put in their
+browsers to identify them by type and version), which, due to the wide variety
+of browser types, versions, and computer platforms, might help to distinguish
+users. Use the following to store the user agent:
+
+#+begin_src php
+$_SESSION['ua'] = $_SERVER['HTTP_USER_AGENT'];
+#+end_src 
+
+And use this to compare the current agent string with the saved one:
+
+#+begin_src php
+if ($_SESSION['ua'] != $_SERVER['HTTP_USER_AGENT']) different_user();
+#+end_src 
+
+Or, better still, combine the two checks like this and save the combination as an md5 hexadecimal string:
+
+#+begin_src php
+$_SESSION['check'] = md5($_SERVER['REMOTE_ADDR'] .
+    $_SERVER['HTTP_USER_AGENT']);
+#+end_src 
 
 * Defensive programming
 ** premature optimization
