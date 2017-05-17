@@ -210,5 +210,5 @@ bool is_directory(const char* path)
 On Windows, all the toolsets except the Cygwin port of GCC define the macro
 _WIN32; macros defined automatically in this way are known as predefined macros.
 
-
+* QT
 
