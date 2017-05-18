@@ -8538,7 +8538,7 @@ Extract the expression into a method. Replace all references to the temp with
 the expression. The new method can then be used in other methods.
 
 ** Inline Method
-
+   
 A method's body is just as clear as its name.
 
 Put the method's body into the body of its callers and remove the method.
