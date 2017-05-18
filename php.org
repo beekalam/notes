@@ -1630,11 +1630,11 @@ array_splice($array, 2);
 ** Check if array is associative
 #+begin_src php
 <?PHP
-FUNCTION is_assoc_array($array){
-    IF(IS_ARRAY($array) && !IS_NUMERIC(ARRAY_SHIFT(ARRAY_KEYS($array)))){
-        RETURN TRUE;
+function is_assoc_array($array){
+    if(is_array($array) && !is_numeric(array_shifT(array_keys($array)))){
+        return true;
     }
-    RETURN FALSE;
+    return false;
 }
 //another one from Limesurvay
 function isAssociative($array)
@@ -1697,6 +1697,7 @@ function blacklist(array $array, array $blacklist)
 
 $filtered = blacklist($array, ['bad1', 'bad2', ...]);
 #+end_src
+
 * Date and Time
 ** Finding the Current Date and Time
 Use strftime() or date() for a formatted time string, as in Example 3-2.
@@ -4845,6 +4846,110 @@ function getMyUrl()
 }
 #+end_src
 
+** get links from url
+#+begin_src php
+function PIPHP_RelToAbsURL($page, $url)
+{
+  if (substr($page, 0, 7) != "http://") return $url;
+
+  $parse = parse_url($page);
+  $root = $parse['scheme'] . "://" . $parse['host'];
+  $p = strrpos(substr($page, 7), '/');
+
+  if ($p) $base = substr($page, 0, $p + 8);
+  else $base = "$page/";
+
+  if (substr($url, 0, 1) == '/') $url = $root . $url;
+  elseif (substr($url, 0, 7) != "http://") $url = $base . $url;
+
+  return $url;
+}
+
+function PIPHP_GetLinksFromURL($page)
+{
+$contents = @file_get_contents($page);
+if (!$contents) return NULL;
+
+  $urls = array();
+  $dom = new domdocument();
+  @$dom ->loadhtml($contents);
+  $xpath = new domxpath($dom);
+  $hrefs = $xpath->evaluate("/html/body//a");
+
+  for ($j = 0 ; $j < $hrefs->length ; $j++)
+    $urls[$j] = PIPHP_RelToAbsURL($page, $hrefs->item($j)->getAttribute('href'));
+
+  return $urls;
+}
+#+end_src 
+
+** directory list 
+#+begin_src php 
+function PIPHP_DirectoryList($path)
+{
+  $files = array();
+  $dirs = array();
+  $fnum = $dnum = 0;
+
+  if (is_dir($path))
+  {
+    $dh = opendir($path);
+    do
+    {
+      $item = readdir($dh);
+      if ($item !== FALSE && $item != "." && $item != "..")
+      {
+          if (is_dir("$path/$item")) $dirs[$dnum++] = $item;
+          else $files[$fnum++] = $item;
+      }
+    } while($item !== FALSE);
+    closedir($dh);
+  }
+  return array($dnum, $fnum, $dirs, $files);
+}
+#+end_src
+
+** hit counter
+#+begin_src php
+function PIPHP_HitCounter($filename, $action)
+{
+  $data = getenv("REMOTE_ADDR") . getenv("HTTP_USER_AGENT") . "\n";
+  switch ($action)
+  {
+    case "reset":
+      $fp = fopen($filename, "w");
+      if (flock($fp, LOCK_EX))
+          ;
+      flock($fp, LOCK_UN);
+      fclose($fp);
+      return;
+
+    case "add":
+      $fp = fopen($filename, "a+");
+      if (flock($fp, LOCK_EX))
+      fwrite($fp, $data);
+      flock($fp, LOCK_UN);
+      fclose($fp);
+      return;
+
+    case "get":
+      $fp = fopen($filename, "r");
+      if (flock($fp, LOCK_EX))
+      $file = fread($fp, filesize($filename) - 1);
+      flock($fp, LOCK_UN);
+      fclose($fp);
+      $lines = explode("\n", $file);
+      $raw = count($lines);
+      $unique = count(array_unique($lines));
+      return array($raw, $unique);
+
+    case "delete":
+      unlink($filename);
+      return;
+  }
+}
+#+end_src 
+
 * json
 ** json encode raw UTF?
 
@@ -6409,6 +6514,28 @@ foreach(spl_classes() as  $k=>$v){
     echo nl2br($v."\n");
 }
 ?>
+#+end_src
+** iterators
+*** LimitIterator
+The LimitIterator is one of the easiest SPL iterators to use. It determines where to start
+the loop and how many times it should run. The LimitIterator constructor takes three
+arguments: the array or object you want to loop through, the starting point (counting
+from zero), and the number of times the loop is to run.
+
+#+begin_src php
+$numbers = array(5, 10, 8, 35, 50);
+// Prepare the array for use with an iterator
+$iterator = new ArrayIterator($numbers);
+// Pass the converted array to the LimitIterator
+$limiter = new LimitIterator($iterator, 0, 2);
+// Loop through the LimitIterator object
+foreach ($limiter as $number) {
+    echo $number . '<br />';
+}
+/*output
+5
+10
+*/
 #+end_src
 
 * using =include_path= to manage large projects
