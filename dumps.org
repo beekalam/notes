@@ -160,7 +160,7 @@ Ich kann alles
 Ich kann alles
 Bis ich aufschlag' beweis' ich, dass ich flieg'
 * LFS assumes that the root file system (/) is of type ext4. To create an ext4 file system on the LFS partition, run the following:
-
+  
 mkfs -v -t ext4 /dev/<xxx>
 If you are using an existing swap partition, there is no need to format it. If a new swap partition was created, it will need to be initialized with this command:
 
@@ -280,7 +280,6 @@ make install
 * this is a new todo?
 what is your name
 route add -net 172.16.11.0/24 172.16.12.141
-* 
 ** 
 howManyBees = function(hive) {
   var res = 0;
@@ -510,8 +509,20 @@ http://nsd.dyndns.org/pppossh/
 https://security.rapiditynetworks.com/publications/2016-10-16/hajime.pdf
 https://github.com/beekalam/Mirai-Source-Code
 ** 
-** 
-   
 https://routerboard.com/rb750g
-
 https://www.itbazar.com/all2_P_S_4734321.aspx
+** 
+۱۳۹۶/۰۲/۰۳
+۱۳۹۵/۱۲/۲۶
+
+* writing maintainable software
+** Write Short Units of Code
+*** intro
+Units are the smallest groups of code that can be maintained and executed independ‐
+ently. In Java, units are methods or constructors. A unit is always executed as a whole.
+It is not possible to invoke just a few lines of a unit. Therefore, the smallest piece of
+code that can be reused and tested is a unit.
+
+ - Short Units Are Easy to Test
+ - Short Units Are Easy to Analyze
+ - Short Units Are Easy to Reuse
