@@ -526,3 +526,17 @@ code that can be reused and tested is a unit.
  - Short Units Are Easy to Test
  - Short Units Are Easy to Analyze
  - Short Units Are Easy to Reuse
+*** how to apply
+ - Refactoring technique: Extract Method
+ - Refactoring technique: Replace Method with Method Object
+ - Limit the length of code units to 15 lines of code.
+** Write Simple Units of Code
+*** intro
+ - Limit the number of branch points per unit to 4.
+ - Do this by splitting complex units into simpler ones and avoiding complex units altogether.
+ - This improves maintainability because keeping the number of branch points low makes units easier to modify and test.
+*** How to apply
+**** Dealing with Conditional Chains
+   - use a Map data structure
+   - Replace Conditional with Polymorphism pattern 
+
