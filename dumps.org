@@ -343,11 +343,19 @@ Your identification has been saved in /home/user/.ssh/ppp_rsa.
 Your public key has been saved in /home/user/.ssh/ppp_rsa.pub.
 The key fingerprint is:
 04:32:f5:c5:0f:94:4b:46:37:d4:00:ab:45:4d:66:ae user@client
-Copy the public key (ppp_rsa.pub) to ~ppp-link/.ssh/authorized_keys on the server. Then add options to the line in authorized_keys to restrict how it can be used. For example:
+
+Copy the public key (ppp_rsa.pub) to ~ppp-link/.ssh/authorized_keys on the
+server. Then add options to the line in authorized_keys to restrict how it can
+be used. For example:
 
 ppp-link@server > cat $HOME/.ssh/authorized_keys
 from="192.168.168.*",no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa AAAB...5+TCM= user@client
-removes all the capabilities that aren't needed (port & X11 and ssh-agent forwarding), and restricts the source IP so that the client must connect from the 192.168.168.0/24 IP subnet. Restricting the client's IP address is a good thing, especially if this is a public ssh server. See the AUTHORIZED_KEYS FILE FORMAT section of the sshd manpage for more ways 'from' can be configured.
+
+removes all the capabilities that aren't needed (port & X11 and ssh-agent
+forwarding), and restricts the source IP so that the client must connect from
+the 192.168.168.0/24 IP subnet. Restricting the client's IP address is a good
+thing, especially if this is a public ssh server. See the AUTHORIZED_KEYS FILE
+FORMAT section of the sshd manpage for more ways 'from' can be configured.
 
 At this point ssh should be working. Test it:
 
@@ -356,7 +364,14 @@ Enter passphrase for key '/home/user/.ssh/ppp_rsa':
 ppp-link@server > exit
 logout
 Connection to server closed.
-Then configure ppp. First add secrets for the chap authentication and IP addresses for the endpoints of the ppp link. You can use a different secret in each direction. This way the ppp client can authenticate the ppp server. In this example the client machine has been called "client" and the server "server". They should be replaced with the actual hostnames (or whatever PPP is configured to use for names).
+
+Then configure ppp. 
+
+First add secrets for the chap authentication and IP addresses for the endpoints
+of the ppp link. You can use a different secret in each direction. This way the
+ppp client can authenticate the ppp server. In this example the client machine
+has been called "client" and the server "server". They should be replaced with
+the actual hostnames (or whatever PPP is configured to use for names).
 
 root@server # echo >>/etc/ppp/chap-secrets <<EOF
 client          server  secret1          10.1.1.1
@@ -426,7 +441,10 @@ root@server # usermod -G dip ppp-link
 And the log directory needs to be created if it doesn't already exist
 
 root@client # mkdir /var/log/ppp
-Now everything is ready. Starting up an ssh-agent (note well: back-ticks, not single-quotes), and adding the public key to ssh-agent keeps ssh from prompting for a passphrase each time ppp (re)connects.
+
+Now everything is ready. Starting up an ssh-agent (note well: back-ticks, not
+single-quotes), and adding the public key to ssh-agent keeps ssh from prompting
+for a passphrase each time ppp (re)connects.
 
 user@client > eval `ssh-agent`
 Agent pid 12345
@@ -467,15 +485,35 @@ Looks good!
 
 tunneling the default route
 
-If the ppp-over-ssh link is being used to create a link to the internet (for example when securing a wireless link) then the default route must point through the tunnel. Two things must be true for this to happen: 'nodefaultroute' must be changed to 'defaultroute' in the ppp peer's configuration, and if there exists a default route before ppp connects then 'replacedefaultroute' must also be in the peer's configuration. Without this pppd will not replace the existing default route. Instead it will log a message to that effect: "not replacing default route to eth0 [192.168.168.1]". As an added niceity, ppp will restore the default route when the ppp link is torn down.
+If the ppp-over-ssh link is being used to create a link to the internet (for
+example when securing a wireless link) then the default route must point through
+the tunnel. Two things must be true for this to happen: 'nodefaultroute' must be
+changed to 'defaultroute' in the ppp peer's configuration, and if there exists a
+default route before ppp connects then 'replacedefaultroute' must also be in the
+peer's configuration. Without this pppd will not replace the existing default
+route. Instead it will log a message to that effect: "not replacing default
+route to eth0 [192.168.168.1]". As an added niceity, ppp will restore the
+default route when the ppp link is torn down.
 
-In the case of a wireless connection, client usually gets its IP address and route table from the DHCP server in the wireless router. That DHCP server cannot be configured not to advertise itself as the default gateway. So both 'defaultroute' and 'replacedefaultroute' are needed.
+In the case of a wireless connection, client usually gets its IP address and
+route table from the DHCP server in the wireless router. That DHCP server cannot
+be configured not to advertise itself as the default gateway. So both
+'defaultroute' and 'replacedefaultroute' are needed.
 
-The DNS server address(es) might also have to be altered if the router also advertised itself as the DNS server. Again the cleanest way to do this is to pass the DNS address(es) to client as part of the ppp connection parameters. 'usepeerdns' on the client's peer configuration, and 'ms-dns' in the server's options configuration file /etc/ppp/options.
+The DNS server address(es) might also have to be altered if the router also
+advertised itself as the DNS server. Again the cleanest way to do this is to
+pass the DNS address(es) to client as part of the ppp connection parameters.
+'usepeerdns' on the client's peer configuration, and 'ms-dns' in the server's
+options configuration file /etc/ppp/options.
 
 OSPF
 
-If other computers need to use client's ppp link, client will be acting as a router. In this case it is most dynamic to run a routing daemon on client and server and have then exchange routes over the ppp link. I prefer OSPF for this since it doesn't send much traffic when no routes change. OSPF can also advertise a default route, which removes the need to add it manually. Here is a typical configurations for zebra's ospfd
+If other computers need to use client's ppp link, client will be acting as a
+router. In this case it is most dynamic to run a routing daemon on client and
+server and have then exchange routes over the ppp link. I prefer OSPF for this
+since it doesn't send much traffic when no routes change. OSPF can also
+advertise a default route, which removes the need to add it manually. Here is a
+typical configurations for zebra's ospfd
 
 root@server # cat /etc/zebra/ospfd.conf
 hostname server
@@ -503,7 +541,14 @@ router ospf
 exit
 
 log file /var/log/zebra/ospfd.log
-Unfortunately zebra's ospf looses the md5 key -> ppp0 binding if ppp0 goes down, so it is not possible to use authentication with ospf on the ppp link. And unfortunately zebra's ospf needs the name of the ppp link device. If there is only one tunnel at any time then it is ppp0. If there are multiple tunnels then ospfd must be reconfigured dynamically as part of the ppp-up process by passing the appropriate commands to vtysh.
+
+Unfortunately zebra's ospf looses the md5 key -> ppp0 binding if ppp0 goes down,
+so it is not possible to use authentication with ospf on the ppp link. And
+unfortunately zebra's ospf needs the name of the ppp link device. If there is
+only one tunnel at any time then it is ppp0. If there are multiple tunnels then
+ospfd must be reconfigured dynamically as part of the ppp-up process by passing
+the appropriate commands to vtysh.
+
 http://nsd.dyndns.org/pppossh/
 * hajimi
 https://security.rapiditynetworks.com/publications/2016-10-16/hajime.pdf
@@ -540,3 +585,4 @@ code that can be reused and tested is a unit.
    - use a Map data structure
    - Replace Conditional with Polymorphism pattern 
 
+* timer1
