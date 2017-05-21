@@ -2417,6 +2417,27 @@ if(strpos('abc', 'a') !== false)
 
  - When testing the return value of a function that can return either 0 or boolean false, like strpos(), always use === and !==, or you’ll run in to problems.
 
+** Escape characters in the PHP date function
+*Escape characters in date with \*
+
+As an example, there are some date formats that require a string constant T
+between the date and time parts of the timestamp, but not the timezone offset as
+well (the 'c' format character will do the T but also include the offset at the
+end).
+
+This is what I'd been doing in the past:
+#+begin_src php
+// don't do this yourself, use the second example below
+$datetime = date('Y-m-d') . 'T' . date('H:i:s');
+#+end_src 
+
+By escaping the T with a \ you can do it with one call to the date function,
+which is much more sensible and I don't know why I never checked the online
+documentation in the past to see if it could be done more concisely:
+#+begin_src php 
+$datetime = date('Y-m-d\TH:i:s');
+#+end_src 
+
 * functions
 ** checking for a function's existence
 
@@ -4950,6 +4971,85 @@ function PIPHP_HitCounter($filename, $action)
 }
 #+end_src 
 
+** PHP command line syntax checking
+*** Syntax checking a single PHP file from the command line
+The syntax for checking is like this, where the -l flag is a lower case L:
+
+#+begin_src shell
+php -l filename
+#+end_src 
+
+*** Syntax check all PHP files in the current directory
+#+begin_src shell 
+for i in *.php; do php -l $i; done
+#+end_src 
+
+*** Syntax check all PHP files in the current directory and all subdirectories
+#+begin_src shell 
+find . -name \*.php -exec php -l "{}" \;
+#+end_src 
+
+** Disable PHP in a directory with Apache .htaccess
+
+If you have a directory which users can upload files into it's a good idea for
+security reasons to disable server-side parsing of scripts such as PHP. This
+post shows a couple of options using Apache's .htaccess files.
+
+*RemoveHandler and RemoveType*
+
+The handlers for PHP are added using AddType in the Apache configuration, and
+should be able to be removed in a .htaccess file like so (adding whatever
+additional extensions you need):
+
+#+begin_src 
+RemoveHandler .php .phtml .php3
+RemoveType .php .phtml .php3
+#+end_src 
+
+*php_flag engine off*
+Another way to disable PHP in a .htaccess file is by adding a line like this:
+#+begin_src 
+php_flag engine off
+#+end_src 
+
+*To be on the safe side*
+#+begin_src 
+RemoveHandler .php .phtml .php3
+RemoveType .php .phtml .php3
+php_flag engine off
+#+end_src 
+
+** PHP Caching Headers
+*Make sure a page is never cached with PHP*
+
+To make sure the page is never cached (or whatever other dynamic content
+generated from PHP such as images, RSS files etc) add the following to the start
+of your script:
+
+#+begin_src php
+$ts = gmdate("D, d M Y H:i:s") . " GMT";
+header("Expires: $ts");
+header("Last-Modified: $ts");
+header("Pragma: no-cache");
+header("Cache-Control: no-cache, must-revalidate");
+#+end_src 
+
+*To set the amount of time to cache*
+
+If instead you want the output from the script to be cached for a certain amount
+of time, set the expires header to a time in the future. For example, to make it
+so the browser will cache the output for 1 hour do this:
+#+begin_src php 
+$seconds_to_cache = 3600;
+$ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
+header("Expires: $ts");
+header("Pragma: cache");
+header("Cache-Control: max-age=$seconds_to_cache");
+#+end_src 
+
+The Cache-Control header requires the number of seconds to cache the file so in
+this example it's 3600 because 60 seconds x 60 minutes = 3600.
+
 * json
 ** json encode raw UTF?
 
@@ -6066,6 +6166,90 @@ foreach(read('http://example.com') as $line)
     var_dump($line);
 }
 #+end_src
+
+** Remove extension from a filename with PHP
+*** Using pathinfo
+The pathinfo() function returns an array containing the directory name,
+basename, extension and filename. Alternatively, you can pass it one of the
+PATHINFO_ constants and just return that part of the full filename:
+#+begin_src php 
+$filename = 'filename.html';
+$without_extension = pathinfo($filename, PATHINFO_FILENAME);
+#+end_src 
+
+If the filename contains a full path, then only the filename without the
+extension is returned.
+
+*** Using basename
+If the extension is known and is the same for the all the filenames, you can
+pass the second optional parameter to basename() to tell it to strip that
+extension from the filename:
+#+begin_src php 
+$filename = 'filename.html';
+$without_extension = basename($filename, '.html');
+#+end_src 
+
+If the filename contains a full path, then only the filename without the
+extension is returned.
+
+*** Using substr and strrpos
+#+begin_src php 
+$filename = 'filename.html';
+$without_extension = substr($filename, 0, strrpos($filename, "."));
+#+end_src 
+
+If the filename contains a full path, then the full path and filename without
+the extension is returned. You could basename() it as well to get rid of the
+path if needed (e.g. basename(substr($filename, 0, strrpos($filename, "."))))
+although it's slower than using pathinfo.
+
+*** Benchmarking
+Running each of these in a loop 10,000,000 times on my Mac with PHP 5.4:
+
+pathinfo: 10.13 seconds
+basename: 7.87 seconds
+substr/strrpos: 6.05 seconds
+basename(substr/strrpos): 11.98 seconds
+
+If the filename doesn't contain the full path or it doesn't matter if it does,
+then the substr/strrpos option appears to be the fastest.
+
+If the filename does contain a path and you don't want the path but do know what
+the extension you want to remove is, then basename appears to be the fastest.
+
+If the filename contains a path, you don't want the path and you don't know what
+the extension is, then use the pathinfo() option.
+
+** Get the directory name, filename and extension with pathinfo()
+PHP's pathinfo() function returns an associative array containing the basename,
+dirname, extension and (from PHP 5.2.0) the filename without the extension.
+
+#+begin_src php
+print_r(pathinfo($path));
+will echo
+
+Array
+(
+    [dirname] => /var/www/mywebsite/htdocs/images
+    [basename] => myphoto.jpg
+    [extension] => jpg
+    [filename] => myphoto
+)
+#+end_src 
+
+To get just the extension you could do something like this, assuming you would
+rather save the extension to a separate variable rather than use the returned
+associative array:
+
+#+begin_src php 
+$pathinfo = pathinfo($path);
+$extension = $pathinfo['extension'];
+#+end_src 
+
+** Get the directory name with dirname()
+#+begin_src php 
+echo dirname($path)
+#+end_src 
 
 * lumen
 ** lumen on apache
@@ -7242,6 +7426,52 @@ http://live.datatables.net/sadipaji/132/edit
 #+begin_src javascript
 //prevents browser caching
 $.ajaxSetup({ cache: false });
+#+end_src
+* csv
+** Use PHP's fputcsv without writing to a file
+PHP's fputcsv function is very useful for creating CSV files, but by default
+will write out to a file. There are a couple of tricks to be able to keep it all
+in memory or instead write the CSV data out directly to the web browser without
+having to write your own custom functions.
+
+*Array to CSV function using fputcsv*
+
+This function takes an array and returns the correctly formatted CSV data as a
+string using an in-memory buffer. It takes the same parameters as the fputcsv
+function, passing them through to it, so it can be used in the same way as
+fputcsv.
+#+begin_src php
+function array2csv($fields, $delimiter = ",", $enclosure = '"', $escape_char = "\\")
+{
+    $buffer = fopen('php://temp', 'r+');
+    fputcsv($buffer, $fields, $delimiter, $enclosure, $escape_char);
+    rewind($buffer);
+    $csv = fgets($buffer);
+    fclose($buffer);
+    return $csv;
+}
+#+end_src 
+Note that you can substitute php://temp for php://memory. The only difference
+between the two is that php://memory will always store its data in memory,
+whereas php://temp will use a temporary file once the amount of data stored hits
+a predefined limit (the default is 2 MB).
+
+Here's an example:
+#+begin_src php
+echo array2csv(array('apples', 'bananas', 'oranges', 'pears'));
+//And the output:
+//apples,bananas,oranges,pears
+#+end_src 
+
+*Writing the array straight out to the browser*
+Instead of buffering the CSV data in memory, you can write it directly out to the data by using php://output instead of php://temp or php://memory:
+#+begin_src php 
+function array2csv($array)
+{
+    $output = fopen('php://output', 'w');
+    fputcsv($output, $array);
+    fclose($output);
+}
 #+end_src 
 
 * query
@@ -9426,15 +9656,10 @@ spent in each of the different algorithms and modules.
 ** CAP epidemic
 *** The symptoms of a CAP Epidemic are 
  - Bugs that keep reappearing in different code locations. 
-
  - The heavy use of search and replace for editing code. 
-
  - Nonsensical comments and names due to a change in context of the copied code. 
-
  - Strange bugs caused by forgetting small changes to copied code. 
-
  - Complex procedures required for updating a single piece of information. 
-
  - Duplicate occurrences of any human-editable information. 
 
 *** To prevent a CAP Epidemic 
