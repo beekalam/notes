@@ -747,7 +747,6 @@ $ httping -c4 -h xena -p 80
 
 ** Measuring Throughput, Jitter, and Packet Loss with iperf
  
-
 * useful resources
 http://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml
 http://oss.oetiker.ch/smokeping-demo
@@ -756,7 +755,6 @@ https://www.vanheusden.com/Linux/index.php
 * temp
 If some machines on your network are reachable but others aren't, or connectivity comes and goes,
 ARP problems may be the cause.
-
 
 * useful resources
 http://ftp.ntua.gr/mirror/technotronic/
