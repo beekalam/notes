@@ -8885,6 +8885,135 @@ function make_pretty($bytes)
 //echo make_pretty(0);            //  0.00 B
 //echo make_pretty(-50);          // -50.00 B
 #+end_src
+* CLI
+** scrip arguments
+#+begin_src php
+<?php
+echo "numbe of arguments" . $argc . "\n";
+echo "list of argumetns: " . print_r($argv) . "\n";
+
+#+end_src
+
+** The Many Ways to Call PHP Scripts
+#+begin_src php
+//From a File
+//You can tell PHP to execute a particular PHP source code file. Here’s an example:
+~$ php myscript.php
+~$ php -f myscript.php
+
+//Note that -f is optional; the previous two lines are functionally equivalent. The PHP command-line
+//options detailed earlier, where appropriate, work in this method. This example
+~$ php -e myscript.php
+//will execute the file myscript.php in Extended Information Mode.
+
+//From a String
+//You can execute a single line of code with the -r flag, as shown here:
+ ~$ php -r "echo(\"Hello World!\n\");"
+
+//From STDIN
+//If you do not specify a file or use the -r option, PHP will treat the contents of STDIN as the PHP code to be
+//executed, as shown here (note that echo works like this only on Linux or macOS):
+~$ echo '<?php echo "hello\n";?>' | php
+//You can also use this method with -B, -R, -F, and -E to make PHP a first-class citizen in shell
+//scripting, giving you the ability to pipe data in and out of PHP. For instance, to reverse every line of a file (or
+//any data source that you pipe into it), on Linux or macOS use the following:
+
+~$ cat file.txt | php -R 'echo strrev($argn)."\n";' | grep olleh
+
+//If you want to use options such as -R but have too much PHP code to fit comfortably on the command line,
+//you can put the code in a normal PHP source code file and include it with include(). Here’s an example:
+
+~$ cat something.txt > php -R 'include("complicated.php");'
+
+//If you have a nontrivial PHP script, it may be more efficient to package it into functions and include it
+//once with -B (-B means it’s executed before the main code) and then execute the function each time with
+//-R. The following example loads the content of my_functions.php once at the start, and then the function
+//complicated() from that file is called on each line (each $argn) from the data file (data.txt):
+
+~$ php -B 'include("my_functions.php");' -R 'complicated($argn);' -f 'data.txt'
+#+end_src
+
+** As a Self-Executing Script
+*** unix/linux
+#+begin_src php
+#!/usr/bin/php
+<?php
+
+//~$ chmod a+x myscript.php
+// use env
+#!/usr/bin/env php
+#+end_src
+
+*** windows
+To do this, run the following two commands at the Windows command prompt,
+which you should run as Administrator. Make sure to change the path/file name in the second command to
+match your installation.
+
+assoc .php=phpfile
+ftype phpfile="C:\PHP5\php.exe" -f "%1" -- %~2
+
+These changes allow you to run myscript rather than C:\php\php.exe myscript.php.
+*** clickable icons linux
+On most Linux systems, specifically those that support the freedesktop.org Desktop Entry Specification
+standard, you can create a clickable launcher icon by simply creating a text file. Most mainstream Linux
+distributions and their window managers follow at least the basics of this standard. To create a launcher for
+your app, create a text file in the folder where you want it to appear (for example, in /home/rob/Desktop)
+called, for instance, myscript.desktop. It is important that it has the .desktop extension. In the file, add the
+#+begin_src 
+following lines:
+[Desktop Entry]
+Type=Application
+Name=My Funky App
+Terminal=true
+Exec=/usr/bin/php /home/rob/scripts/myscript.php
+Icon=/usr/share/icons/Humanity/emblems/32/emblem-OK.png
+#+end_src
+*** Clickable Icons: Ubuntu Unity
+you create a .desktop file in a similar manner to the Linux
+launcher you created before, but with a few more entries in the file. So let’s create a new myscript.desktop:
+#+begin_src 
+[Desktop Entry]
+Name=My Super Script
+Exec=/usr/bin/php /home/rob/scripts/myscript.php
+Icon=/usr/share/icons/Humanity/emblems/32/emblem-important.svg
+Terminal=true
+Type=Application
+StartupNotify=true
+Actions=Window;
+[Desktop Action Window]
+Name=Open me a new window please
+Exec=/usr/bin/php /home/me/scripts/myscript.php -n
+OnlyShowIn=Unity;
+#+end_src
+
+** Quitting your script
+   
+•	 0: Success. You’ve exited normally.
+•	 1: General error. This is usually used for application- or language-specific errors and
+syntax errors.
+•	 2: Incorrect usage.
+•	 126: Command is not executable. This is usually permissions related.
+•	 127: Command is not found.
+•	 128+N (up to 165): Command terminated by POSIX signal number N. For example,
+in the case of kill -9 myscript.php, it should return code 137 (which is 128+9).
+•	 130: Command terminated by Ctrl+C (Ctrl+C is POSIX code 2, so, using the previous
+example, 128 + 2 = 130).
+•	 Any other positive integer is generally construed as exiting because of an unspecified
+error.
+** preload a php file using auto_prepend_file
+#+begin_src shell
+$ php -d auto_prepend_file=initialize.php -a
+Interactive mode enabled
+#+end_src
+
+If you regularly use a few different initialization
+files like this, you can create shell aliases to commands by using the -d flag. For instance, you could add lines
+similar to the following to your ~/.bash_profile:
+
+#+begin_src shell 
+alias php-clients="php -d auto_prepend_file=clientSetup.php -a"
+alias php-inhouse="php -d auto_prepend_file=ourSiteSetup.php -a"
+#+end_src 
 
 * refactoring
 ** Replace Temp with Query

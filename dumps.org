@@ -589,3 +589,4 @@ code that can be reused and tested is a unit.
    - Replace Conditional with Polymorphism pattern 
 
 * timer1
+https://github.com/samyk/evercookie/

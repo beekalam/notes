@@ -8222,6 +8222,44 @@ custombox copies the content of the target div
 $(".custombox-content #textbox").val();
 #+end_src
 
+* browser signature using canvas
+#+begin_src javascript
+
+<script>
+  function browserSignature()
+  {
+
+      //<canvas id="my-canvas"  style="display:none;"> </canvas>
+      var canvas = document.getElementById("my-canvas");
+      var ret = undefined;
+    try{
+            var ctx = canvas.getContext("2d");
+
+            var txt = "this is a canvas.";
+            ctx.textBaseline = "top";
+            // The most common type
+            ctx.font = "14px 'Arial'";
+            ctx.textBaseline = "alphabetic";
+            ctx.fillStyle = "#f60";
+                    ctx.fillRect(125,1,62,20);
+            // Some tricks for color mixing to increase the difference in rendering
+            ctx.fillStyle = "#069";
+            ctx.fillText(txt, 2, 15);
+            ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+            ctx.fillText(txt, 4, 17);
+            console.log(ctx);
+            /* console.log(canvas.toDataURL());*/
+            var cdata = canvas.toDataURL();
+            md5 = MD5(cdata);
+            ret = md5;
+    }catch(e){
+    }
+      return ret;
+  }
+  console.log(browserSignature());
+</script>
+#+end_src 
+
 * URL
 ** decode/encode URL
    
