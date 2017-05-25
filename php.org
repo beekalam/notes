@@ -9013,7 +9013,22 @@ similar to the following to your ~/.bash_profile:
 #+begin_src shell 
 alias php-clients="php -d auto_prepend_file=clientSetup.php -a"
 alias php-inhouse="php -d auto_prepend_file=ourSiteSetup.php -a"
-#+end_src 
+#+end_src
+* Daemons
+The outline process for creating a daemon is as follows:
+ 1 Run a process (PHP script). We call this the parent process.
+ 2 From the parent, fork (copy) a child process.
+ 3 The parent process then exits. The child process is now parentless.
+ 4 init adopts the parentless child process. init is the original process
+   started by the kernel when it boots and is the ancestor of all processes.
+ 5 Dissociate (detach the child) from the terminal you started the parent in. This is so that
+  - None of your output appears in the terminal
+  - Killing the terminal won’t kill your child process
+  - The process is truly running in the background
+ 6 To dissociate (detach), you need to do the following:
+  - Move the child process into its own POSIX process session.
+  - Fork it once again (into the grandchild process) and kill the child process.
+  - Close any file descriptors such as STDIN that may tie it to the terminal.
 
 * refactoring
 ** Replace Temp with Query
