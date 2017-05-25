@@ -1386,6 +1386,16 @@ yet another way
 #+begin_src shell
 service tor reload
 #+end_src
+** use tor in shell 
+#+begin_src shell
+$ . torify on
+#+end_src
+
+* android
+** sdkmanager
+#+begin_src shell 
+$ ./sdkmanager --proxy=http  --no_https --proxy_host=127.0.0.1 --proxy_port=8118 --list
+#+end_src 
 
 * multimedia
 ** convert avi to mp4
