@@ -1862,6 +1862,7 @@ Note that the difference isn’t divided into larger chunks than weeks
 wouldn’t give an accurate count of the time difference calculated.
 
 ** date difference using ~DateInterval~
+
 #+begin_src php
 <?php
 $datetime1 = new DateTime('2009-10-11');
@@ -2566,11 +2567,11 @@ usort($files, function($a, $b) { return strnatcmp($b, $a); });
 #+end_src 
 
 ** Using Named Parameters
-Problem
+*Problem*
 You want to specify your arguments to a function by name, instead of simply their
 position in the function invocation.
 
-Solution
+*Solution*
 PHP doesn’t have language-level named parameter support like some other languages
 do. However, you can emulate it by having a function use one parameter and making
 that parameter an associative array:
@@ -2587,11 +2588,11 @@ $image2 = image(array('src' => 'pig.jpeg'));
 #+end_src 
 
 ** Returning Values by Reference
-Problem
+*Problem*
 You want to return a value by reference, not by value. This allows you to avoid making
 a duplicate copy of a variable.
 
-Solution
+*Solution*
 The syntax for returning a variable by reference is similar to passing it by reference.
 However, instead of placing an & before the parameter, place it before the name of the
 function:

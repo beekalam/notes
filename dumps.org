@@ -590,3 +590,783 @@ code that can be reused and tested is a unit.
 
 * timer1
   https://github.com/samyk/evercookie/
+* css
+
+http://kushagragour.in/lab/hint/
+https://purecss.io/tools/
+https://me.tamin.ir/js/register.js
+https://me.tamin.ir/service/secure/registration
+
+* javascript
+
+var complexityText = 'پیچیدگی گذرواژه کافی نیست';
+var complexityTextUpperCase = 'گذرواژه باید حداقل شامل یک کاراکتر بزرگ باشد';
+var complexityTextLowerCase = 'گذرواژه باید حداقل شامل یک کاراکتر کوچک باشد';
+var complexityTextDigit = 'گذرواژه باید شامل عدد باشد';
+var complexityTextStartCharAlphabet = 'گذرواژه باید با یک حرف آغاز شود';
+var complexityTextLength = 'گذرواژه حداقل باید هشت حرف باشد';
+var complexityTextNotContainsSomeFields = 'گذرواژه باید با حروف لاتین بوده و شامل نام، نام خانوادگی و شماره ملی یا کد اتباع خارجی نباشد.';
+var complexityTextFirstName = 'پیش از ورود نام امکان ارزیابی گذرواژه وجود ندارد';
+var complexityTextlastName = 'پیش از ورود نام خانوادگی امکان ارزیابی گذرواژه وجود ندارد';
+var complexityTextNationalCode = 'پیش از ورود کدملی یا شماره اتباع خارجی امکان ارزیابی گذرواژه وجود ندارد';
+var complexityTextValidChar = 'فقط از کاراکترهای لاتین مجاز استفاده نمایید. شامل حروف، اعداد و !#$%&* ';
+
+function hasClass(ele, cls) {
+    return ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+}
+
+function addClass(ele, cls) {
+    if (!this.hasClass(ele, cls))
+        ele.className += " " + cls;
+}
+function removeClass(ele, cls) {
+    if (hasClass(ele, cls)) {
+        var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+        ele.className = ele.className.replace(reg, ' ');
+    }
+}
+
+function deleteButtonClick() {
+    var queueNumber = document.getElementById('queueNumber');
+    var nationalCode = document.getElementById('nationalCode');
+    window.location.href = 'service/secure/delete-request?nationalCode=' + nationalCode.value + '&queueNumber=' + queueNumber.value;
+}
+
+function validateForm() {
+    var result = true;
+    result = result &
+            validateLastName() &
+            validateFirstName() &
+            validateNationalCode() &
+            validateEmail() &
+            validatePassword() &
+            validateRepeatedPassword() &
+            validatePasswordsEquality() &
+            validateMobile() &
+            validateQuestion1() &
+            validateQuestion2() &
+            validateQuestion3() &
+            validateQuestionEquality() &
+//            validateSerialNo() &
+//            validateSerialDigit() &
+//            validateSerialAlphabet() &
+            validateIdNo() &
+            validateAnswer1() &
+            validateAnswer2() &
+            validateAnswer3() &
+            validateAnswerEquality() &
+//            validateDayOfBirth() &
+            validateYearOfBirth();
+
+    console.log(result != 0);
+    return result != 0;
+}
+
+function validateMobile() {
+    var mobile = document.getElementById('mobile');
+    removeValidationEffects(mobile)
+    if (mobile.value == null || mobile.value.trim() == '') {
+        setInvalid(mobile, 'وارد نمودن شماره موبایل اجباری است');
+        return false;
+    }
+
+    var re = /^[0-9]*$/;
+    if (!re.test(mobile.value)) {
+        setInvalid(mobile, 'شماره موبایل باید با کاراکترهای لاتین، بدون حرف و سایر کاراکترها وارد شود.');
+        return false;
+    }
+
+    if (isNaN(mobile.value)) {
+        setInvalid(mobile, 'شماره موبایل باید عدد باشد');
+        return false;
+    }
+
+    if (mobile.value.length < 11) {
+        setInvalid(mobile, 'شماره موبایل نادرست است');
+        return false;
+    }
+
+    var reg = /^[0][9].*$/;
+    if (!reg.test(mobile.value)) {
+        setInvalid(mobile, 'شماره موبایل باید با عدد 09 شروع شود.');
+        return false;
+    }
+
+
+    setValid(mobile);
+    return true;
+}
+
+//function validateMobile() {
+//    var mobile = document.getElementById('mobile');
+//    removeValidationEffects(mobile)
+//    if (mobile.value == null || mobile.value.trim() == '') {
+//        setInvalid(mobile, 'وارد نمودن شماره موبایل اجباری است');
+//        return false;
+//    }
+//
+//    var re = /^[0-9]*$/;
+//    if (!re.test(mobile.value)) {
+//        setInvalid(mobile, 'شماره موبایل باید با کاراکترهای لاتین، بدون حرف و سایر کاراکترها وارد شود.');
+//        return false;
+//    }
+//
+//    if (isNaN(mobile.value)) {
+//        setInvalid(mobile, 'شماره موبایل باید عدد باشد');
+//        return false;
+//    }
+//
+//
+//    setValid(mobile);
+//    return true;
+//}
+
+function validateSerialNo() {
+    var serialNo = document.getElementById('serialNo');
+    removeValidationEffects(serialNo)
+    if (serialNo.value == null || serialNo.value.trim() == '') {
+        setInvalid(serialNo, 'وارد نمودن شماره سریال اجباری است');
+        return false;
+    }
+
+    var re = /^[0-9]*$/;
+    if (!re.test(serialNo.value)) {
+        setInvalid(serialNo, 'شماره سریال باید با کاراکترهای لاتین، بدون حرف و سایر کاراکترها وارد شود.');
+        return false;
+    }
+
+    if (isNaN(serialNo.value)) {
+        setInvalid(serialNo, 'شماره سریال باید عدد باشد');
+        return false;
+    }
+
+    setValid(serialNo);
+    return true;
+}
+
+function validateSerialDigit() {
+    var serialDigit = document.getElementById('serialDigit');
+    removeValidationEffects(serialDigit)
+    if (serialDigit.value == null || serialDigit.value.trim() == '') {
+//        setInvalid(serialDigit, 'وارد نمودن شماره سری اجباری است');
+//        return false;
+        return true;
+    }
+
+    var re = /^[0-9]*$/;
+    if (!re.test(serialDigit.value)) {
+        setInvalid(serialDigit, 'شماره سری باید با کاراکترهای لاتین، بدون حرف و سایر کاراکترها وارد شود.');
+        return false;
+    }
+
+    if (isNaN(serialDigit.value)) {
+        setInvalid(serialDigit, 'شماره سری باید عدد باشد');
+        return false;
+    }
+
+    setValid(serialDigit);
+    return true;
+}
+
+function validateIdNo() {
+    var idNo = document.getElementById('idNo');
+    removeValidationEffects(idNo)
+    if (idNo.value == null || idNo.value.trim() == '') {
+        setInvalid(idNo, 'وارد نمودن شماره شناسنامه اجباری است');
+        return false;
+    }
+
+    var re = /^[0-9]*$/;
+    if (!re.test(idNo.value)) {
+        setInvalid(idNo, 'شماره شناسنامه باید با کاراکترهای لاتین، بدون حرف و سایر کاراکترها وارد شود.');
+        return false;
+    }
+
+    if (isNaN(idNo.value)) {
+        setInvalid(idNo, 'شماره شناسنامه باید عدد باشد');
+        return false;
+    }
+    setValid(idNo);
+    return true;
+}
+
+function validateLastName() {
+    var lastName = document.getElementById('lastName');
+    removeValidationEffects(lastName)
+    if (lastName.value == null || lastName.value.trim() == '') {
+        setInvalid(lastName, 'وارد نمودن نام خانوادگی اجباری است');
+        return false;
+    }
+    setValid(lastName);
+    return true;
+}
+function validateFirstName() {
+    var firstName = document.getElementById('firstName');
+    removeValidationEffects(firstName);
+    if (firstName.value == null || firstName.value.trim() == '') {
+        setInvalid(firstName, 'وارد نمودن نام اجباری است');
+        return false;
+    }
+    setValid(firstName);
+    return true;
+}
+function validateNationalCode() {
+    var nationalCode = document.getElementById('nationalCode');
+    removeValidationEffects(nationalCode);
+    if (nationalCode.value == null) {
+        setInvalid(nationalCode, 'وارد نمودن کد ملی اجباری است');
+        return false;
+    }
+    if (nationalCode.value.length != 10) {
+        setInvalid(nationalCode, 'کد ملی نادرست است');
+        return false;
+    }
+    var re = /^[0-9]*$/;
+    if (!re.test(nationalCode.value)) {
+        setInvalid(nationalCode, 'کد ملی باید با کاراکترهای لاتین، بدون حرف و سایر کاراکترها وارد شود.');
+        return false;
+    }
+
+    if (isNaN(nationalCode.value)) {
+        setInvalid(nationalCode, 'کد ملی می بایست عدد باشد');
+        return false;
+    }
+    setValid(nationalCode);
+    return true;
+//    var nationalCode = document.getElementById('nationalCode');
+//    removeValidationEffects(nationalCode);
+//    if (nationalCode.value == null || nationalCode.value.trim() == '') {
+//        setInvalid(nationalCode, 'وارد نمودن کد ملی/اتباع خارجی اجباری است');
+//        return false;
+//    }
+//    if (nationalCode.value.length != 10 && nationalCode.value.length != 13) {
+//        setInvalid(nationalCode, 'کد ملی/اتباع خارجی نادرست است');
+//        return false;
+//    }
+//    setValid(nationalCode);
+//    return true;
+}
+function validateEmail() {
+    var email = document.getElementById('email');
+    removeValidationEffects(email);
+    if (email.value == null || email.value.trim() == '') {
+        setInvalid(email, 'وارد نمودن ایمیل اجباری است');
+        return false;
+    }
+
+    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    if (!re.test(email.value)) {
+        setInvalid(email, 'آدرس ایمیل وارد شده صحیح نمی باشد');
+        return false;
+    }
+
+    setValid(email);
+    return true;
+}
+
+function validateSerialAlphabet() {
+    var serialAlphabet = document.getElementById('serialAlphabet');
+    removeValidationEffects(serialAlphabet);
+    if (serialAlphabet.value == null || serialAlphabet.value.trim() == '') {
+//        setInvalid(serialAlphabet, 'وارد نمودن شماره سریال اجباری است');
+//        return false;
+        return true;
+    }
+
+//    var re = '/^[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF]*$/';
+//    if (!re.test(serialAlphabet.value)) {
+//        setInvalid(serialAlphabet, 'بخش آغازین شماره سریال باید از حروف فارسی باشد.');
+//        return false;
+//    }
+
+    setValid(serialAlphabet);
+    return true;
+}
+
+
+function validatePassword() {
+    var password = document.getElementById('password');
+    removeValidationEffects(password);
+    if (password.value == null || password.value.trim() == '') {
+        setInvalid(password, 'وارد نمودن گذرواژه اجباری است');
+        return false;
+    }
+
+    if (password.value.length < 8) {
+        setInvalid(password, 'گذرواژه حداقل باید هشت حرف باشد');
+        return false;
+    }
+    if (!passwordComplexityStartChar(password.value)) {
+        setInvalid(password, complexityTextStartCharAlphabet);
+        return false;
+    }
+    if (!passwordComplexityUpperCase(password.value)) {
+        setInvalid(password, complexityTextUpperCase);
+        return false;
+    }
+    if (!passwordComplexityLowerCase(password.value)) {
+        setInvalid(password, complexityTextLowerCase);
+        return false;
+    }
+    if (!passwordComplexityDigit(password.value)) {
+        setInvalid(password, complexityTextDigit);
+        return false;
+    }
+    if (!passwordComplexityValidChar(password.value)) {
+        setInvalid(password, complexityTextValidChar);
+        return false;
+    }
+
+    var nationalCode = document.getElementById('nationalCode');
+    var firstName = document.getElementById('firstName');
+    var lastName = document.getElementById('lastName');
+
+    if (nationalCode.value === null || nationalCode.value === '') {
+        setInvalid(password, complexityTextNationalCode);
+        return false;
+    }
+    if (firstName.value === null || firstName.value === '') {
+        setInvalid(password, complexityTextFirstName);
+        return false;
+    }
+    if (lastName.value === null || lastName.value === '') {
+        setInvalid(password, complexityTextlastName);
+        return false;
+    }
+
+    if (passwordComplexityNotContainsSomeFields(password.value, firstName.value, lastName.value, nationalCode.value)) {
+        setInvalid(password, complexityTextNotContainsSomeFields);
+        return false;
+    }
+
+
+
+//    if (password.value.length < 8) {
+//        setInvalid(password, 'گذرواژه حداقل باید هشت حرف باشد');
+//        return false;
+//    }
+//
+//    if (!passwordComplexity(password.value)) {
+//        setInvalid(password, complexityText);
+//        return false;
+//    }
+
+    setValid(password);
+    return true;
+}
+function validateRepeatedPassword() {
+    var repeatedPassword = document.getElementById('repeatedpassword');
+    removeValidationEffects(repeatedPassword);
+    if (repeatedPassword.value == null || repeatedPassword.value.trim() == '') {
+        setInvalid(repeatedPassword, 'وارد نمودن تکرار گذرواژه اجباری است');
+        return false;
+    }
+
+    if (repeatedPassword.value.length < 8) {
+        setInvalid(repeatedPassword, 'گذرواژه حداقل باید هشت حرف باشد');
+        return false;
+    }
+    if (!passwordComplexityStartChar(repeatedPassword.value)) {
+        setInvalid(repeatedPassword, complexityTextStartCharAlphabet);
+        return false;
+    }
+    if (!passwordComplexityUpperCase(repeatedPassword.value)) {
+        setInvalid(repeatedPassword, complexityTextUpperCase);
+        return false;
+    }
+    if (!passwordComplexityLowerCase(repeatedPassword.value)) {
+        setInvalid(repeatedPassword, complexityTextLowerCase);
+        return false;
+    }
+    if (!passwordComplexityDigit(repeatedPassword.value)) {
+        setInvalid(repeatedPassword, complexityTextDigit);
+        return false;
+    }
+    if (!passwordComplexityValidChar(repeatedPassword.value)) {
+        setInvalid(repeatedPassword, complexityTextValidChar);
+        return false;
+    }
+
+    var nationalCode = document.getElementById('nationalCode');
+    var firstName = document.getElementById('firstName');
+    var lastName = document.getElementById('lastName');
+
+    if (nationalCode.value === null || nationalCode.value === '') {
+        setInvalid(repeatedPassword, complexityTextNationalCode);
+        return false;
+    }
+    if (firstName.value === null || firstName.value === '') {
+        setInvalid(repeatedPassword, complexityTextFirstName);
+        return false;
+    }
+    if (lastName.value === null || lastName.value === '') {
+        setInvalid(repeatedPassword, complexityTextlastName);
+        return false;
+    }
+
+    if (passwordComplexityNotContainsSomeFields(repeatedPassword.value, firstName.value, lastName.value, nationalCode.value)) {
+        setInvalid(repeatedPassword, complexityTextNotContainsSomeFields);
+        return false;
+    }
+
+//    if (repeatedPassword.value.length < 8) {
+//        setInvalid(repeatedPassword, 'گذرواژه حداقل باید هشت حرف باشد');
+//        return false;
+//    }
+//
+//    if (!passwordComplexity(repeatedPassword.value)) {
+//
+//        setInvalid(repeatedPassword, complexityText);
+//        return false;
+//    }
+
+    setValid(repeatedPassword);
+    return true;
+}
+
+function validatePasswordsEquality() {
+    var password = document.getElementById('password');
+    var repeatedPassword = document.getElementById('repeatedpassword');
+    if (!hasClass(password, 'valid') && !hasClass(repeatedPassword, 'valid')) {
+        return false;
+    }
+
+    removeValidationEffects(password);
+    removeValidationEffects(repeatedPassword);
+
+    var v1 = repeatedPassword.value;
+    var v2 = password.value;
+    console.log(v1);
+    console.log(v2);
+    if (v1 !== v2) {
+        console.log(password.value);
+        console.log(repeatedPassword.value);
+        setInvalid(repeatedPassword, 'گدرواژه و تکرار آن یکسان نمی باشد');
+        setInvalid(password, 'گدرواژه و تکرار آن یکسان نمی باشد');
+        return false;
+    }
+    setValid(password);
+    setValid(repeatedPassword);
+    return true;
+}
+
+function validateQuestionEquality() {
+    var question1 = document.getElementById('question1');
+    var question2 = document.getElementById('question2');
+    var question3 = document.getElementById('question3');
+    if (!hasClass(question1, 'valid') && !hasClass(question2, 'valid') && !hasClass(question3, 'valid')) {
+        return false;
+    }
+
+    removeValidationEffects(question1);
+    removeValidationEffects(question2);
+    removeValidationEffects(question3);
+
+    var v1 = question1.value.trim();
+    var v2 = question2.value.trim();
+    var v3 = question3.value.trim();
+    if (v1 === v2 || v1 === v3 || v2 === v3) {
+        setInvalid(question1, 'سوالات امنیتی نمیتوانند یکسان باشند.');
+        setInvalid(question2, 'سوالات امنیتی نمیتوانند یکسان باشند.');
+        setInvalid(question3, 'سوالات امنیتی نمیتوانند یکسان باشند.');
+        return false;
+    }
+    setValid(question1);
+    setValid(question2);
+    setValid(question3);
+    return true;
+}
+
+function validateAnswerEquality() {
+    var answer1 = document.getElementById('answer1');
+    var answer2 = document.getElementById('answer2');
+    var answer3 = document.getElementById('answer3');
+    if (!hasClass(answer1, 'valid') && !hasClass(answer2, 'valid') && !hasClass(answer3, 'valid')) {
+        return false;
+    }
+
+    removeValidationEffects(answer1);
+    removeValidationEffects(answer2);
+    removeValidationEffects(answer3);
+
+    var v1 = answer1.value.trim();
+    var v2 = answer2.value.trim();
+    var v3 = answer3.value.trim();
+    if (v1 === v2 || v1 === v3 || v2 === v3) {
+        setInvalid(answer1, 'پاسخ ها نمیتوانند یکسان باشند.');
+        setInvalid(answer2, 'پاسخ ها نمیتوانند یکسان باشند.');
+        setInvalid(answer3, 'پاسخ ها نمیتوانند یکسان باشند.');
+        return false;
+    }
+    setValid(answer1);
+    setValid(answer2);
+    setValid(answer3);
+    return true;
+}
+
+function validateYearOfBirth() {
+    var yearOfBirth = document.getElementById('YearOfBirth');
+    removeValidationEffects(yearOfBirth)
+    if (yearOfBirth.value == null || yearOfBirth.value.trim() == '') {
+        setInvalid(yearOfBirth, 'وارد نمودن سال تولد اجباری است');
+        return false;
+    }
+
+    if (isNaN(yearOfBirth.value)) {
+        setInvalid(yearOfBirth, 'سال تولد می بایست عدد باشد');
+        return false;
+    }
+
+    if (yearOfBirth.value <= 1250 || yearOfBirth.value >= 2000) {
+        setInvalid(yearOfBirth, 'سال تولد می بایست عددی بین ۱۲۵۰ تا ۲۰۰۰ باشد');
+        return false;
+    }
+
+    setValid(yearOfBirth);
+    return true;
+}
+
+function validateDayOfBirth() {
+//    setInvalid(dayOfBirth, 'روز وارد شده معتبر نمیباشد.');
+//            return false;
+    var monthOfBirth = document.getElementById('MonthOfBirth');
+    var dayOfBirth = document.getElementById('DayOfBirth');
+    removeValidationEffects(dayOfBirth)
+    if (dayOfBirth.value == null || dayOfBirth.value.trim() == '') {
+        setInvalid(dayOfBirth, 'وارد نمودن روز تولد اجباری است');
+        return false;
+    }
+
+    if (monthOfBirth == "07" || monthOfBirth == '08' || monthOfBirth == '09' || monthOfBirth == '10' || monthOfBirth == '11' || monthOfBirth == '12') {
+//        if (dayOfBirth == '31') {
+        setInvalid(dayOfBirth, 'روز وارد شده معتبر نمیباشد.');
+        return false;
+//        }
+    }
+    setValid(dayOfBirth);
+    return true;
+}
+
+function validateQuestion1() {
+    var question1 = document.getElementById('question1');
+    removeValidationEffects(question1)
+    if (question1.value == null || question1.value.trim() == '') {
+        setInvalid(question1, 'وارد نمودن سوال ۱ اجباری است');
+        return false;
+    }
+    setValid(question1);
+    return true;
+}
+
+function validateQuestion2() {
+    var question2 = document.getElementById('question2');
+    removeValidationEffects(question2)
+    if (question2.value == null || question2.value.trim() == '') {
+        setInvalid(question2, 'وارد نمودن سوال ۲ اجباری است');
+        return false;
+    }
+    setValid(question2);
+    return true;
+}
+
+function validateQuestion3() {
+    var question3 = document.getElementById('question3');
+    removeValidationEffects(question3)
+    if (question3.value == null || question3.value.trim() == '') {
+        setInvalid(question3, 'وارد نمودن سوال ۳ اجباری است');
+        return false;
+    }
+    setValid(question3);
+    return true;
+}
+
+function validateAnswer1() {
+    var answer1 = document.getElementById('answer1');
+    removeValidationEffects(answer1)
+    if (answer1.value == null || answer1.value.trim() == '') {
+        setInvalid(answer1, 'وارد نمودن جواب ۱ اجباری است');
+        return false;
+    }
+    setValid(answer1);
+    return true;
+}
+
+function validateAnswer2() {
+    var answer2 = document.getElementById('answer2');
+    removeValidationEffects(answer2)
+    if (answer2.value == null || answer2.value.trim() == '') {
+        setInvalid(answer2, 'وارد نمودن جواب ۲ اجباری است');
+        return false;
+    }
+    setValid(answer2);
+    return true;
+}
+
+function validateAnswer3() {
+    var answer3 = document.getElementById('answer3');
+    removeValidationEffects(answer3)
+    if (answer3.value == null || answer3.value.trim() == '') {
+        setInvalid(answer3, 'وارد نمودن جواب ۳ اجباری است');
+        return false;
+    }
+    setValid(answer3);
+    return true;
+}
+
+function passwordComplexityLength(password) {
+
+    if (password.length < 8)
+        return false;
+
+}
+
+function passwordComplexityStartChar(password) {
+
+    var hasStartCharAlphabetic = /^[A-Za-z].*$/.test(password);
+    return hasStartCharAlphabetic === true;
+
+}
+
+function passwordComplexityUpperCase(password) {
+
+    var hasUpperCase = /[A-Z]/.test(password);
+    return hasUpperCase === true;
+
+}
+
+function passwordComplexityLowerCase(password) {
+
+    var hasLowerCase = /[a-z]/.test(password);
+    return hasLowerCase === true;
+
+}
+
+function passwordComplexityDigit(password) {
+
+    var hasNumbers = /\d/.test(password);
+    return hasNumbers === true;
+
+}
+
+function passwordComplexityValidChar(password) {
+
+    var hasNumbers = /^(")?(?:[^\."])(?:(?:[\.])?(?:[\w\-!#$%&'*+\/=?\^_`{|}~]))*$/.test(password);
+    return hasNumbers === true;
+
+}
+
+function passwordComplexityNotContainsSomeFields(password, firstName, lastName, nationalCode) {
+
+//    var nationalCode = document.getElementById('nationalCode').value;
+//    var firstName = document.getElementById('firstName').value;
+//    var lastName = document.getElementById('lastName').value;
+//    
+//    if (nationalCode === null || nationalCode === ''){
+//        return false;
+//    }
+//    if (hasLastName === null || hasLastName === ''){
+//        return false;
+//    }
+//    if (hasFistNaame === null || hasFistNaame === ''){
+//        return false;
+//    }
+
+//    var hasNatCode = password.indexOf(nationalCode) !== -1;
+//    console.log('hasNatCode');
+//    console.log(password.indexOf(nationalCode));
+//    console.log(hasNatCode);
+//    var hasFistNaame = password.indexOf(firstName) !== -1;
+//    console.log('hasFistNaame');
+//    console.log(password.indexOf(firstName));
+//    console.log(hasFistNaame);
+//    var hasLastName = password.indexOf(lastName) !== -1;
+//    console.log('hasLastName');
+//    console.log(password.indexOf(lastName));
+//    console.log(hasLastName);
+//    console.log('jam');
+//    console.log(hasFistNaame + hasLastName + hasNatCode);
+//    console.log('kol');
+//    console.log(hasFistNaame + hasLastName + hasNatCode !== 0);
+//    return hasFistNaame + hasLastName + hasNatCode !== 0;
+    var hasNatCode = password.indexOf(nationalCode);
+    if (hasNatCode !== -1)
+        return true;
+    var hasFistNaame = password.indexOf(firstName);
+    if (hasFistNaame !== -1)
+        return true;
+    var hasLastName = password.indexOf(lastName);
+    if (hasLastName !== -1)
+        return true;
+    return false;
+}
+
+function passwordComplexity(password) {
+
+    if (password.length < 8)
+        return false;
+
+    var hasUpperCase = /[A-Z]/.test(password);
+    var hasLowerCase = /[a-z]/.test(password);
+    var hasNumbers = /\d/.test(password);
+    return hasUpperCase + hasLowerCase + hasNumbers === 3;
+
+}
+
+function setInvalid(elem, msg) {
+    elem.parentNode.setAttribute('data-hint', msg);
+    addClass(elem.parentNode, 'hint--left hint--error');
+    addClass(elem, 'invalid');
+}
+function setValid(elem) {
+    addClass(elem, 'valid');
+}
+function removeValidationEffects(elem) {
+    removeClass(elem, 'valid');
+    removeClass(elem, 'invalid');
+    removeClass(elem.parentNode, 'hint--left hint--error');
+    elem.parentNode.removeAttribute('data-hint');
+}
+function myMethod(elem) {
+    var country = document.getElementById('country');
+    var fetchCity = document.getElementById('fetchCity');
+    fetchCity.value = "true";
+    setInvalid(country, country.value);
+    var theForm = document.forms[0];
+    theForm.submit();
+}
+function showResponse(originalRequest)
+{
+    setInvalid(country, 'finito');
+//    var list = $('city');
+//    var xmlString = originalRequest.responseXML;
+//    var items = xmlString.getElementsByTagName('labelValueBean');
+//    clearList(list);
+//    if (items.length > 0)
+//    {
+//        for (var i = 0; i < items.length; i++)
+//        {
+//            var node = items[i];
+//            var value = "";
+//            var label = "";
+//            if (node.getElementsByTagName("label")[0].firstChild.nodeValue) {
+//                value = node.getElementsByTagName("label")[0].firstChild.nodeValue;
+//                label = node.getElementsByTagName("value")[0].firstChild.nodeValue;
+//            }
+//            addElementToList(list, value, label);
+//        }
+//    }
+//    else
+//    {
+//        addElementToList(list, "", "-- Select is Empty --");
+//    }
+}
+
+
+
+
+
+
+
+
+
+
