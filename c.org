@@ -903,7 +903,6 @@ void strncpy (dst, src, max)
 }
 #+end_src
 
-
 * storage classes, Linkage & memory management
 ** Storage classes
  C provides several different models, or storage classes , for storing data in memory.
@@ -1096,7 +1095,6 @@ to optimize certain kinds of code. It can be applied only to pointers, and it in
 pointer is the sole initial means of accessing a data object.
 
 * File Input/Output
-
 ** mode
 To bring some regularity to the handling of text files, C provides two ways of accessing a
 file: binary mode and text mode.
@@ -1268,7 +1266,6 @@ int main(int argc, char *argv[])
   return 0;
 }
 #+end_src 
-
 
 * libusb example
 
@@ -1676,3 +1673,9 @@ int endian()
 }
 
 #+end_src
+
+* android 
+./sdkmanager --proxy=http  --no_https --proxy_host=127.0.0.1 --proxy_port=8118 "ndk-bundle"
+https://developer.android.com/studio/command-line/sdkmanager.html
+https://developer.android.com/ndk/downloads/index.html
+

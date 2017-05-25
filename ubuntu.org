@@ -199,6 +199,11 @@ escapes are only recognized immediately after newline.
 |         |                                                                                                          |
 | ~R      | Request rekeying of the connection (only useful for SSH protocol version 2 and if the peer supports it). |
 
+** use a different key to connect 
+#+begin_src shell
+$ ssh -i key_file root@host
+#+end_src 
+
 * vmware
 ** start virtual machine in background
    

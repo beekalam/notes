@@ -1370,3 +1370,21 @@ function showResponse(originalRequest)
 
 
 
+* android 
+./sdkmanager --proxy=http  --no_https --proxy_host=127.0.0.1 --proxy_port=8118 "ndk-bundle"
+https://developer.android.com/studio/command-line/sdkmanager.html
+https://developer.android.com/ndk/downloads/index.html
+
+
+.side-menu {
+    width: 200px !important;
+}
+
+.topbar .topbar-left {
+    width: 200px !important;
+}
+
+.navbar-custom {
+    margin-right: 200px !important;
+}
+
