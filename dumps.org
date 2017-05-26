@@ -1388,3 +1388,5 @@ https://developer.android.com/ndk/downloads/index.html
     margin-right: 200px !important;
 }
 
+* download 
+https://www.qt.io/download-open-source/#section-2
