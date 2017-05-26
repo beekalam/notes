@@ -9015,6 +9015,7 @@ similar to the following to your ~/.bash_profile:
 alias php-clients="php -d auto_prepend_file=clientSetup.php -a"
 alias php-inhouse="php -d auto_prepend_file=ourSiteSetup.php -a"
 #+end_src
+
 * Daemons
 The outline process for creating a daemon is as follows:
  1 Run a process (PHP script). We call this the parent process.
@@ -9698,6 +9699,111 @@ comment, introduce a method that tests the assertion rule.
 **** Extract method
 **** Preserve whole object
 **** Introduce parameter object
+
+* CURL examples
+** sample usage
+#+begin_src php
+   /**
+     * Send curl request to Splynx API
+     *
+     * @param string $method Method: get, delete, put, post
+     * @param string $url
+     * @param array $param
+     * @return array JSON results
+     */
+    private function curl_process($method, $url, $param = array())
+    {
+        $ch = curl_init();
+
+        if ($this->debug == true) {
+            print $method . " to " . $url . "\n";
+            print_r($param);
+        }
+
+        $headers = array();
+        $headers[] = 'Content-type: application/json';
+        $auth_str = $this->make_auth();
+        $headers[] = 'Authorization: Splynx-EA (' . $auth_str . ')';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        if ($method == 'DELETE') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        }
+
+        if ($method == 'POST') {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($param));
+        }
+
+        if ($method == 'PUT') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($param));
+        }
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Splynx PHP API ' . $this->version);
+
+        if ($this->debug == true) {
+            curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        }
+
+        $out = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            trigger_error("cURL failed. Error #" . curl_errno($ch) . ": " . curl_error($ch), E_USER_ERROR);
+        }
+
+        // Parse headers and body
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $header = substr($out, 0, $header_size);
+        $out = substr($out, $header_size);
+
+        // Parse headers
+        $this->parseResponseHeaders($header);
+
+        $this->response_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        if ($this->debug == true) {
+            var_dump($out);
+        }
+
+        $this->result = false;
+
+        switch ($method) {
+            case 'POST':
+                if ($this->response_code == 201) {
+                    $this->result = true;
+                }
+                break;
+
+            case 'PUT':
+                if ($this->response_code == 202) {
+                    $this->result = true;
+                }
+                break;
+
+            case 'DELETE':
+                if ($this->response_code == 204) {
+                    $this->result = true;
+                }
+                break;
+
+            default:
+                if ($this->response_code == 200) {
+                    $this->result = true;
+                }
+                break;
+        }
+
+        $this->response = json_decode($out, true);
+
+        return $this->result;
+    }
+#+end_src
 
 * preventing session hijacking
 
