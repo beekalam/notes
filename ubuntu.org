@@ -1032,6 +1032,18 @@ Streiter (der);;fighter, wrangler
 Krieg (der);;war, 
 sonderbar;;strange
 egal;;the same, all the same
+** change active tab color
+in */usr/share/themes/Ambiance/gtk-3.0/gtk-widgets.css* change the line below
+with the color you like
+
+#+begin_src
+/* give active tab a background, as it might be dragged across of others when reordering */
+.notebook tab:active {
+    /*background-color: @bg_color;*/
+    background-color: #def;
+}
+#+end_src 
+
 * disk
 ** partition a disk
 ** list partitions

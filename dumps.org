@@ -1369,7 +1369,6 @@ function showResponse(originalRequest)
 
 
 
-
 * android 
 ./sdkmanager --proxy=http  --no_https --proxy_host=127.0.0.1 --proxy_port=8118 "ndk-bundle"
 https://developer.android.com/studio/command-line/sdkmanager.html
@@ -1390,3 +1389,14 @@ https://developer.android.com/ndk/downloads/index.html
 
 * download 
 https://www.qt.io/download-open-source/#section-2
+http://radius-manager.soft112.com/
+http://wifismartzone.com/files/rm_related/
+
+* setting android development environmet
+https://gist.github.com/venkateshshukla/9736261
+
+* radius
+http://radmandemo.dmasoftlab.com/
+http://www.proradiusmanager.com/
+
+
