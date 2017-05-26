@@ -1398,5 +1398,23 @@ https://gist.github.com/venkateshshukla/9736261
 * radius
 http://radmandemo.dmasoftlab.com/
 http://www.proradiusmanager.com/
+http://bulbsoft.com/product/
+http://daloradius.com/
+https://splynx.com/
+http://www.ispcube.com/
+http://demo.snono.systems/#/dashboard
+http://demo.snono.systems/
+
+* useful css/javascript libs
+http://malsup.com/jquery/form/
+https://github.com/carhartl/jquery-cookie
+https://github.com/onokumus/metisMenu
+http://www.jacklmoore.com/autosize/
+http://wenzhixin.net.cn/p/multiple-select/docs/
+https://github.com/blueimp/jQuery-File-Upload
+http://sandywalker.github.io/webui-popover/demo/
+https://github.com/bseth99/jquery-ui-extensions
+http://listjs.com/
+http://ned.im/noty/
 
 
