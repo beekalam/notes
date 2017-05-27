@@ -1417,5 +1417,4 @@ http://sandywalker.github.io/webui-popover/demo/
 https://github.com/bseth99/jquery-ui-extensions
 http://listjs.com/
 http://ned.im/noty/
-
-
+* 
