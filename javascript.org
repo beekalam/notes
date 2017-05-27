@@ -8155,6 +8155,82 @@ var selectedAction = $("input[name='actions']:checked").val();
 
 ** form handling
 ** Implementing basic form validation /tocontinue/
+*** validation examples
+#+begin_src javascript
+function validateCreditCard(value) {
+    if (value != "") {
+        return /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/.test(value);
+    }
+    return true;
+}
+function validateNumber(value) {
+    if (value != "") {
+        return !isNaN(parseInt(value, 10)) && isFinite(value);
+        //isFinite, in case letter is on the end
+    }
+    return true;
+}
+function validateDate(value) {
+    if (value != "") {
+        if (/^\d{2}([.\/-])\d{2}\1\d{4}$/.test(value)) {
+            // Remove leading zeros
+            value = value.replace(/0*(\d*)/gi,"$1");
+            var dateValues = value.split(/[\.|\/|-]/);
+            // Correct the month value as month index starts at 0 now 1 (e.g. 0 = Jan, 1 = Feb)
+            dateValues[1]--;
+            var date = new Date(dateValues[2], dateValues[1], dateValues[0]);
+            if (
+                date.getDate() == dateValues[0] &&
+                    date.getMonth() == dateValues[1] &&
+                    date.getFullYear() == dateValues[2]
+                ) {
+                return true;
+            }
+        }
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function validatePasswords(value) {
+    var password = $('.password').val();
+    if (value == "") {
+        return "Both passwords are required";
+    } else if (value != password) {
+        return "Passwords do not match";
+    }
+    return true;
+}
+#+end_src
+*** input character restriction
+#+begin_src javascript
+  $('.username').on("keypress", function(event){
+      //Get key press character code
+      var key = String.fromCharCode(event.which);
+      if (/[^a-zA-Z\d\s:]/.test(key)) {
+          event.preventDefault();
+          return false;
+      }
+  });
+#+end_src
+** UI
+*** Manipulating element css
+#+begin_src javascript
+$(function(){
+    $('.title-colour').on("change", function(){
+        var colour = $(this).val();
+        if (colour == "#") colour = "";
+        $('h1, h2').css("color", colour);
+    });
+    $('.p-size').on("change", function(){
+        var size = $(this).val();
+        if (size == "#") size = "";
+        $('p').css("font-size", size);
+    });
+});
+#+end_src
+
 ** select
 *** empty the content of select
 #+begin_src javascript

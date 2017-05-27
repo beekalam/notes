@@ -7423,11 +7423,11 @@ http-equiv attribute on the <meta> element, like this:
 
 http://live.datatables.net/sadipaji/132/edit
 * disable ajax browser caching
-  
 #+begin_src javascript
 //prevents browser caching
 $.ajaxSetup({ cache: false });
 #+end_src
+
 * csv
 ** Use PHP's fputcsv without writing to a file
 PHP's fputcsv function is very useful for creating CSV files, but by default
@@ -8886,6 +8886,7 @@ function make_pretty($bytes)
 //echo make_pretty(0);            //  0.00 B
 //echo make_pretty(-50);          // -50.00 B
 #+end_src
+
 * CLI
 ** scrip arguments
 #+begin_src php
