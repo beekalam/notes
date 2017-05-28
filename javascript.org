@@ -4308,7 +4308,9 @@ console.log(map.size);         // 2
 #+end_src
 
 ** method definition
-ES6 provides new alternative method definition syntax besides the arrow functions. The old-school method declaration may look as follows:
+ES6 provides new alternative method definition syntax besides the arrow
+functions. The old-school method declaration may look as follows:
+
 #+begin_src javascript
 
 var foo = {
@@ -8377,4 +8379,4 @@ https://google.github.io/styleguide/jsoncstyleguide.xml
 http://javascript.crockford.com/code.html
 https://github.com/ryanmcdermott/clean-code-javascript
 ** Asynchronous JS
- http://sporto.github.io/blog/2012/12/09/callbacks-listeners-promises/
+   http://sporto.github.io/blog/2012/12/09/callbacks-listeners-promises/
