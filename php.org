@@ -1192,10 +1192,112 @@ password_verify('my super cool password', $hashedPassword); // true
    you. That means that you don’t have to salt it yourself.
 ** random string
 #+begin_src php 
-function randString($l = 8) {
-		return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, $l);
+  function randString($l = 8) {
+		  return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, $l);
+  }
+  function shapeSpace_random_string($length) {
+
+	  $characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";	
+
+	  $strlength = strlen($characters);
+
+	  $random = '';
+
+	  for ($i = 0; $i < $length; $i++) {
+		  $random .= $characters[rand(0, $strlength - 1)];
+	  }
+
+	  return $random;
+
+  }
+
+  function shapeSpace_random_string($length) {
+
+	  $characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+	  $random = substr(str_shuffle($characters), 0, $length);
+
+	  return $random;
+
+  }
+
+  // This technique is similar to the previous, but attempts to make the
+  // alphanumeric string even more random by seeding the random number generator
+  // with the srand() function.
+function shapeSpace_random_string($length) {
+	 
+	$characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	
+	srand((double)microtime()*1000000); 
+	
+	$random = '';
+	
+	for ($i = 0; $i < $length; $i++) {  
+		$random .= $characters[rand() % strlen($characters)];  
+	}
+	
+	return $random;
+	  
 }
-#+end_src 
+
+#+end_src
+
+** random human readable string
+#+begin_src php
+function shapeSpace_random_string_readable($length) {
+	
+	$c = array('b','c','d','f','g','h','j','k','l','m','n','p','r','s','t','v','w','x','y','z');
+	
+	$v = array('a','e','i','o','u');
+	
+	srand((double)microtime()*1000000);
+	
+	$max = $length / 2;
+	
+	$random = '';
+	
+	for ($i = 1; $i <= $max; $i++) {
+		$random .= $c[rand(0,19)];
+		$random .= $v[rand(0,4)];
+	}
+	
+	return $random; 
+	 
+}
+#+end_src
+
+** Random password strings
+#+begin_src php
+function generatePassword($length=9, $strength=0) {
+    $vowels = 'aeuy';
+    $consonants = 'bdghjmnpqrstvz';
+    if ($strength & 1) {
+        $consonants .= 'BDGHJLMNPQRSTVWXZ';
+    }
+    if ($strength & 2) {
+        $vowels .= "AEUY";
+    }
+    if ($strength & 4) {
+        $consonants .= '23456789';
+    }
+    if ($strength & 8) {
+        $consonants .= '@#$%';
+    }
+ 
+    $password = '';
+    $alt = time() % 2;
+    for ($i = 0; $i < $length; $i++) {
+        if ($alt == 1) {
+            $password .= $consonants[(rand() % strlen($consonants))];
+            $alt = 0;
+        } else {
+            $password .= $vowels[(rand() % strlen($vowels))];
+            $alt = 1;
+        }
+    }
+    return $password;
+}
+#+end_src
 
 ** Generate random UUID
 #+begin_src php 
@@ -1696,6 +1798,38 @@ function blacklist(array $array, array $blacklist)
 }
 
 $filtered = blacklist($array, ['bad1', 'bad2', ...]);
+#+end_src
+
+** get random numbers from array
+#+begin_src php
+function shapeSpace_get_random_items($length) {
+	
+	$items = array(
+		'item 1',
+		'item 2',
+		'item 3',
+		'item 4',
+		'item 5',
+		'item 6',
+		'item 7',
+		'item 8',
+	);
+	
+	$n = array(1, 2, 3, 4, 5, 6, 7, 8);
+	
+	srand((double)microtime()*1000000);
+	
+	$rand = array_rand($n, $length);
+	
+	sort($rand);
+	
+	$random = '';
+	
+	foreach ($rand as $r) $random = $items[$r] .' ';
+	
+	return $random;
+	
+}
 #+end_src
 
 * Date and Time
@@ -5050,6 +5184,94 @@ header("Cache-Control: max-age=$seconds_to_cache");
 
 The Cache-Control header requires the number of seconds to cache the file so in
 this example it's 3600 because 60 seconds x 60 minutes = 3600.
+
+** block proxy visits via HTTP header
+#+begin_src php
+function shapeSpace_block_proxy_visits() {
+	
+	$headers = array('CLIENT_IP','FORWARDED','FORWARDED_FOR','FORWARDED_FOR_IP','VIA','X_FORWARDED','X_FORWARDED_FOR','HTTP_CLIENT_IP','HTTP_FORWARDED','HTTP_FORWARDED_FOR','HTTP_FORWARDED_FOR_IP','HTTP_PROXY_CONNECTION','HTTP_VIA','HTTP_X_FORWARDED','HTTP_X_FORWARDED_FOR');
+	
+	foreach ($headers as $header){
+		if (isset($_SERVER[$header])) {
+			die('Proxy access not allowed.');
+		}
+	}
+}
+#+end_src
+
+** Block proxy visits via port scanning
+#+begin_src php
+function shapeSpace_block_proxy_visits() {
+	
+	$ports = array(80,81,553,554,1080,3128,4480,6588,8000,8080);
+
+	foreach ($ports as $port) {
+		if (@fsockopen($_SERVER['REMOTE_ADDR'], $port, $errno, $errstr, 5)) {
+			die('Proxy access not allowed.');
+		}
+	}
+}
+#+end_src
+
+** How to Block Proxy Servers via htaccess
+
+By simply blacklisting the various HTTP protocols employed by proxy servers, it
+is possible to block virtually all proxy connections. Here is the code that I
+use for stopping 99% of the proxies that attempt to access certain sites:
+
+#+begin_src
+# block proxy servers from site access
+# https://perishablepress.com/press/2008/04/20/how-to-block-proxy-servers-via-htaccess/
+
+RewriteEngine on
+RewriteCond %{HTTP:VIA}                 !^$ [OR]
+RewriteCond %{HTTP:FORWARDED}           !^$ [OR]
+RewriteCond %{HTTP:USERAGENT_VIA}       !^$ [OR]
+RewriteCond %{HTTP:X_FORWARDED_FOR}     !^$ [OR]
+RewriteCond %{HTTP:PROXY_CONNECTION}    !^$ [OR]
+RewriteCond %{HTTP:XPROXY_CONNECTION}   !^$ [OR]
+RewriteCond %{HTTP:HTTP_PC_REMOTE_ADDR} !^$ [OR]
+RewriteCond %{HTTP:HTTP_CLIENT_IP}      !^$
+RewriteRule ^(.*)$ - [F]
+#+end_src
+
+** Controlling Proxy Access with HTAccess
+#+begin_src
+RewriteCond %{HTTP_REFERER} !(.*)allowed-proxy-01.domain.tld(.*)
+RewriteCond %{HTTP_REFERER} !(.*)allowed-proxy-02.domain.tld(.*)
+RewriteCond %{HTTP_REFERER} !(.*)allowed-proxy-03.domain.tld(.*)
+#+end_src 
+Each line matches against the specified proxy server in the referrer variable.
+Once integrated into the original method, each of the three specified URI’s will
+be allowed access to your site. Thus, by editing these directives to match the
+name and number of your whitelisted proxy servers, you can allow access to any
+list of proxies or other referrers while blocking many of the others.
+
+To integrate your customized whitelist RewriteConditions with the original
+proxy-block method, simply place them near the end of the existing conditions,
+directly above the RewriteRule, like so:
+
+#+begin_src
+<IfModule mod_rewrite.c>
+ RewriteEngine on
+ RewriteCond %{HTTP:VIA}                 !^$ [OR]
+ RewriteCond %{HTTP:FORWARDED}           !^$ [OR]
+ RewriteCond %{HTTP:USERAGENT_VIA}       !^$ [OR]
+ RewriteCond %{HTTP:X_FORWARDED_FOR}     !^$ [OR]
+ RewriteCond %{HTTP:PROXY_CONNECTION}    !^$ [OR]
+ RewriteCond %{HTTP:XPROXY_CONNECTION}   !^$ [OR]
+ RewriteCond %{HTTP:HTTP_PC_REMOTE_ADDR} !^$ [OR]
+ RewriteCond %{HTTP:XROXY_CONNECTION}    !^$ [OR]
+ RewriteCond %{HTTP:X-FORWARDED-FOR}     !^$ [OR]
+ RewriteCond %{HTTP:HTTP_CLIENT_IP}      !^$ [OR]
+ RewriteCond %{HTTP:FORWARDED-FOR}       !^$ [OR]
+ RewriteCond %{HTTP:X-FORWARDED}         !^$
+ RewriteCond %{HTTP_REFERER}             !(.*)allowed-proxy-01.domain.tld(.*)
+ RewriteCond %{HTTP_REFERER}             !(.*)allowed-proxy-02.domain.tld(.*)
+ RewriteCond %{HTTP_REFERER}             !(.*)allowed-proxy-03.domain.tld(.*)
+ RewriteRule ^(.*)$ - [F]
+</IfModule>
+#+end_src
 
 * json
 ** json encode raw UTF?
