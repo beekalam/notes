@@ -217,7 +217,31 @@ http://kevinboone.net/
    http://tunein.com/radio/Germany-r100346/
    http://www.listenlive.eu/germany.html
 http://www.learndeutsch.ir/post/1
+* radius
+http://radmandemo.dmasoftlab.com/
+http://www.proradiusmanager.com/
+http://bulbsoft.com/product/
+http://daloradius.com/
+https://splynx.com/
+http://www.ispcube.com/
+http://demo.snono.systems/#/dashboard
+http://demo.snono.systems/
+** radius lab
+https://mellowd.co.uk/ccie/?p=2777
 
+* useful css/javascript libs
+http://malsup.com/jquery/form/
+https://github.com/carhartl/jquery-cookie
+https://github.com/onokumus/metisMenu
+http://www.jacklmoore.com/autosize/
+http://wenzhixin.net.cn/p/multiple-select/docs/
+https://github.com/blueimp/jQuery-File-Upload
+http://sandywalker.github.io/webui-popover/demo/
+https://github.com/sandywalker/webui-popover
+https://github.com/bseth99/jquery-ui-extensions
+http://listjs.com/
+https://rawgit.com/jeresig/jquery.hotkeys/master/test-static-01.html
+http://ned.im/noty/
 * dopamine foods supplements
 ** saint john wrot
 ** curcumin
