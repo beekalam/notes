@@ -8228,6 +8228,7 @@ function validatePasswords(value) {
     return true;
 }
 #+end_src
+
 *** input character restriction
 #+begin_src javascript
   $('.username').on("keypress", function(event){
@@ -8239,6 +8240,7 @@ function validatePasswords(value) {
       }
   });
 #+end_src
+
 ** UI
 *** Manipulating element css
 #+begin_src javascript
@@ -8296,6 +8298,11 @@ $('body').on('submit','#form-id',function () {
                 return !this.value;
     }).prop('name', '');
 });
+#+end_src
+
+** simulate keypress event on an input field
+#+begin_src javascript
+$('#sear').trigger(jQuery.Event('keypress', { keycode: 13 }));
 #+end_src
 
 ** useful resources
