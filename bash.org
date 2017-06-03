@@ -351,6 +351,53 @@ done
 $ echo stat phpunit.xml -t | awk '{print $2}'
 #+end_src
 
+* history
+** Clear Bash history completely
+Type the following command to clear all your Bash history:
+#+begin_src shell 
+$ history -cw
+#+end_src 
+
+** Clear current session history
+#+begin_src shell 
+$ history -r
+#+end_src 
+
+** Don’t save command in Bash history
+ Execute a command without saving it in the Bash history:
+#+begin_src shell 
+$ <space>command
+#+end_src 
+
+** Don’t save commands in Bash history for current session
+Unsetting HISTFILE will cause any commands that you have executed in the current
+shell session not to be written in your bash_history file upon logout:
+#+begin_src shell
+$ unset HISTFILE
+#+end_src
+
+** Remove a certain line from Bash history
+Type the following command to remove a certain line (e.g. 352) from the Bash history file:
+#+begin_src shell
+$ history -dw 352
+#+end_src
+
+**  Clear or Remove Last Login History in Linux
+To check the last login history, including the history of login attempts that failed, run one of the commands from the table below.
+
+| Command | Logfile          | Description                           |
+|---------+------------------+---------------------------------------|
+| last    | /var/log/wtmp    | Lists successful login/logout history |
+| lastb   | /var/log/btmp    | Shows the bad login attempts          |
+| lastlog | /var/log/lastlog | Shows the most recent login           |
+
+To remove all the information about the last logged in users, you have to clear the files where this information is kept:
+#+begin_src shell 
+$ echo > /var/log/wtmp
+$ echo > /var/log/btmp
+$ echo > /var/log/lastlog
+#+end_src 
+
 * example
 ** write ~head -n 20~ with shell script
 
