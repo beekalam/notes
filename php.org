@@ -1604,6 +1604,7 @@ $total   = array_sum($scores);    // $total = 310
 ** Specifying an Array Not Beginning at Element 0
 Instruct array() to use a different index using the => syntax:
 #+begin_src php
+
 $residents = array(1 => 'Washington', 'Adams', 'Jefferson', 'Madison');
 
 foreach ($presidents as $number => $president) {
@@ -9255,6 +9256,992 @@ The outline process for creating a daemon is as follows:
   - Fork it once again (into the grandchild process) and kill the child process.
   - Close any file descriptors such as STDIN that may tie it to the terminal.
 
+* Starting External Processes from PHP, or Shelling Out
+** intro
+Before your script can start talking to another process, that other process has to start running. You can
+manually start another piece of software at the same time as your PHP script, but often it is useful for the
+PHP script itself to start the other software when it needs to. This is often referred to as shelling out.
+Numerous functions are available in PHP to achieve this, each doing it in a slightly different way:
+•	 exec(): Executes a program and sends the text output to the user.
+•	 passthru(): Executes a program and sends the binary output to the user.
+•	 system(): Executes a program and gathers the output for use by PHP.
+•	 shell_exec(): Executes a command via a shell and gathers its output for use by PHP.
+•	 Backtick operator (for example, `command`): identical to shell_exec().
+•	 pcntl_exe(): Executes a program in the current process space (that is, it stops the
+current PHP script and replaces it with the specified program).
+•	 popen(): Executes a program and opens a file pointer (identical to the pointers
+returned by fopen(), for example) to read or write to the process via STDOUT or STDIN.
+Can only read or write, not both.
+•	 proc_open(): Like popen(), but with more control. Allows both reading and writing
+at the same time. Not as simple to use as popen().
+
+** Gathering Output from a Program
+
+#+begin_src php 
+// Run a command and return its results as a string.
+$output_string = shell_exec('program args');
+
+// Same as above, using backtick operator.
+$output_string = `program args`;
+
+// Run a command and return its results as a list of strings,
+// one per line.
+$output_lines = array();
+exec('program args', $output_lines);
+
+// -----------------------------
+
+// The only way to execute a program without using the shell is to
+// use pcntl_exec(). However, there is no way to do redirection, so
+// you can't capture its output.
+
+$pid = pcntl_fork();
+if ($pid == -1) {
+    die('cannot fork');
+} elseif ($pid) {
+    pcntl_waitpid($pid, $status);
+} else {
+    // Note that pcntl_exec() automatically prepends the program name
+    // to the array of arguments; the program name cannot be spoofed.
+    pcntl_exec($program, array($arg1, $arg2));
+}
+#+end_src 
+
+** Running Another Program
+   
+#+begin_src php 
+// Run a simple command and retrieve its result code.
+exec("vi $myfile", $output, $result_code);
+
+// -----------------------------
+
+// Use the shell to perform redirection.
+exec('cmd1 args | cmd2 | cmd3 >outfile');
+exec('cmd args <infile >outfile 2>errfile');
+
+// -----------------------------
+
+// Run a command, handling its result code or signal.
+$pid = pcntl_fork();
+if ($pid == -1) {
+    die('cannot fork');
+} elseif ($pid) {
+    pcntl_waitpid($pid, $status);
+    if (pcntl_wifexited($status)) {
+        $status = pcntl_wexitstatus($status);
+        echo "program exited with status $status\n";
+    } elseif (pcntl_wifsignaled($status)) {
+        $signal = pcntl_wtermsig($status);
+        echo "program killed by signal $signal\n";
+    } elseif (pcntl_wifstopped($status)) {
+        $signal = pcntl_wstopsig($status);
+        echo "program stopped by signal $signal\n";
+    }
+} else {
+    pcntl_exec($program, $args);
+}
+
+// -----------------------------
+
+// Run a command while blocking interrupt signals.
+$pid = pcntl_fork();
+if ($pid == -1) {
+    die('cannot fork');
+} elseif ($pid) {
+    // parent catches INT and berates user
+    declare(ticks = 1);
+    function handle_sigint($signal) {
+        echo "Tsk tsk, no process interruptus\n";
+    }
+    pcntl_signal(SIGINT, 'handle_sigint');
+    while (!pcntl_waitpid($pid, $status, WNOHANG)) {}
+} else {
+    // child ignores INT and does its thing
+    pcntl_signal(SIGINT, SIG_IGN);
+    pcntl_exec('/bin/sleep', array('10'));
+}
+
+// -----------------------------
+
+// Since there is no direct access to execv() and friends, and
+// pcntl_exec() won't let us supply an alternate program name
+// in the argument list, there is no way to run a command with
+// a different name in the process table.
+#+end_src 
+
+** Replacing the Current Program with a Different One
+#+begin_src php 
+// Transfer control to the shell to run another program.
+pcntl_exec('/bin/sh', array('-c', 'archive *.data'));
+// Transfer control directly to another program.
+pcntl_exec('/path/to/archive', array('accounting.data'));
+#+end_src
+
+** Reading or Writing to Another Program
+#+begin_src php 
+// Handle each line in the output of a process.
+$readme = popen('program arguments', 'r');
+while (!feof($readme)) {
+    $line = fgets($readme);
+    if ($line === false) break;
+    // ...
+}
+pclose($readme);
+
+// -----------------------------
+
+// Write to the input of a process.
+$writeme = popen('program arguments', 'w');
+fwrite($writeme, 'data');
+pclose($writeme);
+
+// -----------------------------
+
+// Wait for a process to complete.
+$f = popen('sleep 1000000', 'r');  // child goes to sleep
+pclose($f);                        // and parent goes to lala land
+
+// -----------------------------
+
+$writeme = popen('program arguments', 'w');
+fwrite($writeme, "hello\n");  // program will get hello\n on STDIN
+pclose($writeme);             // program will get EOF on STDIN
+
+// -----------------------------
+
+// Output buffering callback that sends output to the pager.
+function ob_pager($output, $mode) {
+    static $pipe;
+    if ($mode & PHP_OUTPUT_HANDLER_START) {
+        $pager = getenv('PAGER');
+        if (!$pager) $pager = '/usr/bin/less';  // XXX: might not exist
+        $pipe = popen($pager, 'w');
+    }
+    fwrite($pipe, $output);
+    if ($mode & PHP_OUTPUT_HANDLER_END) {
+        pclose($pipe);
+    }
+}
+
+// Redirect standard output to the pager.
+ob_start('ob_pager');
+
+// Do something useful that writes to standard output, then
+// close the output buffer.
+// ...
+ob_end_flush();
+#+end_src 
+
+** Filtering Your Own Output
+#+begin_src php
+// Output buffering: Only display a certain number of lines of output.
+class Head {
+    function Head($lines=20) {
+        $this->lines = $lines;
+    }
+
+    function filter($output, $mode) {
+        $result = array();
+        $newline = '';
+        if (strlen($output) > 0 && $output[strlen($output) - 1] == "\n") {
+            $newline = "\n";
+            $output = substr($output, 0, -1);
+        }
+        foreach (explode("\n", $output) as $i => $line) {
+            if ($this->lines > 0) {
+                $this->lines--;
+                $result[] = $line;
+            }
+        }
+        return $result ? implode("\n", $result) . $newline : '';
+    }
+}
+
+// Output buffering: Prepend line numbers to each line of output.
+class Number {
+    function Number() {
+        $this->line_number = 0;
+    }
+
+    function filter($output, $mode) {
+        $result = array();
+        $newline = '';
+        if (strlen($output) > 0 && $output[strlen($output) - 1] == "\n") {
+            $newline = "\n";
+            $output = substr($output, 0, -1);
+        }
+        foreach (explode("\n", $output) as $i => $line) {
+            $this->line_number++;
+            $result[] = $this->line_number . ': ' . $line;
+        }
+        return implode("\n", $result) . $newline;
+    }
+}
+
+// Output buffering: Prepend "> " to each line of output.
+class Quote {
+    function Quote() {
+    }
+
+    function filter($output, $mode) {
+        $result = array();
+        $newline = '';
+        if (strlen($output) > 0 && $output[strlen($output) - 1] == "\n") {
+            $newline = "\n";
+            $output = substr($output, 0, -1);
+        }
+        foreach (explode("\n", $output) as $i => $line) {
+            $result[] = "> $line";
+        }
+        return implode("\n", $result) . $newline;
+    }
+}
+
+// Use arrays as callbacks to register filter methods.
+ob_start(array(new Head(100), 'filter'));
+ob_start(array(new Number(), 'filter'));
+ob_start(array(new Quote(), 'filter'));
+
+// Act like /bin/cat.
+while (!feof(STDIN)) {
+    $line = fgets(STDIN);
+    if ($line === false) break;
+    echo $line;
+}
+
+// Should match number of calls to ob_start().
+ob_end_flush();
+ob_end_flush();
+ob_end_flush();
+#+end_src 
+
+** Preprocessing Input
+
+#+begin_src php
+
+// Process command-line arguments using fopen(). PHP supports URLs for
+// filenames as long as the "allow_url_fopen" configuration option is set.
+//
+// Valid URL protocols include:
+//   - http://www.myserver.com/myfile.html
+//   - ftp://ftp.myserver.com/myfile.txt
+//   - compress.zlib://myfile.gz
+//   - php://stdin
+//
+// See http://www.php.net/manual/en/wrappers.php for details.
+//
+$filenames = array_slice($argv, 1);
+if (!$filenames) $filenames = array('php://stdin');
+foreach ($filenames as $filename) {
+    $handle = @fopen($filename, 'r');
+    if ($handle) {
+        while (!feof($handle)) {
+            $line = fgets($handle);
+            if ($line === false) break;
+            // ...
+        }
+        fclose($handle);
+    } else {
+        die("can't open $filename\n");
+    }
+}
+#+end_src 
+
+** Reading STDERR from a Program
+#+begin_src php 
+$output = `cmd 2>&1`;                          // with backticks
+// or
+$ph = popen('cmd 2>&1');                       // with an open pipe
+while (!feof($ph)) { $line = fgets($ph); }     // plus a read
+// -----------------------------
+$output = `cmd 2>/dev/null`;                   // with backticks
+// or
+$ph = popen('cmd 2>/dev/null');                // with an open pipe
+while (!feof($ph)) { $line = fgets($ph); }     // plus a read
+// -----------------------------
+$output = `cmd 2>&1 1>/dev/null`;              // with backticks
+// or
+$ph = popen('cmd 2>&1 1>/dev/null');           // with an open pipe
+while (!feof($ph)) { $line = fgets($ph); }     // plus a read
+// -----------------------------
+$output = `cmd 3>&1 1>&2 2>&3 3>&-`;           // with backticks
+// or
+$ph = popen('cmd 3>&1 1>&2 2>&3 3>&-|');       // with an open pipe
+while (!feof($ph)) { $line = fgets($ph); }     // plus a read
+// -----------------------------
+exec('program args 1>/tmp/program.stdout 2>/tmp/program.stderr');
+// -----------------------------
+$output = `cmd 3>&1 1>&2 2>&3 3>&-`;
+// -----------------------------
+$fd3 = $fd1;
+$fd1 = $fd2;
+$fd2 = $fd3;
+$fd3 = null;
+// -----------------------------
+exec('prog args 1>tmpfile 2>&1');
+exec('prog args 2>&1 1>tmpfile');
+// -----------------------------
+// exec('prog args 1>tmpfile 2>&1');
+$fd1 = "tmpfile";        // change stdout destination first
+$fd2 = $fd1;             // now point stderr there, too
+// -----------------------------
+// exec('prog args 2>&1 1>tmpfile');
+$fd2 = $fd1;             // stderr same destination as stdout
+$fd1 = "tmpfile";        // but change stdout destination
+Controlling Input and Output of Another Program
+
+// Connect to input and output of a process.
+$proc = proc_open($program,
+                  array(0 => array('pipe', 'r'),
+                        1 => array('pipe', 'w')),
+                  $pipes);
+if (is_resource($proc)) {
+    fwrite($pipes[0], "here's your input\n");
+    fclose($pipes[0]);
+    echo stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+    $result_code = proc_close($proc);
+    echo "$result_code\n";
+}
+
+// -----------------------------
+
+$all = array();
+$outlines = array();
+$errlines = array();
+exec("( $cmd | sed -e 's/^/stdout: /' ) 2>&1", $all);
+foreach ($all as $line) {
+    $pos = strpos($line, 'stdout: ');
+    if ($pos !== false && $pos == 0) {
+        $outlines[] = substr($line, 8);
+    } else {
+        $errlines[] = $line;
+    }
+}
+print("STDOUT:\n");
+print_r($outlines);
+print("\n");
+print("STDERR:\n");
+print_r($errlines);
+print("\n");
+#+end_src
+
+** Controlling the Input, Output, and Error of Another Program
+#+begin_src php
+$proc = proc_open($cmd,
+                  array(0 => array('pipe', 'r'),
+                        1 => array('pipe', 'w'),
+                        2 => array('pipe', 'w')),
+                  $pipes);
+
+if (is_resource($proc)) {
+    // give end of file to kid, or feed him
+    fclose($pipes[0]);
+
+    // read till EOF
+    $outlines = array();
+    while (!feof($pipes[1])) {
+        $line = fgets($pipes[1]);
+        if ($line === false) break;
+        $outlines[] = rtrim($line);
+    }
+
+    // XXX: block potential if massive
+    $errlines = array();
+    while (!feof($pipes[2])) {
+        $line = fgets($pipes[2]);
+        if ($line === false) break;
+        $errlines[] = rtrim($line);
+    }
+
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    proc_close($proc);
+
+    print("STDOUT:\n");
+    print_r($outlines);
+    print("\n");
+    print("STDERR:\n");
+    print_r($errlines);
+    print("\n");
+}
+
+// -----------------------------
+
+// cmd3sel - control all three of kids in, out, and error.
+$cmd = "grep vt33 /none/such - /etc/termcap";
+$proc = proc_open($cmd,
+                  array(0 => array('pipe', 'r'),
+                        1 => array('pipe', 'w'),
+                        2 => array('pipe', 'w')),
+                  $pipes);
+
+if (is_resource($proc)) {
+    fwrite($pipes[0], "This line has a vt33 lurking in it\n");
+    fclose($pipes[0]);
+
+    $readers = array($pipes[1], $pipes[2]);
+    while (stream_select($read=$readers,
+                         $write=null,
+                         $except=null,
+                         0, 200000) > 0) {
+        foreach ($read as $stream) {
+            $line = fgets($stream);
+            if ($line !== false) {
+                if ($stream === $pipes[1]) {
+                    print "STDOUT: $line";
+                } else {
+                    print "STDERR: $line";
+                }
+            }
+            if (feof($stream)) {
+                $readers = array_diff($readers, array($stream));
+            }
+        }
+    }
+
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    proc_close($proc);
+}
+#+end_src 
+** Communicating Between Related Processes
+#+begin_src php 
+// PHP supports fork/exec/wait but not pipe. However, it does
+// support socketpair, which can do everything pipes can as well
+// as bidirectional communication. The original recipes have been
+// modified here to use socketpair only.
+
+// -----------------------------
+
+// pipe1 - use socketpair and fork so parent can send to child
+$sockets = array();
+if (!socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $sockets)) {
+    die(socket_strerror(socket_last_error()));
+}
+list($reader, $writer) = $sockets;
+
+$pid = pcntl_fork();
+if ($pid == -1) {
+    die('cannot fork');
+} elseif ($pid) {
+    socket_close($reader);
+    $line = sprintf("Parent Pid %d is sending this\n", getmypid());
+    if (!socket_write($writer, $line, strlen($line))) {
+        socket_close($writer);
+        die(socket_strerror(socket_last_error()));
+    }
+    socket_close($writer);
+    pcntl_waitpid($pid, $status);
+} else {
+    socket_close($writer);
+    $line = socket_read($reader, 1024, PHP_NORMAL_READ);
+    printf("Child Pid %d just read this: `%s'\n", getmypid(), rtrim($line));
+    socket_close($reader);  // this will happen anyway
+    exit(0);
+}
+
+// -----------------------------
+
+// pipe2 - use socketpair and fork so child can send to parent
+$sockets = array();
+if (!socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $sockets)) {
+    die(socket_strerror(socket_last_error()));
+}
+list($reader, $writer) = $sockets;
+
+$pid = pcntl_fork();
+if ($pid == -1) {
+    die('cannot fork');
+} elseif ($pid) {
+    socket_close($writer);
+    $line = socket_read($reader, 1024, PHP_NORMAL_READ);
+    printf("Parent Pid %d just read this: `%s'\n", getmypid(), rtrim($line));
+    socket_close($reader);
+    pcntl_waitpid($pid, $status);
+} else {
+    socket_close($reader);
+    $line = sprintf("Child Pid %d is sending this\n", getmypid());
+    if (!socket_write($writer, $line, strlen($line))) {
+        socket_close($writer);
+        die(socket_strerror(socket_last_error()));
+    }
+    socket_close($writer);  // this will happen anyway
+    exit(0);
+}
+
+// -----------------------------
+
+// pipe3 and pipe4 demonstrate the use of perl's "forking open"
+// feature to reimplement pipe1 and pipe2. pipe5 uses two pipes
+// to simulate socketpair. Since PHP supports socketpair but not
+// pipe, and does not have a "forking open" feature, these
+// examples are skipped here.
+
+// -----------------------------
+
+// pipe6 - bidirectional communication using socketpair
+$sockets = array();
+if (!socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $sockets)) {
+    die(socket_strerror(socket_last_error()));
+}
+list($child, $parent) = $sockets;
+
+$pid = pcntl_fork();
+if ($pid == -1) {
+    die('cannot fork');
+} elseif ($pid) {
+    socket_close($parent);
+    $line = sprintf("Parent Pid %d is sending this\n", getmypid());
+    if (!socket_write($child, $line, strlen($line))) {
+        socket_close($child);
+        die(socket_strerror(socket_last_error()));
+    }
+    $line = socket_read($child, 1024, PHP_NORMAL_READ);
+    printf("Parent Pid %d just read this: `%s'\n", getmypid(), rtrim($line));
+    socket_close($child);
+    pcntl_waitpid($pid, $status);
+} else {
+    socket_close($child);
+    $line = socket_read($parent, 1024, PHP_NORMAL_READ);
+    printf("Child Pid %d just read this: `%s'\n", getmypid(), rtrim($line));
+    $line = sprintf("Child Pid %d is sending this\n", getmypid());
+    if (!socket_write($parent, $line, strlen($line))) {
+        socket_close($parent);
+        die(socket_strerror(socket_last_error()));
+    }
+    socket_close($parent);
+    exit(0);
+}
+#+end_src
+
+** Making a Process Look Like a File with Named Pipes
+#+begin_src php 
+// -----------------------------
+// % mkfifo /path/to/named.pipe
+// -----------------------------
+
+$fifo = fopen('/path/to/named.pipe', 'r');
+if ($fifo !== false) {
+    while (!feof($fifo)) {
+        $line = fgets($fifo);
+        if ($line === false) break;
+        echo "Got: $line";
+    }
+    fclose($fifo);
+} else {
+    die('could not open fifo for read');
+}
+
+// -----------------------------
+
+$fifo = fopen('/path/to/named.pipe', 'w');
+if ($fifo !== false) {
+    fwrite($fifo, "Smoke this.\n");
+    fclose($fifo);
+} else {
+    die('could not open fifo for write');
+}
+
+// -----------------------------
+// % mkfifo ~/.plan                    #  isn't this everywhere yet?
+// % mknod  ~/.plan p                  #  in case you don't have mkfifo
+// -----------------------------
+
+// dateplan - place current date and time in .plan file
+while (true) {
+    $home = getenv('HOME');
+    $fifo = fopen("$home/.plan", 'w');
+    if ($fifo === false) {
+        die("Couldn't open $home/.plan for writing.\n");
+    }
+    fwrite($fifo,
+           'The current time is '
+           . strftime('%a, %d %b %Y %H:%M:%S %z')
+           . "\n");
+    fclose($fifo);
+    sleep(1);
+}
+
+// -----------------------------
+
+// fifolog - read and record log msgs from fifo
+
+$fifo = null;
+
+declare(ticks = 1);
+function handle_alarm($signal) {
+    global $fifo;
+    if ($fifo) fclose($fifo);   // move on to the next queued process
+}
+pcntl_signal(SIGALRM, 'handle_alarm');
+
+while (true) {
+    pcntl_alarm(0);             // turn off alarm for blocking open
+    $fifo = fopen('/tmp/log', 'r');
+    if ($fifo === false) {
+        die("can't open /tmp/log");
+    }
+    pcntl_alarm(1);             // you have 1 second to log
+
+    $service = fgets($fifo);
+    if ($service === false) continue; // interrupt or nothing logged
+    $service = rtrim($service);
+
+    $message = fgets($fifo);
+    if ($message === false) continue; // interrupt or nothing logged
+    $message = rtrim($message);
+
+    pcntl_alarm(0);             // turn off alarms for message processing
+
+    if ($service == 'http') {
+        // ignoring
+    } elseif ($service == 'login') {
+        // log to /var/log/login
+        $log = fopen('/var/log/login', 'a');
+        if ($log !== false) {
+            fwrite($log,
+                   strftime('%a, %d %b %Y %H:%M:%S %z')
+                   . " $service $message\n");
+            fclose($log);
+        } else {
+            trigger_error("Couldn't log $service $message to /var/log/login\n",
+                          E_USER_WARNING);
+        }
+    }
+}
+#+end_src 
+** Sharing Variables in Different Processes
+#+begin_src php 
+// sharetest - test shared variables across forks
+
+$SHM_KEY = ftok(__FILE__, chr(1));
+$handle = sem_get($SHM_KEY);
+$buffer = shm_attach($handle, 1024);
+
+// The original recipe has an INT signal handler here. However, it
+// causes erratic behavior with PHP, and PHP seems to do the right
+// thing without it.
+
+for ($i = 0; $i < 10; $i++) {
+    $child = pcntl_fork();
+    if ($child == -1) {
+        die('cannot fork');
+    } elseif ($child) {
+        $kids[] = $child; // in case we care about their pids
+    } else {
+        squabble();
+        exit();
+    }
+}
+
+while (true) {
+    print 'Buffer is ' . shm_get_var($buffer, 1) . "\n";
+    sleep(1);
+}
+die('Not reached');
+
+function squabble() {
+    global $handle;
+    global $buffer;
+    $i = 0;
+    $pid = getmypid();
+    while (true) {
+        if (preg_match("/^$pid\\b/", shm_get_var($buffer, 1))) continue;
+        sem_acquire($handle);
+        $i++;
+        shm_put_var($buffer, 1, "$pid $i");
+        sem_release($handle);
+    }
+}
+
+// Buffer is 14357 1
+// Buffer is 14355 3
+// Buffer is 14355 4
+// Buffer is 14354 5
+// Buffer is 14353 6
+// Buffer is 14351 8
+// Buffer is 14351 9
+// Buffer is 14350 10
+// Buffer is 14348 11
+// Buffer is 14348 12
+// Buffer is 14357 10
+// Buffer is 14357 11
+// Buffer is 14355 13
+// ...
+#+end_src 
+
+** Listing Available Signals
+#+begin_src php
+// Available signal constants
+% php -r 'print_r(get_defined_constants());' | grep '\[SIG' | grep -v _
+    [SIGHUP] => 1
+    [SIGINT] => 2
+    [SIGQUIT] => 3
+    [SIGILL] => 4
+    [SIGTRAP] => 5
+    [SIGABRT] => 6
+    [SIGIOT] => 6
+    [SIGBUS] => 7
+    [SIGFPE] => 8
+    [SIGKILL] => 9
+    [SIGUSR1] => 10
+    [SIGSEGV] => 11
+    [SIGUSR2] => 12
+    [SIGPIPE] => 13
+    [SIGALRM] => 14
+    [SIGTERM] => 15
+    [SIGSTKFLT] => 16
+    [SIGCLD] => 17
+    [SIGCHLD] => 17
+    [SIGCONT] => 18
+    [SIGSTOP] => 19
+    [SIGTSTP] => 20
+    [SIGTTIN] => 21
+    [SIGTTOU] => 22
+    [SIGURG] => 23
+    [SIGXCPU] => 24
+    [SIGXFSZ] => 25
+    [SIGVTALRM] => 26
+    [SIGPROF] => 27
+    [SIGWINCH] => 28
+    [SIGPOLL] => 29
+    [SIGIO] => 29
+    [SIGPWR] => 30
+    [SIGSYS] => 31
+    [SIGBABY] => 31
+
+// Predefined signal handler constants
+% php -r 'print_r(get_defined_constants());' | grep '\[SIG' | grep _
+    [SIG_IGN] => 1
+    [SIG_DFL] => 0
+    [SIG_ERR] => -1
+#+end_src
+
+** Sending a Signal
+#+begin_src php 
+// send pid a signal 9
+posix_kill($pid, 9);
+// send whole job a signal 1
+posix_kill($pgrp, -1);
+// send myself a SIGUSR1
+posix_kill(getmypid(), SIGUSR1);
+// send a SIGHUP to processes in pids
+foreach ($pids as $pid) posix_kill($pid, SIGHUP);
+
+// -----------------------------
+
+// Use kill with pseudo-signal 0 to see if process is alive.
+if (posix_kill($minion, 0)) {
+    echo "$minion is alive!\n";
+} else {
+    echo "$minion is deceased.\n";
+}
+#+end_src 
+
+** Installing a Signal Handler
+#+begin_src php 
+// call got_sig_quit for every SIGQUIT
+pcntl_signal(SIGQUIT, 'got_sig_quit');
+// call got_sig_pipe for every SIGPIPE
+pcntl_signal(SIGPIPE, 'got_sig_pipe');
+// increment ouch for every SIGINT
+function got_sig_int($signal) { global $ouch; $ouch++; }
+pcntl_signal(SIGINT, 'got_sig_int');
+// ignore the signal INT
+pcntl_signal(SIGINT, SIG_IGN);
+// restore default STOP signal handling
+pcntl_signal(SIGSTOP, SIG_DFL);
+#+end_src 
+
+** Temporarily Overriding a Signal Handler
+
+#+begin_src php 
+// the signal handler
+function ding($signal) {
+    fwrite(STDERR, "\x07Enter your name!\n");
+}
+
+// prompt for name, overriding SIGINT
+function get_name() {
+    declare(ticks = 1);
+    pcntl_signal(SIGINT, 'ding');
+
+    echo "Kindly Stranger, please enter your name: ";
+    while (!@stream_select($read=array(STDIN),
+                           $write=null,
+                           $except=null,
+                           1)) {
+        // allow signals to be observed
+    }
+    $name = fgets(STDIN);
+
+    // Since pcntl_signal() doesn't return the old signal handler, the
+    // best we can do here is set it back to the default behavior.
+    pcntl_signal(SIGINT, SIG_DFL);
+
+    return $name;
+}
+#+end_src 
+
+** Writing a Signal Handler
+#+begin_src php 
+function got_int($signal) {
+    pcntl_signal(SIGINT, 'got_int');  // but not for SIGCHLD!
+    // ...
+}
+pcntl_signal(SIGINT, 'got_int');
+
+// -----------------------------
+
+declare(ticks = 1);
+$interrupted = false;
+
+function got_int($signal) {
+    global $interrupted;
+    $interrupted = true;
+    // The third argument to pcntl_signal() determines if system calls
+    // should be restarted after a signal. It defaults to true.
+    pcntl_signal(SIGINT, 'got_int', false);  // or SIG_IGN
+}
+pcntl_signal(SIGINT, 'got_int', false);
+
+// ... long-running code that you don't want to restart
+
+if ($interrupted) {
+    // deal with the signal
+}
+#+end_src 
+
+** Catching Ctrl-C
+#+begin_src php 
+// ignore signal INT
+pcntl_signal(SIGINT, SIG_IGN);
+
+// install signal handler
+declare(ticks = 1);
+function tsktsk($signal) {
+    fwrite(STDERR, "\x07The long habit of living indisposeth us for dying.");
+    pcntl_signal(SIGINT, 'tsktsk');
+}
+pcntl_signal(SIGINT, 'tsktsk');
+#+end_src 
+
+** Avoiding Zombie Processes
+#+begin_src php 
+pcntl_signal(SIGCHLD, SIG_IGN);
+
+// -----------------------------
+
+declare(ticks = 1);
+function reaper($signal) {
+    $pid = pcntl_waitpid(-1, $status, WNOHANG);
+    if ($pid > 0) {
+        // ...
+        reaper($signal);
+    }
+    // install *after* calling waitpid
+    pcntl_signal(SIGCHLD, 'reaper');
+}
+pcntl_signal(SIGCHLD, 'reaper');
+
+// -----------------------------
+
+declare(ticks = 1);
+function reaper($signal) {
+    $pid = pcntl_waitpid(-1, $status, WNOHANG);
+    if ($pid == -1) {
+        // No child waiting. Ignore it.
+    } else {
+        if (pcntl_wifexited($signal)) {
+            echo "Process $pid exited.\n";
+        } else {
+            echo "False alarm on $pid\n";
+        }
+        reaper($signal);
+    }
+    pcntl_signal(SIGCHLD, 'reaper');
+}
+pcntl_signal(SIGCHLD, 'reaper');
+#+end_src 
+
+** Blocking Signals
+#+begin_src php 
+// PHP does not support sigprocmask().
+Timing Out an Operation
+
+declare(ticks = 1);
+$aborted = false;
+
+function handle_alarm($signal) {
+    global $aborted;
+    $aborted = true;
+}
+pcntl_signal(SIGALRM, 'handle_alarm');
+
+pcntl_alarm(3600);
+// long-time operations here
+pcntl_alarm(0);
+if ($aborted) {
+    // timed out - do what you will here
+}
+#+end_src
+
+* Semaphores
+A basic form of interaction between programs is negotiation over shared resources. If you have a data source,
+peripheral, data set, or any other kind of resource that you want only one program to access at a time, you
+need some form of communication between the programs to decide who is using it and to work out when
+they have finished with it. Since the advent of System V, Unix has had the concept of semaphores to manage
+this process. PHP embodies their use in the sysvsem extension, which is usually already compiled into most
+PHP distributions on Unix and Linux systems. Semaphores are like a flag that gets passed around, and only
+the program holding the flag can access the resource. The following code shows an example of passing a
+semaphore. Open two shell windows and run the script in each one. You will see the scripts getting and
+releasing the semaphore, such that at any one time, only one script will have the semaphore.
+#+begin_src php 
+<?php
+$process = getmypid();
+$semaphore = sem_get('123456', 1, 0666, 1);
+if (!$semaphore) { echo("Couldn't get semaphore\n"); exit;};
+while (1) {
+  sem_acquire($semaphore);
+  echo ($process." has the semaphore\n");
+  sleep(rand(0,5));
+  if (!sem_release($semaphore)) {
+    echo("Couldn't release semaphore\n");
+    exit;
+  };
+  echo ($process." has released the semaphore\n");
+};
+#+end_src
+
+First you get the pid (process ID) of your script to be sure you are running different processes. Next,
+you create a semaphore by using sem_get() and return an ID for that semaphore (you can run multiple
+semaphores for different reasons at the same time, so the ID is important). If another script has already
+created it, this will just return the ID. Note that all of your scripts/programs that want to share a particular
+semaphore must use the same parameters for the sem_get() function (or its equivalent in another
+language); otherwise, a new semaphore will be created. The first parameter for sem_get() is a unique integer
+key that identifies the semaphore (this is different from the ID returned by the sem_get() function, which is
+PHP’s internal resource ID for the semaphore and will vary from script to script for the same semaphore).
+The second parameter is the number of unique users permitted to hold the semaphore at any one time. This
+allows you to, for instance, allow two (or more) people to “hold the flag” at the same time, which can be used
+to place an upper limit on the number of simultaneous users of a resource. The third parameter specifies the
+standard Unix permissions (as you would use with chmod, for instance), and the fourth parameter specifies
+whether to automatically release the semaphore if the request goes away.
+Once you have your semaphore set up, you then enter a loop. Each time through the loop you try to get
+the flag with sem_aquire(). This is a blocking function, which means that your program will sit and wait
+until the semaphore is available and you can grab it. Once you have it, the program will continue. You sleep
+for a random time (in “real life” you would do something useful with the resource you are protecting with the
+semaphore), and then release it back again. At this point, the next waiting process will pounce in and “grab
+the flag,” as you go back to the start of the loop and try to acquire it again.
+It’s important to note that semaphores work on the honor system. Every program is expected to
+implement and respect the semaphore. The system itself doesn’t know about or enforce semaphores,
+so a rogue program can simply nip in and use the resource regardless of who is “holding the flag.” Thus
+semaphores shouldn’t be used for any systems that you don’t absolutely control (or don’t mind if unentitled
+software grabs your resource), and only where all programs want to share the resource. There is also little
+protection against deadlocks, whereby one program gets the semaphore and fails to release it due to an error
+with that program. The final parameter of the sem_get() function does allow for the automatic releasing of
+the semaphore if the request disappears (for example, if the process crashes or the semaphore is closed in
+the current script with sem_remove()), but this may not protect against the process simply hanging.
 * refactoring
 ** Replace Temp with Query
 
@@ -9922,7 +10909,7 @@ comment, introduce a method that tests the assertion rule.
 **** Extract method
 **** Preserve whole object
 **** Introduce parameter object
-
+     
 * CURL examples
 ** sample usage
 #+begin_src php
@@ -10163,7 +11150,6 @@ spent in each of the different algorithms and modules.
  - Test often to ensure that the refactoring does not change the behavior.
 
 * useful functions
-
 #+begin_src php
 function php_version()
 {
@@ -10311,6 +11297,9 @@ function default_ini_path()
 ** php snippets
 
 http://psoug.org/browse.htm?cid=2
+** cookbook
+http://pleac.sourceforge.net/pleac_php/index.html
+http://pleac.sourceforge.net/
 ** PHP best practices
 
 http://www.phptherightway.com/

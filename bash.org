@@ -367,6 +367,35 @@ do
 done
 #+end_src
 
+* useful functions
+#+begin_src shell
+# for printing message
+p_status() {
+    echo
+    echo "# $1"
+    echo
+}
+
+err() {
+    echo 'Error, exiting'
+    exit 1
+}
+
+exec_cmd_noerror() {
+    echo "$1"
+    bash -c "$1"
+}
+
+exec_cmd() {
+    exec_cmd_noerror "$1" || err
+}
+
+#example
+p_status 'Adding NodeSource repository'
+exec_cmd 'apt-get update'
+
+#+end_src
+
 * usefule resources
 
 http://www.panix.com/~elflord/unix/bash-tute.html
