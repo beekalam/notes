@@ -2012,6 +2012,30 @@ function shapeSpace_get_random_items($length) {
 }
 #+end_src
 
+** printing a list with commas
+#+begin_src php
+function commify_series($list)
+{
+  $n = str_word_count($list); $series = str_word_count($list, 1);
+
+  if ($n == 0) return NULL;
+  if ($n == 1) return $series[0];
+  if ($n == 2) return $series[0] . ' and ' . $series[1];
+  
+  return join(', ', array_slice($series, 0, -1)) . ', and ' . $series[$n - 1];
+}
+
+// ------------
+
+echo commify_series('red') . "\n";
+echo commify_series('red yellow') . "\n";
+echo commify_series('red yellow green') . "\n";
+
+$mylist = 'red yellow green';
+echo 'I have ' . commify_series($mylist) . " marbles.\n";
+
+#+end_src
+
 * Date and Time
 ** Finding the Current Date and Time
 Use strftime() or date() for a formatted time string, as in Example 3-2.
