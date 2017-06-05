@@ -376,6 +376,99 @@ $ truncate logfile --size 0
 
 ** searching
 *** Find
+** find by name
+#+begin_src shell 
+$ find -name "query"
+
+# To find a file by name, but ignore the case of the query, type:
+$ find -iname "query"
+
+# If you want to find all files that don't adhere to a specific pattern, you
+# can invert the search with "-not" or "!". If you use "!", you must escape
+# the character so that bash does not try to interpret it before find can act:
+$ find -not -name "query_to_avoid"
+#Or
+$ find \! -name "query_to_avoid"
+#+end_src
+
+** by type
+You can specify the type of files you want to find with the "-type" parameter. It works like this:
+
+find -type type_descriptor query
+Some of the most common descriptors that you can use to specify the type of file are here:
+
+f: regular file
+
+d: directory
+
+l: symbolic link
+
+c: character devices
+
+b: block devices
+
+For instance, if we wanted to find all of the character devices on our system, we could issue this command:
+#+begin_src shell 
+$ find / -type c
+
+# We can search for all files that end in ".conf" like this:
+$ find / -type f -name "*.conf"
+#+end_src 
+
+** Filtering by Size
+We add a suffix on the end of our value that specifies how we are counting. These are some popular options:
+
+c: bytes
+
+k: Kilobytes
+
+M: Megabytes
+
+G: Gigabytes
+
+b: 512-byte blocks
+
+#+begin_src shell 
+# To find all files that are exactly 50 bytes, type:
+$ find / -size 50c
+
+# To find all files less than 50 bytes, we can use this form instead:
+$ find / -size -50c
+
+# To Find all files more than 700 Megabytes, we can use this command:
+$ find / -size +700M
+#+end_src
+
+** Filter by Time
+inux stores time data about access times, modification times, and change times.
+
+Access Time: Last time a file was read or written to.
+
+Modification Time: Last time the contents of the file were modified.
+
+Change Time: Last time the file's inode meta-data was changed.
+
+We can use these with the "-atime", "-mtime", and "-ctime" parameters. These can
+use the plus and minus symbols to specify greater than or less than, like we did
+with size.
+#+begin_src shell 
+#To find files that have a modification time of a day ago, type:
+$ find / -mtime 1
+
+# If we want files that were accessed in less than a day ago, we can type:
+$ find / -atime -1
+
+#To get files that last had their meta information changed more than 3 days ago, type:
+$ find / -ctime +3
+
+# There are also some companion parameters we can use to specify minutes instead of days:
+$ find / -mmin -1
+
+#This will give the files that have been modified type the system in the last minute.
+Find can also do comparisons against a reference file and return those that are newer:
+$ find / -newer myfile
+#+end_src
+
 
 Some important options:
 -x (on BSD) -xdev (on Linux)       Stay on the same file system (dev in fstab).
@@ -445,6 +538,26 @@ $ find ~ -iname '*.jpg' -print0 | xargs --null ls -l
 # will search its database of pathnames and output any that contain the string "bin/zip"
 $ locate bin/zip
 #+end_src
+
+** Filter by owner and permission
+You do this by using the "-user" and "-group" parameters respectively. 
+#+begin_src shell 
+# Find a file that is owned by the "syslog" user by entering:
+$ find / -user syslog
+
+# Similarly, we can specify files owned by the "shadow" group by typing:
+$ find / -group shadow
+
+#We can also search for files with specific permissions.
+#If we want to match an exact set of permissions, we use this form:
+$ find / -perm 644
+
+#This will match files with exactly the permissions specified.
+
+#If we want to specify anything with at least those permissions, you can use this form:
+$ find / -perm -644
+#+end_src
+
 
 * php
 
