@@ -1594,6 +1594,185 @@ FUNCTION ordinalize($number) {
 empty([]) // true
 #+end_src
 
+** testing for presence of a key
+#+begin_src php
+if (isset($hash[$key]))
+  ; // entry exists  
+else
+  ; // no such entry 
+
+// ------------
+
+// Returns TRUE on all existing entries regardless of attached value
+if (array_key_exists($key, $hash))
+  ; // entry exists  
+else
+  ; // no such entry 
+#+end_src
+
+** Deleting from a array
+
+// Remove one, or more, hash entries
+unset($hash[$key]);
+
+unset($hash[$key1], $hash[$key2], $hash[$key3]);
+
+// Remove entire hash
+unset($hash);
+
+** Traversing a Hash
+#+begin_src php 
+// Access keys and values
+foreach($hash as $key => $value)
+{
+  ; // ...
+}
+
+// Access keys only
+foreach(array_keys($hash) as $key)
+{
+  ; // ...
+}
+
+// Access values only
+foreach($hash as $value)
+{
+  ; // ...
+}
+#+end_src
+
+** Inverting a array
+#+begin_src php 
+// PHP offers the 'array_flip' function to perform the task of exchanging the keys / values
+// of a hash i.e. invert or 'flip' a hash
+
+$reverse = array_flip($hash);
+#+end_src
+
+** sorting array
+#+begin_src php 
+// PHP implements a swag of sorting functions, most designed to work with numerically-indexed
+// arrays. For sorting hashes, the 'key' sorting functions are required:
+// * 'ksort', 'krsort', 'uksort'
+
+// Ascending order
+ksort($hash);
+
+// Descending order [i.e. reverse sort]
+krsort($hash);
+
+// Comparator-based sort
+
+function comparator($left, $right)
+{
+  // Compare left key with right key
+  return $left > $right;
+}
+
+uksort($hash, 'comparator');
+#+end_src
+
+** merging arrays
+#+begin_src php 
+// PHP offers the 'array_merge' function for this task [a related function, 'array_combine',
+// may be used to create a hash from an array of keys, and one of values, respectively]
+
+// Merge two, or more, arrays
+$merged = array_merge($a, $b, $c);
+
+// Create a hash from array of keys, and of values, respectively
+$hash = array_combine($keys, $values);
+#+end_src
+
+** Finding Common or Different Keys in Two Hashes
+#+begin_src php 
+// PHP offers a number of array-based 'set operation' functions:
+// * union:        array_merge
+// * intersection: array_intersect and family
+// * difference:   array_diff and family
+// which may be used for this type of task
+
+// Keys occurring in both hashes
+$common = array_intersect_key($h1, $h2);
+
+// Keys occurring in the first hash [left side], but not in the second hash
+$this_not_that = array_diff_key($h1, $h2);
+#+end_src 
+
+** Hashing References
+#+begin_src php 
+// PHP implements a special type known as a 'resource' that encompasses things like file handles,
+// sockets, database connections, and many others. The 'resource' type is, essentially, a
+// reference variable that is not readily serialisable. That is to say:
+// * A 'resource' may be converted to a string representation via the 'var_export' function
+// * That same string cannot be converted back into a 'resource'
+// So, in terms of array handling, 'resource' types may be stored as array reference values,
+// but cannot be used as keys. 
+//
+// I suspect it is this type of problem that the Perl::Tie package helps resolve. However, since
+// PHP doesn't, AFAIK, sport a similar facility, the examples in this section cannot be
+// implemented using file handles as keys
+
+$filenames = array('/etc/termcap', '/vmlinux', '/bin/cat');
+
+foreach($filenames as $filename)
+{
+  if (!($fh = fopen($filename, 'r'))) continue;
+
+  // Cannot do this as required by the Perl code:
+  // $name[$fh] = $filename;
+
+  // Ok
+  $name[$filename] = $fh;
+}
+
+// Would traverse array via:
+//
+// foreach(array_keys($name) as $fh)
+// ...
+// or
+//
+// foreach($name as $fh => $filename)
+// ...
+// but since '$fh' cannot be a key, either of these will work:
+//
+// foreach($name as $filename => $fh)
+// or
+foreach(array_values($name) as $fh)
+{
+  fclose($fh);
+}
+#+end_src 
+
+** Retrieving from a Hash in Insertion Order
+#+begin_src php
+// Unless sorted, hash elements remain in the order of insertion. If care is taken to
+// always add a new element to the end of the hash, then element order is the order
+// of insertion. The following function, 'array_push_associative' [modified from original
+// found at 'array_push' section of PHP documentation], does just that
+function array_push_associative(&$arr)
+{
+  foreach (func_get_args() as $arg)
+  {
+    if (is_array($arg))
+      foreach ($arg as $key => $value) { $arr[$key] = $value; $ret++; }
+    else
+      $arr[$arg] = '';
+  }
+
+  return $ret;
+}
+
+// ------------
+
+$food_colour = array();
+
+// Individual calls, or ...
+array_push_associative($food_colour, array('Banana' => 'Yellow'));
+array_push_associative($food_colour, array('Apple' => 'Green'));
+array_push_associative($food_colour, array('Lemon' => 'Yellow'));
+#+end_src 
+ 
 ** sum of items in an array
 
 #+begin_src php
@@ -11106,8 +11285,6 @@ Pattern is to abstract the interface to an algorithm so that multiple algorithms
 for the same functionality can be encapsulated in interchangeable objects.
 
 
-
-
 *** Performance Tradeoffs
 At this point you might be thinking, “Well, sure these optimizations lead to
 code that is harder to read and modify, but aren’t the performance improvements
@@ -11126,7 +11303,6 @@ spent in each of the different algorithms and modules.
 *** To prevent a CAP Epidemic 
 
  - Know what project code is available for reuse. 
-
  - Know what external libraries are available for use in place of implementing the functionality internally. 
 
  - Use high-level languages and their features such as functions, objects,
@@ -11148,6 +11324,296 @@ spent in each of the different algorithms and modules.
  - Keep up to date on the advancements in automating refactoring. 
 
  - Test often to ensure that the refactoring does not change the behavior.
+**  NIH syndrome
+*** The symptoms of NIH Syndrome:
+
+ - A desire to control every aspect of the application code because of a lack of trust in other programmers. 
+ - Not using external code and libraries because of an unnecessary fear of: 
+  - Poor performance 
+  - Unknown learning curve 
+  - Minor missing functionality 
+  - Debugging difficulties 
+  - Affect on deadlines 
+ - Duplicating code and work internally that has already been accomplished externally. 
+ - Heavy reliance on internal development because of the belief that all facets
+   of software engineering can be accomplished better internally.
+
+*** To prevent NIH Syndrome: 
+
+ - Use middleware and open source to reduce development time. 
+
+ - Balance the time spent evaluating external solutions with the savings they provide. 
+
+ - Be sure the appropriate level of technical support is available as a reassurance that the external solution will not cause undue problems. 
+
+ - Understand the benefits and disadvantages of code snippets, standard libraries, run-time libraries, active libraries, and frameworks. 
+
+ - Use .NET to expand the available external solutions. 
+
+ - Use the Strategy, Adapter, Bridge, and Façade design patterns to provide
+   encapsulation and abstraction of external libraries to allow easier
+   integration and smoother replacement when necessary.
+
+*** To cure the effects of NIH Syndrome: 
+
+ - Do not allow internal code to become a sacred cow, protected for no valid reason. 
+
+ - Do not be afraid to remove internal code in favor of better external code. 
+
+ - Perform any transition to external code one step at a time using standard refactoring techniques. 
+
+ - When possible, change or wrap the external interface to conform to internal standards. 
+
+ - Apply workarounds carefully, and remove them as soon as they are no longer necessary. 
+
+ - Use testing liberally to verify external code works as expecting and perform regression testing when changing implementations.
+
+* Design patterns
+** Abstract Factory
+*** Intent
+ - Provide an interface for creating families of related or dependent objects without specifying their concrete classes.
+ - A hierarchy that encapsulates: many possible "platforms", and the construction of a suite of "products".
+ - The new operator considered harmful. 
+*** Check list
+ - Decide if "platform independence" and creation services are the current source of pain.
+ - Map out a matrix of "platforms" versus "products".
+ - Define a factory interface that consists of a factory method per product.
+ - Define a factory derived class for each platform that encapsulates all references to the new operator.
+ - The client should retire all references to new, and use the factory methods to create the product objects. 
+#+begin_src php
+<?php
+
+/*
+ * BookFactory classes
+ */
+abstract class AbstractBookFactory {
+    abstract function makePHPBook();
+    abstract function makeMySQLBook();
+}
+
+class OReillyBookFactory extends AbstractBookFactory {
+    private $context = "OReilly";
+    function makePHPBook() {
+        return new OReillyPHPBook;
+    }
+    function makeMySQLBook() {
+        return new OReillyMySQLBook;
+    }
+}
+
+class SamsBookFactory extends AbstractBookFactory {
+    private $context = "Sams";
+    function makePHPBook() {
+        return new SamsPHPBook;
+    }
+    function makeMySQLBook() {
+        return new SamsMySQLBook;
+    }
+}
+
+/*
+ *   Book classes
+ */
+abstract class AbstractBook {
+    abstract function getAuthor();
+    abstract function getTitle();
+}
+
+abstract class AbstractMySQLBook extends AbstractBook {
+    private $subject = "MySQL";
+}
+
+class OReillyMySQLBook extends AbstractMySQLBook {
+    private $author;
+    private $title;
+    function __construct() {
+        $this->author = 'George Reese, Randy Jay Yarger, and Tim King';
+        $this->title = 'Managing and Using MySQL';
+    }
+    function getAuthor() {
+        return $this->author;
+    }
+    function getTitle() {
+        return $this->title;
+    }
+}
+
+class SamsMySQLBook extends AbstractMySQLBook {
+    private $author;
+    private $title;
+    function __construct() {
+        $this->author = 'Paul Dubois';
+        $this->title = 'MySQL, 3rd Edition';
+    }
+    function getAuthor() {
+        return $this->author;
+    }
+    function getTitle() {
+        return $this->title;
+    }
+}
+
+abstract class AbstractPHPBook extends AbstractBook {
+    private $subject = "PHP";
+}
+
+class OReillyPHPBook extends AbstractPHPBook {
+    private $author;
+    private $title;
+    private static $oddOrEven = 'odd';
+    function __construct()
+    {
+        //alternate between 2 books
+        if ('odd' == self::$oddOrEven) {
+            $this->author = 'Rasmus Lerdorf and Kevin Tatroe';
+            $this->title = 'Programming PHP';
+            self::$oddOrEven = 'even';
+        }
+        else {
+            $this->author = 'David Sklar and Adam Trachtenberg';
+            $this->title = 'PHP Cookbook';
+            self::$oddOrEven = 'odd';
+        }
+    }
+    function getAuthor() {
+        return $this->author;
+    }
+    function getTitle() {
+        return $this->title;
+    }
+}
+
+class SamsPHPBook extends AbstractPHPBook {
+    private $author;
+    private $title;
+    function __construct() {
+        //alternate randomly between 2 books
+        mt_srand((double)microtime() * 10000000);
+        $rand_num = mt_rand(0, 1);
+
+        if (1 > $rand_num) {
+            $this->author = 'George Schlossnagle';
+            $this->title = 'Advanced PHP Programming';
+        }
+        else {
+            $this->author = 'Christian Wenz';
+            $this->title = 'PHP Phrasebook';
+        }
+    }
+    function getAuthor() {
+        return $this->author;
+    }
+    function getTitle() {
+        return $this->title;
+    }
+}
+
+/*
+ *   Initialization
+ */
+
+  writeln('BEGIN TESTING ABSTRACT FACTORY PATTERN');
+  writeln('');
+
+  writeln('testing OReillyBookFactory');
+  $bookFactoryInstance = new OReillyBookFactory;
+  testConcreteFactory($bookFactoryInstance);
+  writeln('');
+
+  writeln('testing SamsBookFactory');
+  $bookFactoryInstance = new SamsBookFactory;
+  testConcreteFactory($bookFactoryInstance);
+
+  writeln("END TESTING ABSTRACT FACTORY PATTERN");
+  writeln('');
+
+  function testConcreteFactory($bookFactoryInstance)
+  {
+      $phpBookOne = $bookFactoryInstance->makePHPBook();
+      writeln('first php Author: '.$phpBookOne->getAuthor());
+      writeln('first php Title: '.$phpBookOne->getTitle());
+
+      $phpBookTwo = $bookFactoryInstance->makePHPBook();
+      writeln('second php Author: '.$phpBookTwo->getAuthor());
+      writeln('second php Title: '.$phpBookTwo->getTitle());
+
+      $mySqlBook = $bookFactoryInstance->makeMySQLBook();
+      writeln('MySQL Author: '.$mySqlBook->getAuthor());
+      writeln('MySQL Title: '.$mySqlBook->getTitle());
+  }
+
+  function writeln($line_in) {
+    echo $line_in."<br/>";
+  }
+
+?>
+/*
+Output
+
+BEGIN TESTING ABSTRACT FACTORY PATTERN
+
+
+testing OReillyBookFactory
+first php Author: Rasmus Lerdorf and Kevin Tatroe
+first php Title: Programming PHP
+second php Author: David Sklar and Adam Trachtenberg
+second php Title: PHP Cookbook
+MySQL Author: George Reese, Randy Jay Yarger, and Tim King
+MySQL Title: Managing and Using MySQL
+
+
+testing SamsBookFactory
+first php Author: Christian Wenz
+first php Title: PHP Phrasebook
+second php Author: George Schlossnagle
+second php Title: Advanced PHP Programming
+MySQL Author: Paul Dubois
+MySQL Title: MySQL, 3rd Edition
+
+
+END TESTING ABSTRACT FACTORY PATTERN
+*/
+#+end_src
+
+** Builder Design Pattern
+*** Intent
+
+Separate the construction of a complex object from its representation so that the same construction process can create different representations.
+Parse a complex representation, create one of several targets.
+
+*** Problem
+
+An application needs to create the elements of a complex aggregate. The
+specification for the aggregate exists on secondary storage and one of many
+representations needs to be built in primary storage.
+
+*** Check list
+
+Decide if a common input and many possible representations (or outputs) is the problem at hand.
+Encapsulate the parsing of the common input in a Reader class.
+Design a standard protocol for creating all possible output representations. Capture the steps of this protocol in a Builder interface.
+Define a Builder derived class for each target representation.
+The client creates a Reader object and a Builder object, and registers the latter with the former.
+The client asks the Reader to "construct".
+The client asks the Builder to return the result.
+
+*** Rules of thumb
+
+ - Sometimes creational patterns are complementary: Builder can use one of the
+   other patterns to implement which components get built. Abstract Factory,
+   Builder, and Prototype can use Singleton in their implementations.
+
+ - Builder focuses on constructing a complex object step by step. Abstract
+   Factory emphasizes a family of product objects (either simple or complex).
+   Builder returns the product as a final step, but as far as the Abstract
+   Factory is concerned, the product gets returned immediately.
+
+ - Builder often builds a Composite.
+
+ - Often, designs start out using Factory Method (less complicated, more
+   customizable, subclasses proliferate) and evolve toward Abstract Factory,
+   Prototype, or Builder (more flexible, more complex) as the designer discovers
+   where more flexibility is needed.
 
 * useful functions
 #+begin_src php
