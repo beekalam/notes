@@ -11616,6 +11616,7 @@ The client asks the Builder to return the result.
    where more flexibility is needed.
 
 * useful functions
+** dump
 #+begin_src php
 function php_version()
 {
@@ -11757,6 +11758,38 @@ function default_ini_path()
 {
     return (realpath($_SERVER['DOCUMENT_ROOT']));
 }
+#+end_src
+** check for valid mcode
+
+#+begin_src php
+function ab_mc($vmc)
+	{
+			 $mc = $vmc;
+			
+			if( 10 != strlen($mc) )
+				return false;
+			if("1111111111" == $mc||"0000000000"== $mc||"2222222222"== $mc||"3333333333"== $mc||"4444444444"== $mc|| 
+				"5555555555"== $mc||"6666666666"== $mc||"7777777777"== $mc||"8888888888"== $mc||"9999999999"== $mc)
+				return false;
+				
+				$c = intval($mc[9]);
+				$n = 10 * intval($mc[0]) +
+					 9 * intval($mc[1] ) + 
+					 8 * intval($mc[2] ) + 
+					 7 * intval($mc[3] ) +
+					 6 * intval($mc[4] ) + 
+					 5 * intval($mc[5] ) + 
+					 4 * intval($mc[6] ) + 
+					 3 * intval($mc[7] ) +
+					 2 * intval($mc[8] ) ;
+							   
+				$r= $n - 11 * intval($n/11);
+				
+				if( (0==$r && $r==$c) || (1==$r && 1== $c) || ($r > 1 && $c== 11 - $r) )
+					return true;
+								
+				return false;
+	}
 #+end_src
 
 * useful resources
