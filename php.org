@@ -2036,6 +2036,236 @@ echo 'I have ' . commify_series($mylist) . " marbles.\n";
 
 #+end_src
 
+function commify_series($list)
+{
+  $n = str_word_count($list); $series = str_word_count($list, 1);
+
+  if ($n == 0) return NULL;
+  if ($n == 1) return $series[0];
+  if ($n == 2) return $series[0] . ' and ' . $series[1];
+  
+  return join(', ', array_slice($series, 0, -1)) . ', and ' . $series[$n - 1];
+}
+
+// ------------
+
+echo commify_series('red') . "\n";
+echo commify_series('red yellow') . "\n";
+echo commify_series('red yellow green') . "\n";
+
+$mylist = 'red yellow green';
+echo 'I have ' . commify_series($mylist) . " marbles.\n";
+
+** Iterating Over an Array by Reference
+
+// Conventional 'read-only' access
+foreach($array as $item)
+{
+  ; // Can access, but not update, array element referred to by '$item'
+}
+
+// ----
+
+// '&' makes '$item' a reference
+foreach($array as &$item)
+{
+  ; // Update array element referred to by '$item'
+}
+
+// ------------
+
+$arraylen = count($array);
+
+for($i = 0; $i < $arraylen; $i++)
+{
+  ; // '$array' is updateable via subscript notation
+}
+** Computing Union, Intersection, or Difference of Unique Lists
+
+// PHP offers a number of array-based 'set operation' functions:
+// * union:        array_unique(array_merge(...))
+// * intersection: array_intersect and family
+// * difference:   array_diff and family
+// which may be used for this type of task. Also, if returned arrays need to be
+// reindexed, 'array_slice($array, 0)', or 'array_values($array)' are useful
+
+$a = array(1, 3, 5, 6, 7, 8);
+$b = array(2, 3, 5, 7, 9);
+
+$union = array_values(array_unique(array_merge($a, $b))); // 1, 2, 3, 5, 6, 7, 8, 9
+$isect = array_values(array_intersect($a, $b));           // 3, 5, 7
+$diff = array_values(array_diff($a, $b));                 // 1, 8
+
+** Processing Multiple Elements of an Array
+
+// Array elements can be deleted using 'unset'; removing several elements would require applying
+// 'unset' several times, probably in a loop. However, they would most likely also need to be
+// reindexed, so a better approach would be to use 'array_slice' which avoids explicit looping.
+// Where elements need to be removed, and those elements also returned, it is probably best to
+// combine both operations in a function. This is the approach taken here in implementing both
+// 'shiftN' and 'popN', and it is these functions that are used in the examples
+
+function popN(&$arr, $n)
+{
+  $ret = array_slice($arr, -($n), $n);
+  $arr = array_slice($arr, 0, count($arr) - $n);
+  return $ret;
+}
+
+function shiftN(&$arr, $n)
+{
+  $ret = array_slice($arr, 0, $n);
+  $arr = array_slice($arr, $n);
+  return $ret;
+}
+
+// ------------
+
+// Remove $n elements from the front of $array; return them in $fron
+$front = shiftN($array, $n);
+
+// Remove $n elements from the end of $array; return them in $end
+$end = popN($array, $n);
+
+// ------------
+
+** Sorting an Array Numerically
+
+// PHP offers a rich set of sorting functions. Key features:
+// * Inplace sorts; the original array, not a a copy, is sorted
+// * Separate functions exist for sorting [both ascending and descending order]:
+//   - By value, assign new keys / indices [sort, rsort]
+//   - By key   [ksort, krsort] (for non-numerically indexed arrays)
+//   - By value [asort, arsort]
+//   - As above, but using a user-defined comparator [i.e. callback function]
+//     [usort, uasort, uksort]
+//   - Natural order sort [natsort]
+// * Significantly, if sorting digit-only elements, whether strings or numbers,
+//   'natural order' [i.e. 1 before 10 before 100 (ascending)] is retained. If
+//   the elements are alphanumeric e.g. 'z1', 'z10' then 'natsort' should be
+//   used [note: beware of 'natsort' with negative numbers; prefer 'sort' or 'asort']
+
+$unsorted = array(7, 12, -13, 2, 100, 5, 1, -2, 23, 3, 6, 4);
+
+sort($unsorted);                 // -13, -2, 1, 2, 3, 4, 5, 6, 7, 12, 23, 100
+rsort($unsorted);                // 100, 23, 12, 7, 6, 5, 4, 3, 2, 1, -2, -13
+
+asort($unsorted);                // -13, -2, 1, 2, 3, 4, 5, 6, 7, 12, 23, 100
+arsort($unsorted);               // 100, 23, 12, 7, 6, 5, 4, 3, 2, 1, -2, -13
+
+natsort($unsorted);              // -2, -13, 1, 2, 3, 4, 5, 6, 7, 12, 23, 100
+
+// ------------
+
+function ascend($left, $right) { return $left > $right; }
+function descend($left, $right) { return $left < $right; }
+
+// ------------
+
+usort($unsorted, 'ascend');      // -13, -2, 1, 2, 3, 4, 5, 6, 7, 12, 23, 100
+usort($unsorted, 'descend');     // 100, 23, 12, 7, 6, 5, 4, 3, 2, 1, -2, -13
+
+uasort($unsorted, 'ascend');     // -13, -2, 1, 2, 3, 4, 5, 6, 7, 12, 23, 100
+uasort($unsorted, 'descend');    // 100, 23, 12, 7, 6, 5, 4, 3, 2, 1, -2, -13
+
+// ----------------------------
+
+function kill_process($pid)
+{
+  // Is 'killable' ?
+  if (!posix_kill($pid, 0)) return;
+
+  // Ok, so kill in two stages
+  posix_kill($pid, 15); // SIGTERM
+  sleep(1);
+  posix_kill($pid, 9);  // SIGKILL
+}
+
+function pid($pentry)
+{
+  $p = preg_split('/\s/', trim($pentry));
+  return $p[0];
+}
+
+$processes = array_map('pid', array_slice(preg_split('/\n/', `ps ax`), 1, -1));
+sort($processes);
+
+echo join(' ,', $processes) . "\n";
+
+echo 'Enter a pid to kill: ';
+if (($pid = trim(fgets(STDIN))))
+  kill_process($pid);
+
+** Implementing a Circular List
+
+array_unshift($a1, array_pop($a1));  // last -> first
+array_push($a1, array_shift($a1));   // first -> last
+
+// ----------------------------
+
+function grab_and_rotate(&$arr)
+{
+  $item = $arr[0];
+  array_push($arr, array_shift($arr));
+  return $item;
+}
+
+// ------------
+
+$processes = array(1, 2, 3, 4, 5);
+
+while (TRUE)
+{
+  $process = grab_and_rotate($processes);
+  echo "Handling process {$process}\n";
+  sleep(1);
+}
+
+** Randomizing an Array
+
+// PHP offers the 'shuffle' function to perform this task
+
+$arr = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+shuffle($arr);
+
+echo join(' ', $arr) . "\n";
+
+// ----------------------------
+
+// Perl example equivalents
+function fisher_yates_shuffle(&$a)
+{
+  $size = count($a) - 1;
+
+  for($i = $size; $i >= 0; $i--)
+  {
+    if (($j = rand(0, $i)) != $i)
+      list($a[$i], $a[$j]) = array($a[$j], $a[$i]);
+  }
+}
+
+function naive_shuffle(&$a)
+{
+  $size = count($a);
+
+  for($i = 0; $i < $size; $i++)
+  {
+    $j = rand(0, $size - 1);
+    list($a[$i], $a[$j]) = array($a[$j], $a[$i]);
+  }
+}
+
+// ------------
+
+$arr = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+fisher_yates_shuffle($arr);
+echo join(' ', $arr) . "\n";
+
+naive_shuffle($arr);
+echo join(' ', $arr) . "\n";
+
 * Date and Time
 ** Finding the Current Date and Time
 Use strftime() or date() for a formatted time string, as in Example 3-2.
