@@ -5709,7 +5709,8 @@ directly above the RewriteRule, like so:
 
 ** BH load module
 #+begin_src php
-function load_module($filename){
+function load_module($filename)
+{
     ob_start();
     include $filename;
     $ret = ob_get_clean();

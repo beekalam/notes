@@ -269,6 +269,14 @@ $ hg pull --rev 300
 $ hg  update
 #+end_src
 
+** mplayer
+#+begin_src shell 
+# play recursively
+$ find -maxdepth 1 -type f -name \*.\* > playlist
+# or
+$ mplayer -loop 0 -playlist <(find "$PWD" -type f | egrep -i '(\.mp3|\.wav|\.flac|\.ogg|\.avi|\.flv|\.mpeg|\.mpg)'| sort)
+#+end_src 
+
 * groups
 *** Add a New Group
 
@@ -440,7 +448,7 @@ $ find / -size +700M
 #+end_src
 
 ** Filter by Time
-inux stores time data about access times, modification times, and change times.
+Linux stores time data about access times, modification times, and change times.
 
 Access Time: Last time a file was read or written to.
 
@@ -557,7 +565,6 @@ $ find / -perm 644
 #If we want to specify anything with at least those permissions, you can use this form:
 $ find / -perm -644
 #+end_src
-
 
 * php
 
