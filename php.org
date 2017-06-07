@@ -5707,6 +5707,16 @@ directly above the RewriteRule, like so:
 </IfModule>
 #+end_src
 
+** BH load module
+#+begin_src php
+function load_module($filename){
+    ob_start();
+    include $filename;
+    $ret = ob_get_clean();
+    return $ret;
+}
+#+end_src
+
 * json
 ** json encode raw UTF?
 
