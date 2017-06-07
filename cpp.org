@@ -189,6 +189,17 @@ int main( ) {
 //abc123
 #+end_src 
 
+#+begin_src cpp
+
+string NumberToString ( int Number )
+{
+   ostringstream ss;
+   ss << Number;
+   return ss.str();
+}
+
+#+end_src
+
 * conditional compilation using predifined macros
 
 #+begin_src cpp

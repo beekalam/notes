@@ -12059,7 +12059,6 @@ function ab_mc($vmc)
 
 * useful resources
 ** php snippets
-
 http://psoug.org/browse.htm?cid=2
 ** cookbook
 http://pleac.sourceforge.net/pleac_php/index.html
@@ -12078,3 +12077,7 @@ https://stackoverflow.com/documentation/php/topics
 
 https://github.com/Svish/TimerPHP/blob/master/src/Timer.php
 http://www.geekality.net/2011/05/01/php-how-to-proportionally-resize-an-uploaded-image/#more-1564
+** PHP online website code
+https://github.com/slepp/filebin.ca
+https://github.com/slepp/pastebin.ca
+https://github.com/sayakb/sticky-notes
