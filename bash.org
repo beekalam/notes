@@ -396,8 +396,20 @@ To remove all the information about the last logged in users, you have to clear 
 $ echo > /var/log/wtmp
 $ echo > /var/log/btmp
 $ echo > /var/log/lastlog
-#+end_src 
+#+end_src
 
+* sudo echo > /path/to/privileged_file
+
+#+begin_src shell
+# Using tee:
+$ echo 'deb blah ... blah' | sudo tee --append /etc/apt/sources.list
+# Make sure to avoid quotes inside quotes.
+# To avoid printing data back to the console:
+$ echo 'deb blah ... blah' | sudo tee --append /etc/apt/sources.list > /dev/null
+#+end_src
+
+** TODO use the sudoe in following link
+https://stackoverflow.com/questions/84882/sudo-echo-something-etc-privilegedfile-doesnt-work-is-there-an-alterna
 * example
 ** write ~head -n 20~ with shell script
 
