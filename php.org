@@ -11880,6 +11880,24 @@ The client asks the Builder to return the result.
    Prototype, or Builder (more flexible, more complex) as the designer discovers
    where more flexibility is needed.
 
+* mobile related
+#+begin_src php
+$userAgent=$_SERVER[’HTTP_USER_AGENT’];
+function isTablet()
+{
+ global $userAgent;
+if (strstr($userAgent, "iPad") ||
+    strstr($userAgent, "Kindle") ||
+    strstr($userAgent, "wOSBrowser") ||
+    (strstr($userAgent, "Android")&& strstr(userAgent, "Tablet")) ||
+    (strstr($userAgent, "Android")&&
+    ! strstr(userAgent, "Mobile")))
+ return true;
+
+ return false;
+}
+#+end_src
+
 * useful functions
 ** dump
 #+begin_src php
