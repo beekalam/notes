@@ -4040,7 +4040,14 @@ showDetails(123);
 showDetails(123);
 
 client.quit();
-#+end_src 
+#+end_src
+
+* time
+** set time debian manuall
+#+begin_src shell 
+$ date --set 1998-11-02 
+$ date --set 21:08:00
+#+end_src
 
 * useful resources
 * references
