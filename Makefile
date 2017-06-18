@@ -11,6 +11,5 @@ all:
 		echo "</html>" >> $$file.html; \
 		done)
 
-
 clean:
 	$(shell for file in *html; do rm $$file; done)

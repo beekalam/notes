@@ -1,0 +1,107 @@
+<html>
+<body>
+<p><a href="#time">time</a></p>
+
+<h3>remap caps lock to ctrl</h3>
+
+<p>To permanently change the behaviour:</p>
+
+<pre><code>run dconf-editor
+
+select org.gnome.desktop.input-sources
+
+Change xkb-options to ['ctrl:nocaps'] (or add it to any existing options)
+</code></pre>
+
+<p>or on the command line (Warning -- this overwrites your existing settings!):</p>
+
+<p>gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:nocaps']"</p>
+
+<h3>how teo tell which version of library you have?</h3>
+
+<pre><code>$ dpkg -l '*ssh*'
+</code></pre>
+
+<h3>groups</h3>
+
+<h3>Add a New Group</h3>
+
+<p>To add a new group, all you need to do is use the groupadd command like so:</p>
+
+<pre><code>groupadd &lt;groupname&gt;
+</code></pre>
+
+<h3>Add an Existing User to a Group</h3>
+
+<p>Next we’ll add a user to the group, using this syntax:</p>
+
+<pre><code>usermod -a -G &lt;groupname&gt; username
+</code></pre>
+
+<p>For example, to add user geek to the group admins, use the following command:</p>
+
+<pre><code>usermod -a -G admins geek
+</code></pre>
+
+<h3>Change a User’s Primary Group</h3>
+
+<p>Sometimes you might want to switch out the primary group that a user is assigned to, which you can do with this command:</p>
+
+<pre><code>usermod -g &lt;groupname&gt; username
+</code></pre>
+
+<h3>View a User’s Group Assignments</h3>
+
+<p>If you’re trying to figure out a permissions issue, you’ll want to use the id command to see what groups the user is assigned to:</p>
+
+<p>id <username></p>
+
+<p>This will display output something like this:</p>
+
+<p>uid=500(howtogeek) gid=500(howtogeek) groups=500(howtogeek), 1093(admins)</p>
+
+<p>You can also use the groups command if you prefer, though it is the same as using id -Gn <username>.</p>
+
+<p>groups <username></p>
+
+<h3>View a List of All Groups</h3>
+
+<p>To view all the groups on the system, you can just use the groups command:</p>
+
+<p>groups</p>
+
+<p>Add a New User and Assign a Group in One Command</p>
+
+<p>Sometimes you might need to add a new user that has access to a particular resource or directory, like adding a new FTP user. You can do so with the useradd command:</p>
+
+<p>useradd -g <groupname> username</p>
+
+<p>For instance, lets say you wanted to add a new user named jsmith to the ftp group:</p>
+
+<p>useradd -G ftp jsmith</p>
+
+<p>And then you’ll want to assign a password for that user, of course:</p>
+
+<p>passwd jsmith</p>
+
+<p>Add a User to Multiple Groups</p>
+
+<p>You can easily add a user to more than one group by simply specifying them in a comma-delimited list, as long as you are assigning the secondary groups:</p>
+
+<p>usermod -a -G ftp,admins,othergroup <username></p>
+
+<p>That should cover everything you need to know about adding users to groups on Linux.</p>
+
+<h3>time</h3>
+
+<h3>sync time</h3>
+
+<pre><code>sudo date -s "$(wget -qSO- --max-redirect=0 google.com 2&gt;&amp;1 | grep Date: | cut -d' ' -f5-8)Z"
+</code></pre>
+
+<h3>change CPU affinity for a process</h3>
+
+<pre><code>taskset -pc 0 `pidof recoll`
+</code></pre>
+</body>
+</html>

@@ -1,0 +1,830 @@
+<html>
+<body>
+<h1>Angular 1.x styleguide (ES2015)</h1>
+
+<h3>Architecture, file structure, components, one-way dataflow and best practices</h3>
+
+<hr />
+
+<blockquote>
+  <p>Want an example structure as reference? Check out my <a href="https://github.com/toddmotto/angular-1-5-components-app">component based architecture 1.5 app</a>.</p>
+</blockquote>
+
+<hr />
+
+<p><em>A sensible styleguide for teams by <a href="//twitter.com/toddmotto">@toddmotto</a></em></p>
+
+<p>This architecture and styleguide has been rewritten from the ground up for ES2015, the changes in Angular 1.5+ for future-upgrading your application to Angular 2. This guide includes new best practices for one-way dataflow, event delegation, component architecture and component routing.</p>
+
+<p>You can find the old styleguide <a href="https://github.com/toddmotto/angular-styleguide/tree/angular-old-es5">here</a>, and the reasoning behind the new one <a href="https://toddmotto.com/rewriting-angular-styleguide-angular-2">here</a>.</p>
+
+<blockquote>
+  <p>Join the Ultimate AngularJS learning experience to fully master beginner and advanced Angular features to build real-world apps that are fast, and scale.</p>
+</blockquote>
+
+<p><a href="https://ultimateangular.com" target="_blank"><img src="https://toddmotto.com/img/ua.png"></a></p>
+
+<h2>Table of Contents</h2>
+
+<ol>
+<li><a href="#modular-architecture">Modular architecture</a>
+<ol>
+<li><a href="#module-theory">Theory</a></li>
+<li><a href="#root-module">Root module</a></li>
+<li><a href="#component-module">Component module</a></li>
+<li><a href="#common-module">Common module</a></li>
+<li><a href="#low-level-modules">Low-level modules</a></li>
+<li><a href="#file-naming-conventions">File naming conventions</a></li>
+<li><a href="#scalable-file-structure">Scalable file structure</a></li>
+</ol></li>
+<li><a href="#components">Components</a>
+<ol>
+<li><a href="#component-theory">Theory</a></li>
+<li><a href="#supported-properties">Supported properties</a></li>
+<li><a href="#controllers">Controllers</a></li>
+<li><a href="#one-way-dataflow-and-events">One-way dataflow and Events</a></li>
+<li><a href="#stateful-components">Stateful Components</a></li>
+<li><a href="#stateless-components">Stateless Components</a></li>
+<li><a href="#routed-components">Routed Components</a></li>
+</ol></li>
+<li><a href="#directives">Directives</a>
+<ol>
+<li><a href="#directive-theory">Theory</a></li>
+<li><a href="#recommended-properties">Recommended properties</a></li>
+<li><a href="#constants-or-classes">Constants or Classes</a></li>
+</ol></li>
+<li><a href="#services">Services</a>
+<ol>
+<li><a href="#service-theory">Theory</a></li>
+<li><a href="#classes-for-service">Classes for Service</a></li>
+</ol></li>
+<li><a href="#styles">Styles</a></li>
+<li><a href="#es2015-and-tooling">ES2015 and Tooling</a></li>
+<li><a href="#state-management">State management</a></li>
+<li><a href="#resources">Resources</a></li>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#contributing">Contributing</a></li>
+</ol>
+
+<h1>Modular architecture</h1>
+
+<p>Each module in an Angular app is a module component. A module component is the root definition for that module that encapsulates the logic, templates, routing and child components.</p>
+
+<h3>Module theory</h3>
+
+<p>The design in the modules maps directly to our folder structure, which keeps things maintainable and predictable. We should ideally have three high-level modules: root, component and common. The root module defines the base module that bootstraps our app, and the corresponding template. We then import our component and common modules into the root module to include our dependencies. The component and common modules then require lower-level component modules, which contain our components, controllers, services, directives, filters and tests for each reusable feature.</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Root module</h3>
+
+<p>A root module begins with a root component that defines the base element for the entire application, with a routing outlet defined, example shown using <code>ui-view</code> from <code>ui-router</code>.</p>
+
+<p><code>js
+// app.component.js
+export const AppComponent = {
+  template: `
+    &lt;header&gt;
+        Hello world
+    &lt;/header&gt;
+    &lt;div&gt;
+        &lt;div ui-view&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;footer&gt;
+        Copyright MyApp 2016.
+    &lt;/footer&gt;
+  `
+};
+</code></p>
+
+<p>A root module is then created, with <code>AppComponent</code> imported and registered with <code>.component('app', AppComponent)</code>. Further imports for submodules (component and common modules) are made to include all components relevant for the application. You'll notice styles are also being imported here, we'll come onto this in later chapters in this guide.</p>
+
+<p>```js
+// app.module.js
+import angular from 'angular';
+import uiRouter from 'angular-ui-router';
+import { AppComponent } from './app.component';
+import { ComponentsModule } from './components/components.module';
+import { CommonModule } from './common/common.module';
+import './app.scss';</p>
+
+<p>export const AppModule = angular
+  .module('app', [
+    ComponentsModule,
+    CommonModule,
+    uiRouter
+  ])
+  .component('app', AppComponent)
+  .name;
+```</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Component module</h3>
+
+<p>A Component module is the container reference for all reusable components. See above how we import <code>ComponentsModule</code> and inject them into the Root module, this gives us a single place to import all components for the app. These modules we require are decoupled from all other modules and thus can be moved into any other application with ease.</p>
+
+<p>```js
+import angular from 'angular';
+import { CalendarModule } from './calendar/calendar.module';
+import { EventsModule } from './events/events.module';</p>
+
+<p>export const ComponentsModule = angular
+  .module('app.components', [
+    CalendarModule,
+    EventsModule
+  ])
+  .name;
+```</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Common module</h3>
+
+<p>The Common module is the container reference for all application specific components, that we don't want to use in another application. This can be things like layout, navigation and footers. See above how we import <code>CommonModule</code> and inject them into the Root module, this gives us a single place to import all common components for the app.</p>
+
+<p>```js
+import angular from 'angular';
+import { NavModule } from './nav/nav.module';
+import { FooterModule } from './footer/footer.module';</p>
+
+<p>export const CommonModule = angular
+  .module('app.common', [
+    NavModule,
+    FooterModule
+  ])
+  .name;
+```</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Low-level modules</h3>
+
+<p>Low-level modules are individual component modules that contain the logic for each feature block. These will each define a module, to be imported to a higher-level module, such as a component or common module, an example below. Always remember to add the <code>.name</code> suffix to each <code>export</code> when creating a <em>new</em> module, not when referencing one. You'll noticed routing definitions also exist here, we'll come onto this in later chapters in this guide.</p>
+
+<p>```js
+import angular from 'angular';
+import uiRouter from 'angular-ui-router';
+import { CalendarComponent } from './calendar.component';
+import './calendar.scss';</p>
+
+<p>export const CalendarModule = angular
+  .module('calendar', [
+    uiRouter
+  ])
+  .component('calendar', CalendarComponent)
+  .config(($stateProvider, $urlRouterProvider) => {
+    'ngInject';
+    $stateProvider
+      .state('calendar', {
+        url: '/calendar',
+        component: 'calendar'
+      });
+    $urlRouterProvider.otherwise('/');
+  })
+  .name;
+```</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>File naming conventions</h3>
+
+<p>Keep it simple and lowercase, use the component name, e.g. <code>calendar.*.js*</code>, <code>calendar-grid.*.js</code> - with the name of the type of file in the middle. Use <code>*.module.js</code> for the module definition file, as it keeps it verbose and consistent with Angular 2.</p>
+
+<p><code>
+calendar.module.js
+calendar.component.js
+calendar.service.js
+calendar.directive.js
+calendar.filter.js
+calendar.spec.js
+calendar.html
+calendar.scss
+</code></p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Scalable file structure</h3>
+
+<p>File structure is extremely important, this describes a scalable and predictable structure. An example file structure to illustrate a modular component architecture.</p>
+
+<p><code>
+├── app/
+│   ├── components/
+│   │  ├── calendar/
+│   │  │  ├── calendar.module.js
+│   │  │  ├── calendar.component.js
+│   │  │  ├── calendar.service.js
+│   │  │  ├── calendar.spec.js
+│   │  │  ├── calendar.html
+│   │  │  ├── calendar.scss
+│   │  │  └── calendar-grid/
+│   │  │     ├── calendar-grid.module.js
+│   │  │     ├── calendar-grid.component.js
+│   │  │     ├── calendar-grid.directive.js
+│   │  │     ├── calendar-grid.filter.js
+│   │  │     ├── calendar-grid.spec.js
+│   │  │     ├── calendar-grid.html
+│   │  │     └── calendar-grid.scss
+│   │  ├── events/
+│   │  │  ├── events.module.js
+│   │  │  ├── events.component.js
+│   │  │  ├── events.directive.js
+│   │  │  ├── events.service.js
+│   │  │  ├── events.spec.js
+│   │  │  ├── events.html
+│   │  │  ├── events.scss
+│   │  │  └── events-signup/
+│   │  │     ├── events-signup.module.js
+│   │  │     ├── events-signup.component.js
+│   │  │     ├── events-signup.service.js
+│   │  │     ├── events-signup.spec.js
+│   │  │     ├── events-signup.html
+│   │  │     └── events-signup.scss
+│   │  └── components.module.js
+│   ├── common/
+│   │  ├── nav/
+│   │  │     ├── nav.module.js
+│   │  │     ├── nav.component.js
+│   │  │     ├── nav.service.js
+│   │  │     ├── nav.spec.js
+│   │  │     ├── nav.html
+│   │  │     └── nav.scss
+│   │  ├── footer/
+│   │  │     ├── footer.module.js
+│   │  │     ├── footer.component.js
+│   │  │     ├── footer.service.js
+│   │  │     ├── footer.spec.js
+│   │  │     ├── footer.html
+│   │  │     └── footer.scss
+│   │  └── common.module.js
+│   ├── app.module.js
+│   ├── app.component.js
+│   └── app.scss
+└── index.html
+</code></p>
+
+<p>The high level folder structure simply contains <code>index.html</code> and <code>app/</code>, a directory in which all our root, component, common and low-level modules live along with the markup and styles for each component.</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h1>Components</h1>
+
+<h3>Component theory</h3>
+
+<p>Components are essentially templates with a controller. They are <em>not</em> Directives, nor should you replace Directives with Components, unless you are upgrading "template Directives" with controllers, which are best suited as a component. Components also contain bindings that define inputs and outputs for data and events, lifecycle hooks and the ability to use one-way data flow and event Objects to get data back up to a parent component. These are the new defacto standard in Angular 1.5 and above. Everything template and controller driven that we create will likely be a component, which may be a stateful, stateless or routed component. You can think of a "component" as a complete piece of code, not just the <code>.component()</code> definition Object. Let's explore some best practices and advisories for components, then dive into how you should be structuring them via stateful, stateless and routed component concepts.</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Supported properties</h3>
+
+<p>These are the supported properties for <code>.component()</code> that you can/should use:</p>
+
+<p>| Property | Support |
+|---|---|
+| bindings | Yes, use <code>'@'</code>, <code>'&lt;'</code>, <code>'&amp;'</code> only |
+| controller | Yes |
+| controllerAs | Yes, default is <code>$ctrl</code> |
+| require | Yes (new Object syntax) |
+| template | Yes |
+| templateUrl | Yes |
+| transclude | Yes |</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Controllers</h3>
+
+<p>Controllers should only be used alongside components, never anywhere else. If you feel you need a controller, what you really need is likely a stateless component to manage that particular piece of behaviour.</p>
+
+<p>Here are some advisories for using <code>Class</code> for controllers:</p>
+
+<ul>
+<li>Drop the name "Controller", i.e. use <code>controller: class TodoComponent {...}</code> to aid future Angular 2 migration</li>
+<li>Always use the <code>constructor</code> for dependency injection purposes</li>
+<li>Use <a href="https://github.com/olov/ng-annotate">ng-annotate</a>'s <code>'ngInject';</code> syntax for <code>$inject</code> annotations</li>
+<li>If you need to access the lexical scope, use arrow functions</li>
+<li>Alternatively to arrow functions, <code>let ctrl = this;</code> is also acceptable and may make more sense depending on the use case</li>
+<li>Bind all public functions directly to the <code>Class</code></li>
+<li>Make use of the appropriate lifecycle hooks, <code>$onInit</code>, <code>$onChanges</code>, <code>$postLink</code> and <code>$onDestroy</code>
+<ul>
+<li>Note: <code>$onChanges</code> is called before <code>$onInit</code>, see <a href="#resources">resources</a> section for articles detailing this in more depth</li>
+</ul></li>
+<li>Use <code>require</code> alongside <code>$onInit</code> to reference any inherited logic</li>
+<li>Do not override the default <code>$ctrl</code> alias for the <code>controllerAs</code> syntax, therefore do not use <code>controllerAs</code> anywhere</li>
+</ul>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>One-way dataflow and Events</h3>
+
+<p>One-way dataflow was introduced in Angular 1.5, and redefines component communication.</p>
+
+<p>Here are some advisories for using one-way dataflow:</p>
+
+<ul>
+<li>In components that receive data, always use one-way databinding syntax <code>'&lt;'</code></li>
+<li><em>Do not</em> use <code>'='</code> two-way databinding syntax anymore, anywhere</li>
+<li>Components that have <code>bindings</code> should use <code>$onChanges</code> to clone the one-way binding data to break Objects passing by reference and updating the parent data</li>
+<li>Use <code>$event</code> as a function argument in the parent method (see stateful example below <code>$ctrl.addTodo($event)</code>)</li>
+<li>Pass an <code>$event: {}</code> Object back up from a stateless component (see stateless example below <code>this.onAddTodo</code>).
+<ul>
+<li>Bonus: Use an <code>EventEmitter</code> wrapper with <code>.value()</code> to mirror Angular 2, avoids manual <code>$event</code> Object creation</li>
+</ul></li>
+<li>Why? This mirrors Angular 2 and keeps consistency inside every component. It also makes state predictable.</li>
+</ul>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Stateful components</h3>
+
+<p>Let's define what we'd call a "stateful component".</p>
+
+<ul>
+<li>Fetches state, essentially communicating to a backend API through a service</li>
+<li>Does not directly mutate state</li>
+<li>Renders child components that mutate state</li>
+<li>Also referred to as smart/container components</li>
+</ul>
+
+<p>An example of a stateful component, complete with its low-level module definition (this is only for demonstration, so some code has been omitted for brevity):</p>
+
+<p>```js
+/* ----- todo/todo.component.js ----- */
+import templateUrl from './todo.html';</p>
+
+<p>export const TodoComponent = {
+  templateUrl,
+  controller: class TodoComponent {
+    constructor(TodoService) {
+      'ngInject';
+      this.todoService = TodoService;
+    }
+    $onInit() {
+      this.newTodo = {
+        title: '',
+        selected: false
+      };
+      this.todos = [];
+      this.todoService.getTodos().then(response => this.todos = response);
+    }
+    addTodo({ todo }) {
+      if (!todo) return;
+      this.todos.unshift(todo);
+      this.newTodo = {
+        title: '',
+        selected: false
+      };
+    }
+  }
+};</p>
+
+<p>/* ----- todo/todo.html ----- */</p>
+
+<div class="todo">
+  <todo-form
+    todo="$ctrl.newTodo"
+    on-add-todo="$ctrl.addTodo($event);"></todo-form>
+  <todo-list
+    todos="$ctrl.todos"></todo-list>
+</div>
+
+<p>/* ----- todo/todo.module.js ----- */
+import angular from 'angular';
+import { TodoComponent } from './todo.component';
+import './todo.scss';</p>
+
+<p>export const TodoModule = angular
+  .module('todo', [])
+  .component('todo', TodoComponent)
+  .name;
+```</p>
+
+<p>This example shows a stateful component, that fetches state inside the controller, through a service, and then passes it down into stateless child components. Notice how there are no Directives being used such as <code>ng-repeat</code> and friends inside the template. Instead, data and functions are delegated into <code>&lt;todo-form&gt;</code> and <code>&lt;todo-list&gt;</code> stateless components.</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Stateless components</h3>
+
+<p>Let's define what we'd call a "stateless component".</p>
+
+<ul>
+<li>Has defined inputs and outputs using <code>bindings: {}</code></li>
+<li>Data enters the component through attribute bindings (inputs)</li>
+<li>Data leaves the component through events (outputs)</li>
+<li>Mutates state, passes data back up on-demand (such as a click or submit event)</li>
+<li>Doesn't care where data comes from - it's stateless</li>
+<li>Are highly reusable components</li>
+<li>Also referred to as dumb/presentational components</li>
+</ul>
+
+<p>An example of a stateless component (let's use <code>&lt;todo-form&gt;</code> as an example), complete with its low-level module definition (this is only for demonstration, so some code has been omitted for brevity):</p>
+
+<p>```js
+/* ----- todo/todo-form/todo-form.component.js ----- */
+import templateUrl from './todo-form.html';</p>
+
+<p>export const TodoFormComponent = {
+  bindings: {
+    todo: '&lt;',
+    onAddTodo: '&amp;'
+  },
+  templateUrl,
+  controller: class TodoFormComponent {
+    constructor(EventEmitter) {
+        'ngInject';
+        this.EventEmitter = EventEmitter;
+    }
+    $onChanges(changes) {
+      if (changes.todo) {
+        this.todo = Object.assign({}, this.todo);
+      }
+    }
+    onSubmit() {
+      if (!this.todo.title) return;
+      // with EventEmitter wrapper
+      this.onAddTodo(
+        this.EventEmitter({
+          todo: this.todo
+        })
+      );
+      // without EventEmitter wrapper
+      this.onAddTodo({
+        $event: {
+          todo: this.todo
+        }
+      });
+    }
+  }
+};</p>
+
+<p>/* ----- todo/todo-form/todo-form.html ----- */</p>
+
+<form name="todoForm" ng-submit="$ctrl.onSubmit();">
+  <input type="text" ng-model="$ctrl.todo.title">
+  <button type="submit">Submit</button>
+</form>
+
+<p>/* ----- todo/todo-form/todo-form.module.js ----- */
+import angular from 'angular';
+import { TodoFormComponent } from './todo-form.component';
+import './todo-form.scss';</p>
+
+<p>export const TodoFormModule = angular
+  .module('todo.form', [])
+  .component('todoForm', TodoFormComponent)
+  .value('EventEmitter', payload => ({ $event: payload }))
+  .name;
+```</p>
+
+<p>Note how the <code>&lt;todo-form&gt;</code> component fetches no state, it simply receives it, mutates an Object via the controller logic associated with it, and passes it back to the parent component through the property bindings. In this example, the <code>$onChanges</code> lifecycle hook makes a clone of the initial <code>this.todo</code> binding Object and reassigns it, which means the parent data is not affected until we submit the form, alongside one-way data flow new binding syntax <code>'&lt;'</code>.</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Routed components</h3>
+
+<p>Let's define what we'd call a "routed component".</p>
+
+<ul>
+<li>It's essentially a stateful component, with routing definitions</li>
+<li>No more <code>router.js</code> files</li>
+<li>We use Routed components to define their own routing logic</li>
+<li>Data "input" for the component is done via the route resolve (optional, still available in the controller with service calls)</li>
+</ul>
+
+<p>For this example, we're going to take the existing <code>&lt;todo&gt;</code> component, refactor it to use a route definition and <code>bindings</code> on the component which receives data (the secret here with <code>ui-router</code> is the <code>resolve</code> properties we create, in this case <code>todoData</code> directly map across to <code>bindings</code> for us). We treat it as a routed component because it's essentially a "view":</p>
+
+<p>```js
+/* ----- todo/todo.component.js ----- */
+import templateUrl from './todo.html';</p>
+
+<p>export const TodoComponent = {
+  bindings: {
+    todoData: '&lt;'
+  },
+  templateUrl,
+  controller: class TodoComponent {
+    constructor() {
+      'ngInject'; // Not actually needed but best practice to keep here incase dependencies needed in the future
+    }
+    $onInit() {
+      this.newTodo = {
+        title: '',
+        selected: false
+      };
+    }
+    $onChanges(changes) {
+      if (changes.todoData) {
+        this.todos = Object.assign({}, this.todoData);
+      }
+    }
+    addTodo({ todo }) {
+      if (!todo) return;
+      this.todos.unshift(todo);
+      this.newTodo = {
+        title: '',
+        selected: false
+      };
+    }
+  }
+};</p>
+
+<p>/* ----- todo/todo.html ----- */</p>
+
+<div class="todo">
+  <todo-form
+    todo="$ctrl.newTodo"
+    on-add-todo="$ctrl.addTodo($event);"></todo-form>
+  <todo-list
+    todos="$ctrl.todos"></todo-list>
+</div>
+
+<p>/* ----- todo/todo.service.js ----- */
+export class TodoService {
+  constructor($http) {
+    'ngInject';
+    this.$http = $http;
+  }
+  getTodos() {
+    return this.$http.get('/api/todos').then(response => response.data);
+  }
+}</p>
+
+<p>/* ----- todo/todo.module.js ----- */
+import angular from 'angular';
+import uiRouter from 'angular-ui-router';
+import { TodoComponent } from './todo.component';
+import { TodoService } from './todo.service';
+import './todo.scss';</p>
+
+<p>export const TodoModule = angular
+  .module('todo', [
+    uiRouter
+  ])
+  .component('todo', TodoComponent)
+  .service('TodoService', TodoService)
+  .config(($stateProvider, $urlRouterProvider) => {
+    'ngInject';
+    $stateProvider
+      .state('todos', {
+        url: '/todos',
+        component: 'todo',
+        resolve: {
+          todoData: TodoService => TodoService.getTodos()
+        }
+      });
+    $urlRouterProvider.otherwise('/');
+  })
+  .name;
+```</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h1>Directives</h1>
+
+<h3>Directive theory</h3>
+
+<p>Directives gives us <code>template</code>, <code>scope</code> bindings, <code>bindToController</code>, <code>link</code> and many other things. The usage of these should be carefully considered now that <code>.component()</code> exists. Directives should not declare templates and controllers anymore, or receive data through bindings. Directives should be used solely for decorating the DOM. By this, it means extending existing HTML - created with <code>.component()</code>. In a simple sense, if you need custom DOM events/APIs and logic, use a Directive and bind it to a template inside a component. If you need a sensible amount of DOM manipulation, there is also the <code>$postLink</code> lifecycle hook to consider, however this is not a place to migrate all your DOM manipulation to, use a Directive if you can for non-Angular things.</p>
+
+<p>Here are some advisories for using Directives:</p>
+
+<ul>
+<li>Never use templates, scope, bindToController or controllers</li>
+<li>Always <code>restrict: 'A'</code> with Directives</li>
+<li>Use compile and link where necessary</li>
+<li>Remember to destroy and unbind event handlers inside <code>$scope.$on('$destroy', fn);</code></li>
+</ul>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Recommended properties</h3>
+
+<p>Due to the fact directives support most of what <code>.component()</code> does (template directives were the original component), I'm recommending limiting your directive Object definitions to only these properties, to avoid using directives incorrectly:</p>
+
+<p>| Property | Use it? | Why |
+|---|---|---|
+| bindToController | No | Use <code>bindings</code> in components |
+| compile | Yes | For pre-compile DOM manipulation/events |
+| controller | No | Use a component |
+| controllerAs | No | Use a component |
+| link functions | Yes | For pre/post DOM manipulation/events |
+| multiElement | Yes | <a href="https://docs.angularjs.org/api/ng/service/$compile#-multielement-">See docs</a> |
+| priority | Yes | <a href="https://docs.angularjs.org/api/ng/service/$compile#-priority-">See docs</a> |
+| require | No | Use a component |
+| restrict | Yes | Defines directive usage, always use <code>'A'</code> |
+| scope | No | Use a component |
+| template | No | Use a component |
+| templateNamespace | Yes (if you must) | <a href="https://docs.angularjs.org/api/ng/service/$compile#-templatenamespace-">See docs</a> |
+| templateUrl | No | Use a component |
+| transclude | No | Use a component |</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Constants or Classes</h3>
+
+<p>There are a few ways to approach using ES2015 and directives, either with an arrow function and easier assignment, or using an ES2015 <code>Class</code>. Choose what's best for you or your team, keep in mind Angular 2 uses <code>Class</code>.</p>
+
+<p>Here's an example using a constant with an Arrow function an expression wrapper <code>() =&gt; ({})</code> returning an Object literal (note the usage differences inside <code>.directive()</code>):</p>
+
+<p>```js
+/* ----- todo/todo-autofocus.directive.js ----- */
+import angular from 'angular';</p>
+
+<p>export const TodoAutoFocus = ($timeout) => {
+  'ngInject';
+  return {
+    restrict: 'A',
+    link($scope, $element, $attrs) {
+      $scope.$watch($attrs.todoAutofocus, (newValue, oldValue) => {
+        if (!newValue) {
+          return;
+        }
+        $timeout(() => $element[0].focus());
+      });
+    }
+  }
+};</p>
+
+<p>/* ----- todo/todo.module.js ----- */
+import angular from 'angular';
+import { TodoComponent } from './todo.component';
+import { TodoAutofocus } from './todo-autofocus.directive';
+import './todo.scss';</p>
+
+<p>export const TodoModule = angular
+  .module('todo', [])
+  .component('todo', TodoComponent)
+  .directive('todoAutofocus', TodoAutoFocus)
+  .name;
+```</p>
+
+<p>Or using ES2015 <code>Class</code> (note manually calling <code>new TodoAutoFocus</code> when registering the directive) to create the Object:</p>
+
+<p>```js
+/* ----- todo/todo-autofocus.directive.js ----- */
+import angular from 'angular';</p>
+
+<p>export class TodoAutoFocus {
+  constructor($timeout) {
+    'ngInject';
+    this.restrict = 'A';
+    this.$timeout = $timeout;
+  }
+  link($scope, $element, $attrs) {
+    $scope.$watch($attrs.todoAutofocus, (newValue, oldValue) => {
+      if (!newValue) {
+        return;
+      }
+      this.$timeout(() => $element[0].focus());
+    });
+  }
+}</p>
+
+<p>/* ----- todo/todo.module.js ----- */
+import angular from 'angular';
+import { TodoComponent } from './todo.component';
+import { TodoAutofocus } from './todo-autofocus.directive';
+import './todo.scss';</p>
+
+<p>export const TodoModule = angular
+  .module('todo', [])
+  .component('todo', TodoComponent)
+  .directive('todoAutofocus', () => new TodoAutoFocus())
+  .name;
+```</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h1>Services</h1>
+
+<h3>Service theory</h3>
+
+<p>Services are essentially containers for business logic that our components shouldn't request directly. Services contain other built-in or external services such as <code>$http</code>, that we can then inject into component controllers elsewhere in our app. We have two ways of doing services, using <code>.service()</code> or <code>.factory()</code>. With ES2015 <code>Class</code>, we should only use <code>.service()</code>, complete with dependency injection annotation using <code>$inject</code>.</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h3>Classes for Service</h3>
+
+<p>Here's an example implementation for our <code>&lt;todo&gt;</code> app using ES2015 <code>Class</code>:</p>
+
+<p>```js
+/* ----- todo/todo.service.js ----- */
+export class TodoService {
+  constructor($http) {
+    'ngInject;'
+    this.$http = $http;
+  }
+  getTodos() {
+    return this.$http.get('/api/todos').then(response => response.data);
+  }
+}</p>
+
+<p>/* ----- todo/todo.module.js ----- */
+import angular from 'angular';
+import { TodoComponent } from './todo.component';
+import { TodoService } from './todo.service';
+import './todo.scss';</p>
+
+<p>export const TodoModule = angular
+  .module('todo', [])
+  .component('todo', TodoComponent)
+  .service('TodoService', TodoService)
+  .name;
+```</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h1>Styles</h1>
+
+<p>Using <a href="https://webpack.github.io/">Webpack</a> we can now use <code>import</code> statements on our <code>.scss</code> files in our <code>*.module.js</code> to let Webpack know to include that file in our stylesheet. Doing this lets us keep our components isolated for both functionality and style, it also aligns more closely to how stylesheets are declared for use in Angular 2. Doing this won't isolate our styles to just that component like it does with Angular 2, the styles will still be usable application wide but its more manageable and makes our applications structure easier to reason about.</p>
+
+<p>If you have some variables or globally used styles like form input elements then these files should still be placed into the root <code>scss</code> folder. e.g. <code>scss/_forms.scss</code>. These global styles can the be <code>@imported</code> into your root module (<code>app.module.js</code>) stylesheet like you would normally do.</p>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h1>ES2015 and Tooling</h1>
+
+<h5>ES2015</h5>
+
+<ul>
+<li>Use <a href="https://babeljs.io/">Babel</a> to compile your ES2015+ code and any polyfills</li>
+<li>Consider using <a href="http://www.typescriptlang.org/">TypeScript</a> to make way for any Angular 2 upgrades</li>
+</ul>
+
+<h5>Tooling</h5>
+
+<ul>
+<li>Use <code>ui-router</code> <a href="https://github.com/angular-ui/ui-router">latest alpha</a> (see the Readme) if you want to support component-routing
+<ul>
+<li>Otherwise you're stuck with <code>template: '&lt;component&gt;'</code> and no <code>bindings</code>/resolve mapping</li>
+</ul></li>
+<li>Consider preloading templates into <code>$templateCache</code> with <code>angular-templates</code> or <code>ngtemplate-loader</code>
+<ul>
+<li><a href="https://www.npmjs.com/package/gulp-angular-templatecache">Gulp version</a></li>
+<li><a href="https://www.npmjs.com/package/grunt-angular-templates">Grunt version</a></li>
+<li><a href="https://github.com/WearyMonkey/ngtemplate-loader">Webpack version</a></li>
+</ul></li>
+<li>Consider using <a href="https://webpack.github.io/">Webpack</a> for compiling your ES2015 code and styles</li>
+<li>Use <a href="https://github.com/olov/ng-annotate">ngAnnotate</a> to automatically annotate <code>$inject</code> properties</li>
+<li>How to use <a href="https://www.timroes.de/2015/07/29/using-ecmascript-6-es6-with-angularjs-1-x/#ng-annotate">ngAnnotate with ES6</a></li>
+</ul>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h1>State management</h1>
+
+<p>Consider using Redux with Angular 1.5 for data management.</p>
+
+<ul>
+<li><a href="https://github.com/angular-redux/ng-redux">Angular Redux</a></li>
+</ul>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h1>Resources</h1>
+
+<ul>
+<li><a href="https://toddmotto.com/stateful-stateless-components">Stateful and stateless components, the missing manual</a></li>
+<li><a href="https://toddmotto.com/exploring-the-angular-1-5-component-method/">Understanding the .component() method</a></li>
+<li><a href="https://toddmotto.com/on-init-require-object-syntax-angular-component/">Using "require" with $onInit</a></li>
+<li><a href="https://toddmotto.com/angular-1-5-lifecycle-hooks">Understanding all the lifecycle hooks, $onInit, $onChanges, $postLink, $onDestroy</a></li>
+<li><a href="https://toddmotto.com/resolve-promises-in-angular-routes/">Using "resolve" in routes</a></li>
+<li><a href="http://blog.rangle.io/managing-state-redux-angular/">Redux and Angular state management</a></li>
+<li><a href="https://github.com/chihab/angular-styleguide-sample">Sample Application from Community</a></li>
+</ul>
+
+<p><strong><a href="#table-of-contents">Back to top</a></strong></p>
+
+<h1>Documentation</h1>
+
+<p>For anything else, including API reference, check the <a href="//docs.angularjs.org/api">Angular documentation</a>.</p>
+
+<h1>Contributing</h1>
+
+<p>Open an issue first to discuss potential changes/additions. Please don't open issues for questions.</p>
+
+<h2>License</h2>
+
+<h4>(The MIT License)</h4>
+
+<p>Copyright (c) 2016 Todd Motto</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</body>
+</html>
