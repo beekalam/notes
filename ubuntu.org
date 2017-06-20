@@ -1097,8 +1097,10 @@ $ git config http.postBuffer 524288000
 
 #+begin_src shell
 $ git clone  --branch release <git_address> 
-#+end_src 
+#+end_src
 
+** git merge help
+https://gist.github.com/karenyyng/f19ff75c60f18b4b8149
 * font
 ** rebuild font cache
    

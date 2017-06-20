@@ -11880,6 +11880,46 @@ The client asks the Builder to return the result.
    Prototype, or Builder (more flexible, more complex) as the designer discovers
    where more flexibility is needed.
 
+* jquery mobile swipe example
+#+begin_src javascript
+// the line below makes use of touch gestures of jquery mobile only
+<script type="text/javascript">$(document).bind("mobileinit", function(){$.extend(  $.mobile , {autoInitializePage: false})});</script>
+<script src="{{@BASE}}/ui/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js"></script>
+  $(document).ready(function() {  
+        /*=============================================== jquery mobile swipe */
+        var isMenuClosed = $("#wrapper").hasClass("enlarged");
+            
+             $("body").swiperight(function() {  
+                    if($("#wrapper").hasClass("enlarged")) 
+                        isMenuClosed = true;
+                    else
+                        isMenuClosed = false;
+
+                    // console.log("right menu clased");
+                    // console.log(isMenuClosed);
+                    if(!isMenuClosed){
+                        $.Sidemenu.openLeftBar();   
+                    }
+                
+            });
+
+           $("body").swipeleft(function() {  
+                    if($("#wrapper").hasClass("enlarged")) 
+                        isMenuClosed = true;
+                    else
+                        isMenuClosed = false;
+
+
+                    // console.log("left menu clased");
+                    // console.log(isMenuClosed);
+                    if(isMenuClosed){
+                        $.Sidemenu.openLeftBar();   
+                    }
+
+            });  
+    });  
+#+end_src
+
 * mobile related
 #+begin_src php
 $userAgent=$_SERVER[’HTTP_USER_AGENT’];
