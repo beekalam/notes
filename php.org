@@ -2266,6 +2266,19 @@ echo join(' ', $arr) . "\n";
 naive_shuffle($arr);
 echo join(' ', $arr) . "\n";
 
+** recursive in array
+#+begin_src php
+ function recursive_in_array($needle, $haystack)
+{
+    foreach ($haystack as $stalk) {
+        if ($needle == $stalk || (is_array($stalk) && recursive_in_array($needle, $stalk))) {
+            return true;
+        }
+    }
+    return false;
+}
+#+end_src
+
 * Date and Time
 ** Finding the Current Date and Time
 Use strftime() or date() for a formatted time string, as in Example 3-2.
@@ -3005,6 +3018,54 @@ which is much more sensible and I don't know why I never checked the online
 documentation in the past to see if it could be done more concisely:
 #+begin_src php 
 $datetime = date('Y-m-d\TH:i:s');
+#+end_src
+
+** seconds to string
+#+begin_src php
+function secs_to_str($d)
+{
+    $periods = array( 'day'    => 86400,
+                      'hour'   => 3600,
+                      'minute' => 60,
+                      'second' => 1 );
+    $parts = array();
+    foreach ( $periods as $name => $dur )
+    {
+        $div = floor( $d / $dur );
+         if ( $div == 0 )
+                continue;
+         else if ( $div == 1 )
+                $parts[] = $div . " " . $name;
+         else
+                $parts[] = $div . " " . $name . "s";
+         $d %= $dur;
+    }
+    $last = array_pop( $parts );
+    if ( empty( $parts ) )
+        return $last;
+    else
+        return join( ', ', $parts ) . " and " . $last;
+}
+#+end_src
+
+Example usage for this function would be as follows
+#+begin_src php
+$start_time = time();
+
+// put your code here
+sleep(rand(1,10)); // to give us some test data
+
+$stop_time = time();
+$seconds_taken = $stop_time - $start_time;
+
+print( secs_to_str( $seconds_taken ) );
+#+end_src
+
+example output for this function
+#+begin_src 
+9 seconds
+2 hours, 8 minutes and 55 seconds
+1 day, 10 hours, 30 minutes and 19 seconds
 #+end_src 
 
 * functions
@@ -6917,7 +6978,37 @@ $extension = $pathinfo['extension'];
 ** Get the directory name with dirname()
 #+begin_src php 
 echo dirname($path)
-#+end_src 
+#+end_src
+
+** recursive rm
+#+begin_src php
+function recursive_rm( $path )
+{
+    /* open dir handel - return on fail */
+    if( !$dir = @opendir( $path ))
+    return ( FALSE );
+
+    /* for each file in dir */
+    while( ($file = readdir($dir)) !== FALSE )
+    {
+         /* if not special */
+         if($file == '.' || $file == '..')
+         continue;
+
+          /* if cant delete path send path back round */
+          if(!@unlink($path . "/" . $file))
+          $this->recursive_rm( $path . "/" . $file );
+    }
+
+    /* close handel */
+    closedir( $dir );
+
+    /* rm base dir */
+    @rmdir( $path );
+
+return ( TRUE );
+}
+#+end_src
 
 * lumen
 ** lumen on apache
@@ -12115,6 +12206,127 @@ function ab_mc($vmc)
 	}
 #+end_src
 
+** IPv6 regex with preg_match
+IPv6 is coming, I hope you are all ready for it! This function should help you
+out when developing software that needs to be IPv6 aware.
+
+#+begin_src php
+function valid_ipv6_address( $ipv6 )
+{
+        $pattern1 = '([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}';
+        $pattern2 = '[A-Fa-f0-9]{1,4}::([A-Fa-f0-9]{1,4}:){0,5}[A-Fa-f0-9]{1,4}';
+        $pattern3 = '([A-Fa-f0-9]{1,4}:){2}:([A-Fa-f0-9]{1,4}:){0,4}[A-Fa-f0-9]{1,4}';
+        $pattern4 = '([A-Fa-f0-9]{1,4}:){3}:([A-Fa-f0-9]{1,4}:){0,3}[A-Fa-f0-9]{1,4}';
+        $pattern5 = '([A-Fa-f0-9]{1,4}:){4}:([A-Fa-f0-9]{1,4}:){0,2}[A-Fa-f0-9]{1,4}';
+        $pattern6 = '([A-Fa-f0-9]{1,4}:){5}:([A-Fa-f0-9]{1,4}:){0,1}[A-Fa-f0-9]{1,4}';
+        $pattern7 = '([A-Fa-f0-9]{1,4}:){6}:[A-Fa-f0-9]{1,4}';
+
+        $full = "/^($pattern1)$|^($pattern2)$|^($pattern3)$|^($pattern4)$|^($pattern5)$|^($pattern6)$|^($pattern7)$/";
+
+        if(!preg_match($full, $ipv6))
+        return (0); // is not a valid IPv6 Address
+
+    return (1);
+}
+#+end_src
+Basic example usage of this function
+
+#+begin_src php
+$addr6 = "2001:2d12:c4fe:5afe::1";
+if ( valid_ipv6_address( $addr6 ) )
+{
+    printf ( "%s is a valid IPv6 Address!n", $addr6 );
+}
+else
+{
+    printf ( "%s is *NOT* a valid IPv6 Address!n", $addr6 );
+}
+
+$addr6 = "4d4x:3daz:rdc2:23sd::1";
+if ( valid_ipv6_address( $addr6 ) )
+{
+    printf ( "%s is a valid IPv6 Address!n", $addr6 );
+}
+else
+{
+    printf ( "%s is *NOT* a valid IPv6 Address!n", $addr6 );
+}
+#+end_src 
+Gives us this output
+
+2001:2d12:c4fe:5afe::1 is a valid IPv6 Address!
+4d4x:3daz:rdc2:23sd::1 is *NOT* a valid IPv6 Address!
+**  Check if IPv4 address is from a private range.
+This function is very handy if you need to allow or stop people from submitting
+private address spaces into you application. It has many uses.
+
+#+begin_src php 
+function ip_is_private($ip)
+{
+        $pri_addrs = array(
+                          '10.0.0.0|10.255.255.255',
+                          '172.16.0.0|172.31.255.255',
+                          '192.168.0.0|192.168.255.255',
+                          '169.254.0.0|169.254.255.255',
+                          '127.0.0.0|127.255.255.255'
+                         );
+
+        $long_ip = ip2long($ip);
+        if($long_ip != -1) {
+
+            foreach($pri_addrs AS $pri_addr)
+            {
+                list($start, $end) = explode('|', $pri_addr);
+
+                 // IF IS PRIVATE
+                 if($long_ip >= ip2long($start) && $long_ip <= ip2long($end))
+                 return (TRUE);
+            }
+    }
+
+return (FALSE);
+}
+#+end_src 
+
+Example of this function being used
+#+begin_src php
+$ip_address1 = "10.4.200.1";
+$ip_address2 = "192.168.0.2";
+$ip_address3 = "213.224.100.43";
+
+if ( ip_is_private ( $ip_address1 ) )
+{
+    printf ( "%s is from a private address rangen", $ip_address1 );
+}
+else
+{
+    printf ( "%s is *NOT* from a private address rangen", $ip_address1 );
+}
+
+if ( ip_is_private ( $ip_address2 ) )
+{
+    printf ( "%s is from a private address rangen", $ip_address2 );
+}
+else
+{
+    printf ( "%s is *NOT* from a private address rangen", $ip_address2 );
+}
+
+if ( ip_is_private ( $ip_address3 ) )
+{
+    printf ( "%s is from a private address rangen", $ip_address3 );
+}
+else
+{
+    printf ( "%s is *NOT* from a private address rangen", $ip_address3 );
+}
+#+end_src
+
+Which gives us this output
+
+10.4.200.1 is from a private address range
+192.168.0.2 is from a private address range
+213.224.100.43 is *NOT* from a private address range
 * useful resources
 ** php snippets
 http://psoug.org/browse.htm?cid=2
