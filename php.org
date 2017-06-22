@@ -8885,28 +8885,32 @@ in a comma-separated list:
 
 ** selectors
 *** Attribute selectors
+#+begin_src css
 E[attr] {...} /* Simple Attribute Selector */
 E[attr='value'] {...} /* Exact Attribute Value Selector */
 E[attr  ~='value'] {...} /* Partial Attribute Value Selector */
 E[attr|='value'] {...} /* Language Attribute Selector */
-
+#+end_src 
 
 The Simple Attribute Selector applies rules to elements that have the
 s ­ pecified attribute defined, regardless of that attribute’s value.
-
+#+begin_src css
 a[rel] { color: red; }
+#+end_src 
 
 If you want to be more specific, you can use the Exact Attribute Value Selector
 to define a value:
-
+#+begin_src css
 a[rel='friend'] { color: red; }
+#+end_src 
 
 This code applies the rule only to the second a element in the
 markup (v) because it selects only elements that have the exact value
 of  friend . If you want to select both of the elements that have this value,
 you would use the Partial Attribute Value Selector:
-
+#+begin_src css
 a[rel~='friend'] { color: red; }
+#+end_src 
 
 This code looks for the value of friend as part of a space-separated list
 (in most cases, a word)
@@ -8915,8 +8919,9 @@ The final selector, the Language Attribute Selector, applies rules to ele-
 ments that have an attribute matching the first argument in the selector,
 the value of which is the second argument in the selector followed immedi-
 ately by a hyphen.
-
+#+begin_src css 
 a[lang|='es'] { color: red; }
+#+end_src 
 
 *** New Attribute Selectors in CSS3
 Beginning Substring Attribute Value Selector
@@ -8987,9 +8992,10 @@ Our final new DOM selector in CSS3 is a combinator, which you’ll recall
 means that it joins together more than one selector. The General Sibling
 Combinator is an extension of the Adjacent Sibling Combinator, which was
 introduced in CSS2. The syntaxes differ by just a single character:
-
+#+begin_src css
 E + F {...} /* Adjacent Sibling Combinator */
 E ~ F {...} /* General Sibling Combinator */
+#+end_src 
 
 The difference between the two is subtle but important: Adjacent
 Sibling selects any element ( F ) that is immediately preceded by element
