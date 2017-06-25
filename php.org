@@ -1611,6 +1611,7 @@ else
 #+end_src
 
 ** Deleting from a array
+#+begin_src php
 
 // Remove one, or more, hash entries
 unset($hash[$key]);
@@ -1619,6 +1620,7 @@ unset($hash[$key1], $hash[$key2], $hash[$key3]);
 
 // Remove entire hash
 unset($hash);
+#+end_src 
 
 ** Traversing a Hash
 #+begin_src php 
@@ -2057,7 +2059,7 @@ $mylist = 'red yellow green';
 echo 'I have ' . commify_series($mylist) . " marbles.\n";
 
 ** Iterating Over an Array by Reference
-
+#+begin_src php
 // Conventional 'read-only' access
 foreach($array as $item)
 {
@@ -2080,8 +2082,10 @@ for($i = 0; $i < $arraylen; $i++)
 {
   ; // '$array' is updateable via subscript notation
 }
-** Computing Union, Intersection, or Difference of Unique Lists
+#+end_src 
 
+** Computing Union, Intersection, or Difference of Unique Lists
+#+begin_src php 
 // PHP offers a number of array-based 'set operation' functions:
 // * union:        array_unique(array_merge(...))
 // * intersection: array_intersect and family
@@ -2095,9 +2099,10 @@ $b = array(2, 3, 5, 7, 9);
 $union = array_values(array_unique(array_merge($a, $b))); // 1, 2, 3, 5, 6, 7, 8, 9
 $isect = array_values(array_intersect($a, $b));           // 3, 5, 7
 $diff = array_values(array_diff($a, $b));                 // 1, 8
+#+end_src 
 
 ** Processing Multiple Elements of an Array
-
+#+begin_src php 
 // Array elements can be deleted using 'unset'; removing several elements would require applying
 // 'unset' several times, probably in a loop. However, they would most likely also need to be
 // reindexed, so a better approach would be to use 'array_slice' which avoids explicit looping.
@@ -2128,6 +2133,7 @@ $front = shiftN($array, $n);
 $end = popN($array, $n);
 
 // ------------
+#+end_src
 
 ** Sorting an Array Numerically
 
@@ -2197,7 +2203,7 @@ if (($pid = trim(fgets(STDIN))))
   kill_process($pid);
 
 ** Implementing a Circular List
-
+#+begin_src php
 array_unshift($a1, array_pop($a1));  // last -> first
 array_push($a1, array_shift($a1));   // first -> last
 
@@ -2220,9 +2226,10 @@ while (TRUE)
   echo "Handling process {$process}\n";
   sleep(1);
 }
+#+end_src
 
 ** Randomizing an Array
-
+#+begin_src php 
 // PHP offers the 'shuffle' function to perform this task
 
 $arr = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -2265,6 +2272,7 @@ echo join(' ', $arr) . "\n";
 
 naive_shuffle($arr);
 echo join(' ', $arr) . "\n";
+#+end_src
 
 ** recursive in array
 #+begin_src php
