@@ -794,6 +794,90 @@ Thanks to <forcer> on #emacs-beginners irc channel for the explanation.
     (string-to-list str))))
 #+end_src
 
+*** Trim whitespace
+Trim whitespace from the end of a string:
+#+begin_src lisp
+    (setq test-str "abcdefg  ")
+    (when (string-match "[ \t]*$" test-str)
+      (message (concat "[" (replace-match "" nil nil test-str) "]")))
+#+end_src 
+Trim whitespace from a string with a Perl-like chomp function:
+#+begin_src lisp
+    (defun chomp (str)
+      "Chomp leading and tailing whitespace from STR."
+      (while (string-match "\\`\n+\\|^\\s-+\\|\\s-+$\\|\n+\\'"
+                           str)
+        (setq str (replace-match "" t t str)))
+      str)
+#+end_src 
+Let’s not overcomplicate matters:
+#+begin_src lisp
+    (defun chomp-end (str)
+      "Chomp tailing whitespace from STR."
+      (replace-regexp-in-string (rx (* (any " \t\n")) eos)
+                                ""
+                                str))
+    (defun chomp (str)
+      "Chomp leading and tailing whitespace from STR."
+      (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
+                                        (: (* (any " \t\n")) eos)))
+                                ""
+                                str))
+#+end_src
+
+*** Joining strings
+Use ‘mapconcat’ to join a list of strings using a separator string between them.
+#+begin_src lisp
+  (mapconcat 'identity '("" "home" "alex " "elisp" "erc") "/")
+    ==> "/home/alex /elisp/erc"
+;If the separator is empty, use ‘apply’:
+
+  (apply #'concat '("hello, " "world"))
+    ==> "hello, world"
+#+end_src
+
+*** Delete line
+The equivalent of ‘kill-line’ (‘C-k’) but without kill-ring side effects:
+#+begin_src lisp 
+ (let ((beg (point)))
+   (forward-line 1)
+   (forward-char -1)
+   (delete-region beg (point)))
+#+end_src 
+Alternatively, replacing the ‘let’ with ‘progn’.
+
+#+begin_src lisp 
+  (delete-region (point) (progn (forward-line 1)
+                                (forward-char -1)
+                                (point)))
+Or just: (delete-region (point) (line-end-position))
+#+end_src
+
+The examples with ‘forward-line’ are shown for comparison with other examples, below.
+
+*** Delete line backwards
+The equivalent of killing the line backwards (‘C-0 C-k’) but without kill-ring side effects:
+
+ (let ((beg (point)))
+   (forward-line 0)
+   (delete-region (point) beg))
+Alternatively, replacing the ‘let’ with ‘progn’.
+
+  (delete-region (progn (forward-line 0) (point))
+                 (point))
+Or just: (delete-region (line-beginning-position) (point))
+
+*** Delete line to next line
+The equivalent of killing the line and the newline (‘C-1 C-k’) but without kill-ring side effects:
+#+begin_src lisp 
+ (let ((beg (point)))
+   (forward-line 1)
+   (delete-region beg (point)))
+;Alternatively, replacing the ‘let’ with ‘progn’.
+
+  (delete-region (point) (progn (forward-line 1) (point)))
+#+end_src
+
 * Functions
 ** variable holding function
 
