@@ -699,6 +699,101 @@ You can give any number of arguments to setf.
 3
 #+end_src
 
+* Elisp cookbook
+** strings
+*** check for empty string
+#+begin_src lisp
+
+The empty string (zero-length string, null string, …):
+
+(zerop (string-match "" "")) ;; O(n)
+==> t
+(string-equal "" "") ;; O(n)?
+==> t
+(equal "" "") ;; O(n)?
+==> t
+(zerop (length "")) ;; O(1)
+==> t
+#+end_src
+
+*** substrings
+#+begin_src lisp
+
+    (substring "abcdefg" 0 3)
+    ==> "abc"
+    (substring "abcdefg" -3 -1)
+    ==> "ef"
+;;The TO argument is optional:
+
+    (substring "abcdefg" -3)
+    ==> "efg"
+#+end_src
+
+*** starts-with and ends-with predicates
+#+begin_src lisp
+ Standardfunctions (version 24.4):
+
+    (string-prefix-p "bull" "bulldozer")   ; optional ignore case argument too
+    ==> t
+    (string-suffix-p "dozer" "bulldozer")  ; optional ignore case argument too
+    ==> t
+#+end_src 
+Custom functions:
+#+begin_src lisp
+    (defun string/ends-with (s ending)
+      "Return non-nil if string S ends with ENDING."
+      (cond ((>= (length s) (length ending))
+             (let ((elength (length ending)))
+               (string= (substring s (- 0 elength)) ending)))
+            (t nil)))
+    (defun string/starts-with (s begins)
+      "Return non-nil if string S starts with BEGINS."
+      (cond ((>= (length s) (length begins))
+             (string-equal (substring s 0 (length begins)) begins))
+            (t nil)))
+#+end_src 
+Faster, simpler:
+#+begin_src lisp
+    (defun string/ends-with (string suffix)
+      "Return t if STRING ends with SUFFIX."
+      (and (string-match (rx-to-string `(: ,suffix eos) t)
+                         string)
+           t))
+#+end_src
+
+The first argument to rx-to-string `(: ,suffix eos) is a regular expression in
+sexp form. The help page for “rx” elucidates the syntax:
+#+begin_src 
+    (: SEXP1 SEXP2 ...)
+    matches what SEXP1 matches, followed by what SEXP2 matches, etc.
+#+end_src 
+,suffix is SEXP1 and eos is SEXP2 '(: suffix eos) would create a list of three
+elements: The symbol named “:”, the symbol named “suffix”, and the symbol named
+“eos”. But that’s not what this function wants. It wants the value of the symbol
+named “suffix”, not the symbol itself. ` is special syntax (note the backtick,
+not just tick) that allows some things in the list to be preceded by a comma,
+which are then evaluated. `(: ,suffix eos) is convenience syntax for (list ':
+suffix 'eos). The only symbol that is evaluated is suffix. Because there is no ,
+before : or eos, both : and eos are not evaluated. Symbols are not evaluated by
+default in the `( … ) syntax and require a , if you want them to be evaluated.
+Thanks to <forcer> on #emacs-beginners irc channel for the explanation.
+#+begin_src lisp
+    (defun string/starts-with (string prefix)
+      "Return t if STRING starts with prefix."
+      (and (string-match (rx-to-string `(: bos ,prefix) t)
+                         string)
+           t))
+#+end_src
+
+*** reversing string
+#+begin_src lisp
+(defun string/reverse (str)
+  "Reverse the str where str is a string"
+  (apply #'string 
+    (reverse 
+    (string-to-list str))))
+#+end_src
+
 * Functions
 ** variable holding function
 
