@@ -1317,7 +1317,46 @@ function wp_generate_uuid4() {
 		mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
 	);
 }
-#+end_src 
+#+end_src
+
+** strpos of the first digit
+#+begin_src php
+function digpos($str) {
+  $pat = '(\d+)';
+  preg_match($pat,$str,$matches);
+  return(array($matches[0],strpos($str,$matches[0])));
+}
+$tests = array('sdfj234skdfl;s','this 1s a test','xxxx');
+foreach ($tests as $str) {
+   list($matstr,$matpos) = digpos($str);
+   if ($matpos !== false) {
+      echo "The digits [$matstr] were found at position [$matpos] in the string [$str]<br>\n";
+   } else {
+      echo "No digits were found in the string [$str]<br>\n";
+   }
+}
+#+end_src
+
+** alpabet ordinal value from 1(a->1, b->2, ...)
+#+begin_src php
+function alpha_ord($in)
+{
+	return ord(strtoupper($in)) - 64;
+}
+//reverse 1->a 2->b ...
+function ord_to_alpha($in)
+{
+	$alpha = "abcdefghijklmnopqrstuvwxyz";
+	for($i = 0; $i < strlen($alpha); $i++)
+	{
+		if($in == alpha_ord($alpha[$i]))
+		{
+			return $alpha[$i];
+		}
+	}
+	return "";
+}
+#+end_src
 
 * numbers
 ** Checking Whether a Variable Contains a Valid Number
@@ -9660,7 +9699,7 @@ function make_pretty($bytes)
 #+end_src
 
 * CLI
-** scrip arguments
+** script arguments
 #+begin_src php
 <?php
 echo "numbe of arguments" . $argc . "\n";
