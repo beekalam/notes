@@ -857,7 +857,7 @@ The examples with ‘forward-line’ are shown for comparison with other example
 
 *** Delete line backwards
 The equivalent of killing the line backwards (‘C-0 C-k’) but without kill-ring side effects:
-
+#+begin_src lisp 
  (let ((beg (point)))
    (forward-line 0)
    (delete-region (point) beg))
@@ -866,7 +866,7 @@ Alternatively, replacing the ‘let’ with ‘progn’.
   (delete-region (progn (forward-line 0) (point))
                  (point))
 Or just: (delete-region (line-beginning-position) (point))
-
+#+end_src 
 *** Delete line to next line
 The equivalent of killing the line and the newline (‘C-1 C-k’) but without kill-ring side effects:
 #+begin_src lisp 
@@ -878,6 +878,215 @@ The equivalent of killing the line and the newline (‘C-1 C-k’) but without k
   (delete-region (point) (progn (forward-line 1) (point)))
 #+end_src
 
+*** Delete whole line
+The equivalent of ‘kill-whole-line’ (‘C-S-DEL’) but without kill-ring side effects:
+#+begin_src lisp 
+ (let ((beg (progn (forward-line 0)
+                   (point))))
+   (forward-line 1)
+   (delete-region beg (point)))
+Alternatively, replacing the ‘let’ with ‘progn’.
+
+  (delete-region (progn (forward-line 0) (point))
+                 (progn (forward-line 1) (point)))
+Or just:
+
+  (delete-region (line-beginning-position)
+                 (line-end-position))
+#+end_src
+
+*** Delete word
+The equivalent of ‘kill-word’ (‘M-d’) but without kill-ring side effects:
+#+begin_src lisp 
+ (let ((beg (point)))
+   (forward-word 1)
+   (delete-region beg (point)))
+Alternatively, replacing the ‘let’ with ‘progn’.
+
+  (delete-region (point) (progn (forward-word 1) (point)))
+#+end_src
+
+*** Delete sentence
+The equivalent of ‘kill-sentence’ (‘M-k’) but without kill-ring side effects:
+#+begin_src lisp 
+ (let ((beg (point)))
+   (forward-sentence 1)
+   (delete-region beg (point)))
+Alternatively, replacing the ‘let’ with ‘progn’.
+
+  (delete-region (point) (save-excursion
+                           (forward-sentence 1)
+                           (point)))
+#+end_src
+** Numbers
+*** Test whether a string represents a number
+#+begin_src lisp 
+  (defun string-integer-p (string)
+    (if (string-match "\\`[-+]?[0-9]+\\'" string)
+        t
+      nil))
+  (string-integer-p "1234")
+    ==> t
+  (string-integer-p "x1234")
+    ==> nil
+  (string-integer-p "3.141592653589793")
+    ==> nil
+  (defun string-float-p (string)
+    (if (string-match "\\`[-+]?[0-9]+\\.[0-9]*\\'" string)
+        t
+      nil))
+  (string-float-p "1234")
+    ==> nil
+  (string-float-p "3.141592653589793")
+    ==> t
+  (string-float-p ".1")
+    ==> nil
+  (string-float-p "1.")
+    ==> t
+#+end_src
+*** String to number
+
+The following example is for instruction. Normally standard function
+‘string-to-number’ would be used.
+
+#+begin_src lisp
+  (defun decimal-number (string)
+    (let ((n (string-to-number string)))
+      (save-match-data
+        (if (and (not (zerop n))
+                 (string-match "\\`\\s-*0+\\.?0*\\s-*\\'" string))
+            n
+          nil))))
+  
+  (decimal-number "536870911")
+  ==> 536870911
+  
+  (decimal-number "536870912")
+  ==> 536870912.0
+  
+  (decimal-number "3.141592653589793")
+  ==> 3.141592653589793
+  
+  (decimal-number "042")
+  ==> 42
+  
+  (decimal-number " 0 ")
+  ==> 0
+  
+  (decimal-number "000")
+  ==> 0
+  
+  (decimal-number "0.0")
+  ==> 0.0
+#+end_src
+*** Random numbers
+#+begin_src lisp 
+(random 2)  ;coin toss (0 or 1)
+  (+ (random 6) 1)  ;dice
+#+end_src
+*** Put commas in numbers
+#+begin_src lisp 
+  (defun group-number (num &optional size char)
+    "Format NUM as string grouped to SIZE with CHAR."
+    ;; Based on code for `math-group-float' in calc-ext.el
+    (let* ((size (or size 3))
+           (char (or char ","))
+           (str (if (stringp num)
+                    num
+                  (number-to-string num)))
+            ;; omitting any trailing non-digit chars
+            ;; NOTE: Calc supports BASE up to 36 (26 letters and 10 digits ;)
+           (pt (or (string-match "[^0-9a-zA-Z]" str) (length str))))
+      (while (> pt size)
+        (setq str (concat (substring str 0 (- pt size))
+                          char
+                          (substring str (- pt size)))
+              pt (- pt size)))
+      str))
+  (group-number 299792458)
+  ==> "299,792,458"
+  (group-number "149597870691" 4 " ")
+  ==> "1495 9787 0691"
+#+end_src
+** dates and times
+*** Today's date
+#+begin_src lisp 
+   (defun today-is ()
+     "Display current time."
+     (interactive)
+     (message (format-time-string "Today is %Y-%m-%d %T")))
+ #+end_src
+
+*** Formatting dates
+Use the function ‘format-time-string’ which is a build in function in both Emacsen and works like ‘strftime’:
+
+    ;; Year-Month-Day:
+    (insert (format-time-string "%Y-%m-%d"))
+    ;; Hour:Minutes:Seconds
+    (insert (format-time-string "%H:%M:%S"))
+*** Conversions
+Read a date from a string.
+#+begin_src lisp 
+  (let ((time (date-to-time "Tue, 27-Sep-83 12:35:59 EST")))
+    (set-time-zone-rule t) ;; Use Universal time.
+    (prog1 (format-time-string "%Y-%m-%d %T UTC" time)
+      (set-time-zone-rule nil))) ;; Reset to default time zone.
+  ==> "1983-09-27 17:35:59 UTC"
+#+end_src 
+
+*** Decode a time object.
+#+begin_src lisp 
+  (decode-time (date-to-time "Tue, 27-Sep-83 12:35:59 EST"))
+  ==> (59 35 13 27 9 1983 2 t -14400)
+Get the seconds from the unix epoch.
+
+  (let ((time (date-to-time "13 Feb 2009 23:31:30 UTC")))
+    (float-time time))
+  ==> 1234585890.0
+#+end_src 
+
+*** Find the date for seconds from the unix epoch.
+#+begin_src lisp 
+  (format-time-string "%Y-%m-%d %T UTC" (seconds-to-time 1234585890))
+  ==> "2009-02-13 23:31:30 UTC"
+#+end_src 
+
+*** Find the date 30 seconds in the future.
+#+begin_src lisp 
+  (format-time-string "%Y-%m-%d %T UTC" (time-add (current-time)
+                                                  (seconds-to-time 30)))
+  ==> "2012-02-13 10:07:11 UTC"
+#+end_src  
+
+*** Formatting elapsed time in years, days, hours, minutes and seconds.
+#+begin_src lisp 
+  (format-seconds "%Y %D %h:%m:%s" (1- (* 367 24 3600)))
+  ==> "1 year 1 day 23:59:59"
+#+end_src 
+
+*** Find the days between two dates.
+#+begin_src lisp 
+  (let ((days1 (time-to-days (date-to-time "Tue, 27-Sep-83 12:35:59 EST")))
+        (days2 (time-to-days (date-to-time "2009-02-13 23:31:30 UTC"))))
+    (- days2 days1))
+  ==> 9271
+#+end_src 
+
+*** Getting the day in the year.
+#+begin_src lisp 
+  (time-to-day-in-year (current-time))
+  ==> 44
+#+end_src 
+
+*** Build a date based on the day of the year.
+#+begin_src lisp 
+
+  (format-time-string "%j"
+                      (encode-time 0 0 0 44 1 2012))
+  ==> "044"
+#+end_src
+** pattern matching
+** @https://www.emacswiki.org/emacs/ElispCookbook
 * Functions
 ** variable holding function
 

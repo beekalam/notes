@@ -374,10 +374,10 @@ M-x auto-fill-mode + M-q allow you to wordwrap for real a pre-existing paragraph
 #+end_src
 
 * indent paragraph
-select the text to indent
-C-u C-x C-i
+  select the text to indent
+  C-u C-x C-i
 
 * References
-http://ehneilsen.net/notebook/orgExamples/org-examples.htm
+  http://ehneilsen.net/notebook/orgExamples/org-examples.htm
 
    
