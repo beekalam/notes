@@ -8191,6 +8191,50 @@ if(in_array($extension, $whitelist['extensions'])){
 }
 #+end_src 
 
+** disable =register_globals=
+** preventing session hijacking
+
+When SSL is not a possibility, you can further authenticate users by storing
+their IP address along with their other details. Do this by adding a line such
+as the following when you store a user’s session:
+
+#+begin_src php
+$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
+#+end_src 
+
+Then, as an extra check, whenever any page loads and a session is available,
+perform the following check. It calls the function different_user if the stored
+IP address doesn’t match the current one:
+
+#+begin_src php
+if ($_SESSION['ip'] != $_SERVER['REMOTE_ADDR']) different_user();
+#+end_src 
+
+Of course, you need to be aware that users on the same proxy server, or sharing
+the same IP address on a home or business network, will have the same IP
+address. Again, if this is a problem for you, use SSL. You can also store a copy
+of the browser’s user agent string (a string that developers put in their
+browsers to identify them by type and version), which, due to the wide variety
+of browser types, versions, and computer platforms, might help to distinguish
+users. Use the following to store the user agent:
+
+#+begin_src php
+$_SESSION['ua'] = $_SERVER['HTTP_USER_AGENT'];
+#+end_src 
+
+And use this to compare the current agent string with the saved one:
+
+#+begin_src php
+if ($_SESSION['ua'] != $_SERVER['HTTP_USER_AGENT']) different_user();
+#+end_src 
+
+Or, better still, combine the two checks like this and save the combination as an md5 hexadecimal string:
+
+#+begin_src php
+$_SESSION['check'] = md5($_SERVER['REMOTE_ADDR'] .
+    $_SERVER['HTTP_USER_AGENT']);
+#+end_src 
+
 * apache =.htaccess= sample configuration
   
 #+begin_src
@@ -8334,8 +8378,6 @@ SELECT s,md5 FROM huge_data_table limit 10;
  ?>
 #+end_src 
 
-* security
-** disable =register_globals=
 * bootstrap
 ** structure of page
 *** settings of the viewing arena
@@ -9675,29 +9717,6 @@ http://code.google.com/p/php-tail/
 https://gist.github.com/lorenzos/1711e81a9162320fde20
 http://stackoverflow.com/questions/15025875/what-is-the-best-way-in-php-to-read-last-lines-from-a-file
 http://www.geekality.net/2011/05/28/php-tail-tackling-large-files/
-* output number of bytes in human readable format
-#+begin_src php
-function make_pretty($bytes)
-{
-    $symbols = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
-
-    if($bytes == 0)
-        return sprintf('%.2f '.$symbols[0], 0);
-
-    $exp = floor(log(abs($bytes)) / log(1024));
-
-    return sprintf('%.2f '.$symbols[$exp], $bytes/pow(1024, floor($exp)));
-}
-//example
-//echo make_pretty(167892598784); //  156.36 GiB
-//echo make_pretty(719267016);    //  685.95 MiB
-//echo make_pretty(114893);       //  112.20 KiB
-//echo make_pretty(6218);         //  6.07 KiB
-//echo make_pretty(42);           //  42.00 B
-//echo make_pretty(0);            //  0.00 B
-//echo make_pretty(-50);          // -50.00 B
-#+end_src
-
 * CLI
 ** script arguments
 #+begin_src php
@@ -11718,49 +11737,6 @@ comment, introduce a method that tests the assertion rule.
     }
 #+end_src
 
-* preventing session hijacking
-
-When SSL is not a possibility, you can further authenticate users by storing
-their IP address along with their other details. Do this by adding a line such
-as the following when you store a user’s session:
-
-#+begin_src php
-$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
-#+end_src 
-
-Then, as an extra check, whenever any page loads and a session is available,
-perform the following check. It calls the function different_user if the stored
-IP address doesn’t match the current one:
-
-#+begin_src php
-if ($_SESSION['ip'] != $_SERVER['REMOTE_ADDR']) different_user();
-#+end_src 
-
-Of course, you need to be aware that users on the same proxy server, or sharing
-the same IP address on a home or business network, will have the same IP
-address. Again, if this is a problem for you, use SSL. You can also store a copy
-of the browser’s user agent string (a string that developers put in their
-browsers to identify them by type and version), which, due to the wide variety
-of browser types, versions, and computer platforms, might help to distinguish
-users. Use the following to store the user agent:
-
-#+begin_src php
-$_SESSION['ua'] = $_SERVER['HTTP_USER_AGENT'];
-#+end_src 
-
-And use this to compare the current agent string with the saved one:
-
-#+begin_src php
-if ($_SESSION['ua'] != $_SERVER['HTTP_USER_AGENT']) different_user();
-#+end_src 
-
-Or, better still, combine the two checks like this and save the combination as an md5 hexadecimal string:
-
-#+begin_src php
-$_SESSION['check'] = md5($_SERVER['REMOTE_ADDR'] .
-    $_SERVER['HTTP_USER_AGENT']);
-#+end_src 
-
 * Defensive programming
 ** premature optimization
 *** symptoms
@@ -12179,24 +12155,6 @@ The client asks the Builder to return the result.
     });  
 #+end_src
 
-* mobile related
-#+begin_src php
-$userAgent=$_SERVER[’HTTP_USER_AGENT’];
-function isTablet()
-{
- global $userAgent;
-if (strstr($userAgent, "iPad") ||
-    strstr($userAgent, "Kindle") ||
-    strstr($userAgent, "wOSBrowser") ||
-    (strstr($userAgent, "Android")&& strstr(userAgent, "Tablet")) ||
-    (strstr($userAgent, "Android")&&
-    ! strstr(userAgent, "Mobile")))
- return true;
-
- return false;
-}
-#+end_src
-
 * useful functions
 ** dump
 #+begin_src php
@@ -12495,6 +12453,47 @@ Which gives us this output
 10.4.200.1 is from a private address range
 192.168.0.2 is from a private address range
 213.224.100.43 is *NOT* from a private address range
+** output number of bytes in human readable format
+#+begin_src php
+function make_pretty($bytes)
+{
+    $symbols = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
+
+    if($bytes == 0)
+        return sprintf('%.2f '.$symbols[0], 0);
+
+    $exp = floor(log(abs($bytes)) / log(1024));
+
+    return sprintf('%.2f '.$symbols[$exp], $bytes/pow(1024, floor($exp)));
+}
+//example
+//echo make_pretty(167892598784); //  156.36 GiB
+//echo make_pretty(719267016);    //  685.95 MiB
+//echo make_pretty(114893);       //  112.20 KiB
+//echo make_pretty(6218);         //  6.07 KiB
+//echo make_pretty(42);           //  42.00 B
+//echo make_pretty(0);            //  0.00 B
+//echo make_pretty(-50);          // -50.00 B
+#+end_src
+
+** mobile related
+#+begin_src php
+$userAgent=$_SERVER[’HTTP_USER_AGENT’];
+function isTablet()
+{
+ global $userAgent;
+if (strstr($userAgent, "iPad") ||
+    strstr($userAgent, "Kindle") ||
+    strstr($userAgent, "wOSBrowser") ||
+    (strstr($userAgent, "Android")&& strstr(userAgent, "Tablet")) ||
+    (strstr($userAgent, "Android")&&
+    ! strstr(userAgent, "Mobile")))
+ return true;
+
+ return false;
+}
+#+end_src
+
 * useful resources
 ** php snippets
 http://psoug.org/browse.htm?cid=2
