@@ -12155,6 +12155,114 @@ The client asks the Builder to return the result.
     });  
 #+end_src
 
+* laravel
+** installing laravel sample blog
+
+ #+begin_src shell
+ $ sudo composer create-project --prefer-dist laravel/laravel blog
+ #+end_src
+
+** routes
+*** controllers grouping
+
+#+begin_src php
+Route::group(['prefix']=>'home', function()
+{
+  Route::get('/', 'HomeController@showIndex');
+  Route::get('/about', 'HomeController@About');
+  Route::get('/contact', 'HomeController@showContact');
+});
+
+#+end_src
+You see, inside the group, we need not write ‘home’ anymore. It is explicitly told
+to our router.
+ 
+*** listing all routes with artisan
+
+  #+begin_src shell
+  $ php artisan routes
+  #+end_src
+
+*** named routes
+   
+ #+begin_src php
+ Route::get('session/create', [
+ 'as'=>'create',
+ 'use'=>'SessionController@create']);
+ //////
+ Route::get('register', [
+  'before'=>['guest'],
+  'as'=>['register'],
+  'use'=>['SessionController@register']
+ ]);
+
+ //You can write it like this also:
+
+ Route::get('register', [
+  'as'=>['register'],
+  'use'=>['SessionController@register']
+ ])->before('guest');
+ #+end_src
+** using sqlite as database
+ first make sure sqlite drivers for php is installed
+
+ #+begin_src shell
+ $ sudo apt-get install php-sqlite3
+ $ sudo apt-get install php7.0-sqlite3
+ # create a sample database in /storage folder
+ $ sqlite3 database.sqlite
+
+ # run the migrate command
+ $ php artisan migrate
+ #+end_src
+
+ #+begin_src php 
+ dotenv = new Dotenv\Dotenv(DIR . '/../', '.' . getenv('APP_ENV') . '.env');
+ dotenv->overload(); //this is important
+ // change the following in database.php from 'mysql' to 'sqlite'
+ 'default' => env('DB_CONNECTION', 'sqlite'),
+ // change 'database =>' 
+ 'sqlite' => [
+		    'driver' => 'sqlite',
+			 // 'database' => env('DB_DATABASE', database_path('database.sqlite')),
+			 'database' => storage_path() . '/database.sqlite',
+			 'prefix' => '',
+ ]
+ #+end_src 
+
+* javascript cookie functions
+#+begin_src javascript
+function setCookie(c_name,c_value,c_expiredays,c_path,c_domain) {
+   var c_exdate=new Date();
+   c_exdate.setDate(c_exdate.getDate()+c_expiredays);
+   document.cookie=c_name+ "=" +escape(c_value)+((c_expiredays==null) ? "" : ";expires="+c_exdate.toUTCString()) +"; path="+ c_path +"; domain="+ c_domain;
+}
+
+function getCookie(tag) {
+  var value = null
+  var myCookie = document.cookie + ";"
+  var findTag = tag + "="
+  var endPos
+  if (myCookie.length > 0) {
+  var beginPos = myCookie.indexOf(findTag)
+  if (beginPos != -1) {
+  beginPos = beginPos + findTag.length
+  endPos = myCookie.indexOf(";",beginPos)
+  if (endPos == -1)
+  endPos = myCookie.length
+  value = unescape(myCookie.substring(beginPos,endPos))
+  }
+  }
+return value
+}
+
+function deleteCookie(cookie) {
+var yesterday = 24 * 60 * 60 * 1000
+var expireDate = new Date()
+expireDate.setTime (expireDate.getTime() - yesterday)
+document.cookie =cookie + "=" + escape("nothing") + ";" + "expires" + "=" + expireDate.toGMTString()
+}
+#+end_src
 * useful functions
 ** dump
 #+begin_src php
