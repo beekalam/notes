@@ -8407,6 +8407,42 @@ try {
 } catch(e)	{ 
   return false; 
 }	
+
+///////////////////////////////////////////////////////////////////////////
+function Num2En(param){
+	ennum = new Array(0,1,2,3,4,5,6,7,8,9);
+	fanum = new Array("۰","۱","۲","۳","۴","۵","۶","۷","۸","۹");
+	arnum = new Array("٠","١","٢","٣","٤","٥","٦","٧","٨","٩");	
+	return param.replaceArray(arnum, ennum).replaceArray(fanum, ennum);
+}
+
+String.prototype.replaceArray = function(find, replace) {
+  var replaceString = this;
+  var regex; 
+  for (var i = 0; i < find.length; i++) {
+    regex = new RegExp(find[i], "g");
+    replaceString = replaceString.replace(regex, replace[i]);
+  }
+  return replaceString;
+};
+///////////////////////////////////////////////////////////////////////////
+function IsNumeric(sText)
+{
+   var ValidChars = "0123456789.";
+   var IsNumber=true;
+   var Char;
+ 
+   for (i = 0; i < sText.length && IsNumber == true; i++) 
+      { 
+      Char = sText.charAt(i); 
+      if (ValidChars.indexOf(Char) == -1) 
+         {
+         IsNumber = false;
+         }
+      }
+   return IsNumber;   
+}
+
 #+end_src
 
 * useful resources
