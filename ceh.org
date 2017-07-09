@@ -623,6 +623,13 @@ PING alrac.net(11.22.33.44) 56(84) bytes of data.
 10 packets transmitted, 0 received, 100% packet loss, time 10007ms
 #+end_src
 
+** checking internet connection
+*** try pining google public dns servers
+#+begin_src shell 
+$ ping 4.2.2.4
+$ ping 8.8.8.8
+#+end_src
+
 ** profiling
 *** ping whole subnet
 **** with Fping
