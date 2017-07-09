@@ -8291,6 +8291,13 @@ $('#nas-ippools').on('change', function() {
 <option selected='selected' disabled='true'>--Please Select --</option>
 #+end_src
 
+*** traverse through select items with jquery
+#+begin_src javascript
+$("#selectId > option").each(function() {
+    alert(this.text + ' ' + this.value);
+});
+#+end_src
+
 ** only send non empty fields on submit
 #+begin_src javascript
 $('body').on('submit','#form-id',function () {
