@@ -2881,4 +2881,4 @@ https://rawgit.com/jeresig/jquery.hotkeys/master/test-static-01.html
 http://ned.im/noty/
 http://malsup.com/jquery/block/
 * asus n552vm 4-300-0000
-* 
+* upgrage baileys 
