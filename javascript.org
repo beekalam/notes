@@ -8403,6 +8403,127 @@ function urldecode(str) {
 
 https://github.com/kvz/locutus/blob/master/src/php/url/urldecode.js
 
+* chrom extensions
+** creating first extension
+*** files
+#+begin_src javascript
+// manifest.json
+// manifest.json is the only reserved file name in an extension. All the other files
+// can be named anything you want.
+////////////////////////////////////////////////////////////////////////
+{
+	"manifest_version" : 2,
+	"name" : "ShowTime",
+	"description" : "Extension to show the current time and date",
+	"version" : "1.2",
+	"browser_action": {
+		"default_title" : "ShowTime",
+		"default_icon" : "icon.png",
+		"default_popup" : "popup.html"
+	},
+	"icons" : {
+		"16" : "icon16.png",
+		"48" : "icon48.png",
+		"128" : "icon128.png"
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
+///ShowTime/popup_script.js
+//region {variables and functions}
+var timeId = "time";
+var dateId = "date";
+var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var consoleGreeting = "Hello World! - from popup_script.js";
+function setTimeAndDate(timeElement,dateElement) {
+	var date = new Date();
+	var minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+	var time = date.getHours() + ":" + minutes;
+	//In "date.getMonth", 0 indicates the first month of the year
+	//In "date.getDay", 0 represents Sunday
+	var date = days[date.getDay()] + ", " + months[date.getMonth()] + " " + date.getDate() + " " + date.getFullYear();
+	timeElement.innerHTML = time;
+	dateElement.innerHTML = date;
+}
+//end-region
+
+
+
+//region {calls}
+console.log(consoleGreeting);
+document.addEventListener("DOMContentLoaded",function(dcle) {
+	var timeElement = document.getElementById(timeId);
+	var dateElement = document.getElementById(dateId);
+	setTimeAndDate(timeElement,dateElement);
+});
+//end-region
+////////////////////////////////////////////////////////////////////////
+// showTime/popup.html
+<!DOCTYPE html>
+<html>
+<head>
+
+<!-- The following tag is not obeyed -->
+<title>ShowTime (Custom)</title>
+
+<!--
+<script>
+// Inline scripts are not allowed
+alert('Hello World');
+</script>
+-->
+
+<!-- Referring scripts is allowed -->
+<script src="popup_script.js"></script>
+
+<style>
+body {
+	padding:0px;
+	margin:0px;
+	width:300px;
+	height:200px;
+}
+div {
+	height:100%;
+	width:100%;
+	display:table;
+	font-family:"Tahoma","Verdana";
+	font-size:15px;
+	font-weight:bold;
+	text-shadow:0px 0px 1px #000000;
+	background-color:#555;
+	color:#fff;
+}
+h1,h2 {
+	display:table-row;
+	vertical-align:middle;
+	text-align:center;
+}
+h2 {
+	background-color:#777;
+}
+.unselectable {
+	-webkit-user-select:none;
+	cursor:default;
+}
+</style>
+</head>
+<body>
+	<div class="unselectable">
+		<h1 class="empty"></h1>
+		<h1 id="time"></h1>
+		<h2 id="date"></h2>
+	</div>
+</body>
+</html>
+
+#+end_src
+*** loading the extension
+goto =chrome://extensions= & turn on the developer mode & load the extension folder
+** usefule resources
+https://chrome.google.com/webstore/developer/dashboard
+
 * useful functions
 #+begin_src javascript
 function isMobile () {
