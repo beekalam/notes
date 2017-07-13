@@ -9336,6 +9336,24 @@ url('GenBkBasR.ttf') format('truetype');
 }
 
 *** todo: continue text effects@ch6 the book of css3
+** make text unselectable
+
+#+begin_src 
+.unselectable{
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+#+end_src
+
+using javascript
+#+begin_src javascript
+<div id="test" onmousedown='return false;' onselectstart='return false;'>
+#+end_src
+
 ** useful resources
 
 https://www.w3.org/TR/css3-selectors/
