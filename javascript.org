@@ -8523,7 +8523,7 @@ h2 {
 goto =chrome://extensions= & turn on the developer mode & load the extension folder
 ** usefule resources
 https://chrome.google.com/webstore/developer/dashboard
-
+** architecture overview
 * useful functions
 #+begin_src javascript
 function isMobile () {
