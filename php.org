@@ -7495,6 +7495,13 @@ session_start( );
 ?>
 #+end_src
 
+** change session save path
+*** example #1
+#+begin_src php
+session_save_path( dirname(__FILE__) . '/tmp/sessions');
+ini_set('session.gc_probability', 1);
+#+end_src 
+
 * SPL
 ** Available objects in SPL
    
