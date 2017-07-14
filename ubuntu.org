@@ -4063,3 +4063,56 @@ http://askubuntu.com/questions/499995/change-ip-address-which-is-given-by-tor-us
 
 http://superuser.com/questions/792525/how-to-change-ffmpeg-threads-settings
 http://crm5.farahoosh.ir/AAA2/userinfo/118262
+* dump
+** check if SDD support TRIM command
+
+#+begin_src shell
+
+$ hdparm -I /dev/sda
+
+#...
+#Commands/features:
+#Enabled Supported:
+#...
+#+end_src
+** kernel device detection
+plug-and-play hardware, a more dynamic approach was needed, and devfs was created to auto-
+matically detect new hardware and create device files. The requirement to
+interact better with userspace scripts and programs led to the development
+of udev , which replaced devfs . Today, udev has been merged into systemd and
+runs a daemon called systemd-udevd .
+When a new device is attached to (or removed from) a host, an inter-
+rupt notifies the kernel of a hardware change. The kernel informs the udev
+system, which creates appropriate devices with proper permissions, executes
+setup (or removal) scripts and programs, and sends messages to other dae-
+mons (via dbus , for example).
+To observe udev in action, use the udevadm tool in monitor mode:
+
+#+begin_src shell 
+$ udevadm monitor
+#+end_src
+
+** determine a list of the associated files and paths for attached devices
+
+#+begin_src shell
+$ udevadm info /dev/sdf
+#+end_src
+
+** storage devices in /dev
+Attached drives will appear as block devices in the /dev directory when
+they’re detected by the kernel. Raw disk device files have a specific nam-
+ing convention: sd* for SCSI and SATA, hd* for IDE, md* for RAID arrays,
+nvme*n* for NVME drives, and other names for less common or proprietary
+disk device drivers.
+| name    | type         |
+|---------+--------------|
+| sd*     | SCSI and ATA |
+| md*     | RAID         |
+| nvme*n* | NVME         |
+
+** abbreviations
+| abbrv | desc                                                                                        |
+|-------+---------------------------------------------------------------------------------------------|
+| SATA  | seriall ATA                                                                                 |
+| eSATA | external interface                                                                          |
+| mSATA | mini-SATA(allows small SATA drives to attach directly to a mainboard without separate cable |
