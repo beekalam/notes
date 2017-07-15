@@ -4116,3 +4116,14 @@ disk device drivers.
 | SATA  | seriall ATA                                                                                 |
 | eSATA | external interface                                                                          |
 | mSATA | mini-SATA(allows small SATA drives to attach directly to a mainboard without separate cable |
+** linux /dev devices
+| dev           | desc                                 |
+|---------------+--------------------------------------|
+| /dev/null     | discards any data written to it      |
+| /dev/zero     | steady stream of zeros.              |
+| /dev/random   | provides stream of random data       |
+| /dev/st       | tape drives start with st            |
+| /dev/cdrom    |                                      |
+| /dev/dvd      | these are symbolic links to /dev/sr* |
+| /dev/loop*    |                                      |
+| /dev/mapper/* |                                      |

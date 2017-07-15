@@ -261,33 +261,6 @@ about how many hours is 7386 seconds? Divide using the true division operator:
 2.0514
 #+end_src 
 
-** Python 3.0 division operators
-Python 3 has two division operators.
-
-The / true division operator always tries to produce a true, floating-point
-result. It does this even when the two operands are integers. This is an unusual
-operator in this respect. All other operators try to preserve the type of the
-data. The true division operation - when applied to integers - produces a float
-result.
-
-The // truncated division operator always tries to produce a truncated result.
-For two integer operands, this is the truncated quotient. For two floating-point
-operands, this is a truncated floating-point result:
-#+begin_src 
->>> 7358.0 // 3600.0
-    2.0
-#+end_src 
-
-By default, Python 2 only has one division operator. For programmers still using
-Python 2, we can start using these new division operators with this:
-
-#+begin_src 
->>> from __future__ import division
-#+end_src 
-
-
-
-
 * classes
 ** calling Superclass constructors
 
@@ -433,7 +406,6 @@ curated list of popular packages and frameworks
 Python Weekly (http://www.pythonweekly.com/) is a popular newsletter that
 delivers to its subscribers dozens of new and interesting Python packages and
 resources every week
-
 
 * Updating a string with a replacement
 #+begin_src python
@@ -698,7 +670,6 @@ forward to Chapter 6 , Basics of Classes and Objects :
 IAD  : Dulles Intl Airport :   32 /  13 /  0.40
 #+end_src 
 
-
 * Building complex strings from lists of characters
 Here's a string that we'd like to rearrange:
 #+begin_src python
@@ -779,7 +750,6 @@ We'd like to do two transformations:
 >>> string_bytes
 b'You drew \xf0\x9f\x80\x80'
 #+end_src 
-
 
 * remove sublime register message
 #+begin_src python
