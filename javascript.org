@@ -1214,6 +1214,177 @@ There are 1 letter "a"s in the word javascript
 */
 #+end_src
 
+** Splitting Strings with .split( )
+You want to be able to split a string into an array of strings, given a specific substring (or regular expression)
+to split them by.
+
+#+begin_src javascript
+console.log('abc'.split('a'));
+console.log('/var/www/site/javascriptrecipes'.split('/'));
+console.log('/var/www/site/javascriptrecipes'.split(/\//g));
+console.log('/var/www/site/javascriptrecipes'.split('/', 2));
+#+end_src
+
+String.prototype.split()uses regular expressions (discussed at length in Chapter 20) to search for
+matches inside of the parent string. If the first argument passed to it is not a regular expression, it will
+convert it to one (using the RegExp constructor function). This means simply using a string is mostly fine,
+as long as you don’t cross swords with regular expression syntax. The second argument can be used to limit
+the amount of splits that happen. It defaults to 2^53-1 (9,007,199,254,740,991) and if you attempt to enter a
+larger value (e.g., 9,007,199,254,740,992), 2^53-1 will be used. It’s a hard cap on the amount of splits that can
+occur in a string. Realistically this is a limit that you’re very unlikely to hit.
+** Stripping Blank Spaces with trim( )
+Problem
+You want to be able to remove trailing and leading whitespace from a string.
+#+begin_src javascript
+console.log(' hello '.trim());
+console.log('\r\n\r\nFile start...\r\n...\r\nFile end...\r\n');
+console.log('\r\n\r\nFile start...\r\n...\r\nFile end...\r\n'.trim());
+#+end_src
+
+** Determining If a String “Comes Before” Another with
+localeCompare( )
+You want to check if a particular string should precede another, in terms of ordering within a particular
+locale. For example in English a “comes before” b, as a precedes b in the English alphabet.
+ Determining If a String “Comes Before” Another with localeCompare()
+#+begin_src javascript 
+if ('Mike'.localeCompare('John') === -1) {
+    console.log('Mike comes before John');
+} else if ('Mike'.localeCompare('John') === 1) {
+    console.log('John comes before Mike');
+} else {
+    console.log('John and Mike are both in the same position');
+}
+if ('Jan'.localeCompare('John') === -1) {
+    console.log('Jan comes before John');
+} else if ('Jan'.localeCompare('John') === 1) {
+    console.log('John comes before Jan');
+} else {
+    console.log('John and Jan are both in the same position');
+}
+ if ('a'.localeCompare('á') === -1) {
+    console.log('a comes before á');
+} else if ('a'.localeCompare('á') === 1) {
+    console.log('á comes before a');
+} else {
+    console.log('a and á are the same kind of letter');
+}
+if ('Michelle'.localeCompare('Michéllé') === -1) {
+    console.log('Michelle comes before Michéllé');
+} else if ('Michelle'.localeCompare('Michéllé') === 1) {
+    console.log('Michéllé comes before Michelle');
+} else {
+    console.log('Michéllé and Michelle are both in the same position');
+}
+The output is:
+John comes before Mike
+Jan comes before John
+a comes before á
+Michelle comes before Michéllé
+#+end_src
+
+** Counting the Occurrences of a Substring
+Problem
+You want to be able to count the occurrences of a substring in a given parent string, but no methods exist for
+this natively in JavaScript.
+
+Counting the Occurrences of a Substring
+ 
+#+begin_src javascript
+function findOccurrences(string, substring) {
+  var occurrenceCount = 0, position = 0;
+  while ((position = string.indexOf(substring, position)) !== -1)  {
+      occurrenceCount++;
+      position += substring.length;
+  }
+  return occurrenceCount;
+}
+#+end_src
+
+** Padding a String with a Custom Function
+ adding a String with a Custom Function
+
+#+begin_src javascript  
+function pad(string, desiredLength = 0, padString = ' ', direction = -1) {
+    var repetition = (desiredLength - string.length) / padString.length;
+    if (repetition && direction > 0) {
+        return string + padString.repeat(repetition);
+    } else if (repetition && direction < 0) {
+        return padString.repeat(repetition) + string;
+    } else if (repetition && direction === 0) {
+        var left = Math.floor(repetition/2),
+            right = repetition - left;
+        return padString.repeat(left) + string + padString.repeat(right);
+    }
+    return string;
+}
+#+end_src
+
+** Truncating a String with a Custom Function
+#+begin_src javascript 
+function truncate(string, desiredLength, addendum = '\u2026') {
+    if (string.length <= desiredLength) {
+        return string;
+    }
+    return string.slice(0, string.lastIndexOf(' ', desiredLength - addendum.length)) + addendum;
+}
+#+end_src
+
+The solution in this particular implementation is simple, perhaps a
+little naive. Much more complex solutions exist for the same problem. This also generally only works with
+LTR (Left to Right) languages such as English or French. String.prototype.slice() is given two arguments,
+the first is 0 (the beginning of the string) the next is more complex.
+Here the function calls String.prototype.lastIndexOf(). It calls it with a ' ' (space) character, the
+idea being it should look for the last space character in the string, which would indicate the index between
+the last and second to last word. Except it's actually passed a second argument, desiredLength - addendum.
+length, which tells String.prototype.lastIndexOf() to look further down the string. This means that
+String.prototype.lastIndexOf() actually finds the nearest space, left-most of the desiredLength cutoff
+point. This makes the function a little greedy, oftentimes coming in under the desiredLength, but the use
+case of this means it’s better to be under than over.
+** Making a ROT13 Cypher with a Custom Function
+
+ #+begin_src javascript
+
+ function rot13(string) {
+     return string.replace(/[a-z]/ig, function (character) {
+         var moveNumber = character.toLowerCase() < 'n' ? 13 : -13;
+         character = character.charCodeAt(0) + moveNumber;
+         return String.fromCharCode(character);
+     });
+ }
+ #+end_src
+** Calculating the Levenshtein Distance Between Two Strings with a Custom Function
+ You want to use the Levenshtein Distance algorithm to denote the numerical similarity between two words.
+ Levenshtein distance is the algorithm used to predict spelling corrections or auto-correct, and counts the
+ number of single character edits between two words, to get from one word to the other. For example, the
+ Levenshtein distance between “cat” and “hat” is 1 (change the c to h), while “cat” and “care” is 2 (change the
+ t to r, add the e). A naive implementation might just count the different letters, but we want the most efficient
+ way to change this.
+
+ #+begin_src javascript 
+ function lev(string1, string2) {
+     var string1Length = string1.length,
+         string2Length = string2.length,
+         matrix = new Array(string1Length + 1);
+     for (var i = 0; i <= string1Length; i++) {
+         matrix[i] = new Array(string2Length + 1);
+         matrix[i][0] = i;
+     }
+     for (let i = 0; i <= string2Length; i++) {
+         matrix[0][i] = i;
+     }
+     for (let i = 1; i <= string1Length; i++) {
+         for (let n = 1; n <= string2Length; n++) {
+             var add = matrix[i - 1][n] + 1,
+                 remove = matrix[i][n - 1] + 1,
+                 change = matrix[i - 1][n - 1] + Number(string1.charAt(i - 1) !== string2.
+ charAt(n - 1));
+             matrix[i][n] = Math.min(add, remove, change);
+         }
+     }
+     return matrix[string1Length][string2Length];
+ }
+ #+end_src
+
 * numbers
 ** isNumber
 
@@ -1286,6 +1457,226 @@ var cnum = +num;
 #+begin_src javascript
 var val = parseInt(rgb, 16);
 #+end_src
+
+** Creating a Number Object
+ You want to create an object whose datatype is a number in order to work with numerical values.
+
+ #+begin_src javascript 
+ var myNumberObject = new Number(2);
+ console.log(myNumberObject);
+ if(myNumberObject.valueOf() === 2){
+    console.log(‘we are the same’);
+ }
+ console.log(typeof parseInt('2')); // returns number
+ console.log(typeof parseFloat('2')); //returns number
+ console.log(typeof parseFloat(myNumberObject)); //returns number
+ #+end_src
+
+** Checking If a Value Is Not a Number
+  Using the isNaN Method on the Number Object to Check Value
+ #+begin_src javascript
+
+ var numberObject = new Number('things');
+ function checkIsNaN(value){
+   if(typeof value !== 'number'){
+     return 'is not a number';
+   }else{
+     return 'is a number';
+   }
+ }
+ checkIsNaN('1234'); //returns is not a number
+ isNaN('things'); // returns true
+ Number.isNaN(numberObject.valueOf()); //returns true
+ Number.isNaN(4); //returns false
+ Number.isNaN(NaN); //returns true
+ #+end_src
+
+  Using the global isNaN method, parameters are converted to numbers, then evaluated. If you were to pass a
+ string or number to the method on the number object, it will return false. This makes it possible to only pass
+ parameters that can safely be converted to NaN but are not the same value. In addition, you can use the typeof
+ operator and strict equality or inequality operators. One way to think of this would be, “is this not a number?”.
+** Formatting a Number to a Fixed Amount of Digits
+ Fixing the Amount of Numbers after a Decimal Point
+ #+begin_src javascript
+ var numObj = 1.23456789;
+ numObj.toPrecision(); //returns 1.23456789
+ numObj.toPrecision(2); //returns 1.2
+ numObj.toPrecision(5); //returns 1.2346 Five numbers total. Notice how it is rounded up
+ numObj.toFixed(5); //returns 1.23457 Notice how it rounds up
+ numObj.toFixed(2); //returns 1.2
+ #+end_src
+
+** Checking to See If a Number Is Finite
+ You want to make sure the number being used is a finite number.
+ #+begin_src javascript
+ var myNumberObject = new Number(2);
+ isFinite(myNumberObject); //returns true
+ isFinite(2); //returns true
+ isFinite('myNumberObject'); //returns false
+ Number.isFinite(myNumberObject.valueOf()); //returns true  
+ Number.isFinite(myNumberObject); //returns false  
+ Number.isFinite('myNumberObject'); //returns false  
+ Number.isFinite(NaN); //returns false  
+ isFinite(NaN); //returns false
+ isFinite(null); //returns true
+ Number.isFinite(null); //returns false  
+ #+end_src
+
+ The global isFinite function will do type conversion while the version associated with the number object
+ does not. If you’re passing a number object to the global version, it will be treated like a number due to type
+ conversion. Passing a string that cannot be converted into a number will return false. Values like null will
+ be converted into a number and return true, while NaN will return false.
+** Checking If a Value Is an Integer
+ You want to determine if the number are working with is a whole number.
+ JavaScript does not have an integer datatype; all numbers are really floating-point numbers. For these
+ purposes, you want a number converted to a whole number without decimals. The methods round, ceil,
+ and floor used with the math object will return integers and will convert strings into numbers. If the string
+ cannot be converted, it will return NaN.
+
+ #+begin_src javascript
+ var myNumber = 1
+ Number.isInteger(myNumber);//returns true does not work in IE
+ Number.isInteger('2'); //returns false does not work in IE
+ Math.floor(1.6); //returns 1
+ Math.floor(1.4); //returns 1
+ Math.floor(NaN); //returns NaN
+ Math.ceil(1.6); //returns 2
+ Math.ceil(1.4); //returns 2
+ Math.round(1.6); //returns 2
+ Math.round(1.4); //returns 1
+ Math.round(-1.5); //returns -1
+ Math.round(-1.6); //returns -2
+ Math.round('3.5'); //returns -4
+ Math.round('jenny'); //returns NaN
+ Math.round(null); //returns 0
+ #+end_src
+
+** Formatting Numbers for Date Time and Currency
+ You want to take numbers and format them into percentages and currency.
+ The number object does not have built-in formatting functions. Because of this, there are a lot of third-party
+ libraries and APIs to give you what you need. The ECMAScript Internationalization API has methods for date
+ time and currency. The visualization library D3 also has formatting methods. The internationalization API
+ works with IE 11, but not in Safari and the D3 library works with IE 9 and above.
+
+ #+begin_src javascript 
+ d3.format('%')(1); // returns 100%
+ d3.format(',')(1000000); //returns 1,000,000
+ d3.format("$,")(1250); //returns $1,250
+ d3.format("$,.2f")(1250);  //returns $1,250.00
+ d3.time.format('%Y-%m-%d').parse('1975-08-19');
+ //returns Tue Aug 19 1975 00:00:00 GMT-0400 (EDT)
+ new Intl.NumberFormat().format(45000);   // returns 45,000
+ new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(45000);
+ // returns ¥45,000
+ new Intl.DateTimeFormat('ja-JP', { weekday: 'long', year: 'numeric', month: 'long', day:
+ 'numeric' }).format(new Date(1975, 07, 19)); //returns 1975年8月19日火曜日
+ new Intl.DateTimeFormat('en-US', { weekday: 'long', year: 'numeric', month: 'long', day:
+ 'numeric' }).format(new Date(1975, 07, 19)); // returns Tuesday, August 19, 1975
+ #+end_src
+
+** Creating a Random Number Generator
+ You want generate a random number between two values.
+ Creating a Random Number Generator Based on the Range of Two Numbers
+
+ #+begin_src javascript 
+ function getRandomBetweenMinAndMax(min, max) {
+   return Math.floor(Math.random() * (max - min) + min);
+ }
+ function getRandomArbitrary(min, max) {
+   return Math.floor(Math.random() * (max - min + 1) + min);
+ }
+ getRandomBetweenMinAndMax(0,5);
+ getRandomArbitrary(0,5);
+ #+end_src
+
+** Using Math.max to Determine the Highest Number
+ Without performing a loop or any type of comparison function, you need to determine the highest number
+ in a list or in an array.
+
+ #+begin_src javascript 
+ Math.max(1,10) //returns 10
+ Math.max(-100,10) //returns 10
+ Using apply as part of the method call can define scope of the array.
+ var myNumArray = [1,2,3,4,5,6,7,8,9];
+ Math.max.apply(null,myArray); //returns 9
+ This would give you the same result:
+ Math.max.apply(this,myArray); //returns 9
+ Math.max.apply(myArray) //returns –Infinity
+ Math.max(myArray) //Returns NaN
+ #+end_src
+
+** Returning the Square Root of a Number
+
+ #+begin_src javascript 
+ Math.sqrt(’Roger’) //result NaN
+ Math.sqrt(1000); //result 31.622776601683793
+ #+end_src 
+
+** Using Coercion and Performing Equations
+ Because JavaScript does type coercion, strings can be converted into numbers and used in equations
+ dynamically. Depending on the order of the strings, numbers, and operators (+, -), the results can be
+ different.
+
+ #+begin_src javascript 
+ var myNumber = ‘15’;
+ //adding numbers
+ console.log(myNumber + 5) // returns 155
+ console.log(5 + myNumber) //returns 515
+ //subtracting numbers
+ console.log(5 – myNumber) // returns -10
+ console.log(myNumber – 5) //returns 10
+ var testNum = ‘7’;
+     testNum += 7 // returns 77
+     testumber – ‘1’ // returns 6
+ var machineType = ‘Tardis Type ‘;
+     machineType += 40 // returns Tardis Type 40
+ var num1 = 5;
+ var num2= 5;
+ console.log (‘the total is ‘ + (num1 + num2)); // returns the total is 10
+ #+end_src 
+
+** Returning a Number in Reverse
+ You are given a number and are asked to give that number back in reverse. For example, if you are given 123
+ the result should be 321.
+
+ #+begin_src javascript 
+
+ var numSequence = 1234;  
+  var reversedNumbers = Number(numSequence.toString().split(”).reverse().join(”));
+ console.log(reversedNumbers) // returns 4321
+ //with out converting to a string
+ var = 123456789, b=0;
+ while(a > 0){
+   b = b * 10;
+   b = b + parseInt(a%10);
+  a = parseInt(a/10);
+ }
+ console.log("Reversed number: " + b);
+ #+end_src 
+
+** Determining the Length of a Number
+
+ #+begin_src javascript 
+ var myNum = 123456789;
+ console.log(myNum.toString().split(‘’).length);
+ //without converting to a string
+ var length = Math.log(555555555) * Math.LOG10E + 1 | 0;
+ console.log(length);
+ #+end_src 
+
+** Swapping Two Numbers Without a Temporary Variable
+ Determine First with String Conversion then Without
+
+ #+begin_src javascript 
+ function swapNumbers(numb1, numb2){
+    console.log(‘starting order = ‘ + numb1 + ‘,’ + numb2);
+    numb2 = numb2 – numb1; //is now -150
+    numb1 = numb1 + numb2; //is now 50
+    numb2 = numb1 – numb2; //is now 200
+    console.log(‘ending order = ‘ + numb1 + ‘,’ + numb2);
+ }
+ swapNumbers(200,50);
+ #+end_src
 
 * date time
 ** next month
