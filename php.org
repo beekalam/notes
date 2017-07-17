@@ -7500,7 +7500,25 @@ session_start( );
 #+begin_src php
 session_save_path( dirname(__FILE__) . '/tmp/sessions');
 ini_set('session.gc_probability', 1);
-#+end_src 
+#+end_src
+
+** session unserialize
+#+begin_src php
+function unserialize_session_data( $serialized_string ) 
+{
+    $variables = array();
+    $a = preg_split( "/(\w+)\|/", $serialized_string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+
+    for( $i = 0; $i<count($a); $i = $i+2 )
+    {
+        if(isset($a[$i+1]))
+        {
+                $variables[$a[$i]] = unserialize( $a[$i+1] );
+        }
+    }
+    return( $variables );
+}
+#+end_src
 
 * SPL
 ** Available objects in SPL
