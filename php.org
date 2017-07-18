@@ -3113,8 +3113,186 @@ example output for this function
 9 seconds
 2 hours, 8 minutes and 55 seconds
 1 day, 10 hours, 30 minutes and 19 seconds
-#+end_src 
+#+end_src
 
+** CONVERT TIMESTAMP TO RELATIVE TIME IN PHP
+Sometimes users may find difficult to identify the activity date time. It may
+look weird when you display standard datetime like 2015-03-29 08:03:07. Instead
+of displaying the date timestamp raw, we can convert fuzzy timestamps into
+relative time formats like “5 minutes ago”, “5 hours ago”, “1 day ago”, “6
+months ago” or “1 year ago”. It is good to use relative times for better user
+experience.
+
+Lets jump into the code snippet for converting the timestamp into relative time.
+Copy the findTimeAgo php function to your code and pass the datetime to the
+findTimeAgo function like this $time1 = findTimeAgo("2015-03-29 00:30:30");
+
+Relative time in php
+#+begin_src php 
+<?php
+function findTimeAgo($past, $now = "now") {
+    // sets the default timezone if required 
+    // list of supported timezone identifiers 
+    // http://php.net/manual/en/timezones.php
+    // date_default_timezone_set("Asia/Calcutta"); 
+    $secondsPerMinute = 60;
+    $secondsPerHour = 3600;
+    $secondsPerDay = 86400;
+    $secondsPerMonth = 2592000;
+    $secondsPerYear = 31104000;
+    // finds the past in datetime
+    $past = strtotime($past);
+    // finds the current datetime
+    $now = strtotime($now);
+    
+    // creates the "time ago" string. This always starts with an "about..."
+    $timeAgo = "";
+    
+    // finds the time difference
+    $timeDifference = $now - $past;
+    
+    // less than 29secs
+    if($timeDifference <= 29) {
+      $timeAgo = "less than a minute";
+    }
+    // more than 29secs and less than 1min29secss
+    else if($timeDifference > 29 && $timeDifference <= 89) {
+      $timeAgo = "1 minute";
+    }
+    // between 1min30secs and 44mins29secs
+    else if($timeDifference > 89 &&
+      $timeDifference <= (($secondsPerMinute * 44) + 29)
+    ) {
+      $minutes = floor($timeDifference / $secondsPerMinute);
+      $timeAgo = $minutes." minutes";
+    }
+    // between 44mins30secs and 1hour29mins29secs
+    else if(
+      $timeDifference > (($secondsPerMinute * 44) + 29)
+      &&
+      $timeDifference < (($secondsPerMinute * 89) + 29)
+    ) {
+      $timeAgo = "about 1 hour";
+    }
+    // between 1hour29mins30secs and 23hours59mins29secs
+    else if(
+      $timeDifference > (
+        ($secondsPerMinute * 89) +
+        29
+      )
+      &&
+      $timeDifference <= (
+        ($secondsPerHour * 23) +
+        ($secondsPerMinute * 59) +
+        29
+      )
+    ) {
+      $hours = floor($timeDifference / $secondsPerHour);
+      $timeAgo = $hours." hours";
+    }
+    // between 23hours59mins30secs and 47hours59mins29secs
+    else if(
+      $timeDifference > (
+        ($secondsPerHour * 23) +
+        ($secondsPerMinute * 59) +
+        29
+      )
+      &&
+      $timeDifference <= (
+        ($secondsPerHour * 47) +
+        ($secondsPerMinute * 59) +
+        29
+      )
+    ) {
+      $timeAgo = "1 day";
+    }
+    // between 47hours59mins30secs and 29days23hours59mins29secs
+    else if(
+      $timeDifference > (
+        ($secondsPerHour * 47) +
+        ($secondsPerMinute * 59) +
+        29
+      )
+      &&
+      $timeDifference <= (
+        ($secondsPerDay * 29) +
+        ($secondsPerHour * 23) +
+        ($secondsPerMinute * 59) +
+        29
+      )
+    ) {
+      $days = floor($timeDifference / $secondsPerDay);
+      $timeAgo = $days." days";
+    }
+    // between 29days23hours59mins30secs and 59days23hours59mins29secs
+    else if(
+      $timeDifference > (
+        ($secondsPerDay * 29) +
+        ($secondsPerHour * 23) +
+        ($secondsPerMinute * 59) +
+        29
+      )
+      &&
+      $timeDifference <= (
+        ($secondsPerDay * 59) +
+        ($secondsPerHour * 23) +
+        ($secondsPerMinute * 59) +
+        29
+      )
+    ) {
+      $timeAgo = "about 1 month";
+    }
+    // between 59days23hours59mins30secs and 1year (minus 1sec)
+    else if(
+      $timeDifference > (
+        ($secondsPerDay * 59) + 
+        ($secondsPerHour * 23) +
+        ($secondsPerMinute * 59) +
+        29
+      )
+      &&
+      $timeDifference < $secondsPerYear
+    ) {
+      $months = round($timeDifference / $secondsPerMonth);
+      // if months is 1, then set it to 2, because we are "past" 1 month
+      if($months == 1) {
+        $months = 2;
+      }
+      
+      $timeAgo = $months." months";
+    }
+    // between 1year and 2years (minus 1sec)
+    else if(
+      $timeDifference >= $secondsPerYear
+      &&
+      $timeDifference < ($secondsPerYear * 2)
+    ) {
+      $timeAgo = "about 1 year";
+    }
+    // 2years or more
+    else {
+      $years = floor($timeDifference / $secondsPerYear);
+      $timeAgo = "over ".$years." years";
+    }
+    
+    return $timeAgo." ago";
+  }
+
+//current time: 2015-03-29 08:03:07
+
+$time1 = findTimeAgo("2015-03-29 00:30:30"); // 7 hours ago
+
+$time2 = findTimeAgo("2015-03-28 17:24:42"); //14 hours ago
+
+$time3 = findTimeAgo("2015-03-17 17:24:42"); //11 days ago
+
+$time4 = findTimeAgo("2015-01-02 17:24:42"); //3 months ago
+
+$time5 = findTimeAgo("2014-01-02 00:00:00"); //about 1 year ago
+
+#+end_src
+
+http://www.idiotinside.com/2015/03/29/convert-timestamp-to-relative-time-in-php/
 * functions
 ** checking for a function's existence
 
@@ -8258,7 +8436,113 @@ Or, better still, combine the two checks like this and save the combination as a
 #+begin_src php
 $_SESSION['check'] = md5($_SERVER['REMOTE_ADDR'] .
     $_SERVER['HTTP_USER_AGENT']);
+#+end_src
+** hasing passwords
+*** intro
+When you have to save user’s password in a database you should never store them
+in plain text for security precautions and privacy. If we do hashing the
+passwords before saving them to the database we will have a safety mechanism for
+not revealing them to the atacker.
+
+One of the most popular but wrong way of hashing password was using md5()
+function that calculates md5 hash of a string. Hashing passwords with md5 (or
+sha1 or even sha256) is bad because these hashes can get decrypted.
+
+#+begin_src php 
+<?php
+
+// plain text password
+$password = 'secretcode';
+
+// hash the password with md5
+$md5 = md5($password);
+
+Common solution to preventing decryption is using the salt.
+
+<?php
+
+// plain text password
+$password = 'secretcode';
+
+// add random characters - the salt
+$salt = 'k*jJlrsH:cY]O^Z^/J2)Pz{)qz:+yCa]^+V0S98Zf$sV[c@hKKG07Q{utg%OlODS';
+
+// hash salt and password together
+$md5 = md5($salt . $password);
+#+end_src
+
+This is still not good enough though - Rainbow tables. Cryptography is a large field and quite complex for lot of people so leave it to the experts.
+
+*** Right & Secure way of hashing passwords as of PHP 5.5
+
+Right way of hashing passwords is currently using PHP 5.5 and its native
+passwords hashing API which provides an easy to use wrapper around crypt
+function.
+
+Example of PHP 5.5 native password hashing API usage:
+
+#+begin_src php 
+<?php
+
+// plain text password
+$password = 'secretcode';
+
+// The cost parameter can change over time as hardware improves
+$options = ['cost' => 12];
+
+echo password_hash($password, PASSWORD_DEFAULT, $options);
 #+end_src 
+
+In password_hash function there are two types of algorithms available.
+PASSWORD_DEFAULT and PASSWORD_BCRYPT. Currently PASSWORD_DEFAULT is
+PASSWORD_BCRYPT. In future there will be different types of algorithms supported
+and PASSWORD_DEFAULT will get replaced with a new type of algorithm. Good advice
+is to always use PASSWORD_DEFAULT.
+
+The database password's field should be varchar(255) for future proof algorithm
+changes. Using your own salt might not be a very good option. Leave that to the
+experts as well and use above bullet proof solution without setting your own
+salt. Salt is randomly generated by default in password_hash function.
+
+Another option that is important to mention is the cost which controls the hash
+speed. On servers with better resources cost can be increased. There is a script
+for calculating the cost for your environment in the PHP manual.
+
+Verifying passwords can be done with *password_verify()*:
+
+#+begin_src php 
+<?php
+
+// this is the hash of the password in above example
+$hash = '$2y$12$3BZAuYlYaaz4hdxuZRsEV.D69wq.oiT18cVhqoxIsmGkd4JbCq8Ai';
+
+if (password_verify('secretcode', $hash)) {
+    echo 'Password is valid!';
+
+} else {
+    echo 'Invalid password.';
+}
+#+end_src 
+ 
+*** Regenerate hash if algorithm or cost changed
+
+When you change the cost or hashing algorithm, hash needs to regenerated. For
+this purpose, password_needs_rehash() comes to the rescue, This function checks
+to see if the supplied hash implements the algorithm and options provided. If
+not, it is assumed that the hash needs to be rehashed. This comes handy in case
+of server hardware upgrade and therefore increasing the cost option.
+
+#+begin_src php 
+<?php 
+// Check if a newer hashing algorithm is available
+// or the cost has changed
+
+if (password_needs_rehash($hash, PASSWORD_DEFAULT, $options)) {
+    // If so, create a new hash, and replace the old one
+    $new_hash = password_hash($password, PASSWORD_DEFAULT, $options);
+}
+?>
+#+end_src
 
 * apache =.htaccess= sample configuration
   
@@ -12654,6 +12938,46 @@ function is_base64($data)
 	    return true;
 	}
 	return false;
+}
+#+end_src
+
+** check if function is enabled or available
+#+begin_src php
+<?php
+if(function_exists('fsockopen')) {
+ 
+echo "fsockopen function is enabled";
+ 
+}else {
+ 
+echo "fsockopen is not enabled";
+ 
+}
+?>
+#+end_src
+
+** getIPAddress()
+#+begin_src php
+function getIPAddress()
+{
+  // Try REMOTE_ADDR
+  if (isset($_SERVER['REMOTE_ADDR']) and $_SERVER['REMOTE_ADDR'] != '')
+  {
+    return $_SERVER['REMOTE_ADDR'];
+  }
+  // Fall back to HTTP_CLIENT_IP
+  elseif (isset($_SERVER['HTTP_CLIENT_IP']) and $_SERVER['HTTP_CLIENT_IP'] != '')
+  {
+    return $_SERVER['HTTP_CLIENT_IP'];
+  }
+  // Finally fall back to HTTP_X_FORWARDED_FOR
+  // I'm aware this can sometimes pass the users LAN IP, but it is a last ditch attempt
+  elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR']) and $_SERVER['HTTP_X_FORWARDED_FOR'] != '')
+  {
+    return $_SERVER['HTTP_X_FORWARDED_FOR'];
+  }
+  // Nothing? Return false
+  return false;
 }
 #+end_src
 
