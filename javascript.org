@@ -8950,6 +8950,10 @@ String.prototype.replaceArray = function(find, replace) {
   return replaceString;
 };
 ///////////////////////////////////////////////////////////////////////////
+#+end_src
+
+** IsNumeric
+#+begin_src javascript 
 function IsNumeric(sText)
 {
    var ValidChars = "0123456789.";
@@ -8967,6 +8971,29 @@ function IsNumeric(sText)
    return IsNumber;   
 }
 
+#+end_src
+* editable
+** editable show message on ajax response
+
+#+begin_src javascript
+$.fn.editable.defaults.ajaxOptions = {
+        type: "POST",
+        success: function(data){
+            console.log("success");
+            var success = (data && data == "1") || (data && JSON.parse(data).success == true);
+            if(success)
+            {
+                toastr.success('اطلاعات با موفقیت ثبت شد.', '');
+                // console.log("success");    
+            }else{
+                toastr.error('خطلا در ثبت اطلاعات', '');
+            }
+            // console.log(data);
+        },
+        error: function(xhr, status, error){
+            toastr.error('error', 'error');
+        }
+};
 #+end_src
 
 * useful resources
