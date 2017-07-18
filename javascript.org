@@ -8703,6 +8703,11 @@ $('body').on('submit','#form-id',function () {
 $('#sear').trigger(jQuery.Event('keypress', { keycode: 13 }));
 #+end_src
 
+** How do I disable TextBox using JavaScript?
+#+begin_src javascript
+$("#color").prop('disabled', true);
+#+end_src
+
 ** useful resources
 
 http://api.jquery.com/
