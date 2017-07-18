@@ -12533,7 +12533,7 @@ Gives us this output
 
 2001:2d12:c4fe:5afe::1 is a valid IPv6 Address!
 4d4x:3daz:rdc2:23sd::1 is *NOT* a valid IPv6 Address!
-**  Check if IPv4 address is from a private range.
+** Check if IPv4 address is from a private range.
 This function is very handy if you need to allow or stop people from submitting
 private address spaces into you application. It has many uses.
 
@@ -12642,6 +12642,18 @@ if (strstr($userAgent, "iPad") ||
  return true;
 
  return false;
+}
+#+end_src
+
+** check if string is base64
+#+begin_src php
+function is_base64($data)
+{
+	if ( base64_encode(base64_decode($data)) === $data)
+	{
+	    return true;
+	}
+	return false;
 }
 #+end_src
 
