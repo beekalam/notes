@@ -4127,3 +4127,4 @@ disk device drivers.
 | /dev/dvd      | these are symbolic links to /dev/sr* |
 | /dev/loop*    |                                      |
 | /dev/mapper/* |                                      |
+* sublime
