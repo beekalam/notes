@@ -13032,5 +13032,14 @@ http://www.geekality.net/2011/05/01/php-how-to-proportionally-resize-an-uploaded
 https://github.com/slepp/filebin.ca
 https://github.com/slepp/pastebin.ca
 https://github.com/sayakb/sticky-notes
+** php graph library
+http://www.ebrueggeman.com/phpgraphlib/examples
+
+** visitor tracking
+http://www.ebrueggeman.com/blog/redis-visitor-tracking
+
+** blog
+http://www.ebrueggeman.com/blog
+
 
  

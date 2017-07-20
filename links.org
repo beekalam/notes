@@ -1,36 +1,34 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
 * speedtest
-http://www.tecmint.com/speedtest-mini-server-to-test-bandwidth-speed/
-http://www.brandonchecketts.com/open-source-speedtest
-https://github.com/adolfintel/speedtest
-https://github.com/satyaakam/speedtest
-http://speedtest.xfinity.com/speedtest.swf
-http://speedtestbeta.xfinity.com/
+** http://www.tecmint.com/speedtest-mini-server-to-test-bandwidth-speed/
+** http://www.brandonchecketts.com/open-source-speedtest
+** https://github.com/adolfintel/speedtest
+** https://github.com/satyaakam/speedtest
+** http://speedtest.xfinity.com/speedtest.swf
+** http://speedtestbeta.xfinity.com/
 
 * linux
-http://doc.norang.ca/
-https://lwn.net/
-http://man7.org/articles/index.html
-http://blog.man7.org/
-http://giantdorks.org/
+** http://doc.norang.ca/
+** https://lwn.net/
+** http://man7.org/articles/index.html
+** http://blog.man7.org/
+** http://giantdorks.org/
 ** magazine
 ftp://ftp.freiesmagazin.de/
 http://magzdb.org/j/5803
 ** tutorials
 https://community.linuxmint.com/index.php/tutorial/search/
 * emacs
-https://www.emacswiki.org/emacs/SiteMap
-https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html
-https://nakkaya.com/
-http://ehneilsen.net/notebook/orgExamples/org-examples.html
-http://sachachua.com/
-
+** https://www.emacswiki.org/emacs/SiteMap
+** https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html
+** https://nakkaya.com/
+** http://ehneilsen.net/notebook/orgExamples/org-examples.html
+** http://sachachua.com/
 ** org-emacs
-http://orgmode.org/worg/orgcard.html
-http://orgmode.org/worg/org-tutorials/
-http://emacs.stackexchange.com/
-https://news.ycombinator.com/item?id=11386590
-
+*** http://orgmode.org/worg/orgcard.html
+*** http://orgmode.org/worg/org-tutorials/
+*** http://emacs.stackexchange.com/
+*** https://news.ycombinator.com/item?id=11386590
 *** org-mode protocol
 https://github.com/alphapapa/org-protocol-capture-html
 
@@ -87,20 +85,20 @@ https://github.com/alphapapa/org-protocol-capture-html
 * others
   https://github.com/jnv/lists
 * books
-  http://www.onlineprogrammingbooks.com/linux/
-  https://www.computer-pdf.com/
-  http://www.wowebook.pw/
-  https://1bookcase.com/
-  http://www.itebookshare.com/
-  http://ebookee.org/
-  http://itbookshub.com/
-  http://www.freebookcentre.net/
-  http://freecomputerbooks.com/
-  http://aosabook.org/en/index.html
-  http://www.e-booksdirectory.com/n
-  http://www.getfreeebooks.com/
-  http://www.ebook3000.com/
-  http://ebookbb.com/
+** http://www.onlineprogrammingbooks.com/linux/
+** https://www.computer-pdf.com/
+** http://www.wowebook.pw/
+** https://1bookcase.com/
+** http://www.itebookshare.com/
+** http://ebookee.org/
+** http://itbookshub.com/
+** http://www.freebookcentre.net/
+** http://freecomputerbooks.com/
+** http://aosabook.org/en/index.html
+** http://www.e-booksdirectory.com/n
+** http://www.getfreeebooks.com/
+** http://www.ebook3000.com/
+** http://ebookbb.com/
 * prog practice
 ** algorithmic
 write a stack
@@ -128,62 +126,65 @@ http://devdocs.io/lodash~4/
     O(Array('first', 'second'), 'mouseover', 'mousehandler')
 
 * programming problems
-  https://github.com/lnishan/awesome-competitive-programming
-  http://rosettacode.org/
-  http://codekata.pragprog.com/
-  http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html
-  https://wiki.haskell.org/99_Haskell_exercises
-  http://www.codeabbey.com/
-  https://github.com/lnishan/awesome-competitive-programming
-  http://codeforces.com/
-  https://www.hackerrank.com
-  http://www.codeeval.com/
-  http://www.codeabbey.com/
-  https://codecombat.com/
-  https://screeps.com/
-  https://github.com/git-game/git-game
-  http://play.elevatorsaga.com/
-  https://www.codingame.com/start
-  http://www.hacker.org/challenge/about.php
-  http://www.pexforfun.com/
-  http://www.rankk.org/
-  https://code.google.com/codejam/contests.html
-  http://www.pythonchallenge.com/
-  https://groups.google.com/forum/#%21forum/algogeeks
-  http://codekata.com/
-  http://forum.lessthandot.com/viewforum.php?f=102
-  http://thedailywtf.com/series/bring-your-own-code
-  http://poj.org/
-  https://uva.onlinejudge.org/
-  https://programmingpraxis.com/
-  https://projecteuler.net/index.php
-  http://codingbat.com/java
-  http://rosalind.info/problems/locations/
-  https://leetcode.com/
-  http://practiceit.cs.washington.edu/]
-  https://checkio.org/
-  https://codility.com/
-  http://www.geeksforgeeks.org/
-  https://www.testdome.com/Questions
-  https://code.google.com/codejam/
-  https://www.freecodecamp.com
-  https://www.reddit.com/r/dailyprogrammer/
+** https://github.com/lnishan/awesome-competitive-programming
+** http://rosettacode.org/
+** http://codekata.pragprog.com/
+** http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html
+** https://wiki.haskell.org/99_Haskell_exercises
+** http://www.codeabbey.com/
+** https://github.com/lnishan/awesome-competitive-programming
+** http://codeforces.com/
+** https://www.hackerrank.com
+** http://www.codeeval.com/
+** http://www.codeabbey.com/
+** https://codecombat.com/
+** https://screeps.com/
+** https://github.com/git-game/git-game
+** http://play.elevatorsaga.com/
+** https://www.codingame.com/start
+** http://www.hacker.org/challenge/about.php
+** http://www.pexforfun.com/
+** http://www.rankk.org/
+** https://code.google.com/codejam/contests.html
+** http://www.pythonchallenge.com/
+** https://groups.google.com/forum/#%21forum/algogeeks
+** http://codekata.com/
+** http://forum.lessthandot.com/viewforum.php?f=102
+** http://thedailywtf.com/series/bring-your-own-code
+** http://poj.org/
+** https://uva.onlinejudge.org/
+** https://programmingpraxis.com/
+** https://projecteuler.net/index.php
+** http://codingbat.com/java
+** http://rosalind.info/problems/locations/
+** https://leetcode.com/
+** http://practiceit.cs.washington.edu/]
+** https://checkio.org/
+** https://codility.com/
+** http://www.geeksforgeeks.org/
+** https://www.testdome.com/Questions
+** https://code.google.com/codejam/
+** https://www.freecodecamp.com
+** https://www.reddit.com/r/dailyprogrammer/
+** https://open.kattis.com
+** https://algo.is/solved-problems/
+** http://acm.timus.ru/
 * practice programming projects
-http://inventwithpython.com/blog/2012/02/20/i-need-practice-programming-49-ideas-for-game-clones-to-code/
+** http://inventwithpython.com/blog/2012/02/20/i-need-practice-programming-49-ideas-for-game-clones-to-code/
 
 * network
-  http://packetlife.net/
-  https://wiki.wireshark.org/FrontPage
-  http://sobek.su/Cisco/IOS/
+** http://packetlife.net/
+** https://wiki.wireshark.org/FrontPage
+** http://sobek.su/Cisco/IOS/
 * cron
 [project idea]
-http://crontab-generator.org/
-https://crontab.guru
-http://www.crontutorials.com/
-http://crontab-generator.org/
-http://stackoverflow.com/documentation/bash/topics
+** http://crontab-generator.org/
+** https://crontab.guru
+** http://www.crontutorials.com/
+** http://crontab-generator.org/
+** http://stackoverflow.com/documentation/bash/topics
 * monitor
-  http://www.maadiran.com
+** http://www.maadiran.com
 * shiraz
 ** electronics
     http://irasaelec.com/
@@ -193,17 +194,17 @@ http://stackoverflow.com/documentation/bash/topics
 ** misc
    http://www.gli-shiraz.com/
 * MOOCS
-  https://alison.com/learn/programming
-  http://www.howtogeek.com/117674/the-best-websites-for-free-online-courses-certificates-degrees-and-educational-resources/
-  https://channel9.msdn.com/info
+** https://alison.com/learn/programming
+** http://www.howtogeek.com/117674/the-best-websites-for-free-online-courses-certificates-degrees-and-educational-resources/
+** https://channel9.msdn.com/info
 * online IDE
-  http://cpp.sh/
-  http://ideone.com/
-  http://joel.franusic.com/Online-REPs-and-REPLs/
+** http://cpp.sh/
+** http://ideone.com/
+** http://joel.franusic.com/Online-REPs-and-REPLs/
 ** regex
    http://www.phpliveregex.com/
 * glasses
-  http://miraflexglass.com/
+** http://miraflexglass.com/
 * vocabulary
 ** https://quizlet.com/2289321/top-10000-common-words-flash-cards/
 ** http://www.use-in-a-sentence.com/english-words/10000-words/the-most-frequent-10000-words-of-english.html

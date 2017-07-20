@@ -222,4 +222,12 @@ On Windows, all the toolsets except the Cygwin port of GCC define the macro
 _WIN32; macros defined automatically in this way are known as predefined macros.
 
 * QT
-
+* useful resources
+https://cpbook.net/#downloads
+https://github.com/ksaveljev/UVa-online-judge
+http://felix-halim.net/
+https://github.com/dipu-bd/UVA-Arena
+http://dipu-bd.github.io/UVA-Arena/
+https://github.com/search?q=topic%3Aproblem-solving&type=Repositories
+** professinal cpp book code
+http://www.wrox.com/WileyCDA/WroxTitle/Professional-C-3rd-Edition.productCd-1118858050,descCd-DOWNLOAD.html

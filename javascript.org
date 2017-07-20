@@ -8997,16 +8997,23 @@ $.fn.editable.defaults.ajaxOptions = {
 #+end_src
 
 * useful resources
-
 ** noname
-
 http://es6katas.org/
 
 ** json style
-
 https://google.github.io/styleguide/jsoncstyleguide.xml
 ** code conventions, styles
-http://javascript.crockford.com/code.html
-https://github.com/ryanmcdermott/clean-code-javascript
+*** http://javascript.crockford.com/code.html
+*** https://github.com/ryanmcdermott/clean-code-javascript
+
 ** Asynchronous JS
    http://sporto.github.io/blog/2012/12/09/callbacks-listeners-promises/
+** tooltip library
+https://github.com/elliottb/skinnytip
+
+** notify
+http://bootstrap-growl.remabledesigns.com/
+
+** touch slider
+http://idangero.us/swiper/
+

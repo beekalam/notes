@@ -1361,9 +1361,6 @@ function showResponse(originalRequest)
 //    }
 }
 
-* 
-* 
-
 * persianjs
 Ext.define('Tamin.helpers.Persian', {
     requires:['Tamin.PDate'],
@@ -3012,7 +3009,6 @@ length, which tells String.prototype.lastIndexOf() to look further down the stri
 String.prototype.lastIndexOf() actually finds the nearest space, left-most of the desiredLength cutoff
 point. This makes the function a little greedy, oftentimes coming in under the desiredLength, but the use
 case of this means it’s better to be under than over.
-* Making a ROT13 Cypher with a Custom Function
 
 * Creating a Number Object
 You want to create an object whose datatype is a number in order to work with numerical values.
@@ -3234,3 +3230,2035 @@ function swapNumbers(numb1, numb2){
 swapNumbers(200,50);
 #+end_src
 
+* myscript shirazs http://shirazs.ir/JavaScripts/myScript.js
+
+/// <reference path="references.js" />
+
+//------------ Global Function --------------------------
+$(document).ready(function () {
+
+    //------ animate icon-bar---------------
+    $(".navbar-toggle").on("click", function () {
+        $(this).toggleClass("active");
+    });
+
+
+
+    //--------animate hamburger css --------
+    var toggles = document.querySelectorAll(".c-hamburger");
+
+    for (var i = toggles.length - 1; i >= 0; i--) {
+        var toggle = toggles[i];
+        toggleHandler(toggle);
+    };
+
+    function toggleHandler(toggle) {
+        toggle.addEventListener("click", function (e) {
+            e.preventDefault();
+            (this.classList.contains("is-active") === true) ? this.classList.remove("is-active") : this.classList.add("is-active");
+        });
+    }
+
+    $('.mnu').click(function () {
+        toggle.click();
+    });
+
+    // correct table header
+    // $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+    });
+
+
+    //fix modal force focus
+    $.fn.modal.Constructor.prototype.enforceFocus = function () { };
+});
+
+// ------------ ajax ----------------
+//$.ajaxSetup({
+//    beforeSend: function (xhr) {
+//        //var token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiSXNBZG1pbiI6dHJ1ZSwiRnVsbE5hbWUiOiLYudmE24zYsdi22KcsINin2LnYqtmF2KfYr9uMIiwiQWNjZXNzIjoiMTExMTAiLCJFeHAiOjYzNjIyMTU1MTI2MDE3NzQzM30.tqz0TsPqG3w3omQAqLTx3bLnRxoskiEjGM_IHojUtpODiYLUEYoy4vnW4F8c3NxE-XCPK2m5c4mQGn_43bdhBA";
+//        //localStorage.getItem('token');
+//        //xhr.setRequestHeader('Token', token);
+//    }
+//});
+
+$(document).ajaxStart(function () {
+    utility.enableLoading();
+});
+
+$(document).ajaxStop(function () {
+
+    utility.disableLoading();
+});
+
+$(document).ajaxError(function (XMLHttpRequest, textStatus, errorThrow) {
+    $(".cssload-modal").fadeOut(300);
+
+    if (textStatus.status == 401) {
+        utility.showNotify("اتمام جلسه کاری...", false);
+
+        setTimeout(
+          function () {
+              utility.logout();
+          }, 3000);
+    } else if (textStatus.status == 404) {
+        utility.showNotify("رکورد مورد نظر یافت نگردید.", false);
+    }
+});
+
+$(window).load(function () {
+    // $(".cssload-modal").fadeOut(300);
+});
+//------------ /Global Function -------------------------
+
+
+var utility = (function () {
+
+    var option = {
+        showLoading: true
+    };
+
+    /*####################################
+                    create
+    ####################################*/
+    function loadCreateModal(container_id, strModal_id, url, callback) {
+
+        var containerModal = getContainerObj(container_id);
+        var strFrm_id = strModal_id.replace('modal', 'frm');
+        var frm;
+
+        // is veiw not loaded
+        if (containerModal.children('.modal').length == 0) {
+
+            getData(url, function (response, status, xhr) {
+
+                if (status == "success") {
+
+                    // set modal html
+                    containerModal.html(response);
+
+                    // open modal
+                    var modal = variables.get(strModal_id);
+                    modal.modal('show');
+
+                    // form validation
+                    frm = variables.get(strFrm_id);
+                    $.validator.unobtrusive.parse(frm);
+
+                    //prevent post back
+                    frm.submit(function (e) {
+                        e.preventDefault();
+                    });
+
+                    //prevent default reset
+                    frm.on('reset', function (e) {
+                        e.preventDefault();
+                    });
+
+                    variables.setObject(strFrm_id, frm);
+
+                    //modal.on('shown.bs.modal', function (e) {
+                    callback(null, frm);
+                    //});
+
+                } else {
+                    showNotifyErr();
+                }
+            });
+        } else {
+
+            frm = variables.getObject(strFrm_id);
+            callback(null, frm);
+            resetFormValidaion(frm);
+            variables.get(strModal_id).modal('show');
+        }
+    }
+
+    function submitModalCreate(frm, closeModal, callback) {
+
+        var modal = variables.get('#' + frm.attr('id').replace('frm', 'modal'));
+        var url = frm.attr('action');
+        var formData = frm.serialize();
+        postData(frm, url, formData, function (data) {
+
+            showNotify(data.msg, data.success);
+            if (data.success) {
+                if (closeModal) {
+                    modal.modal('hide');
+                }
+
+                // پاس دادن شی به متد
+                // callback
+                // برای درج در جدول
+                callback(data.obj);
+            }
+        });
+    }
+
+
+    /*####################################
+                    edit
+    ####################################*/
+    function loadEditModal(container_id, id, strModal_id, editUrl, getByIDUrl, callBack) {
+
+        var containerModal = getContainerObj(container_id);
+        var strFrm_id = strModal_id.replace('modal', 'frm');
+        var frm;
+
+        // is veiw not loaded
+        if (containerModal.children('.modal').length == 0) {
+
+            getData(editUrl, function (response, status, xhr) {
+
+                if (status == "success") {
+
+                    // set modal html
+                    containerModal.html(response);
+
+                    // open modal
+                    var modal = variables.get(strModal_id);
+                    modal.modal('show');
+
+                    // form validation
+                    frm = variables.get(strFrm_id);
+                    $.validator.unobtrusive.parse(frm);
+
+                    //prevent post back
+                    frm.submit(function (e) {
+                        e.preventDefault();
+                    });
+
+                    //prevent default reset
+                    frm.on('reset', function (e) {
+                        e.preventDefault();
+                    });
+
+                    variables.setObject(strFrm_id, frm);
+
+                    //load data
+                    //modal.one('shown.bs.modal', function (e) {
+                    getData(getByIDUrl, function (data) {
+                        setFrmAction(id, frm)
+                        callBack(data, frm);
+                    });
+                    //});
+
+
+
+                } else {
+                    showNotifyErr();
+                }
+            });
+        }
+            // only load data
+        else {
+
+            frm = variables.getObject(strFrm_id);
+            resetFormValidaion(frm);
+            getData(getByIDUrl, function (data) {
+
+                variables.get(strModal_id).modal('show');
+                setFrmAction(id, frm)
+                callBack(data, frm);
+            });
+        }
+    }
+
+    function submitModalEdit(frm, closeModal, callback) {
+
+        var modal = variables.get('#' + frm.attr('id').replace('frm', 'modal'));
+        var url = frm.attr('action');
+        var formData = frm.serialize();
+
+        postData(frm, url, formData, function (data) {
+
+            showNotify(data.msg, data.success);
+            if (data.success) {
+
+                if (closeModal) {
+                    modal.modal('hide');
+                }
+                callback(data.obj);
+            }
+        });
+    }
+
+
+    /*####################################
+                    delete
+    ####################################*/
+    function loadDeleteModal(container_id, id, strModal_id, url, getByIDUrl, callback) {
+
+        var containerModal = getContainerObj(container_id);
+        var strFrm_id = strModal_id.replace('modal', 'frm');
+        var frm;
+
+        // if veiw not loaded
+        if (containerModal.children('.modal').length == 0) {
+
+            getData(url, function (response, status, xhr) {
+
+                if (status == "success") {
+
+                    // set modal html
+                    containerModal.html(response);
+
+                    variables.get(strModal_id).modal('show');
+                    frm = variables.get(strFrm_id);
+
+                    //prevent post back
+                    $(frm).submit(function (e) {
+                        e.preventDefault();
+                    });
+
+                    //load data
+                    getData(getByIDUrl, function (data) {
+                        setFrmAction(id, frm)
+                        callback(data, frm);
+                    });
+                } else {
+                    showNotifyErr();
+                }
+            });
+
+
+        }
+            // only load data
+        else {
+
+            variables.get(strModal_id).modal('show');
+            frm = variables.get(strFrm_id);
+
+            getData(getByIDUrl, function (data) {
+
+                variables.get(strModal_id).modal('show');
+                setFrmAction(id, frm)
+                if (callback) {
+                    callback(data);
+                }
+            });
+        }
+    }
+
+    function submitModalDelete(strFrm_id, tbl_id, callback) {
+
+        var frm = variables.get(strFrm_id);
+        var modal = variables.get(strFrm_id.replace('frm', 'modal'));
+        var url = frm.attr('action');
+        var formData = frm.serialize();
+
+        postData(frm, url, formData, function (data) {
+
+            showNotify(data.msg, data.success);
+            if (data.success) {
+                modal.modal('hide');
+
+                // پیدا کردن آی دی از روی اکشن فرم
+                var frmAction = frm.attr('action');
+                var indexOfID = Number(frmAction.lastIndexOf('/'));
+                var id = frmAction.substring(indexOfID + 1, frmAction.length);
+
+                if (isNaN(id)) {
+                    id = null;
+                }
+
+                datatable.deleteFromDataTable(tbl_id, id);
+
+                if (callback) {
+                    callback();
+                }
+            }
+        });
+
+    }
+
+
+    /*####################################
+            custom view, modal
+    ####################################*/
+    function loadCustomModal(container_id, loadUrl, callback) {
+
+        var containerModal = getContainerObj(container_id);
+
+        // if veiw not loaded
+        if (containerModal.children('.modal').length == 0) {
+            getData(loadUrl, function (response, status, xhr) {
+
+                if (status == "success") {
+
+                    // set modal html
+                    containerModal.html(response);
+
+                    modal = containerModal.find('.modal:first');
+                    modal.modal('show');
+                    modal.on('shown.bs.modal', function (e) {
+                        //$.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+                        var tbl = modal.find('table');
+                        if (tbl && tbl[1]) {
+                            datatable.adjustHeader(modal.find('table')[1].id);
+                        }
+
+                        //if (callback) {
+                        //    callback();
+                        //}
+                    });
+
+                    var frm = containerModal.find('form');
+                    $.validator.unobtrusive.parse(frm);
+
+                    //prevent post back
+                    $(frm).submit(function (e) {
+                        e.preventDefault();
+                    });
+
+                    if (callback) {
+                        callback();
+                    }
+
+                } else {
+                    showNotifyErr();
+                }
+            });
+        }
+            // open modal
+        else {
+
+            containerModal.find('.modal:first').modal('show');
+
+            if (callback) {
+                callback();
+            }
+        }
+    }
+
+    function loadCustomView(container_id, loadUrl, callback) {
+
+        var container = variables.get('#' + container_id);
+        if (!container.length) {
+            throw "contianer does not define";
+        }
+
+        // if veiw not loaded
+        if (container.children().length == 0) {
+            getData(loadUrl, function (response, status, xhr) {
+
+                if (status == "success") {
+
+                    // set modal html
+                    container.html(response);
+
+                    var frm = container.find('form');
+                    $.validator.unobtrusive.parse(frm);
+                    //prevent post back
+                    $(frm).submit(function (e) {
+                        e.preventDefault();
+                    });
+
+                    if (callback) {
+                        callback();
+                    }
+                } else {
+                    showNotifyErr();
+                }
+            });
+        }
+        else {
+
+            if (callback) {
+                callback();
+            }
+        }
+    }
+
+    /*####################################
+            post data to server
+    ####################################*/
+    function postData(frm, url, formData, callback) {
+
+        if (!frm.valid()) {
+            return false;
+        }
+
+        if (frm.find('input[type=file]').length) {
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: new FormData(frm[0]),
+                cache: false,
+                //async: false,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (callback)
+                        callback(data);
+                },
+                error: function () {
+                    showNotifyErr();
+                }
+            });
+        } else {
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: formData,
+                cache: false,
+                //async: false,
+                success: function (data) {
+                    if (callback)
+                        callback(data);
+                },
+                error: function () {
+                    showNotifyErr();
+                }
+            });
+        }
+
+    }
+
+
+    /*####################################
+            get data from server
+    ####################################*/
+    function getData(url, callback) {
+
+        $.ajax({
+            type: 'get',
+            url: url,
+            success: function (data, textStatus, jqXHR) {
+                if (callback)
+                    callback(data, textStatus, jqXHR);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                showNotifyErr();
+            }
+        });
+    }
+
+
+    /*####################################
+                notification
+    ####################################*/
+    function showNotify(msg, isSuccess) {
+        if (isSuccess) {
+            $.notify({
+                icon: 'glyphicon glyphicon-ok',
+                message: msg
+            }, {
+                type: 'success',
+                z_index: 1050
+            });
+        } else {
+            $.notify({
+                icon: 'glyphicon glyphicon-exclamation-sign',
+                message: msg
+            }, {
+                type: 'danger',
+                z_index: 1050
+            });
+        }
+    }
+
+    function showNotifyErr() {
+        showNotify('خطا در دریافت اطلاعات...', false);
+    }
+
+
+    /*####################################
+                date time
+    ####################################*/
+    function fillDateTime(selector, targetSelector, hasTimePicker, group, isFromDate, isToDate) {
+
+        // set default val
+        hasTimePicker = !hasTimePicker ? false : hasTimePicker;
+        group = !group ? '' : group;
+        isToDate = !isToDate ? false : isToDate;
+        isFromDate = !isFromDate ? false : isFromDate;
+
+        variables.get(selector).MdPersianDateTimePicker({
+            //Placement: 'bottom', // default is 'bottom'
+            Trigger: 'click', // default is 'focus',
+            EnableTimePicker: hasTimePicker, // default is true,
+            TargetSelector: targetSelector, // default is empty,
+            GroupId: group, // default is empty,
+            ToDate: isToDate, // default is false,
+            FromDate: isFromDate, // default is false,
+            EnglishNumber: true,
+            Disabled: false,
+        });
+    }
+
+    function enableDateTime(selector, isEnable) {
+        if (isEnable) {
+            variables.get(selector).addClass('_date');
+        }
+        else {
+            variables.get(selector).removeClass('_date');
+        }
+
+        variables.get(selector).MdPersianDateTimePicker('disable', !isEnable);
+    }
+
+    function convertJSONMiladiToPersian(mDate) {
+        return persianDate(mDate).format('YYYY/MM/DD');
+    }
+
+    function convertJSONMiladiToPersianDateTime(mDateTime) {
+        return persianDate(mDateTime).format('YYYY/MM/DD HH:mm:ss');
+    }
+
+    function convertPersianToMiladi(pDate) {
+
+        if (!pDate || !pDate.trim()) {
+            //showNotify('تاریخ خالی میباشد');
+            return "";
+        }
+
+        pDate = pDate.replace(/-/g, '/');
+        var arr = pDate.split('/');
+
+        if (arr.length != 3) {
+            showNotify('خطای تبدیل تاریخ');
+            return false;
+        }
+        var jy = Number(arr[0]);
+        var jm = Number(arr[1]);
+        var jd = Number(arr[2]);
+
+        var converted = toGregorian(jy, jm, jd);
+        return converted.gy + '/' + converted.gm + '/' + converted.gd;
+    }
+
+    function convertPersianToMiladiDateTime(pDateTime) {
+
+        if (!pDateTime || !pDateTime.trim()) {
+            return false;
+        }
+
+        var arrDateTime = pDateTime.match(/\S+/g);
+        var pDate = arrDateTime[0];
+        var time = arrDateTime[1];
+
+        pDate = pDate.replace(/-/g, '/');
+        var arr = pDate.split('/');
+
+        if (arr.length != 3) {
+            showNotify('خطای تبدیل تاریخ');
+            return false;
+        }
+        var jy = Number(arr[0]);
+        var jm = Number(arr[1]);
+        var jd = Number(arr[2]);
+
+        var converted = toGregorian(jy, jm, jd);
+        return converted.gy + '/' + converted.gm + '/' + converted.gd + ' ' + time;
+    }
+
+    function convertMiladiToPersian(mDate) {
+
+        if (!mDate.trim()) {
+            return false;
+        }
+
+        mDate = mDate.replace(/-/g, '/');
+        var arr = mDate.split('/');
+
+        if (arr.length != 3) {
+            showNotify('خطای تبدیل تاریخ');
+            return false;
+        }
+        var gy = Number(arr[0]);
+        var gm = Number(arr[1]);
+        var gd = Number(arr[2]);
+
+        var converted = toJalaali(gy, gm, gd);
+        return converted.jy + '/' + converted.jm + '/' + converted.jd;
+    }
+
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+
+    function getCurrentMiladiDateTime() {
+        var date = new Date();
+
+        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' '
+            + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    }
+
+    function getCurrentPersianDate() {
+        var date = new Date();
+
+        var gy = date.getFullYear();
+        var gm = date.getMonth() + 1;
+        var gd = date.getDate();
+
+
+        var converted = toJalaali(gy, gm, gd);
+        return converted.jy + '/' + converted.jm + '/' + converted.jd;
+    }
+
+
+    /*####################################
+            reset and preview img
+   ####################################*/
+    function resetImgPreview(file_id, img_id, lblFimeName_id) {
+
+        variables.get('#' + file_id).val('');
+        variables.get('#' + img_id).attr('src', 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQzLjUiIHk9IjcwIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+MTQweDE0MDwvdGV4dD48L2c+PC9zdmc+');
+        variables.get('#' + lblFimeName_id).text('');
+    }
+
+    function setImgSrc(file_id, img_id, lblFimeName_id, src) {
+
+        variables.get('#' + file_id).val('');
+        variables.get('#' + lblFimeName_id).text('');
+        variables.get('#' + img_id).attr('src', src);
+    }
+
+    function readImgURL(input, img_id, lblFimeName_id) {
+        var imgName = input.value.toLowerCase();
+
+        if (imgName.lastIndexOf('.jpg') > -1 ||
+            imgName.lastIndexOf('.jpeg') > -1 ||
+            imgName.lastIndexOf('.gif') > -1 ||
+            imgName.lastIndexOf('.png') > -1 ||
+            imgName.lastIndexOf('.bmp') > -1 ||
+            imgName.lastIndexOf('.icn') > -1) {
+
+            variables.get('#' + lblFimeName_id).text(imgName);
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#' + img_id).attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        } else {
+            input.value = '';
+            variables.get('#' + lblFimeName_id).text('');
+            showNotify('فایل نامعتبر میباشد.', false);
+        }
+    }
+
+
+    /*####################################
+               file upload
+   ####################################*/
+    function readFileURL(input, lblFimeName_id) {
+
+        var imgName = input.value;
+        variables.get('#' + lblFimeName_id).text(imgName);
+    }
+
+    function resetFile(file_id, lblFileName_id) {
+        variables.get('#' + file_id).val('');
+        variables.get('#' + lblFileName_id).text('');
+    }
+
+
+    /*####################################
+               select2 component
+   ####################################*/
+    function fillSelect2(select2_id, _url, remotable, data, taggable, callback) {
+
+        var slct2 = variables.get('#' + select2_id);
+        taggable = taggable ? true : false;
+
+        var options = {
+            placehoder: "جستجو...",
+            dir: 'rtl',
+            language: 'fa',
+            tags: taggable,
+            tokenSeparators: [',']
+        };
+
+        if (taggable) {
+            options.multiple = 'multiple'
+        }
+
+        if (remotable) {
+            slct2.find('option').remove();
+
+            options.ajax = {
+                url: _url,
+                length: [],
+                dataType: 'json',
+                delay: 800,
+                data: function (params) {
+                    return {
+                        term: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, params) {
+                    // parse the results into the format expected by Select2
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data, except to indicate that infinite
+                    // scrolling can be used
+                    params.page = params.page || 1;
+
+                    if (data.results && data.pagination) {
+                        return data;
+                    }
+                    else {
+                        return {
+                            results: data,
+                            pagination: {
+                                more: (params.page * 30) < data.length
+                            }
+                        };
+                    }
+                },
+                cache: true
+            };
+            //options.escapeMarkup = function (markup) { return markup; }; // let our custom formatter work
+            options.minimumInputLength = 3;
+        }
+        else if (data) {
+
+            slct2.find('option').remove();
+            options.data = data;
+        }
+        else if (_url) {
+            $.getJSON(_url, function (d) {
+
+                slct2.find('option').remove();
+                options.data = d;
+                slct2.select2(options);
+            }).done(function () {
+                if (callback) {
+                    callback();
+                }
+            });
+        }
+
+        slct2.select2(options);
+
+        if (taggable) {
+            slct2.val(null).trigger('change');
+        }
+    }
+
+    function select2SearchProgrammatic(select2_id, term) {
+
+        $('.select2-hidden-accessible').select2('close');
+        variables.get('#' + select2_id).select2('open');
+
+        var $searchInput = variables.get('input.select2-search__field');
+        $searchInput.val(term);
+        $searchInput.trigger('input')
+    }
+
+
+    /*####################################
+               convert num
+   ####################################*/
+    function convertToInt(num) {
+        num = num || '0';
+        num = isNaN(num) ? 0 : num;
+        num = parseInt(num);
+
+        return num;
+    }
+
+    function unFormatAndConvertToInt(num) {
+        num = unFormatNumber(num);
+        num = convertToInt(num);
+
+        return num;
+    }
+
+    function unFormatAndFormatNumber(num) {
+        num = unFormatNumber(num);
+        num = convertToInt(num);
+
+        return formatNumber(num);
+    }
+
+    function formatNumber(num) {
+        num = convertToInt(num);
+
+        return num.toLocaleString();
+    }
+
+    function formatNumberWithCama(num) {
+        num = unFormatAndConvertToInt(num);
+        num = convertToInt(num);
+
+        return num.toLocaleString();
+    }
+
+    function unFormatNumber(num) {
+        num = convertPersianNumToEng(num);
+
+        return num.replace(/,/g, '');
+    }
+
+    function convertEngNumToPersian(engStr) {
+
+        engStr = engStr || '';
+        engStr = engStr.toString() || '';
+        var arr = engStr.split('');
+
+        for (var i = 0; i < arr.length; i++) {
+            var replacement = arr[i];
+            switch (arr[i]) {
+                case '0':
+                    replacement = '۰';
+                    break;
+                case '1':
+                    replacement = '۱';
+                    break;
+                case '2':
+                    replacement = '۲';
+                    break;
+                case '3':
+                    replacement = '۳';
+                    break;
+                case '4':
+                    replacement = '۴';
+                    break;
+                case '5':
+                    replacement = '۵';
+                    break;
+                case '6':
+                    replacement = '۶';
+                    break;
+                case '7':
+                    replacement = '۷';
+                    break;
+                case '8':
+                    replacement = '۸';
+                    break;
+                case '9':
+                    replacement = '۹';
+                    break;
+
+            }
+            arr[i] = replacement;
+        }
+
+        return arr.join("");
+    }
+
+    function convertPersianNumToEng(persianStr) {
+
+        persianStr = persianStr || '';
+        persianStr = persianStr.toString() || '';
+        var arr = persianStr.split('');
+
+        for (var i = 0; i < arr.length; i++) {
+            var replacement = arr[i];
+            switch (arr[i]) {
+                case '۰':
+                    replacement = '0';
+                    break;
+                case '۱':
+                    replacement = '1';
+                    break;
+                case '۲':
+                    replacement = '2';
+                    break;
+                case '۳':
+                    replacement = '3';
+                    break;
+                case '۴':
+                    replacement = '4';
+                    break;
+                case '۵':
+                    replacement = '5';
+                    break;
+                case '۶':
+                    replacement = '6';
+                    break;
+                case '۷':
+                    replacement = '7';
+                    break;
+                case '۸':
+                    replacement = '8';
+                    break;
+                case '۹':
+                    replacement = '9';
+                    break;
+                case '٫':
+                case '\'':
+                case '،':
+                case '٬':
+                    replacement = ',';
+                    break;
+            }
+            arr[i] = replacement;
+        }
+
+        return arr.join("");
+    }
+
+    function makeTexBoxFormatable(txt_id) {
+
+        var $txt = variables.get('#' + txt_id);
+        $txt.addClass('text-center')
+            .on('input', function () {
+                this.value = unFormatAndFormatNumber(this.value);
+            }).focus(function () {
+                $txt.select();
+            });
+    }
+
+    function limitMaxLen(txt_id, isNumerical, isMobile) {
+
+        var $txt = variables.get('#' + txt_id);
+        $txt.on('keydown', function (e) {
+
+            if (isMobile && $txt.val().charAt(0) == 0) {
+                $txt.val($txt.val().substr(1));
+            }
+
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||  // {46:delete, 8:backspace, 9:tab, 27:escape, 13:enter, 110:decimal point, 190:period}
+                // Allow: Ctrl/cmd+A
+                    (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+C
+                    (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+X
+                    (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+
+            var maxLen = $txt.data()["valLengthMax"] || $txt.data()["valMaxlengthMax"] || $txt.attr('maxlength') || 0;
+
+            if (getSelectionTextLen() == maxLen) {
+                return true;
+            }
+
+            // Ensure that it is a number and stop the keypress
+            if ($txt.val().length >= maxLen
+                || (isNumerical
+                    && (e.shiftKey || (e.keyCode < 48 || e.keyCode > 57))
+                    && (e.keyCode < 96 || e.keyCode > 105))) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    function getSelectionTextLen() {
+        var text = "";
+        var activeEl = document.activeElement;
+        var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
+        if (
+          (activeElTagName == "textarea") || (activeElTagName == "input" &&
+          /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
+          (typeof activeEl.selectionStart == "number")
+        ) {
+            text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
+        } else if (window.getSelection) {
+            text = window.getSelection().toString();
+        }
+        return text.length;
+    }
+
+    function onlyPersianChar(txt_id, spn_id) {
+        var regex = /^[\u0600-\u06FF\s]+$/;
+
+        var spn = variables.get('#' + spn_id);
+        var $txt = variables.get('#' + txt_id);
+
+        $txt.on('keydown', function (e) {
+
+            if ($txt.val() == "" ||
+                $.inArray(e.keyCode, [46, 8, 9, 27, 13, 190, 32]) !== -1 ||  // {46:delete, 8:backspace, 9:tab, 27:escape, 13:enter, 110:decimal point, 190:period, 32:space}
+                // Allow: Ctrl/cmd+A
+                    (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+C
+                    (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+X
+                    (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+
+            if (!regex.test($txt.val())) {
+                e.preventDefault();
+                spn.text('از حروف فارسی استفاده شود');
+            }
+            else {
+                spn.text('');
+            }
+        });
+    }
+
+
+    /*####################################
+                no category
+    ####################################*/
+    function setFrmAction(id, frm) {
+
+        var frmAction = frm.attr('action');
+        var indexOfID = frmAction.lastIndexOf('/');
+        frmAction = frmAction.substring(0, indexOfID);
+        frm.attr('action', frmAction + '/' + id);
+    }
+
+    function getContainerObj(container_id) {
+        allModalContainer = variables.get('#containerModals');
+        var containerModal = allModalContainer.children('#' + container_id);
+
+        // if contianer not exists, create one
+        if (!containerModal.length) {
+            allModalContainer.append('<div id="' + container_id + '"></div>');
+
+            containerModal = allModalContainer.children('#' + container_id);
+        }
+
+        return containerModal;
+    }
+
+    function resetFormValidaion(frm) {
+        //Removes validation from input-fields
+        frm.find('.input-validation-error').addClass('input-validation-valid').removeClass('input-validation-error');
+        //Removes validation message after input-fields
+        frm.find('.field-validation-error').addClass('field-validation-valid').removeClass('field-validation-error');
+        //Removes validation summary
+        frm.find('.validation-summary-errors').addClass('validation-summary-valid').removeClass('validation-summary-errors');
+    }
+
+    function correctModalOverflowY(modal_front, modal_back) {
+        variables.get('#' + modal_front).on('hide.bs.modal', function () {
+            $('#' + modal_back).css('overflow-y', 'scroll');
+        });
+    }
+
+    function loadMenu(url) {
+
+        var jwtObj = getJwtObject();
+        variables.get('#spn_user_fullName').text(decodeURI(jwtObj.FullName));
+
+        getData(url, function (data) {
+
+            // image profile
+            variables.get('#userImageProfile').attr('src', data.UserImgPath)
+
+
+            // load menu
+            var myMenu = new SideMenu();
+
+            var lstMenu = [];
+
+            for (var i = 0; i < data.lstMdl.length; i++) {
+                var mdl = data.lstMdl[i];
+                for (var j = 0; j < data.lstAccessPage.length; j++) {
+                    var mnu = data.lstAccessPage[j];
+
+                    if (mnu.Module_FK == mdl.ID) {
+                        lstMenu.push(new SMLinkItem(mnu.FaName, mnu.EnName));
+                    }
+                }
+
+                if (lstMenu.length) {
+                    myMenu.addItem(new SMSubMenuItem(mdl.Name, lstMenu));
+                }
+                lstMenu.splice(0, lstMenu.length)
+            }
+            myMenu.appendTo(document.getElementById('menu'));
+
+            // ----- open close menu----------------
+            variables.get('#_btnMenu').click(function () {
+                myMenu.toggle();
+            });
+
+        });
+
+    }
+
+    function disableLoading() {
+
+        variables.get(".cssload-modal").fadeOut(300)
+    }
+
+    function enableLoading() {
+        if (option.showLoading) {
+            variables.get(".cssload-modal").fadeIn(50)
+        }
+    }
+
+
+    /*####################################
+        jwt token and base 64 conversion
+    ####################################*/
+    function b64DecodeUnicode(str) {
+        return decodeURIComponent(Array.prototype.map.call(atob(str), function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    }
+
+    function b64EncodeUnicode(str) {
+        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
+            return String.fromCharCode('0x' + p1);
+        }));
+    }
+
+    function parseJwt(token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(b64DecodeUnicode(base64));
+    };
+
+    function getJwtObject() {
+        var token = myCookie.getCookie('Token');
+        return parseJwt(token);
+    }
+
+
+    //نمایش وضعیت دانش آموز در مراحل تعیین سرویس
+    //type-->0 فقط مراحل ثبت نام 
+    //type-->1 تمام اطلاعات (پنل) کاربری
+
+    function setStudentStatus(data, type) {
+        var MustPay = data.PrePayment;
+
+        var Status = (data.StuPay - MustPay >= 0) ? 'glyphicon-ok-circle text-success' : 'glyphicon-remove-circle text-danger';
+        var StatusPre = (data.HasPrePaid) ? 'text-success">پرداخت موفق پیش پرداخت' : 'text-danger">ضروری جهت تعیین سرویس';
+
+        var Part = ['<p class="row label-default"><span class="glyphicon ', Status, '">&nbsp;</span><strong>1-  پیش پرداخت (از اول شهریورماه)</strong><br />&nbsp;&nbsp;<strong class="' + StatusPre + '</strong><br />&nbsp;&nbsp;<font>* مبلغ : </font>&nbsp;<strong>', utility.formatNumber(MustPay), ' ریال</strong></p>'].join("");
+
+        variables.get("#PrePayment").addClass(Status);
+        variables.get("#VerifyPhone").addClass(enums.CheckStuStatus[data.VerifyPhone]);
+        variables.get("#HasRegister").addClass(enums.CheckStuStatus[data.HasRegister]);
+        variables.get("#HasService").addClass(enums.CheckStuStatus[data.HasService]);
+        variables.get("#AcceptLaw").addClass(enums.CheckStuStatus[(data.AcceptLaw) ? true : false && data.HasService]);
+        variables.get("#HasSettle").addClass(enums.CheckStuStatus[data.HasSettle && data.HasService]);
+
+        if (type == 1) {
+            variables.get("#StuId").text(data.StuNationalNo);
+            variables.get("#School").text(data.School);
+            variables.get("#ServicePrice").text(data.ServicePrice);
+            variables.get("#StuLevel").text(data.StuLevel);
+            variables.get("#StuFather").text(data.StuFather);
+            variables.get("#PayAmount").text(utility.formatNumber(data.StuPay) + ' ریال');
+            variables.get("#StuName").text(data.StuName);
+            variables.get("#ServicePrice").text(utility.formatNumber(data.ServicePrice) + ' ریال');
+            variables.get("#RemainServicePrice").text(utility.formatNumber(data.StuPay - data.ServicePrice) + ' ریال');
+
+            if (data.HasService) {
+                variables.get("#CompanyName").text(data.CompanyName);
+                variables.get("#ServiceDistance").text(data.ServiceDistance + ' کیلومتر');
+                variables.get("#DrvName").text(data.DrvName);
+            }
+            else
+                variables.get(".NoService").removeClass("hidden");
+
+            variables.get("#Installment").append(Part);
+            if (data.HasService) {
+                data.Services.forEach(function (item, index) {
+                    MustPay += item.Amount;
+                    var Status = (data.StuPay - MustPay > 0) ? 'glyphicon-ok-circle text-success' : 'glyphicon-remove-circle text-danger';
+                    var Part = ['<p class="row label-default"><span class="glyphicon ', Status, '">&nbsp;</span><strong>', index + 2, '- قسط ', item.PartNo, ' </strong><br />&nbsp;&nbsp;<font>* مهلت پرداخت : </font>&nbsp;<strong class="text-danger">', utility.convertJSONMiladiToPersian(item.ExpireDate), '</strong><br />&nbsp;&nbsp;<font>* مبلغ : </font>&nbsp;<strong>', utility.formatNumber(item.Amount), ' ریال</strong></p>'].join("");
+                    variables.get("#Installment").append(Part);
+                });
+            }
+
+        }
+        $("._stepfix p").find(".glyphicon-remove-circle").first().parent().addClass("row label-default alert alert-info");
+
+    }
+
+    function printingElement(elementid) {
+        $("#" + elementid).print({
+            globalStyles: true,
+            mediaPrint: false,
+            stylesheet: null,
+            noPrintSelector: ".no-print",
+            iframe: true,
+            append: null,
+            prepend: null,
+            manuallyCopyFormValues: true,
+            deferred: $.Deferred(),
+            timeout: 750,
+            title: null,
+            doctype: '<!doctype html>'
+        });
+    }
+    //---------------------------------
+    return {
+        option: option,
+        //--load modal--
+        loadCreateModal: loadCreateModal,
+        submitModalCreate: submitModalCreate,
+        loadEditModal: loadEditModal,
+        submitModalEdit: submitModalEdit,
+        loadDeleteModal: loadDeleteModal,
+        submitModalDelete: submitModalDelete,
+        resetFormValidaion: resetFormValidaion,
+        loadCustomModal: loadCustomModal,
+        loadCustomView: loadCustomView,
+        //--connect to server--
+        postData: postData,
+        getData: getData,
+        //--notify--
+        showNotify: showNotify,
+        showNotifyErr: showNotifyErr,
+        //--date time--
+        fillDateTime: fillDateTime,
+        enableDateTime: enableDateTime,
+        convertJSONMiladiToPersian: convertJSONMiladiToPersian,
+        convertJSONMiladiToPersianDateTime: convertJSONMiladiToPersianDateTime,
+        convertPersianToMiladi: convertPersianToMiladi,
+        convertPersianToMiladiDateTime: convertPersianToMiladiDateTime,
+        convertMiladiToPersian: convertMiladiToPersian,
+        addDays: addDays,
+        getCurrentMiladiDateTime: getCurrentMiladiDateTime,
+        getCurrentPersianDate: getCurrentPersianDate,
+        //--img--
+        resetImgPreview: resetImgPreview,
+        setImgSrc: setImgSrc,
+        readImgURL: readImgURL,
+        //--file upload
+        readFileURL: readFileURL,
+        resetFile: resetFile,
+        //--Select2--
+        fillSelect2: fillSelect2,
+        select2SearchProgrammatic: select2SearchProgrammatic,
+        //--format--
+        convertToInt: convertToInt,
+        unFormatAndConvertToInt: unFormatAndConvertToInt,
+        formatNumber: formatNumber,
+        formatNumberWithCama: formatNumberWithCama,
+        unFormatNumber: unFormatNumber,
+        unFormatAndFormatNumber: unFormatAndFormatNumber,
+        convertEngNumToPersian: convertEngNumToPersian,
+        convertPersianNumToEng: convertPersianNumToEng,
+        makeTexBoxFormatable: makeTexBoxFormatable,
+        limitMaxLen: limitMaxLen,
+        onlyPersianChar: onlyPersianChar,
+        //--no category
+        correctModalOverflowY: correctModalOverflowY,
+        loadMenu: loadMenu,
+        disableLoading: disableLoading,
+        enableLoading: enableLoading,
+        setStudentStatus: setStudentStatus,
+        printingElement: printingElement
+    }
+})();
+
+var datatable = (function () {
+    //------------- datatable component--------------
+    var lstDataTables = {};
+
+    function fillDataTable(tbl_id, src, col, hasIndex, hasEdit, hasDelete, appName, searchableFooter, callback) {
+
+        var tbl;
+
+        if (lstDataTables[tbl_id]) {
+            reloadDataTable(tbl_id, src);
+            return lstDataTables[tbl_id];
+        } else {
+
+
+            if (hasIndex) {
+                col.unshift({
+                    title: 'ردیف',
+                    data: null,
+                    searchable: false,
+                    sortable: false,
+                    visible: true
+                })
+            }
+
+            if (hasEdit) {
+                col.push({
+                    title: 'ویرایش',
+                    data: 'id',
+                    searchable: false,
+                    sortable: false,
+                    render: function (data, type, row) {
+                        return '<a href="javascript:' + appName + '._loadEditModal(' + data + ')" ><span class="glyphicon glyphicon-edit"></span></a>';
+                    }
+                })
+            }
+
+            if (hasDelete) {
+                col.push({
+                    title: 'حذف',
+                    data: 'id',
+                    searchable: false,
+                    sortable: false,
+                    render: function (data, type, row) {
+                        return '<a href="javascript:' + appName + '._loadDeleteModal(' + data + ');" class="text-danger"><span class="glyphicon glyphicon-remove"></span></a>';
+                    }
+                });
+            }
+
+            var $tbl = $('#' + tbl_id);
+
+            // serachable footer
+            if (searchableFooter) {
+                var $tfootTr = $tbl.append('<tfoot></tfoot>').find('tfoot').append('<tr></tr>').find('tr');
+
+                for (var i = 0; i < col.length; i++) {
+                    if (col[i].searchable == false) {
+                        $tfootTr.append('<td></td>')
+                    }
+                    else if (col[i].myType == 'bool') {
+                        $tfootTr.append('<td><label class="checkbox">فیلتر<input type="checkbox" class="_chkFooterSearch" data-related="' + tbl_id + '" data-state="indeterminate"/></label></td>');
+                    }
+                    else {
+                        $tfootTr.append('<td><input type="text" class="_txtFooterSearch" data-related="' + tbl_id + '" style="width:100%" placeholder="جستجو" /></td>')
+                    }
+                }
+
+                $tfootTr.find('input[type="checkbox"]').prop('indeterminate', true);
+                //--------------------------------------
+            }
+
+            // init datatable
+            tbl = $tbl.DataTable({
+                aaSorting: [],
+                sAjaxSource: src,
+                sAjaxDataProp: "",
+                columns: col,
+                responsive: true,
+                scrollY: 350,
+                language: {
+                    "sProcessing": "درحال پردازش...",
+                    "sLengthMenu": "نمایش محتویات _MENU_",
+                    "sZeroRecords": "موردی یافت نشد",
+                    "sInfo": "نمایش _START_ تا _END_ از مجموع _TOTAL_ مورد",
+                    "sInfoEmpty": "تهی",
+                    "sInfoFiltered": "(فیلتر شده از مجموع _MAX_ مورد)",
+                    "sInfoPostFix": "",
+                    "sSearch": "جستجو:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "ابتدا",
+                        "sPrevious": "قبلی",
+                        "sNext": "بعدی",
+                        "sLast": "انتها"
+                    }
+                },
+                initComplete: function (settings, json) {
+                    if (callback) {
+                        callback(settings, json);
+                    }
+                }
+            });
+
+            if (hasIndex) {
+                tbl.on('order.dt search.dt', function () {
+                    tbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }).draw();
+            }
+
+            $('#' + tbl_id + ' tbody').on('click', 'tr', function () {
+                tbl.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            });
+
+            lstDataTables[tbl_id] = tbl;
+
+            //event for footer search
+            if (searchableFooter) {
+                tbl.columns().every(function () {
+                    var dataTableColumn = this;
+                    var $footer = $(this.footer());
+                    $footer.find('input[type="text"]').on('input', function () {
+                        dataTableColumn.search(this.value).draw();
+                    });
+
+                    $footer.find('input[type="checkbox"]').change(function () {
+
+                        var attr = this.getAttribute('data-state');
+
+                        if (attr == "indeterminate") {
+                            this.checked = true;
+                            this.indeterminate = false;
+                            this.setAttribute('data-state', 'checked')
+                        }
+                        else if (attr == "checked") {
+
+                            this.checked = false;
+                            this.indeterminate = false;
+                            this.setAttribute('data-state', 'unchecked')
+                        }
+                        else if (attr == "unchecked") {
+
+                            this.indeterminate = true;
+                            this.setAttribute('data-state', 'indeterminate')
+                        }
+
+                        if (this.indeterminate) {
+                            dataTableColumn.search('').draw();
+                        }
+                        else {
+                            dataTableColumn.search(this.checked).draw();
+                        }
+
+                    });
+                });
+            }
+
+            return tbl;
+        }
+    }
+
+    function fillDataTable2(tbl_id, option, callback) {
+
+        var tbl;
+
+        // default option
+        if (option.sAjaxSource) {
+            option.sAjaxSource = option.sAjaxSource;
+        }
+        if (option.columns) {
+            option.columns = option.columns;
+        }
+        option.aaSorting = option.aaSorting ? option.aaSorting : [];
+        option.responsive = option.responsive ? option.responsive : true;
+        option.scrollY = option.scrollY ? option.scrollY : 350;
+        option.language = option.language ? option.language : {
+            "sProcessing": "درحال پردازش...",
+            "sLengthMenu": "نمایش محتویات _MENU_",
+            "sZeroRecords": "موردی یافت نشد",
+            "sInfo": "نمایش _START_ تا _END_ از مجموع _TOTAL_ مورد",
+            "sInfoEmpty": "تهی",
+            "sInfoFiltered": "(فیلتر شده از مجموع _MAX_ مورد)",
+            "sInfoPostFix": "",
+            "sSearch": "جستجو:",
+            "sUrl": "",
+            "oPaginate": {
+                "sFirst": "ابتدا",
+                "sPrevious": "قبلی",
+                "sNext": "بعدی",
+                "sLast": "انتها"
+            }
+        };
+
+        option.initComplete = option.initComplete ? option.initComplete : function (settings, json) {
+            if (callback) {
+                callback(settings, json);
+            }
+        };
+        //--------------------------------
+
+
+
+        if (lstDataTables[tbl_id]) {
+            reloadDataTable(tbl_id, src);
+            return lstDataTables[tbl_id];
+        } else {
+
+            var col = option.columns;
+            var hasIndex = option.hasIndex;
+            var hasEdit = option.hasEdit;
+            var hasDelete = option.hasDelete;
+            var appName = option.appName;
+
+            if (hasIndex) {
+                col.unshift({
+                    title: 'ردیف',
+                    data: null,
+                    searchable: false,
+                    sortable: false,
+                    visible: true
+                })
+            }
+
+            if (hasEdit) {
+                col.push({
+                    title: 'ویرایش',
+                    data: 'id',
+                    searchable: false,
+                    sortable: false,
+                    render: function (data, type, row) {
+                        return '<a href="javascript:' + appName + '._loadEditModal(' + data + ')" ><span class="glyphicon glyphicon-edit"></span></a>';
+                    }
+                })
+            }
+
+            if (hasDelete) {
+                col.push({
+                    title: 'حذف',
+                    data: 'id',
+                    searchable: false,
+                    sortable: false,
+                    render: function (data, type, row) {
+                        return '<a href="javascript:' + appName + '._loadDeleteModal(' + data + ');" class="text-danger"><span class="glyphicon glyphicon-remove"></span></a>';
+                    }
+                });
+            }
+
+            tbl = $('#' + tbl_id).DataTable(option);
+
+            if (hasIndex) {
+                tbl.on('order.dt search.dt', function () {
+                    tbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }).draw();
+            }
+
+            $('#' + tbl_id + ' tbody').on('click', 'tr', function () {
+                tbl.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            });
+
+            lstDataTables[tbl_id] = tbl;
+
+            return tbl;
+
+            //    for(let i = 0; i< col.length; i++)
+            //    {
+            //        if(col[i].searchable == false)
+            //        {
+            //            $tfootTr.append('')
+            //        }
+            //    }
+            //}
+        }
+    }
+
+    function insertToDataTable(tbl_id, rowData) {
+
+        var isInserted = false;
+        // باز یابی شی جدول با نام آن
+        var tbl = lstDataTables[tbl_id];
+
+        if (tbl) {
+
+            clearSearchbox(tbl_id);
+
+            // اضافه
+            var insertedRow = tbl.row.add(rowData).draw().node();
+            tbl.page('last').draw('page');
+
+            // حذف تمامی سطرهای انتخاب شده
+            tbl.$('tr.selected').removeClass('selected');
+
+            // انتخاب کردن ردیف اضاف شده
+            $(insertedRow).addClass('selected');
+
+            isInserted = true;
+        }
+
+        return isInserted;
+    }
+
+    function editDataTable(tbl_id, rowData) {
+
+
+        // باز یابی شی جدول با نام آن
+        var tbl = lstDataTables[tbl_id];
+        var isUpdated = false;
+
+        if (tbl) {
+            var index = getRowIndexById(tbl, rowData.id);
+            if (index != -1) {
+                // ویرایش
+                tbl.row(index).data(rowData).draw(false);
+                isUpdated = true;
+            }
+        }
+
+        return isUpdated;
+    }
+
+    function deleteFromDataTable(tbl_id, id) {
+
+        // باز یابی شی جدول با نام آن
+        var tbl = lstDataTables[tbl_id];
+        var isDeleted = false;
+
+        if (tbl) {
+            if (!id) {
+                id = tbl.row('.selected').data().id;
+            }
+
+            var index = getRowIndexById(tbl, id);
+            if (index != -1) {
+                // حذف
+                tbl.row(index).remove().draw(false);
+                isDeleted = true;
+            }
+        }
+
+        return isDeleted;
+    }
+
+    function reloadDataTable(tbl_id, url, data) {
+
+        var tbl = lstDataTables[tbl_id];
+        if (data) {
+            tbl.clear();
+            tbl.rows.add(data).draw();
+        } else if (url) {
+            tbl.ajax.url(url).load();
+        } else {
+            tbl.ajax.reload();
+        }
+    }
+
+    /* search in dataTables data and find row index */
+    function getRowIndexById(tbl, id) {
+
+        var index = -1
+
+        tbl.rows().every(function (rowIdx, tableLoop, rowLoop) {
+
+            var data = this.data();
+            if (data.id == id) {
+                index = rowIdx;
+                return false;
+            }
+        });
+        return index;
+    }
+
+
+    function getRowById(tbl_id, id) {
+
+        var tbl = lstDataTables[tbl_id];
+        var row = [];
+
+        if (tbl) {
+            tbl.rows().every(function (rowIdx, tableLoop, rowLoop) {
+
+                var data = this.data();
+                if (data.id == id) {
+                    row = data;
+                    return false;
+                }
+            });
+        }
+
+        return row;
+    }
+
+
+    /* find page of record by index */
+    function getPageOfRowIndex(tbl, rowIndex) {
+        var index = 0;
+        tbl.rows().every(function (rowIdx, tableLoop, rowLoop) {
+
+            var data = this.data();
+            if (data.id == id) {
+                index = rowLoop;
+                return false;
+            }
+        });
+
+        var pageLen = tbl.page.info().length;
+        var pageToDisplay = Math.floor(index / pageLen);
+        return pageToDisplay;
+    }
+
+    /* merge form data and Table data */
+    function concatFormAndTableData(frm) {
+
+        var tbl_id = frm.find('table')
+              .filter(function () {
+                  var attr = $(this).attr('id');
+                  return (typeof attr !== typeof undefined && attr !== false)
+              }).attr('id')
+        var tableData = lstDataTables[tbl_id].$('input').serialize();
+
+        var formData = frm.find('input').not('#' + tbl_id + ' input').serialize();
+
+        formData += '&' + tableData;
+        return formData;
+    }
+
+    function adjustHeader(tbl_id) {
+
+        var tbl = lstDataTables[tbl_id];
+        if (tbl) {
+            tbl.columns.adjust();
+        }
+    }
+
+    function initDatatableChkHeader(chkHeader_id) {
+
+        var chk = $('#' + chkHeader_id);
+        chk.unbind();
+        chk.click(function (e) {
+
+            e.stopPropagation()
+        });
+
+        var col_index = chk.parent().index();
+        var tbl_id = chk.parents('.dataTables_wrapper:first').attr('id').replace('_wrapper', '');
+
+        var tbl = lstDataTables[tbl_id];
+        if (tbl) {
+
+            tbl.off('page');
+
+            var allPageNodes = tbl.rows().nodes();
+            var allPageChk = $(allPageNodes).find('td:eq(' + col_index + ') input[type=checkbox]');
+            //allPageChk.off('change');
+
+            chk.on('change', function () {
+
+                var currentPageNodes = tbl.rows({ page: 'current' }).nodes();
+                var currentPageChk = $(currentPageNodes).find('td:eq(' + col_index + ') input[type=checkbox]');
+                currentPageChk.prop('checked', $(this).is(':checked'));
+            });
+
+            function correctHeaderCheckState() {
+                var currentPageNodes = tbl.rows({ page: 'current' }).nodes();
+                var currentPageChk = $(currentPageNodes).find('td:eq(' + col_index + ') input[type=checkbox]');
+
+                var currentPageChkLen = currentPageChk.length;
+                var currentPageCheckedLen = $(currentPageNodes).find('td:eq(' + col_index + ') input[type=checkbox]:checked').length;
+                var currentPageUnCheckedLen = currentPageChkLen - currentPageCheckedLen;
+
+                if (currentPageCheckedLen == currentPageChkLen) {
+                    chk.prop('indeterminate', false);
+                    chk.prop('checked', true);
+                } else if (currentPageUnCheckedLen == currentPageChkLen) {
+                    chk.prop('indeterminate', false);
+                    chk.prop('checked', false);
+                } else {
+                    chk.prop('indeterminate', true);
+                }
+            }
+
+            tbl.on('page', correctHeaderCheckState);
+            allPageChk.on('change', correctHeaderCheckState);
+            correctHeaderCheckState();
+        }
+    }
+
+    function clearSearchbox(tbl_id) {
+        // header search box
+        var $searchBox = variables.get('input[type="search"][aria-controls="' + tbl_id + '"]');
+        if ($searchBox.val() != '') {
+
+            $searchBox.val('');
+            lstDataTables[tbl_id].search('').draw();
+        }
+        //------------------
+
+
+        // footer search box
+        variables.get('input[data-related="' + tbl_id + '"], input[data-related="' + tbl_id + '"]').each(function () {
+
+            var $input = $(this);
+
+            if ($input.hasClass('_chkFooterSearch') && $input.prop('indeterminate') != true) {
+
+                $input.data('state', 'unchecked');
+                $input.trigger('change');
+            }
+            else if ($input.hasClass('_txtFooterSearch') && $input.val() != '') {
+                $input.val('');
+                $input.trigger('input');
+            }
+        });
+        //------------------
+    }
+
+    return {
+        fillDataTable: fillDataTable,
+        insertToDataTable: insertToDataTable,
+        editDataTable: editDataTable,
+        deleteFromDataTable: deleteFromDataTable,
+        reloadDataTable: reloadDataTable,
+        getRowIndexById: getRowIndexById,
+        getPageOfRowIndex: getPageOfRowIndex,
+        adjustHeader: adjustHeader,
+        concatFormAndTableData: concatFormAndTableData,
+        initDatatableChkHeader: initDatatableChkHeader,
+        getRowById: getRowById
+    }
+})();
+
+var enums = {
+    UserType: ["دانش آموز", "اولیا دانش آموز", "سازمان دانش آموزی", "ناحیه", "شرکت", "راننده", "مدیر اجرایی", "بازرس"],
+    Gender: { "false": "زن", "true": "مرد" },
+    IsActive: { "false": "غیر فعال", "true": "فعال" },
+    IsStatic: { "false": "متغیر", "true": "ثابت" },
+    IsDeleted: { "false": "قطعی", "true": "حذف شده" },
+    Nationality: ["ایرانی", "غیر ایرانی"],
+    Reason: ["", "تغییرات قیمت دانش آموز", "انصراف و جابجایی", "تغییرات قیمت مدرسه"],
+    IsPercent: { "false": "مقداری", "true": "درصدی" },
+    ServiceState: ["عادی", "انصراف", "جابجایی بین راننده", "جابجایی بین مدرسه", "جابجایی بین شرکت"],
+    SpectorType: { "false": "بازرس", "true": "سر بازرس" },
+    QuestionType: ["دو گزینه ای", "تک انتخابی", "چند انتخابی", "عددی", "متنی"],
+    FilterType: ["ورودی عدد", "ورودی متن", "انتخابی"],
+    CheckStuStatus: { "true": "glyphicon-ok-circle text-success", "false": "glyphicon-remove-circle text-danger" },
+    IsIncremental: { "false": "کاهشی", "true": "افزایشی" },
+    PaymentResult: {
+        5: {
+            '-30': "پرداخت قبلاً برگشت خورده است",
+            '-4': "اطلاعات پرداخت موجود نمی باشد",//invoice =""
+            '-3': "عدم تکمیل عملیات پرداخت، بازگشت مبلغ حداکثر تا 48 ساعت",
+            '-2': "خطای ارتباط با درگاه پرداخت",
+            '-1': "عدم تکمیل عملیات پرداخت",
+            0: "انصراف دارنده کارت",
+            100: "پرداخت موفق",
+            110: "انصراف دارنده ی کارت",
+            120: "موجودی حساب کافی نیست",
+            140: "اطلاعات کارت اشتباه است",
+            131: "رمز کارت اشتباه است",
+            132: "کارت مسدود شده است",
+            133: "کارت منقضی شده است",
+            130: "زمان مورد نظر به پایان رسیده است",
+            150: "خطای داخل بانکی",
+            160: "خطا در cvv2 یا تاریخ انقضاء کارت",
+            166: "بانک صادر کننده مجوز انجام تراکنش را صادر نکرده است",
+            200: "مبلغ مورد نظر بیش از سقف مجاز برای هر تراکنش میباشد",
+            201: "مبلغ مورد نظر بیش از سقف مجاز در روز میباشد",
+            202: "مبلغ مورد نظر بیش از سقف مجاز در ماه میباشد",
+            507: "خطای سیستمی 507 از سمت درگاه پرداخت"
+        },
+        1: {
+            '-6': "عدم تکمیل عملیات پرداخت، بازگشت مبلغ حداکثر تا 48 ساعت",
+            '-5': "عدم تکمیل عملیات پرداخت، بازگشت مبلغ حداکثر تا 48 ساعت",
+            '-4': "اطلاعات پرداخت موجود نمی باشد",//invoice =""
+            '-3': "عدم تکمیل عملیات پرداخت، بازگشت مبلغ حداکثر تا 48 ساعت",
+            '-2': "خطای ارتباط با درگاه پرداخت",
+            '-1': "عدم تکمیل عملیات پرداخت",
+            2: "انصراف دارنده کارت",
+            0: "پرداخت موفق",
+            100: "پرداخت موفق",
+            1029: "خطای ارتباطی با درگاه بانک",
+            1: "لطفاً با بانک صادرکننده،تماس حاصل فرمائید!",
+            3: "کارت پذیرنده فعال نیست",
+            14: "شماره کارت شناخته شده نیست",
+            23: "کارت پذیرنده نامعتبر است",
+            33: "کارت شما منقضی شده است",
+            38: "تعداد دفعات ورود رمز نادرست بیش از حد مجاز است",
+            41: "کارت مفقوده می باشد",
+            43: "کارت مسروقه می باشد",
+            44: "اطلاعات قبض صحیح نیست",
+            51: "مبلغ درخواستی از موجودی حساب شما، بیشتر است",
+            52: "شماره حساب نامعتبر است",
+            54: "تاریخ انقضا کارت سپری شده است",
+            55: "رمز کارت صحیح نمی باشد",
+            56: "اطلاعات کارت نادرست است",
+            57: "دارنده کارت مجاز به انجام این تراکنش نمی باشد",
+            61: "مبلغ تراکنش بیش از حدمجاز است",
+            62: "کارت محدود شده است",
+            65: "تعداد دفعات تراکنش بیشتر از حد مجاز است",
+            75: "ورود رمز دوم کارت از حد مجاز بیشتر است",
+            78: "کارت غیر فعال می باشد",
+            79: "حساب متصل به کارت نامعتبر است",
+            92: "صادر کننده کارت معتبر نیست",
+            1016: "پرداخت با کارت های شتاب غیرفعال شده است",
+            1031: "مهلت زمانی شما جهت پرداخت به پایان رسيده است",
+            9006: "تراکنش ناموفق بوده و مبلغ با موفقيت به حساب شما برگشت داده شده است",
+        }
+    },
+};
+
+var myCookie = (function () {
+
+    var setCookie = function (cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    var getCookie = function (cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    return {
+        setCookie: setCookie,
+        getCookie: getCookie
+    }
+})();
+
+var variables = {
+    lstNodes: {},
+    get: function (selector) {
+
+        var domNode = this.lstNodes[selector];
+        if (domNode) {
+            return domNode;
+        }
+        else {
+            this.set(selector);
+            return this.lstNodes[selector];
+        }
+    },
+    set: function (selector) {
+
+        this.lstNodes[selector] = $(selector);
+    },
+    getObject: function (key, callback) {
+        var domNode = this.lstNodes[key];
+        if (domNode) {
+            return domNode;
+        }
+        else {
+            if (!callback) {
+                throw key + ' not found!';
+            }
+            this.setObject(key, callback());
+            return this.lstNodes[key];
+        }
+    },
+    setObject: function (key, value) {
+        var domNode = this.lstNodes[key];
+        this.lstNodes[key] = value;
+    }
+};
+
+* http://shirazs.ir/JavaScripts/customValidation.js
+/// <reference path="jquery-2.2.4.js" />
+/// <reference path="myScript.js" />
+/// <reference path="jquery.validate.js" />
+
+
+// national number validaton
+jQuery.validator.addMethod("nationalnovalidator",
+     function (value, element, param) {
+
+         if (["000000000", "1111111111", "2222222222", "3333333333", "4444444444", 
+             "5555555555", "6666666666", "7777777777", "8888888888", "9999999999"]
+             .indexOf(value) !== -1) {
+             return false;
+         }
+
+         var L = value.length;
+
+         if (L == 11) return true;
+
+         if (L < 8 || parseInt(value, 10) == 0) return false;
+         value = ('0000' + value).substr(L + 4 - 10);
+         if (parseInt(value.substr(3, 6), 10) == 0) return false;
+         var c = parseInt(value.substr(9, 1), 10);
+         var s = 0;
+         for (var i = 0; i < 9; i++)
+             s += parseInt(value.substr(i, 1), 10) * (10 - i);
+         s = s % 11;
+         return (s < 2 && c == s) || (s >= 2 && c == (11 - s));
+         return true;
+     });
+
+jQuery.validator.unobtrusive.adapters.addBool("nationalnovalidator");
+
+*
