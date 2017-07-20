@@ -8511,7 +8511,23 @@ function call2() {
         $('.info').append(data);
     });
 }
-#+end_src 
+#+end_src
+
+*** disable ajax caching
+#+begin_src javascript
+//to disable globally
+$.ajaxSetup({ cache: false });
+
+// to disable for a single request
+$.ajax({
+    //.....
+    cache: false,
+    //....
+}).done(function(data) {
+
+});	
+
+#+end_src
 
 ** Searching JavaScript objects
 #+begin_src javascript
