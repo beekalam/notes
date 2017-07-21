@@ -177,7 +177,6 @@ http://devdocs.io/lodash~4/
 ** https://wiki.wireshark.org/FrontPage
 ** http://sobek.su/Cisco/IOS/
 * cron
-[project idea]
 ** http://crontab-generator.org/
 ** https://crontab.guru
 ** http://www.crontutorials.com/

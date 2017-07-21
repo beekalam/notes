@@ -2880,7 +2880,6 @@ http://malsup.com/jquery/block/
 * asus n552vm 4-300-0000
 * upgrage baileys 
 * projects
-https://delim.co
 http://www.freeformatter.com/string-utilities.html
 http://www.lukepaynesoftware.com/projects/peek-through/
 * Splitting Strings with .split( )
