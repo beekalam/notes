@@ -200,6 +200,144 @@ string NumberToString ( int Number )
 
 #+end_src
 
+* strings
+** reverse string
+#+begin_src c++
+std::reverse(s.begin(), s.end());
+// In the event that you want to copy the string to another string, but backward, use reverse iterators, like this: 
+std::string s = "Los Angeles";
+std::string rs;
+rs.assign(s.rbegin( ), s.rend( ));
+#+end_src
+
+**  Padding a String
+You need to "pad," or fill, a string with a number of occurrences of some
+character to a certain width. For example, you may want to pad the string
+"Chapter 1" to 20 characters wide with periods, so that it looks like "Chapter
+1...........".
+
+*Solution*
+Use string's insert and append member functions to pad a string with characters on the beginning or end. For example, to pad the end of a string to 20 characters with X's: 
+#+begin_src c++
+std::string s = "foo";
+s.append(20 - s.length( ), 'X');
+
+//To pad the string at the beginning instead: 
+
+s.insert(s.begin( ), 20 - s.length( ), 'X');
+
+#+end_src 
+
+*A generic pad function template*
+
+#+begin_src c++
+#include <string>
+#include <iostream>
+using namespace std;
+// The generic approach
+template<typename T>
+void pad(basic_string<T>& s,
+         typename basic_string<T>::size_type n, T c) {
+   if (n > s.length( ))
+      s.append(n - s.length( ), c);
+}
+int main( ) {
+   string  s  = "Appendix A";
+   wstring ws = L"Acknowledgments"; // The "L" indicates that
+                                     // this is a wide char
+   pad(s, 20, '*');                  // literal
+   pad(ws, 20, L'*');
+   // cout  << s  << std::endl;  // You shouldn't be able to
+   wcout << ws << std::endl;     // run these at the same time
+}
+#+end_src
+
+** trimmin a string
+
+#+begin_src c++
+#include <string>
+#include <iostream>
+// The approach for narrow character strings
+void rtrim(std::string& s, char c) {
+   if (s.empty( ))
+      return;
+   std::string::iterator p;
+   for (p = s.end( ); p != s.begin( ) && *--p == c;);
+   if (*p != c)
+      p++;
+   s.erase(p, s.end( ));
+}
+int main( )
+{
+   std::string s = "zoo";
+   rtrim(s, 'o');
+   std::cout << s << '\n';
+}
+#+end_src
+
+*A generic version of rtrim*
+#+begin_src c++
+
+#include <string>
+#include <iostream>
+using namespace std;
+// The generic approach for trimming single
+// characters from a string
+template<typename T>
+void rtrim(basic_string<T>& s, T c)
+{
+   if (s.empty( ))
+      return;
+   typename basic_string<T>::iterator p;
+   for (p = s.end( ); p != s.begin( ) && *--p == c;);
+   if (*p != c)
+      p++;
+   s.erase(p, s.end( ));
+}
+int main( ) {
+   string s = "Great!!!!";
+   wstring ws = L"Super!!!!";
+   rtrim(s, '!');
+   rtrim(ws, L'!');
+   cout << s << '\n';
+   wcout << ws << L'\n';
+}
+#+end_src
+
+*trimming whitespace*
+#+begin_src c++
+#include <string>
+#include <iostream>
+#include <cctype>
+#include <cwctype>
+using namespace std;
+template<typename T, typename F>
+void rtrimws(basic_string<T>& s, F f) {
+   if (s.empty( ))
+      return;
+   typename basic_string<T>::iterator p;
+   for (p = s.end( ); p != s.begin( ) && f(*--p););
+   if (!f(*p))
+      p++;
+   s.erase(p, s.end( ));
+}
+// Overloads to make cleaner calling for client code
+void rtrimws(string& s) {
+   rtrimws(s, isspace);
+}
+void rtrimws(wstring& ws) {
+   rtrimws(ws, iswspace);
+}
+int main( ) {
+   string s = "zing        ";
+   wstring ws = L"zong        ";
+   rtrimws(s);
+   rtrimws(ws);
+   cout << s << "|\n";
+   wcout << ws << L"|\n";
+}
+#+end_src
+
 * conditional compilation using predifined macros
 
 #+begin_src cpp
@@ -253,6 +391,41 @@ int main () {
   return 0;
 }
 #+end_src
+** sort
+#+begin_src c++
+// sort algorithm example
+#include <iostream>     // std::cout
+#include <algorithm>    // std::sort
+#include <vector>       // std::vector
+
+bool myfunction (int i,int j) { return (i<j); }
+
+struct myclass {
+  bool operator() (int i,int j) { return (i<j);}
+} myobject;
+
+int main () {
+  int myints[] = {32,71,12,45,26,80,53,33};
+  std::vector<int> myvector (myints, myints+8);               // 32 71 12 45 26 80 53 33
+
+  // using default comparison (operator <):
+  std::sort (myvector.begin(), myvector.begin()+4);           //(12 32 45 71)26 80 53 33
+
+  // using function as comp
+  std::sort (myvector.begin()+4, myvector.end(), myfunction); // 12 32 45 71(26 33 53 80)
+
+  // using object as comp
+  std::sort (myvector.begin(), myvector.end(), myobject);     //(12 26 32 33 45 53 71 80)
+
+  // print out content:
+  std::cout << "myvector contains:";
+  for (std::vector<int>::iterator it=myvector.begin(); it!=myvector.end(); ++it)
+    std::cout << ' ' << *it;
+  std::cout << '\n';
+
+  return 0;
+}
+#+end_src 
 
 * read from STDIN
 ** read number
