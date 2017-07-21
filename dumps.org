@@ -2882,6 +2882,8 @@ http://malsup.com/jquery/block/
 * projects
 http://www.freeformatter.com/string-utilities.html
 http://www.lukepaynesoftware.com/projects/peek-through/
+https://www.easycron.com/
+ftp manager like the one in chrome using a single php file
 * Splitting Strings with .split( )
 You want to be able to split a string into an array of strings, given a specific substring (or regular expression)
 to split them by.
@@ -3230,7 +3232,7 @@ swapNumbers(200,50);
 #+end_src
 
 * myscript shirazs http://shirazs.ir/JavaScripts/myScript.js
-
+  
 /// <reference path="references.js" />
 
 //------------ Global Function --------------------------
@@ -5264,3 +5266,6 @@ jQuery.validator.unobtrusive.adapters.addBool("nationalnovalidator");
 
 * downloads
 uberstudent
+* https://www.voti.nl/wisp648/
+16F688
+* 
