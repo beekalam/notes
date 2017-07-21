@@ -627,7 +627,6 @@ $ last reboot                              # Show system reboot history
 *Kernel detected hardware:*
 
 #+begin_src shell 
-$+begin_src shell
 $ dmesg                               # Detected hardware and boot messages
 $ lsdev                                  # information about installed hardware
 $ dd if=/dev/mem bs=1k skip=768 count=256 2>/dev/null | strings -n 8 # Read BIOS
@@ -642,6 +641,11 @@ $ lspci -tv                       # Show PCI devices
 $ lsusb -tv                      # Show USB devices
 $ lshal                            # Show a list of all devices with their properties
 $ dmidecode                # Show DMI/SMBIOS: hw info from the BIOS
+$ dmidecode -t processor   # CPU family
+$ dmidecode -t cache       # CPU cache
+$ dmidecode -t memory      # memory, including slots used, size, data width, speed
+$ dmidecode -t slot        # num pci slots
+$ lshw  -class storage     # storage interfaces, type (SATA, NVME, SCSI, and so on), and speed
 
 #+end_src
  
@@ -1058,7 +1062,13 @@ $ apt-get update                     # First update the package lists
 $ apt-get install emacs          # Install the package emacs
 $ dpkg --remove emacs        # Remove the package emacs
 $ dpkg -S file                           # find what package a file belongs to
-#+end_src 
+#+end_src
+
+** temperature
+#+begin_src shell
+# hard disk temperature
+$ hddtemp /dev/sdb
+#+end_src
 
 * git
 ** add a remote
@@ -4063,7 +4073,7 @@ http://askubuntu.com/questions/499995/change-ip-address-which-is-given-by-tor-us
 
 http://superuser.com/questions/792525/how-to-change-ffmpeg-threads-settings
 http://crm5.farahoosh.ir/AAA2/userinfo/118262
-* dump
+* dump(forensic imaging)
 ** check if SDD support TRIM command
 
 #+begin_src shell
@@ -4109,6 +4119,168 @@ disk device drivers.
 | sd*     | SCSI and ATA |
 | md*     | RAID         |
 | nvme*n* | NVME         |
+** sparse files
+Sparse files are worth mentioning because they have some advantages; how-
+ever, they can also be problematic when calculating disk capacity. Some
+filesystems use metadata to represent a sequence of zeros in a file instead
+of actually writing all the zeros to the disk. Sparse files contain “holes” where
+a sequence of zeros is known to exist. To illustrate, a new drive containing
+mostly zeroed sectors is acquired with GNU dd, 2 first as a regular raw file
+and then as a sparse file.
+
+#+begin_src shell
+
+$ dd if=/dev/sde of=image.raw
+15466496+0 records in
+15466496+0 records out
+7918845952 bytes (7.9 GB, 7.4 GiB) copied, 112.315 s, 70.5 MB/s
+
+$ dd if=/dev/sde of=sparse-image.raw conv=sparse
+15466496+0 records in
+15466496+0 records out
+7918845952 bytes (7.9 GB, 7.4 GiB) copied, 106.622 s, 74.3 MB/s
+#+end_src
+
+The GNU dd command provides a conv=sparse flag that creates a sparse
+destination file. In these dd examples, you can see the number of blocks
+transferred is the same for both the normal and sparse files. In the following
+
+output, the file size and the MD5 hash are also identical. However, notice
+how the block size used on the filesystem is very different (7733252 blocks
+versus 2600 blocks):
+
+#+begin_src shell 
+# ls -ls image.raw sparse-image.raw
+7733252 -rw-r----- 1 root root 7918845952 May 15 08:28 image.raw
+2600 -rw-r----- 1 root root 7918845952 May 15 08:30 sparse-image.raw
+# md5sum image.raw sparse-image.raw
+325383b1b51754def26c2c29bcd049ae image.raw
+325383b1b51754def26c2c29bcd049ae sparse-image.raw
+#+end_src
+
+Although the sparse file requires much less space, the full byte size is
+still reported as the file size. This can cause confusion when calculating the
+real available disk capacity. Sparse files are often used by VM images and can
+become an issue when extracted for analysis.
+
+** write blocking protection
+write blocking blocks the OS or other programs that try to access filesystem.
+Modern OSes index files and generate thumbnails or they can update timestamps which
+we don't want here.
+There are *hardware write blockers* and *software write blockers*.
+
+*software write blocking*
+Software write blockers are difficult to implement. Simply mounting
+a disk as read-only ( mount -o ro ) will not guarantee that the disk won’t be
+modified. The read-only property in this context refers to the filesystem, not
+the disk device.
+
+Tools such as hdparm and blockdev can set a disk to read-only by setting
+a kernel flag. For example:
+
+#+begin_src shell 
+$ hdparm -r1 /dev/sdk
+/dev/sdk:
+setting readonly to 1 (on)
+readonly
+= 1 (on)
+
+# The same flag can be set with blockdev, like this:
+$ blockdev --setro /dev/sdk
+#+end_src 
+
+The method of setting kernel flags is dependent on properly configur-
+ing udev to make newly attached drives read-only before any other process
+has a chance to modify them.
+
+** view acquisition hardware
+Understanding the examination host’s hardware configuration is useful
+for performance tuning, capacity planning, maintaining a stable platform,
+troubleshooting, isolating faults, and reducing the risk of human error.
+
+#+begin_src shell 
+# The bus information describes the device specific addresses, such
+# as pci@domain:bus:slot.function, scsi@host.channel.target.lun, and
+# usb@bus:device.
+$ lshw -businfo
+
+# You can also use lshw to specifically look for an attached device type.
+$ lshw -businfo -class storage 
+
+# list the devices attached to the PCI bus
+# The PCI bus categorizes devices by class (see http:// pci-ids.ucw.cz/ for
+# more information about PCI IDs and device classes). Devices matching the
+# Mass storage controller class (class ID 01) are of interest because they manage
+# attached storage media.
+$ lspci
+
+
+# Newer versions of lspci (as of pciutils version 3.30) can list the PCI bus
+# by device class, which can be useful to isolate specific hardware of interest.
+# The following command lists all SATA mass storage controller (class ID 01,
+# subclass ID 06) devices:
+$ lspci -d ::0106
+
+
+# This command enumerates all the SCSI, IDE, RAID, ATA, SATA, SAS,
+# and NVME mass storage controller devices on a system:
+$ for i in 00 01 04 05 06 07 08; do lspci -d ::01$i; done
+
+# Another PCI class that can manage connected storage media is the serial
+# bus controller class (class ID 0C). The following command lists all devices with
+# the USB serial bus controller class (class ID 0C, subclass ID 03):
+$ lspci -d ::0C03
+
+# This command enumerates all FireWire, USB, and Fibre Channel serial
+# bus controllers on the examiner host:
+
+$ for i in 00 03 04; do lspci -d ::0C$i; done
+
+#+end_src
+
+** identifying the subject device
+
+#+begin_src shell
+$ lsusb -vd 0781:5583
+
+# Nearly all drives are accessible via SCSI commands
+$ lsscsci -v
+
+# The kernel outputs an informational message when devices are attached
+# or detached from a host system. This is the kernel ring buffer and is viewed
+# with the dmesg tool.
+# T prints human readable time stamps
+$ dmesg -T
+
+
+$ lsblk -pd -o TRAN,NAME,SERIAL,VENDOR,MODEL,REV,WWN,SIZE,HCTL,SUBSYSTEMS,HCTL
+#+end_src
+
+** Query Disk Capabilities and Features with hdparm
+
+#+begin_src shell
+$ hdparm -I /dev/sda
+$ smartctl -x /dev/sda     #install apt-get install smartmontools
+#+end_src
+
+** remove DCO
+The DCO was developed to allow PC system manufacturers to make differ-
+ent drive models appear to have the same features. Using a DCO, certain
+features can be disabled, and the capacity of a drive (number of usable sec-
+tors) can be reduced to fit a vendor’s requirements. Identifying and remov-
+ing the DCO is standard forensic practice when you’re analyzing a suspect
+drive.
+
+ *check if DCO is active*
+#+begin_src shell
+# check if the asterisk ( * ) next to Device Configuration Overlay feature set indicates it is active:
+$ hdparm -I /dev/sdl
+#+end_src
+
+ *queries for the features modified by a DCO:*
+#+begin_src shell
+$ hdparm --dco-identify /dev/sdl
+#+end_src
 
 ** abbreviations
 | abbrv | desc                                                                                        |
@@ -4127,4 +4299,6 @@ disk device drivers.
 | /dev/dvd      | these are symbolic links to /dev/sr* |
 | /dev/loop*    |                                      |
 | /dev/mapper/* |                                      |
+
+
 * sublime
