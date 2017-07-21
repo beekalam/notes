@@ -1362,6 +1362,7 @@ function ord_to_alpha($in)
 ** Checking Whether a Variable Contains a Valid Number
    
 #+begin_src php
+
 <?php
 if (is_numeric(5))          { /* true  */ }
 if (is_numeric('5'))        { /* true  */ }
@@ -1626,6 +1627,9 @@ FUNCTION ordinalize($number) {
 ?>
 #+end_src
 
+** how to get an integer division?
+se intdiv($dividend, $divisor)
+or remainder use `$dividend % $divisor`
 * arrays
 ** check for empty array
 
@@ -2324,6 +2328,40 @@ echo join(' ', $arr) . "\n";
     }
     return false;
 }
+#+end_src
+
+** Filter Empty Array Elements
+
+#+begin_src php
+<?PHP
+ 
+// filter empty elements
+$some_array = PREG_GREP('#\S#', ARRAY_MAP('trim', $some_array));
+ 
+?>
+#+end_src
+** Unique Array function
+Similar to array_unique(), but implemented manually
+
+#+begin_src php
+<?PHP
+ 
+FUNCTION uniqueArray($array)
+{
+// Get unique elts as keys in assoc. array
+FOR ($i=0,$n=COUNT($array, 1);$i<$n;$i++)
+     $u_array[$array[$i]] = 1;
+ 
+// Copy keys only into another array
+RESET($u_array, 1);
+FOR ($i=0,$n=COUNT($u_array, 1);$i<$n;$i++) {
+     $unduplicated_array[] = KEY($u_array, 1);
+     NEXT($u_array, 1);
+}
+RETURN $unduplicated_array;
+}
+ 
+?>
 #+end_src
 
 * Date and Time
@@ -3751,13 +3789,13 @@ $_SESSION['last_session_request'] = TIME();
 #+begin_src php
 <?PHP
  
-FUNCTION change_string($str){
+function change_string($str){
      $str = TRIM($str);
      $str = HTMLSPECIALCHARS($str);
      $str = PREG_REPLACE('#(.*)\@(.*)\.(.*)#','<a href="mailto:\\1@\\2.\\3">Send email</a>',$str);
      $str = PREG_REPLACE('=([^\s]*)(www.)([^\s]*)=','<a href="http://\\2\\3" target=\'_new\'>\\2\\3</a>',$str);
-     RETURN $str;
-   }
+     return $str;
+}
  
 ?>
 #+end_src
@@ -4277,17 +4315,6 @@ FOR ($i = 1; $i <= $maxemails; $i++) {
         $nextmail .= $tld[$rnd];
         ECHO "<a href=\"mailto:$nextmail\">".$nextmail."</a><br>\n";
 }
- 
-?>
-#+end_src
-
-** Filter Empty Array Elements
-
-#+begin_src php
-<?PHP
- 
-// filter empty elements
-$some_array = PREG_GREP('#\S#', ARRAY_MAP('trim', $some_array));
  
 ?>
 #+end_src
@@ -4819,25 +4846,6 @@ FOREACH($mailObj->parts AS $key=>$val):
 //Posted by Christian in Php at 07:04 
 #+end_src
 
-** Prompt user at command line
-#+begin_src php
-<?PHP
- 
-ECHO "Give me your name: ";
-$data = FOPEN("php://stdin", "rb");
- 
-WHILE (1==1) {
-   $chunk = FREAD($data, 1);
-   IF ($chunk == "\n" || $chunk == "\r") BREAK;
-   $input .= $chunk;
-}
-FCLOSE($data);
- 
-ECHO "Hello $input!\n";
- 
-?>
-#+end_src
-
 ** Protect Writable Directory
 
 Use this in writeable directories in .htaccess. 
@@ -4871,30 +4879,6 @@ FUNCTION auth_pwgen(){
   $pw .= RAND(10,99);
  
   RETURN $pw;
-}
- 
-?>
-#+end_src
-
-** Unique Array function
-Similar to array_unique(), but implemented manually
-
-#+begin_src php
-<?PHP
- 
-FUNCTION uniqueArray($array)
-{
-// Get unique elts as keys in assoc. array
-FOR ($i=0,$n=COUNT($array, 1);$i<$n;$i++)
-     $u_array[$array[$i]] = 1;
- 
-// Copy keys only into another array
-RESET($u_array, 1);
-FOR ($i=0,$n=COUNT($u_array, 1);$i<$n;$i++) {
-     $unduplicated_array[] = KEY($u_array, 1);
-     NEXT($u_array, 1);
-}
-RETURN $unduplicated_array;
 }
  
 ?>
@@ -5504,18 +5488,6 @@ if ($type == 1 || $type == 2 || $type == 3)
 //image type is jpg, gif or png
 }
 #+end_src
-
-** Write to STDERR in a PHP script
-just use the PHP fwrite function like this:
-#+begin_src php
-fwrite(STDERR, “hello, world\n”);
-#+end_src 
-
-Or, in a more real-world example, here's how I'm writing MySQL error messages to
-STDERR in PHP:
-#+begin_src php 
-fwrite(STDERR, "MySQL INSERT error on \"INSERT INTO files\" statement: " . mysql_error());
-#+end_src 
 
 ** A simple PHP form example
 #+begin_src php
@@ -10172,6 +10144,37 @@ similar to the following to your ~/.bash_profile:
 #+begin_src shell 
 alias php-clients="php -d auto_prepend_file=clientSetup.php -a"
 alias php-inhouse="php -d auto_prepend_file=ourSiteSetup.php -a"
+#+end_src
+
+** Write to STDERR in a PHP script
+just use the PHP fwrite function like this:
+#+begin_src php
+fwrite(STDERR, “hello, world\n”);
+#+end_src 
+
+Or, in a more real-world example, here's how I'm writing MySQL error messages to
+STDERR in PHP:
+#+begin_src php 
+fwrite(STDERR, "MySQL INSERT error on \"INSERT INTO files\" statement: " . mysql_error());
+#+end_src 
+
+** Prompt user at command line
+#+begin_src php
+<?PHP
+ 
+ECHO "Give me your name: ";
+$data = FOPEN("php://stdin", "rb");
+ 
+WHILE (1==1) {
+   $chunk = FREAD($data, 1);
+   IF ($chunk == "\n" || $chunk == "\r") BREAK;
+   $input .= $chunk;
+}
+FCLOSE($data);
+ 
+ECHO "Hello $input!\n";
+ 
+?>
 #+end_src
 
 * Daemons

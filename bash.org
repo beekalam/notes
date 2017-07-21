@@ -352,6 +352,7 @@ $ echo stat phpunit.xml -t | awk '{print $2}'
 #+end_src
 
 * history
+
 ** Clear Bash history completely
 Type the following command to clear all your Bash history:
 #+begin_src shell 
@@ -397,6 +398,69 @@ $ echo > /var/log/wtmp
 $ echo > /var/log/btmp
 $ echo > /var/log/lastlog
 #+end_src
+
+* Bash Shell Loop Over Set of Files
+** Syntax
+
+The general syntax is as follows:
+#+begin_src shell
+for f in file1 file2 file3 file5
+do
+ echo "Processing $f"
+ # do something on $f
+done
+#+end_src 
+
+You can also use shell variables:
+
+#+begin_src shell 
+FILES="file1
+/path/to/file2
+/etc/resolv.conf"
+for f in $FILES
+do
+	echo "Processing $f"
+done
+#+end_src 
+You can loop through all files such as *.c, enter:
+
+$ for f in *.c; do echo "Processing $f file.."; done
+Sample Shell Script To Loop Through All Files
+
+#+begin_src shell 
+#!/bin/bash
+FILES=/path/to/*
+for f in $FILES
+do
+  echo "Processing $f file..."
+  # take action on each file. $f store current file name
+  cat $f
+done
+#+end_src 
+
+** Filename Expansion
+
+You can do filename expansion in loop such as work on all pdf files in current directory:
+#+begin_src shell 
+for f in *.pdf
+do
+	echo "Removing password for pdf file - $f"
+done
+#+end_src 
+
+However, there is one problem with the above syntax. If there are no pdf files
+in current directory it will expand to *.pdf (i.e. f will be set to *.pdf”). To
+avoid this problem add the following statement before the for loop:
+#+begin_src shell 
+#!/bin/bash
+# Usage: remove all utility bills pdf file password 
+shopt -s nullglob
+for f in *.pdf
+do
+	echo "Removing password for pdf file - $f"
+        pdftk "$f" output "output.$f" user_pw "YOURPASSWORD-HERE"
+done
+#+end_src 
 
 * sudo echo > /path/to/privileged_file
 
@@ -458,5 +522,5 @@ exec_cmd 'apt-get update'
 * usefule resources
 
 http://www.panix.com/~elflord/unix/bash-tute.html
-
 http://jvns.ca/blog/2017/03/26/bash-quirks/
+https://bash.cyberciti.biz/guide/Main_Page
