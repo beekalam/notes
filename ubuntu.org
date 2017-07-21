@@ -4263,42 +4263,107 @@ $ hdparm -I /dev/sda
 $ smartctl -x /dev/sda     #install apt-get install smartmontools
 #+end_src
 
-** remove DCO
-The DCO was developed to allow PC system manufacturers to make differ-
-ent drive models appear to have the same features. Using a DCO, certain
-features can be disabled, and the capacity of a drive (number of usable sec-
-tors) can be reduced to fit a vendor’s requirements. Identifying and remov-
-ing the DCO is standard forensic practice when you’re analyzing a suspect
-drive.
+** DCO
+*** remove DCO
+**** intro
+ The DCO was developed to allow PC system manufacturers to make differ-
+ ent drive models appear to have the same features. Using a DCO, certain
+ features can be disabled, and the capacity of a drive (number of usable sec-
+ tors) can be reduced to fit a vendor’s requirements. Identifying and remov-
+ ing the DCO is standard forensic practice when you’re analyzing a suspect
+ drive.
 
- *check if DCO is active*
-#+begin_src shell
-# check if the asterisk ( * ) next to Device Configuration Overlay feature set indicates it is active:
-$ hdparm -I /dev/sdl
+*** check if DCO is active
+ #+begin_src shell
+ # check if the asterisk ( * ) next to Device Configuration Overlay feature set indicates it is active:
+ $ hdparm -I /dev/sdl
+ #+end_src
+
+*** queries for the features modified by a DCO:
+ #+begin_src shell
+ $ hdparm --dco-identify /dev/sdl
+ #+end_src
+
+*** check if drive configuration is not locked 
+ check for ~not locked~ in the security section
+ #+begin_src shell 
+ $ hdparm -I /dev/sdl
+ #+end_src
+
+*** remove DCO
+
+ #+begin_src shell
+ $ hdparm --yes-i-know-what-i-am-doing --dco-restore /dev/sdl
+ #+end_src
+
+
+
+
+ [LEFT_HERE] at page
+*** abbreviations
+ | abbrv | desc                                                                                        |
+ |-------+---------------------------------------------------------------------------------------------|
+ | SATA  | seriall ATA                                                                                 |
+ | eSATA | external interface                                                                          |
+ | mSATA | mini-SATA(allows small SATA drives to attach directly to a mainboard without separate cable |
+*** linux /dev devices
+ | dev           | desc                                 |
+ |---------------+--------------------------------------|
+ | /dev/null     | discards any data written to it      |
+ | /dev/zero     | steady stream of zeros.              |
+ | /dev/random   | provides stream of random data       |
+ | /dev/st       | tape drives start with st            |
+ | /dev/cdrom    |                                      |
+ | /dev/dvd      | these are symbolic links to /dev/sr* |
+ | /dev/loop*    |                                      |
+ | /dev/mapper/* |                                      |
+
+** Image acquisation
+*** acquire image with dd tools
+#+begin_src shell 
+$ dd if=/dev/sde of=image.raw
+#+end_src
+If read errors occur in the middle of an acquisition, dd will abort with an
+“Input/output error.” Address this issue by adding conv=noerror , which will
+force dd to skip over the unreadable block and continue. The problem
+with skipping over unreadable blocks is that the sector offset on the des-
+tination file changes for filesystem blocks on the rest of the disk, causing
+the rest of the filesystem on the disk to appear corrupted.
+
+The sync parameter corrects this by padding the unreadable output
+block with zeros, essentially creating a “fake” sector or block (full of zeros)
+to represent the missing one.
+
+#+begin_src shell 
+$ dd if=/dev/sde of=image.raw conv=noerror,sync
 #+end_src
 
- *queries for the features modified by a DCO:*
+Another issue with dd is that the transfer block size can be larger than
+the physical media sector size. This is problematic when a read error occurs,
+because the remaining sectors in the larger block are padded with zeros, not
+just the one unreadable sector. This means some normal readable sectors
+might be excluded from the forensic image.
+*** dcfldd and dc3dd 
+The following example uses dcfldd to image a disk, ensuring blocks con-
+taining unreadable sectors are padded and don’t cause an abort:
+
 #+begin_src shell
-$ hdparm --dco-identify /dev/sdl
+$ dcfldd if=/dev/sde of=image.raw conv=noerror,sync errlog=error.log
+241664 blocks (7552Mb) written.
+241664+0 records in
+241664+0 records out
+#+end_src 
+
+Errors are written to a separate error log file. The dcfldd tool does not
+use conv=noerror,sync by default; you must add it manually.
+A similar imaging command for dc3dd is shown in the next example.
+By default, dc3dd does a good job of managing errors during acquisition.
+No conv=noerror,sync flag is needed because it’s built in. The output is well
+documented, both to stdout and to the log file. Here is a simple example
+acquisition:
+
+#+begin_src shell 
+$ dc3dd if=/dev/sde of=image.raw log=error.log
 #+end_src
-
-** abbreviations
-| abbrv | desc                                                                                        |
-|-------+---------------------------------------------------------------------------------------------|
-| SATA  | seriall ATA                                                                                 |
-| eSATA | external interface                                                                          |
-| mSATA | mini-SATA(allows small SATA drives to attach directly to a mainboard without separate cable |
-** linux /dev devices
-| dev           | desc                                 |
-|---------------+--------------------------------------|
-| /dev/null     | discards any data written to it      |
-| /dev/zero     | steady stream of zeros.              |
-| /dev/random   | provides stream of random data       |
-| /dev/st       | tape drives start with st            |
-| /dev/cdrom    |                                      |
-| /dev/dvd      | these are symbolic links to /dev/sr* |
-| /dev/loop*    |                                      |
-| /dev/mapper/* |                                      |
-
 
 * sublime
