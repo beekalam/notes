@@ -1342,7 +1342,7 @@ compile: ~$ g++ test.cpp -lusb-1.0
 http://www.dreamincode.net/forums/topic/148707-introduction-to-using-libusb-10/
 
 * utils functions
-
+  
 #+begin_src c
 
 #define _GNU_SOURCE
@@ -1672,5 +1672,66 @@ int endian()
     return ret;
 }
 
+#+end_src
+
+* useful functions
+** error_exit
+#+begin_src c
+#include <stdlib.h>
+#include <stdio.h>
+void error_exit(unsigned int error_n) // Print a last error message
+{
+  // and exit the program.
+  char * error_msg[] = { "Unknown error code.\n",
+                        "Insufficient memory.\n",
+                        "Illegal memory access.\n" };
+  unsigned int arr_len = sizeof(error_msg)/sizeof(char *);
+  if ( error_n >= arr_len )
+      error_n = 0;
+  fputs( error_msg[error_n], stderr );
+  exit(1);
+}
+#+end_src
+** swapf
+   
+#+begin_src c
+
+inline void swapf( float *p1, float *p2 ) // An inline function.
+{
+  float tmp = *p1; *p1 = *p2; *p2 = tmp;
+}
+// The function selection_sortf() uses the selection-sort
+// algorithm to sort an array of float elements.
+// Arguments:
+// An array of float, and its length.
+// Return value: None.
+void selection_sortf( float
+{
+  register int i, j, mini;
+//search for minimum starting index i
+  for( i  =0; i < n - 1; ++i)
+  {
+     mini = i;
+     for(j = i + 1; j < n ;++j)
+        if(a[j] < a[mini])
+           mini = j;
+     swapf(a+i, a+mini);  //swap the  mimimum with the element at index i;
+  }
+  }
+#+end_src
+** variable number of arguments
+#+begin_src c
+// the mandatory first argument indicates the number of arguments.
+double add( int n, ... )
+{
+  int i = 0;
+  double sum = 0.0;
+  va_list argptr;
+  va_start( argptr, n );
+  for ( i = 0; i < n; ++i )
+    sum += va_arg( argptr, double );
+  va_end( argptr );
+  return sum;
+}
 #+end_src
 

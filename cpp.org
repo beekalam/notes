@@ -253,88 +253,118 @@ int main( ) {
 #+end_src
 
 ** trimmin a string
+*** trim
+ #+begin_src c++
+ #include <string>
+ #include <iostream>
+ // The approach for narrow character strings
+ void rtrim(std::string& s, char c) {
+    if (s.empty( ))
+       return;
+    std::string::iterator p;
+    for (p = s.end( ); p != s.begin( ) && *--p == c;);
+    if (*p != c)
+       p++;
+    s.erase(p, s.end( ));
+ }
+ int main( )
+ {
+    std::string s = "zoo";
+    rtrim(s, 'o');
+    std::cout << s << '\n';
+ }
+ #+end_src
 
+ *A generic version of rtrim*
+ #+begin_src c++
+
+ #include <string>
+ #include <iostream>
+ using namespace std;
+ // The generic approach for trimming single
+ // characters from a string
+ template<typename T>
+ void rtrim(basic_string<T>& s, T c)
+ {
+    if (s.empty( ))
+       return;
+    typename basic_string<T>::iterator p;
+    for (p = s.end( ); p != s.begin( ) && *--p == c;);
+    if (*p != c)
+       p++;
+    s.erase(p, s.end( ));
+ }
+ int main( ) {
+    string s = "Great!!!!";
+    wstring ws = L"Super!!!!";
+    rtrim(s, '!');
+    rtrim(ws, L'!');
+    cout << s << '\n';
+    wcout << ws << L'\n';
+ }
+ #+end_src
+
+*** trimming whitespace
+ #+begin_src c++
+ #include <string>
+ #include <iostream>
+ #include <cctype>
+ #include <cwctype>
+ using namespace std;
+ template<typename T, typename F>
+ void rtrimws(basic_string<T>& s, F f) {
+    if (s.empty( ))
+       return;
+    typename basic_string<T>::iterator p;
+    for (p = s.end( ); p != s.begin( ) && f(*--p););
+    if (!f(*p))
+       p++;
+    s.erase(p, s.end( ));
+ }
+ // Overloads to make cleaner calling for client code
+ void rtrimws(string& s) {
+    rtrimws(s, isspace);
+ }
+ void rtrimws(wstring& ws) {
+    rtrimws(ws, iswspace);
+ }
+ int main( ) {
+    string s = "zing        ";
+    wstring ws = L"zong        ";
+    rtrimws(s);
+    rtrimws(ws);
+    cout << s << "|\n";
+    wcout << ws << L"|\n";
+ }
+ #+end_src
+
+*** Using Boost's string trim functions
 #+begin_src c++
-#include <string>
 #include <iostream>
-// The approach for narrow character strings
-void rtrim(std::string& s, char c) {
-   if (s.empty( ))
-      return;
-   std::string::iterator p;
-   for (p = s.end( ); p != s.begin( ) && *--p == c;);
-   if (*p != c)
-      p++;
-   s.erase(p, s.end( ));
-}
-int main( )
-{
-   std::string s = "zoo";
-   rtrim(s, 'o');
-   std::cout << s << '\n';
-}
-#+end_src
-
-*A generic version of rtrim*
-#+begin_src c++
-
 #include <string>
-#include <iostream>
+#include <boost/algorithm/string.hpp>
 using namespace std;
-// The generic approach for trimming single
-// characters from a string
-template<typename T>
-void rtrim(basic_string<T>& s, T c)
-{
-   if (s.empty( ))
-      return;
-   typename basic_string<T>::iterator p;
-   for (p = s.end( ); p != s.begin( ) && *--p == c;);
-   if (*p != c)
-      p++;
-   s.erase(p, s.end( ));
-}
+using namespace boost;
 int main( ) {
-   string s = "Great!!!!";
-   wstring ws = L"Super!!!!";
-   rtrim(s, '!');
-   rtrim(ws, L'!');
-   cout << s << '\n';
-   wcout << ws << L'\n';
-}
-#+end_src
-
-*trimming whitespace*
-#+begin_src c++
-#include <string>
-#include <iostream>
-#include <cctype>
-#include <cwctype>
-using namespace std;
-template<typename T, typename F>
-void rtrimws(basic_string<T>& s, F f) {
-   if (s.empty( ))
-      return;
-   typename basic_string<T>::iterator p;
-   for (p = s.end( ); p != s.begin( ) && f(*--p););
-   if (!f(*p))
-      p++;
-   s.erase(p, s.end( ));
-}
-// Overloads to make cleaner calling for client code
-void rtrimws(string& s) {
-   rtrimws(s, isspace);
-}
-void rtrimws(wstring& ws) {
-   rtrimws(ws, iswspace);
-}
-int main( ) {
-   string s = "zing        ";
-   wstring ws = L"zong        ";
-   rtrimws(s);
-   rtrimws(ws);
-   cout << s << "|\n";
-   wcout << ws << L"|\n";
+   string s1 = "      leading spaces?";
+   trim_left(s1); // Trim the original
+   string s2 = trim_left_copy(s1); // Trim, but leave original intact
+   cout << "s1 = " << s1 << endl;
+   cout << "s2 = " << s2 << endl;
+   s1 = "YYYYboostXXX";
+   s2 = trim_copy_if(s1, is_any_of("XY")); // Use a predicate to
+   trim_if(s1, is_any_of("XY"));
+   cout << "s1 = " << s1 << endl;
+   cout << "s2 = " << s2 << endl;
+   s1 = "1234 numbers 9876";
+   s2 = trim_copy_if(s1, is_digit( ));
+   cout << "s1 = " << s1 << endl;
+   cout << "s2 = " << s2 << endl;
+   // Nest calls to trim functions if you like
+   s1 = "    ****Trim!***     ";
+   s2 = trim_copy_if(trim_copy(s1), is_any_of("*"));
+   cout << "s1 = " << s1 << endl;
+   cout << "s2 = " << s2 << endl;
 }
 #+end_src
 
