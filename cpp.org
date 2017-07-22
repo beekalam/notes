@@ -368,6 +368,13 @@ int main( ) {
 }
 #+end_src
 
+** access by position
+#+begin_src c++
+cout << *(input.end() - 2);     //gets value second to the last character in the string
+cout << *(input.end() - 1);     //gets value of the last character in the string
+#+end_src
+
+cout << 
 * conditional compilation using predifined macros
 
 #+begin_src cpp
