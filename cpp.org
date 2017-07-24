@@ -471,6 +471,11 @@ int main () {
 int n, m;
 cin >> n >> m;  //reads a string "6 6" ==> n = 6, m = 6
 #+end_src
+** read a value into array element
+#+begin_src c++
+float dep[110];
+cin >> dep[12]; // read and put the value into slot 12
+#+end_src
 
 * useful resources
 https://cpbook.net/#downloads
