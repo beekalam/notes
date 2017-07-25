@@ -2884,6 +2884,7 @@ http://www.freeformatter.com/string-utilities.html
 http://www.lukepaynesoftware.com/projects/peek-through/
 https://www.easycron.com/
 ftp manager like the one in chrome using a single php file
+flexible timers
 * Splitting Strings with .split( )
 You want to be able to split a string into an array of strings, given a specific substring (or regular expression)
 to split them by.
