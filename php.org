@@ -4483,7 +4483,8 @@ FUNCTION hex2dec($hex) {
 #+begin_src php
 <?PHP
 // highlight words in a string 
-FUNCTION highlight($text, $search) {
+FUNCTION highlight($text, $search) 
+{
    $text = PREG_REPLACE( "/(^|\s|,!|;)(".PREG_QUOTE($search, "/").")(\s|,|!|&|$)/i", "\\1<span class='hlstyle'>\\2</span>\\3", $text );
    RETURN $text;
 }
@@ -4670,8 +4671,11 @@ FUNCTION check_email($email){
 #+begin_src php
 <?PHP
  
-ECHO SUBSTR($entry['content'],0,STRPOS($entry['content'],".",200)+1)." <a href=\"your-link\">read more</a></p>\n";
- 
+//ECHO SUBSTR($entry['content'],0,STRPOS($entry['content'],".",200)+1)." <a href=\"your-link\">read more</a></p>\n";
+function readMore($input)
+{
+ return  SUBSTR($input,0,STRPOS($input,".",200) +1)." <a href=\"your-link\">read more</a></p>\n";
+} 
 ?>
 #+end_src
 
