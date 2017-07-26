@@ -8815,7 +8815,7 @@ function urldecode(str) {
 
 https://github.com/kvz/locutus/blob/master/src/php/url/urldecode.js
 
-* chrom extensions
+* chrome extensions
 ** creating first extension
 *** files
 #+begin_src javascript
@@ -8988,6 +8988,30 @@ function IsNumeric(sText)
 }
 
 #+end_src
+
+** flatten object
+#+begin_src javascript
+var flattenObject = function(ob) {
+    var toReturn = {};
+    
+    for (var i in ob) {
+        if (!ob.hasOwnProperty(i)) continue;
+        
+        if ((typeof ob[i]) == 'object') {
+            var flatObject = flattenObject(ob[i]);
+            for (var x in flatObject) {
+                if (!flatObject.hasOwnProperty(x)) continue;
+                
+                toReturn[i + '.' + x] = flatObject[x];
+            }
+        } else {
+            toReturn[i] = ob[i];
+        }
+    }
+    return toReturn;
+};
+#+end_src
+
 * editable
 ** editable show message on ajax response
 
