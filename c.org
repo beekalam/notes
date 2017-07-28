@@ -1734,7 +1734,17 @@ double add( int n, ... )
   return sum;
 }
 #+end_src
+** timestamp
 
+#+begin_src c
+#include <time.h>
+void timestamp()
+{
+    time_t ltime; /* calendar time */
+    ltime=time(NULL); /* get current cal time */
+    printf("%s",asctime( localtime(&ltime) ) );
+}
+#+end_src
 * libpcap
 ** open the default device 
 
@@ -2147,6 +2157,104 @@ So let's make a chart:
 | sniff_ip       | X + SIZE_ETHERNET                                              |
 | sniff_tcp      | X + SIZE_ETHERNET + {IP HEADER LENGTH }                        |
 | payload        | X + SIZE_ETHERNET + {IP Header lengtth} + { TCP header length} |
+** get device IP address and net mask
+
+#+begin_src c
+
+int main(int argc, char **argv)
+{
+  char *dev; /* name of the device to use */
+  char *net; /* dot notation of the network address */
+  char *mask;/* dot notation of the network mask    */
+  int ret;   /* return code */
+  char errbuf[PCAP_ERRBUF_SIZE];
+  bpf_u_int32 netp; /* ip          */
+  bpf_u_int32 maskp;/* subnet mask */
+  struct in_addr addr;
+
+  /* ask pcap to find a valid device for use to sniff on */
+  dev = pcap_lookupdev(errbuf);
+
+  /* error checking */
+  if(dev == NULL)
+  {
+   printf("%s\n",errbuf);
+   exit(1);
+  }
+
+  /* print out device name */
+  printf("DEV: %s\n",dev);
+
+  /* ask pcap for the network address and mask of the device */
+  ret = pcap_lookupnet(dev,&netp,&maskp,errbuf);
+
+  if(ret == -1)
+  {
+   printf("%s\n",errbuf);
+   exit(1);
+  }
+
+  /* get the network address in a human readable form */
+  addr.s_addr = netp;
+  net = inet_ntoa(addr);
+
+  if(net == NULL)/* thanks Scott :-P */
+  {
+    perror("inet_ntoa");
+    exit(1);
+  }
+
+  printf("NET: %s\n",net);
+
+  /* do the same as above for the device's mask */
+  addr.s_addr = maskp;
+  mask = inet_ntoa(addr);
+
+  if(mask == NULL)
+  {
+    perror("inet_ntoa");
+    exit(1);
+  }
+
+//....
+}
+#+end_src
+
+** disset ethernet header
+
+#+begin_src c
+// .....
+ pcap_t* descr;
+   const u_char *packet;
+    struct pcap_pkthdr hdr;     /* pcap.h */
+    struct ether_header *eptr;  /* net/ethernet.h */
+// ....
+packet = pcap_next(descr,&hdr);
+printf("Ethernet address length is %d\n",ETHER_HDR_LEN);
+
+    /* lets start with the ether header... */
+    eptr = (struct ether_header *) packet;
+
+    /* check to see if we have an ip packet */
+    if (ntohs (eptr->ether_type) == ETHERTYPE_IP)
+    {
+        printf("Ethernet type hex:%x dec:%d is an IP packet\n",
+                ntohs(eptr->ether_type),
+                ntohs(eptr->ether_type));
+    }else  if (ntohs (eptr->ether_type) == ETHERTYPE_ARP)
+    {
+        printf("Ethernet type hex:%x dec:%d is an ARP packet\n",
+                ntohs(eptr->ether_type),
+                ntohs(eptr->ether_type));
+    }else
+    {
+        printf("Ethernet type %x not IP", ntohs(eptr->ether_type));
+        exit(1);
+    }
+//......
+#+end_src
 
 ** resources
 *** http://www.tcpdump.org/pcap.htm
+*** https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
+*** http://www.devdungeon.com/content/using-libpcap-c
