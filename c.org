@@ -1960,3 +1960,193 @@ putting it into promiscuous mode. It finds the first packet to come across port
 23 (telnet) and tells the user the size of the packet (in bytes). Again, this
 program includes a new call, pcap_close(), which we will discuss later (although
 it really is quite self explanatory).
+** capturing with pcap_loop
+The prototype for pcap_loop() is below:
+
+#+begin_src c
+	int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user)
+#+end_src 
+
+The first argument is our session handle. Following that is an integer that
+tells pcap_loop() how many packets it should sniff for before returning (a
+negative value means it should sniff until an error occurs). The third argument
+is the name of the callback function (just its identifier, no parentheses). The
+last argument is useful in some applications, but many times is simply set as
+NULL. Suppose we have arguments of our own that we wish to send to our callback
+function, in addition to the arguments that pcap_loop() sends. This is where we
+do it. Obviously, you must typecast to a u_char pointer to ensure the results
+make it there correctly; as we will see later, pcap makes use of some very
+interesting means of passing information in the form of a u_char pointer. Before
+we can provide an example of using pcap_loop(), we must examine the format of
+our callback function. We cannot arbitrarily define our callback's prototype;
+otherwise, pcap_loop() would not know how to use the function. So we use this
+format as the prototype for our callback function:
+
+#+begin_src c
+void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
+#+end_src 
+
+Let's examine this in more detail. First, you'll notice that the function has a
+void return type. This is logical, because pcap_loop() wouldn't know how to
+handle a return value anyway. The first argument corresponds to the last
+argument of pcap_loop(). Whatever value is passed as the last argument to
+pcap_loop() is passed to the first argument of our callback function every time
+the function is called. The second argument is the pcap header, which contains
+information about when the packet was sniffed, how large it is, etc. The
+pcap_pkthdr structure is defined in pcap.h as:
+
+#+begin_src c
+	struct pcap_pkthdr {
+		struct timeval ts; /* time stamp */
+		bpf_u_int32 caplen; /* length of portion present */
+		bpf_u_int32 len; /* length this packet (off wire) */
+	};
+#+end_src
+
+These values should be fairly self explanatory. The last argument is the most
+interesting of them all, and the most confusing to the average novice pcap
+programmer. It is another pointer to a u_char, and it points to the first byte
+of a chunk of data containing the entire packet, as sniffed by pcap_loop().
+
+But how do you make use of this variable (named "packet" in our prototype)? A
+packet contains many attributes, so as you can imagine, it is not really a
+string, but actually a collection of structures (for instance, a TCP/IP packet
+would have an Ethernet header, an IP header, a TCP header, and lastly, the
+packet's payload). This u_char pointer points to the serialized version of these
+structures. To make any use of it, we must do some interesting typecasting.
+
+First, we must have the actual structures define before we can typecast to them.
+The following are the structure definitions that I use to describe a TCP/IP
+packet over Ethernet.
+
+#+begin_src c
+/* Ethernet addresses are 6 bytes */
+#define ETHER_ADDR_LEN	6
+
+	/* Ethernet header */
+	struct sniff_ethernet {
+		u_char ether_dhost[ETHER_ADDR_LEN]; /* Destination host address */
+		u_char ether_shost[ETHER_ADDR_LEN]; /* Source host address */
+		u_short ether_type; /* IP? ARP? RARP? etc */
+	};
+
+	/* IP header */
+	struct sniff_ip {
+		u_char ip_vhl;		/* version << 4 | header length >> 2 */
+		u_char ip_tos;		/* type of service */
+		u_short ip_len;		/* total length */
+		u_short ip_id;		/* identification */
+		u_short ip_off;		/* fragment offset field */
+	#define IP_RF 0x8000		/* reserved fragment flag */
+	#define IP_DF 0x4000		/* dont fragment flag */
+	#define IP_MF 0x2000		/* more fragments flag */
+	#define IP_OFFMASK 0x1fff	/* mask for fragmenting bits */
+		u_char ip_ttl;		/* time to live */
+		u_char ip_p;		/* protocol */
+		u_short ip_sum;		/* checksum */
+		struct in_addr ip_src,ip_dst; /* source and dest address */
+	};
+	#define IP_HL(ip)		(((ip)->ip_vhl) & 0x0f)
+	#define IP_V(ip)		(((ip)->ip_vhl) >> 4)
+
+	/* TCP header */
+	typedef u_int tcp_seq;
+
+	struct sniff_tcp {
+		u_short th_sport;	/* source port */
+		u_short th_dport;	/* destination port */
+		tcp_seq th_seq;		/* sequence number */
+		tcp_seq th_ack;		/* acknowledgement number */
+		u_char th_offx2;	/* data offset, rsvd */
+	#define TH_OFF(th)	(((th)->th_offx2 & 0xf0) >> 4)
+		u_char th_flags;
+	#define TH_FIN 0x01
+	#define TH_SYN 0x02
+	#define TH_RST 0x04
+	#define TH_PUSH 0x08
+	#define TH_ACK 0x10
+	#define TH_URG 0x20
+	#define TH_ECE 0x40
+	#define TH_CWR 0x80
+	#define TH_FLAGS (TH_FIN|TH_SYN|TH_RST|TH_ACK|TH_URG|TH_ECE|TH_CWR)
+		u_short th_win;		/* window */
+		u_short th_sum;		/* checksum */
+		u_short th_urp;		/* urgent pointer */
+};
+#+end_src
+
+So how does all of this relate to pcap and our mysterious u_char pointer? Well,
+those structures define the headers that appear in the data for the packet. So
+how can we break it apart? Be prepared to witness one of the most practical uses
+of pointers (for all of those new C programmers who insist that pointers are
+useless, I smite you).
+
+Again, we're going to assume that we are dealing with a TCP/IP packet over
+Ethernet. This same technique applies to any packet; the only difference is the
+structure types that you actually use. So let's begin by defining the variables
+and compile-time definitions we will need to deconstruct the packet data.
+
+#+begin_src c
+/* ethernet headers are always exactly 14 bytes */
+#define SIZE_ETHERNET 14
+
+	const struct sniff_ethernet *ethernet; /* The ethernet header */
+	const struct sniff_ip *ip; /* The IP header */
+	const struct sniff_tcp *tcp; /* The TCP header */
+	const char *payload; /* Packet payload */
+
+	u_int size_ip;
+	u_int size_tcp;
+#+end_src
+
+And now we do our magical typecasting:
+
+#+begin_src c
+	ethernet = (struct sniff_ethernet*)(packet);
+	ip = (struct sniff_ip*)(packet + SIZE_ETHERNET);
+	size_ip = IP_HL(ip)*4;
+	if (size_ip < 20) {
+		printf("   * Invalid IP header length: %u bytes\n", size_ip);
+		return;
+	}
+	tcp = (struct sniff_tcp*)(packet + SIZE_ETHERNET + size_ip);
+	size_tcp = TH_OFF(tcp)*4;
+	if (size_tcp < 20) {
+		printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
+		return;
+	}
+	payload = (u_char *)(packet + SIZE_ETHERNET + size_ip + size_tcp);
+#+end_src
+
+How does this work? Consider the layout of the packet data in memory. The u_char
+pointer is really just a variable containing an address in memory. That's what a
+pointer is; it points to a location in memory.
+
+For the sake of simplicity, we'll say that the address this pointer is set to is
+the value X. Well, if our three structures are just sitting in line, the first
+of them (sniff_ethernet) being located in memory at the address X, then we can
+easily find the address of the structure after it; that address is X plus the
+length of the Ethernet header, which is 14, or SIZE_ETHERNET.
+
+Similarly if we have the address of that header, the address of the structure
+after it is the address of that header plus the length of that header. The IP
+header, unlike the Ethernet header, does not have a fixed length; its length is
+given, as a count of 4-byte words, by the header length field of the IP header.
+As it's a count of 4-byte words, it must be multiplied by 4 to give the size in
+bytes. The minimum length of that header is 20 bytes.
+
+The TCP header also has a variable length; its length is given, as a number of
+4-byte words, by the "data offset" field of the TCP header, and its minimum
+length is also 20 bytes.
+
+So let's make a chart:
+
+| variable       | location(in bytes)                                             |
+|----------------+----------------------------------------------------------------|
+| sniff_ethernet | X                                                              |
+| sniff_ip       | X + SIZE_ETHERNET                                              |
+| sniff_tcp      | X + SIZE_ETHERNET + {IP HEADER LENGTH }                        |
+| payload        | X + SIZE_ETHERNET + {IP Header lengtth} + { TCP header length} |
+
+** resources
+*** http://www.tcpdump.org/pcap.htm
