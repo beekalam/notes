@@ -1735,3 +1735,228 @@ double add( int n, ... )
 }
 #+end_src
 
+* libpcap
+** open the default device 
+
+#+begin_src c
+	#include <stdio.h>
+	#include <pcap.h>
+
+	int main(int argc, char *argv[])
+	{
+		char *dev, errbuf[PCAP_ERRBUF_SIZE];
+
+		dev = pcap_lookupdev(errbuf);
+		if (dev == NULL) {
+			fprintf(stderr, "Couldn't find default device: %s\n", errbuf);
+			return(2);
+		}
+		printf("Device: %s\n", dev);
+		return(0);
+	}
+#+end_src
+
+** get the name of the device to open from command line
+
+#+begin_src c
+	#include <stdio.h>
+	#include <pcap.h>
+
+	int main(int argc, char *argv[])
+	{
+		 char *dev = argv[1];
+
+		 printf("Device: %s\n", dev);
+		 return(0);
+	}
+#+end_src
+
+** open device for sniffing
+
+The task of creating a sniffing session is really quite simple. For this, we use
+pcap_open_live(). The prototype of this function (from the pcap man page) is as
+follows:
+
+#+begin_src c
+	pcap_t *pcap_open_live(char *device, int snaplen, int promisc, int to_ms,
+	    char *ebuf)
+#+end_src
+
+The first argument is the device that we specified in the previous section.
+snaplen is an integer which defines the maximum number of bytes to be captured
+by pcap. promisc, when set to true, brings the interface into promiscuous mode
+(however, even if it is set to false, it is possible under specific cases for
+the interface to be in promiscuous mode, anyway). to_ms is the read time out in
+milliseconds (a value of 0 means no time out; on at least some platforms, this
+means that you may wait until a sufficient number of packets arrive before
+seeing any packets, so you should use a non-zero timeout). Lastly, ebuf is a
+string we can store any error messages within (as we did above with errbuf). The
+function returns our session handler.
+
+To demonstrate, consider this code snippet:
+#+begin_src c
+	 #include <pcap.h>
+	 ...
+	 pcap_t *handle;
+
+	 handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
+	 if (handle == NULL) {
+		 fprintf(stderr, "Couldn't open device %s: %s\n", dev, errbuf);
+		 return(2);
+	 }
+#+end_src
+
+This code fragment opens the device stored in the strong "dev", tells it to read
+however many bytes are specified in BUFSIZ (which is defined in pcap.h). We are
+telling it to put the device into promiscuous mode, to sniff until an error
+occurs, and if there is an error, store it in the string errbuf; it uses that
+string to print an error message.
+** filtering traffic
+
+Before applying our filter, we must "compile" it. The filter expression is kept
+in a regular string (char array). The syntax is documented quite well in the man
+page for tcpdump; I leave you to read it on your own. However, we will use
+simple test expressions, so perhaps you are sharp enough to figure it out from
+my examples.
+
+To compile the program we call pcap_compile(). The prototype defines it as:
+
+#+begin_src c
+	int pcap_compile(pcap_t *p, struct bpf_program *fp, char *str, int optimize, 
+	    bpf_u_int32 netmask)
+#+end_src
+
+The first argument is our session handle (pcap_t *handle in our previous
+example). Following that is a reference to the place we will store the compiled
+version of our filter. Then comes the expression itself, in regular string
+format. Next is an integer that decides if the expression should be "optimized"
+or not (0 is false, 1 is true. Standard stuff.) Finally, we must specify the
+network mask of the network the filter applies to. The function returns -1 on
+failure; all other values imply success.
+
+After the expression has been compiled, it is time to apply it. Enter
+pcap_setfilter(). Following our format of explaining pcap, we shall look at the
+pcap_setfilter() prototype:
+
+#+begin_src c
+	int pcap_setfilter(pcap_t *p, struct bpf_program *fp)
+ #include <pcap.h>
+	 ...
+	 pcap_t *handle;		/* Session handle */
+	 char dev[] = "rl0";		/* Device to sniff on */
+	 char errbuf[PCAP_ERRBUF_SIZE];	/* Error string */
+	 struct bpf_program fp;		/* The compiled filter expression */
+	 char filter_exp[] = "port 23";	/* The filter expression */
+	 bpf_u_int32 mask;		/* The netmask of our sniffing device */
+	 bpf_u_int32 net;		/* The IP of our sniffing device */
+
+	 if (pcap_lookupnet(dev, &net, &mask, errbuf) == -1) {
+		 fprintf(stderr, "Can't get netmask for device %s\n", dev);
+		 net = 0;
+		 mask = 0;
+	 }
+	 handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
+	 if (handle == NULL) {
+		 fprintf(stderr, "Couldn't open device %s: %s\n", dev, errbuf);
+		 return(2);
+	 }
+	 if (pcap_compile(handle, &fp, filter_exp, 0, net) == -1) {
+		 fprintf(stderr, "Couldn't parse filter %s: %s\n", filter_exp, pcap_geterr(handle));
+		 return(2);
+	 }
+	 if (pcap_setfilter(handle, &fp) == -1) {
+		 fprintf(stderr, "Couldn't install filter %s: %s\n", filter_exp, pcap_geterr(handle));
+		 return(2);
+	 }
+#+end_src
+
+This program preps the sniffer to sniff all traffic coming from or going to port 23, in promiscuous mode, on the device rl0.
+
+You may notice that the previous example contains a function that we have not
+yet discussed. pcap_lookupnet() is a function that, given the name of a device,
+returns one of its IPv4 network numbers and corresponding network mask (the
+network number is the IPv4 address ANDed with the network mask, so it contains
+only the network part of the address). This was essential because we needed to
+know the network mask in order to apply the filter. This function is described
+in the Miscellaneous section at the end of the document.
+** capturing individual packets with pcap_next
+
+There are two main techniques for capturing packets. We can either capture a
+single packet at a time, or we can enter a loop that waits for n number of
+packets to be sniffed before being done. We will begin by looking at how to
+capture a single packet, then look at methods of using loops. For this we use
+pcap_next().
+
+The prototype for pcap_next() is fairly simple:
+
+#+begin_src c
+	u_char *pcap_next(pcap_t *p, struct pcap_pkthdr *h)
+#+end_src
+
+The first argument is our session handler. The second argument is a pointer to a
+structure that holds general information about the packet, specifically the time
+in which it was sniffed, the length of this packet, and the length of his
+specific portion (incase it is fragmented, for example.) pcap_next() returns a
+u_char pointer to the packet that is described by this structure. We'll discuss
+the technique for actually reading the packet itself later.
+
+Here is a simple demonstration of using pcap_next() to sniff a packet.
+
+#+begin_src c
+	 #include <pcap.h>
+	 #include <stdio.h>
+
+	 int main(int argc, char *argv[])
+	 {
+		pcap_t *handle;			/* Session handle */
+		char *dev;			/* The device to sniff on */
+		char errbuf[PCAP_ERRBUF_SIZE];	/* Error string */
+		struct bpf_program fp;		/* The compiled filter */
+		char filter_exp[] = "port 23";	/* The filter expression */
+		bpf_u_int32 mask;		/* Our netmask */
+		bpf_u_int32 net;		/* Our IP */
+		struct pcap_pkthdr header;	/* The header that pcap gives us */
+		const u_char *packet;		/* The actual packet */
+
+		/* Define the device */
+		dev = pcap_lookupdev(errbuf);
+		if (dev == NULL) {
+			fprintf(stderr, "Couldn't find default device: %s\n", errbuf);
+			return(2);
+		}
+		/* Find the properties for the device */
+		if (pcap_lookupnet(dev, &net, &mask, errbuf) == -1) {
+			fprintf(stderr, "Couldn't get netmask for device %s: %s\n", dev, errbuf);
+			net = 0;
+			mask = 0;
+		}
+		/* Open the session in promiscuous mode */
+		handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
+		if (handle == NULL) {
+			fprintf(stderr, "Couldn't open device %s: %s\n", dev, errbuf);
+			return(2);
+		}
+		/* Compile and apply the filter */
+		if (pcap_compile(handle, &fp, filter_exp, 0, net) == -1) {
+			fprintf(stderr, "Couldn't parse filter %s: %s\n", filter_exp, pcap_geterr(handle));
+			return(2);
+		}
+		if (pcap_setfilter(handle, &fp) == -1) {
+			fprintf(stderr, "Couldn't install filter %s: %s\n", filter_exp, pcap_geterr(handle));
+			return(2);
+		}
+		/* Grab a packet */
+		packet = pcap_next(handle, &header);
+		/* Print its length */
+		printf("Jacked a packet with length of [%d]\n", header.len);
+		/* And close the session */
+		pcap_close(handle);
+		return(0);
+	 }
+#+end_src
+
+This application sniffs on whatever device is returned by pcap_lookupdev() by
+putting it into promiscuous mode. It finds the first packet to come across port
+23 (telnet) and tells the user the size of the packet (in bytes). Again, this
+program includes a new call, pcap_close(), which we will discuss later (although
+it really is quite self explanatory).
