@@ -12597,6 +12597,38 @@ expireDate.setTime (expireDate.getTime() - yesterday)
 document.cookie =cookie + "=" + escape("nothing") + ";" + "expires" + "=" + expireDate.toGMTString()
 }
 #+end_src
+* Returning HTTP 503 using PHP (maintenance page)
+Returning HTTP 503 using PHP (maintenance page)
+If you need to create an "under maintenance" page in PHP without getting Googlebot to index it, create a PHP script.
+Let's call it maintenancee503.php and place in the home directory, in this case assume under /www/ARUL/. Add these lines:
+
+#+begin_src
+header('HTTP/1.1 503 Service Temporarily Unavailable');
+header('Status: 503 Service Temporarily Unavailable');
+header('Retry-After: 3600');
+Without using PHP - Apache's httpd.conf file
+#+end_src 
+
+If you have access to Apache's httpd.conf file, you can edit it to output HTTP 503 code to all requests.
+First, create a simple or custom file and call it maintenance503.html under /www/ARUL.
+Configure Apache to forward all requests to this script maintenance503.php.
+In Apache, this is what you would typically do. Edit httpd.conf or .htaccess file and include these lines:
+
+#+begin_src 
+RewriteEngine on
+RewriteCond %{ENV:REDIRECT_STATUS} !=503
+RewriteRule !^maintenance503.html$ %{DOCUMENT_ROOT}/maintenance503.html [L,R=503]
+#+end_src
+
+Make sure the Error 503 line contains this:
+
+#+begin_src 
+ErrorDocument 503 /www/ARUL/maintanence503.html
+#+end_src
+
+Then restart Apache. If editing .htaccess, you don't need to restart Apache.
+https://aruljohn.com/code/php/503.html
+
 * useful functions
 ** dump
 #+begin_src php

@@ -474,6 +474,48 @@ $ echo 'deb blah ... blah' | sudo tee --append /etc/apt/sources.list > /dev/null
 
 ** TODO use the sudoe in following link
 https://stackoverflow.com/questions/84882/sudo-echo-something-etc-privilegedfile-doesnt-work-is-there-an-alterna
+* Display columns from colon delimited file
+
+Read a colon delimited file /etc/passwd and display certain columns
+This shell script reads a colon delimited file (for example /etc/passwd) and displays certain columns.
+It uses while .. do .. done < filename to read the file.
+
+#+begin_src shell
+#!/bin/bash
+
+# readpasswdfile.sh
+# Shell script to read /etc/passwd file
+# Coded by Arul John
+#  + Sample line in /etc/password is
+#  + root:x:0:0:root:/root:/bin/bash
+
+IFS=:
+echo "Username | Shell"
+while read name pass x x x x shell
+do
+    echo "$name uses $shell"
+done < /etc/passwd
+#+end_src 
+Make the script executable.
+#+begin_src shell
+chmod +x readpasswdfile.sh
+chmod +x readpasswdfile.sh
+#+end_src
+
+It will show something like this:
+
+#+begin_src 
+arul ~/work $ ./readpasswd.sh
+Username | Shell
+root uses /bin/bash
+bin uses /sbin/nologin
+daemon uses /sbin/nologin
+adm uses /sbin/nologin
+lp uses /sbin/nologin
+sync uses /bin/sync
+....
+#+end_src
+
 * example
 ** write ~head -n 20~ with shell script
 

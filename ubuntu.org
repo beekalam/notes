@@ -167,6 +167,25 @@ $ nmblookup '*'
 
 $ nmblookup -S '*'
 #+end_src
+*** share NTFS drive
+mount the device from 
+#+begin_src shell
+$ sudo mount /dev/sda2 /media/drive_d -o uid=moh,gid=moh
+#+end_src
+If you add these other two options to mount fmask=664,dmask=775, everyone in the
+users group will effectively be able to write to that file system.
+more info at =man  mount.ntfs-3g=
+
+set a share name like this at *smbd* conf(/etc/samba/smb.conf)
+#+begin_src 
+[sharename]
+comment = "sharecomment"
+path = "/media/drive_d/"
+browsable = yes
+guest ok = yes
+read only = no
+writeable = no
+#+end_src
 
 * ssh
 ** installation
@@ -4365,5 +4384,111 @@ acquisition:
 #+begin_src shell 
 $ dc3dd if=/dev/sde of=image.raw log=error.log
 #+end_src
+* expect
+** variables
+The following commands set the variable name to the string value "Don", the
+variable word to the value "foobar“, and the variable pi to "3.14159".
+
+#+begin_src
+set name Don
+set word foobar
+set pi 3.14159
+#+end_src
+
+Variable names, values, and commands are case sensitive. So the variable name is
+different than Name.
+
+To access a variable’s value, prefix the variable name with a dollar sign ($).
+The following command sets the variable phrase to foobar by retrieving it from
+the variable word.
+
+#+begin_src 
+set phrase $word
+#+end_src 
+
+Variable substitutions can occur anywhere in a command, not just at the
+beginning of an argument. The following command sets the variable phrase2 to the
+string "word=foobar“.
+
+#+begin_src 
+set phrase2 word=$word
+#+end_src 
+
+You can insert a literal dollar sign by prefixing it with a backslash. The
+following command sets the variable money to the value "$1000“.
+
+#+begin_src 
+set money \$1000
+#+end_src 
+
+The backslash is also a useful way to embed other special characters in strings.
+For example, "\t" is a tab and "\b" is a backspace. Most of the Standard C
+backslash conventions are supported including \ followed by one to three octal
+digits and \x followed by any number of hex digits.[7] I will mention more of
+these escapes later.
+
+#+begin_src 
+# stick control-Z in a variable
+set controlZ \032
+# define control-C
+set controlC \x03
+# define string with embedded control-Z and tab
+set oddword foo\032bar\tgorp
+#+end_src
+
+A command beginning with "#" is a comment. It extends to the end of the line.
+You can think of "#" as a command whose arguments are discarded.
+
+Multiple commands can be strung together if they are separated by a semicolon. A
+literal semicolon can be embedded by prefacing it with a backslash.
+
+#+begin_src 
+set word1 foo; set word2 bar   ;# two commands
+set word3 foo\;bar             ;# one command
+#+end_src
+
+The ";#" sequence above is a common way of a tacking comments on the end of a
+line. The ";" ends the previous command and the "#" starts the comment. Writing
+the ";#" together avoids the possibility of having your comment unintentionally
+accepted as additional arguments because of a forgotten semicolon.
+
+Commands are normally terminated at the end of a line, but a backslash at the
+end of a line allows multi-line commands. The backslash-newline sequence and any
+following whitespace behaves as if it were a single space. Later, I will show
+other ways of writing multi-line commands.
+
+#+begin_src 
+set word \
+       really-long-string-which-does-not-quite-fit-on-previous-line
+#+end_src        
+
+** examples 
+*** setting passwd for 100 users
+
+ #+begin_src 
+ spawn passwd [lindex $argv 0]
+ set password [lindex $argv 1]
+ expect "password:"
+ send "$password\r"
+ expect "password:"
+ send "$password\r"
+ expect eof
+ #+end_src
+
+ The first line starts the passwd program with the username passed as an
+ argument. The next line saves the password in a variable for convenience. As in
+ shell scripts, variables do not have to be declared in advance. In the third
+ line, the expect command looks for the pattern "password:“. expect waits until
+ the pattern is found before continuing. After receiving the prompt, the next
+ line sends a password to the current process. The \r indicates a
+ carriage-return. (Most of the usual C string conventions are supported.) There
+ are two expect-send sequences because passwd asks the password to be typed twice
+ as a spelling verification. There is no point to this in a non-interactive
+ passwd, but the script has to do it because passwd assumes it is interacting
+ with a human who does not type consistently. The final command "expect eof"
+ causes the script to wait for the end-of-file in the output of passwd. Similar
+ to timeout, eof is another keyword pattern. This final expect effectively waits
+ for passwd to complete execution before returning control to the script.
 
 * sublime
+  

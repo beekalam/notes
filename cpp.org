@@ -1,3 +1,8 @@
+#+TITLE:   c++ recipes 
+#+AUTHOR:  Mohammad Reza Mansouri
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+#+STARTUP: overview
+
 * code organization
 ** Making Sure a Header File Gets Included Only Once
 
@@ -131,73 +136,78 @@ int main( ) {
 }
 #+end_src
 ** Converting Numbers to Strings
+ #+begin_src cpp
+ #include <iostream>
+ #include <iomanip>
+ #include <string>
+ #include <sstream>
+ using namespace std;
+ int main( ) {
+    stringstream ss;
+    ss << "There are " << 9 << " apples in my cart.";
+    cout << ss.str( ) << endl;  // stringstream::str( ) returns a string
+                               // with the contents
+    ss.str("");                   // Empty the string
+    ss << showbase << hex << 16;  // Show the base in hexadecimal
+    cout << "ss = " << ss.str( ) << endl;
+    ss.str("");
+    ss << 3.14;
+    cout << "ss = " << ss.str( ) << endl;
+ }
+
+ //The output of Example 3-3 looks like this: 
+ //There are 9 apples in my cart.
+ //ss = 0x10
+ //ss = 3.14
+ #+end_src 
+
+ using boost
+ #+begin_src cpp
+ #include <iostream>
+ #include <boost/format.hpp>
+ using namespace std;
+ using boost::format;
+ using boost::io::str;
+ using boost::io::format_error;
+ int main( ) {
+    try {
+       format f("There are %1% ways %2% %3% %4%");
+       f % 3;
+       f % "to" % "do" % "this.";
+       cout << f << endl;
+       f.clear( ); // Clear buffers to format something else
+       f.parse("Those cost $%d.");
+       f % 50;
+       cout << f << endl;
+       int x = 11256099;
+       string strx = str(format("%x") % x);
+       cout << strx << endl;
+    }
+    catch (format_error &e) {
+       cout << e.what( ) << endl;
+    }
+ }
+
+ //Here's what you see when you run this program: 
+ //There are 3 ways to do this.
+ //Those cost $50.
+ //abc123
+ #+end_src 
+
+ #+begin_src cpp
+
+ string NumberToString ( int Number )
+ {
+    ostringstream ss;
+    ss << Number;
+    return ss.str();
+ }
+
+ #+end_src
+** int to char string using sprintf
 #+begin_src cpp
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <sstream>
-using namespace std;
-int main( ) {
-   stringstream ss;
-   ss << "There are " << 9 << " apples in my cart.";
-   cout << ss.str( ) << endl;  // stringstream::str( ) returns a string
-                              // with the contents
-   ss.str("");                   // Empty the string
-   ss << showbase << hex << 16;  // Show the base in hexadecimal
-   cout << "ss = " << ss.str( ) << endl;
-   ss.str("");
-   ss << 3.14;
-   cout << "ss = " << ss.str( ) << endl;
-}
-
-//The output of Example 3-3 looks like this: 
-//There are 9 apples in my cart.
-//ss = 0x10
-//ss = 3.14
-#+end_src 
-
-using boost
-#+begin_src cpp
-#include <iostream>
-#include <boost/format.hpp>
-using namespace std;
-using boost::format;
-using boost::io::str;
-using boost::io::format_error;
-int main( ) {
-   try {
-      format f("There are %1% ways %2% %3% %4%");
-      f % 3;
-      f % "to" % "do" % "this.";
-      cout << f << endl;
-      f.clear( ); // Clear buffers to format something else
-      f.parse("Those cost $%d.");
-      f % 50;
-      cout << f << endl;
-      int x = 11256099;
-      string strx = str(format("%x") % x);
-      cout << strx << endl;
-   }
-   catch (format_error &e) {
-      cout << e.what( ) << endl;
-   }
-}
-
-//Here's what you see when you run this program: 
-//There are 3 ways to do this.
-//Those cost $50.
-//abc123
-#+end_src 
-
-#+begin_src cpp
-
-string NumberToString ( int Number )
-{
-   ostringstream ss;
-   ss << Number;
-   return ss.str();
-}
-
+char string[BUFF_LENGTH];
+sprintf(string, "%d", number);
 #+end_src
 
 * strings
@@ -210,7 +220,7 @@ std::string rs;
 rs.assign(s.rbegin( ), s.rend( ));
 #+end_src
 
-**  Padding a String
+** Padding a String
 You need to "pad," or fill, a string with a number of occurrences of some
 character to a certain width. For example, you may want to pad the string
 "Chapter 1" to 20 characters wide with periods, so that it looks like "Chapter
@@ -374,7 +384,31 @@ cout << *(input.end() - 2);     //gets value second to the last character in the
 cout << *(input.end() - 1);     //gets value of the last character in the string
 #+end_src
 
-cout << 
+cout <<
+** convert number in character to equivalent int vice versa
+#+begin_src cpp
+//convert character to int
+int res = '8'  - '0';
+//convert number to character
+char res = (char)('0'+ value);
+#+end_src
+** prepepend a character to string
+   use the + operator
+#+begin_src cpp
+strin res;
+res = 'c' + res;
+//prepend a number to the end of a string
+res = (char)('0' + 1) + res;
+#+end_src
+
+* array
+** allocate 2D array dynamically
+#+begin_src cpp
+int** ary = new int*[rowCount];
+for(int i = 0; i < rowCount; ++i)
+    ary[i] = new int[colCount];
+#+end_src
+
 * conditional compilation using predifined macros
 
 #+begin_src cpp
@@ -428,6 +462,7 @@ int main () {
   return 0;
 }
 #+end_src
+
 ** sort
 #+begin_src c++
 // sort algorithm example
@@ -462,7 +497,475 @@ int main () {
 
   return 0;
 }
-#+end_src 
+#+end_src
+
+** sum elements
+#+begin_src cpp
+#inculde <numeric>
+sum_of_elements = std::accumulate(vector.begin(), vector.end(),0);
+#+end_src
+Be careful with accumulate. The last argument's type is used not just for the
+initial value, but for the type of the result as well. If you put an int there,
+it will accumulate ints even if the vector has float. If you are summing
+floating-point numbers, change 0 to 0.0 or 0.0f
+
+#+begin_src cpp
+std::for_each(vector.begin(), vector.end(), [&](int n){
+    sum_of_elements +=n;
+});
+// using range based loops
+for(auto& n : vector)
+   sum_of_elements += n;
+#+end_src
+
+* algorithms
+** algorithms collections
+#+begin_src cpp
+#include <algorithm>
+#include <cstdio>
+#include <string>
+#include <vector>
+using namespace std;
+
+typedef struct {
+  int id;
+  int solved;
+  int penalty;
+} team;
+
+bool icpc_cmp(team a, team b) {
+  if (a.solved != b.solved) // can use this primary field to decide sorted order
+    return a.solved > b.solved;   // ICPC rule: sort by number of problem solved
+  else if (a.penalty != b.penalty)       // a.solved == b.solved, but we can use
+                                       // secondary field to decide sorted order
+    return a.penalty < b.penalty;       // ICPC rule: sort by descending penalty
+  else                        // a.solved == b.solved AND a.penalty == b.penalty
+    return a.id < b.id;                      // sort based on increasing team ID
+}
+
+int main() {
+  int *pos, arr[] = {10, 7, 2, 15, 4};
+  vector<int> v(arr, arr + 5);          // another way to initialize vector
+  vector<int>::iterator j;
+
+  // sort descending with vector
+  sort(v.rbegin(), v.rend());        // example of using 'reverse iterator'
+  for (vector<int>::iterator it = v.begin(); it != v.end(); it++)
+    printf("%d ", *it);                     // access the value of iterator
+  printf("\n");
+  printf("==================\n");
+
+  // sort descending with integer array
+  sort(arr, arr + 5);                                          // ascending
+  reverse(arr, arr + 5);                                    // then reverse
+  for (int i = 0; i < 5; i++)
+    printf("%d ", arr[i]);
+  printf("\n");
+  printf("==================\n");
+
+  random_shuffle(v.begin(), v.end());          // shuffle the content again
+  for (vector<int>::iterator it = v.begin(); it != v.end(); it++)
+    printf("%d ", *it);
+  printf("\n");
+  printf("==================\n");
+  partial_sort(v.begin(), v.begin() + 2, v.end());     // partial_sort demo
+  for (vector<int>::iterator it = v.begin(); it != v.end(); it++)
+    printf("%d ", *it);
+  printf("\n");
+  printf("==================\n");
+
+  // sort ascending
+  sort(arr, arr + 5);                           // arr should be sorted now
+  for (int i = 0; i < 5; i++)                            // 2, 4, 7, 10, 15
+    printf("%d ", arr[i]);
+  printf("\n");
+  sort(v.begin(), v.end());                // sorting a vector, same output
+  for (vector<int>::iterator it = v.begin(); it != v.end(); it++)
+    printf("%d ", *it);
+  printf("\n");
+  printf("==================\n");
+
+  // multi-field sorting example, suppose we have 4 ICPC teams
+  team nus[4] = { {1, 1, 10}, 
+                  {2, 3, 60},
+                  {3, 1, 20},
+                  {4, 3, 60} };
+
+  // without sorting, they will be ranked like this:
+  for (int i = 0; i < 4; i++)
+    printf("id: %d, solved: %d, penalty: %d\n",
+           nus[i].id, nus[i].solved, nus[i].penalty);
+
+  sort(nus, nus + 4, icpc_cmp);         // sort using a comparison function
+  printf("==================\n");
+  // after sorting using ICPC rule, they will be ranked like this:
+  for (int i = 0; i < 4; i++)
+    printf("id: %d, solved: %d, penalty: %d\n",
+           nus[i].id, nus[i].solved, nus[i].penalty);
+  printf("==================\n");
+
+  // there is a trick for multi-field sorting if the sort order is "standard"
+  // use "chained" pair class in C++ and put the highest priority in front
+  typedef pair < int, pair < string, string > > state;
+  state a = make_pair(10, make_pair("steven", "grace"));
+  state b = make_pair(7, make_pair("steven", "halim"));
+  state c = make_pair(7, make_pair("steven", "felix"));
+  state d = make_pair(9, make_pair("a", "b"));
+  vector<state> test;
+  test.push_back(a);
+  test.push_back(b);
+  test.push_back(c);
+  test.push_back(d);
+  for (int i = 0; i < 4; i++)
+    printf("value: %d, name1 = %s, name2 = %s\n", test[i].first,
+    ((string)test[i].second.first).c_str(), ((string)test[i].second.second).c_str());
+  printf("==================\n");
+  sort(test.begin(), test.end());   // no need to use a comparison function
+  // sorted ascending based on value, then based on name1,
+  // then based on name2, in that order!
+  for (int i = 0; i < 4; i++)
+    printf("value: %d, name1 = %s, name2 = %s\n", test[i].first,
+      ((string)test[i].second.first).c_str(), ((string)test[i].second.second).c_str());
+  printf("==================\n");
+
+  // binary search using lower bound
+  pos = lower_bound(arr, arr + 5, 7);                              // found
+  printf("%d\n", *pos);
+  j = lower_bound(v.begin(), v.end(), 7);
+  printf("%d\n", *j);
+
+  pos = lower_bound(arr, arr + 5, 77);                         // not found
+  if (pos - arr == 5) // arr is of size 5 -> 
+                      //    arr[0], arr[1], arr[2], arr[3], arr[4]
+                      // if lower_bound cannot find the required value,
+                      //   it will set return arr index +1 of arr size, i.e.
+                      //   the 'non existent' arr[5]
+                      // thus, testing whether pos - arr == 5 blocks 
+                      //   can detect this "not found" issue
+    printf("77 not found\n");
+  j = lower_bound(v.begin(), v.end(), 77);
+  if (j == v.end()) // with vector, lower_bound will do the same:
+                    //   return vector index +1 of vector size
+                    // but this is exactly the position of vector.end()
+                    //   so we can test "not found" this way
+    printf("77 not found\n");
+  printf("==================\n");
+
+  // useful if you want to generate permutations of set
+  next_permutation(arr, arr + 5); // 2, 4, 7, 10, 15 -> 2, 4, 7, 15, 10
+  next_permutation(arr, arr + 5); // 2, 4, 7, 15, 10 -> 2, 4, 10, 7, 15
+  for (int i = 0; i < 5; i++)
+    printf("%d ", arr[i]);
+  printf("\n");
+
+  next_permutation(v.begin(), v.end());
+  next_permutation(v.begin(), v.end());
+  for (vector<int>::iterator it = v.begin(); it != v.end(); it++)
+    printf("%d ", *it);
+  printf("\n");
+  printf("==================\n");
+
+  // sometimes these two useful simple macros are used
+  printf("min(10, 7) = %d\n", min(10, 7));
+  printf("max(10, 7) = %d\n", max(10, 7));
+
+  return 0;
+}
+#+end_src
+** stack queue and dequeue(double ended queue) example
+#+begin_src cpp
+#include <cstdio>
+#include <stack>
+#include <queue>
+using namespace std;
+
+int main() {
+  stack<char> s;
+  queue<char> q;
+  deque<char> d;
+
+  printf("%d\n", s.empty());                   // currently s is empty, true (1)
+  printf("==================\n");
+  s.push('a');
+  s.push('b');
+  s.push('c');
+  // stack is LIFO, thus the content of s is currently like this:
+  // c <- top
+  // b
+  // a
+  printf("%c\n", s.top());                                   // output 'c'
+  s.pop();                                                  // pop topmost
+  printf("%c\n", s.top());                                   // output 'b'
+  printf("%d\n", s.empty());        // currently s is not empty, false (0)
+  printf("==================\n");
+
+  printf("%d\n", q.empty());             // currently q is empty, true (1)
+  printf("==================\n");
+  while (!s.empty()) {                   // stack s still has 2 more items
+    q.push(s.top());                          // enqueue 'b', and then 'a'
+    s.pop();
+  }
+  q.push('z');                                        // add one more item
+  printf("%c\n", q.front());                                  // prints 'b'
+  printf("%c\n", q.back());                                   // prints 'z'
+
+  // output 'b', 'a', then 'z' (until queue is empty), according to the insertion order above
+  printf("==================\n");
+  while (!q.empty()) {
+    printf("%c\n", q.front());                      // take the front first
+    q.pop();                             // before popping (dequeue-ing) it
+  }
+
+  printf("==================\n");
+  d.push_back('a');
+  d.push_back('b');
+  d.push_back('c');
+  printf("%c - %c\n", d.front(), d.back());               // prints 'a - c'
+  d.push_front('d');
+  printf("%c - %c\n", d.front(), d.back());               // prints 'd - c'
+  d.pop_back();
+  printf("%c - %c\n", d.front(), d.back());               // prints 'd - b'
+  d.pop_front();
+  printf("%c - %c\n", d.front(), d.back());               // prints 'a - b'
+
+  return 0;
+}
+#+end_src
+** map & set example
+#+begin_src cpp
+#include <cstdio>
+#include <map>
+#include <set>
+#include <string>
+using namespace std;
+
+int main() {
+  char name[20];
+  int value;
+  // note: there are many clever usages of this set/map
+  // that you can learn by looking at top coder's codes
+  // note, we don't have to use .clear() if we have just initialized the set/map
+  set<int> used_values; // used_values.clear();
+  map<string, int> mapper; // mapper.clear();
+
+  // suppose we enter these 7 name-score pairs below
+  /*
+  john 78
+  billy 69
+  andy 80
+  steven 77
+  felix 82
+  grace 75
+  martin 81
+  */
+  mapper["john"] = 78;   used_values.insert(78);
+  mapper["billy"] = 69;  used_values.insert(69);
+  mapper["andy"] = 80;   used_values.insert(80);
+  mapper["steven"] = 77; used_values.insert(77);
+  mapper["felix"] = 82;  used_values.insert(82);
+  mapper["grace"] = 75;  used_values.insert(75);
+  mapper["martin"] = 81; used_values.insert(81);
+
+  // then the internal content of mapper MAY be something like this:
+  // re-read balanced BST concept if you do not understand this diagram
+  // the keys are names (string)!
+  //                        (grace,75) 
+  //           (billy,69)               (martin,81)   
+  //     (andy,80)   (felix,82)    (john,78)  (steven,77)
+
+  // iterating through the content of mapper will give a sorted output
+  // based on keys (names)
+  for (map<string, int>::iterator it = mapper.begin(); it != mapper.end(); it++)
+    printf("%s %d\n", ((string)it->first).c_str(), it->second);
+
+  // map can also be used like this
+  printf("steven's score is %d, grace's score is %d\n",
+    mapper["steven"], mapper["grace"]);
+  printf("==================\n");
+
+  // interesting usage of lower_bound and upper_bound
+  // display data between ["f".."m") ('felix' is included, martin' is excluded)
+  for (map<string, int>::iterator it = mapper.lower_bound("f"); it != mapper.upper_bound("m"); it++)
+    printf("%s %d\n", ((string)it->first).c_str(), it->second);
+
+  // the internal content of used_values MAY be something like this
+  // the keys are values (integers)!
+  //                 (78) 
+  //         (75)            (81)   
+  //     (69)    (77)    (80)    (82)
+
+  // O(log n) search, found
+  printf("%d\n", *used_values.find(77));
+  // returns [69, 75] (these two are before 77 in the inorder traversal of this BST)
+  for (set<int>::iterator it = used_values.begin(); it != used_values.lower_bound(77); it++)
+    printf("%d,", *it);
+  printf("\n");
+  // returns [77, 78, 80, 81, 82] (these five are equal or after 77 in the inorder traversal of this BST)
+  for (set<int>::iterator it = used_values.lower_bound(77); it != used_values.end(); it++)
+    printf("%d,", *it);
+  printf("\n");
+  // O(log n) search, not found
+  if (used_values.find(79) == used_values.end())
+    printf("79 not found\n");
+
+  return 0;
+}
+#+end_src
+** priority queue
+#+begin_src cpp
+#include <cstdio>
+#include <iostream>
+#include <string>
+#include <queue>
+using namespace std;
+
+int main() {
+  int money;
+  char name[20];
+  priority_queue< pair<int, string> > pq;             // introducing 'pair'
+  pair<int, string> result;
+
+  // suppose we enter these 7 money-name pairs below
+  /*
+  100 john
+  10 billy
+  20 andy
+  100 steven
+  70 felix
+  2000 grace
+  70 martin
+  */
+  pq.push(make_pair(100, "john"));          // inserting a pair in O(log n)
+  pq.push(make_pair(10, "billy"));
+  pq.push(make_pair(20, "andy"));
+  pq.push(make_pair(100, "steven"));
+  pq.push(make_pair(70, "felix"));
+  pq.push(make_pair(2000, "grace"));
+  pq.push(make_pair(70, "martin"));
+  // priority queue will arrange items in 'heap' based
+  // on the first key in pair, which is money (integer), largest first
+  // if first keys tie, use second key, which is name, largest first
+  
+  // the internal content of pq heap MAY be something like this:
+  // re-read (max) heap concept if you do not understand this diagram
+  // the primary keys are money (integer), secondary keys are names (string)!
+  //                        (2000,grace)
+  //           (100,steven)               (70,martin)   
+  //     (100,john)   (10,billy)     (20,andy)  (70,felix)
+
+  // let's print out the top 3 person with most money
+  result = pq.top();                // O(1) to access the top / max element
+  pq.pop();          // O(log n) to delete the top and repair the structure
+  printf("%s has %d $\n", ((string)result.second).c_str(), result.first);
+  result = pq.top(); pq.pop();
+  printf("%s has %d $\n", ((string)result.second).c_str(), result.first);
+  result = pq.top(); pq.pop();
+  printf("%s has %d $\n", ((string)result.second).c_str(), result.first);
+
+  return 0;
+}
+
+#+end_src
+
+* bit manipulation
+#+begin_src cpp
+// note: for example usage of bitset, see ch5_06_primes.cpp
+
+#include <cmath>
+#include <cstdio>
+#include <stack>
+using namespace std;
+
+#define isOn(S, j) (S & (1 << j))
+#define setBit(S, j) (S |= (1 << j))
+#define clearBit(S, j) (S &= ~(1 << j))
+#define toggleBit(S, j) (S ^= (1 << j))
+#define lowBit(S) (S & (-S))
+#define setAll(S, n) (S = (1 << n) - 1)
+
+#define modulo(S, N) ((S) & (N - 1))   // returns S % N, where N is a power of 2
+#define isPowerOfTwo(S) (!(S & (S - 1)))
+#define nearestPowerOfTwo(S) ((int)pow(2.0, (int)((log((double)S) / log(2.0)) + 0.5)))
+#define turnOffLastBit(S) ((S) & (S - 1))
+#define turnOnLastZero(S) ((S) | (S + 1))
+#define turnOffLastConsecutiveBits(S) ((S) & (S + 1))
+#define turnOnLastConsecutiveZeroes(S) ((S) | (S - 1))
+
+void printSet(int vS) {                         // in binary representation
+  printf("S = %2d = ", vS);
+  stack<int> st;
+  while (vS)
+    st.push(vS % 2), vS /= 2;
+  while (!st.empty())                         // to reverse the print order
+    printf("%d", st.top()), st.pop();
+  printf("\n");
+}
+
+int main() {
+  int S, T;
+
+  printf("1. Representation (all indexing are 0-based and counted from right)\n");
+  S = 34; printSet(S);
+  printf("\n");
+
+  printf("2. Multiply S by 2, then divide S by 4 (2x2), then by 2\n");
+  S = 34; printSet(S);
+  S = S << 1; printSet(S);
+  S = S >> 2; printSet(S);
+  S = S >> 1; printSet(S);
+  printf("\n");
+
+  printf("3. Set/turn on the 3-th item of the set\n");
+  S = 34; printSet(S);
+  setBit(S, 3); printSet(S);
+  printf("\n");
+
+  printf("4. Check if the 3-th and then 2-nd item of the set is on?\n");
+  S = 42; printSet(S);
+  T = isOn(S, 3); printf("T = %d, %s\n", T, T ? "ON" : "OFF");
+  T = isOn(S, 2); printf("T = %d, %s\n", T, T ? "ON" : "OFF");
+  printf("\n");
+
+  printf("5. Clear/turn off the 1-st item of the set\n");
+  S = 42; printSet(S);
+  clearBit(S, 1); printSet(S);
+  printf("\n");
+
+  printf("6. Toggle the 2-nd item and then 3-rd item of the set\n");
+  S = 40; printSet(S);
+  toggleBit(S, 2); printSet(S);
+  toggleBit(S, 3); printSet(S);
+  printf("\n");
+
+  printf("7. Check the first bit from right that is on\n");
+  S = 40; printSet(S);
+  T = lowBit(S); printf("T = %d (this is always a power of 2)\n", T);
+  S = 52; printSet(S);
+  T = lowBit(S); printf("T = %d (this is always a power of 2)\n", T);
+  printf("\n");
+
+  printf("8. Turn on all bits in a set of size n = 6\n");
+  setAll(S, 6); printSet(S);
+  printf("\n");
+
+  printf("9. Other tricks (not shown in the book)\n");
+  printf("8 %c 4 = %d\n", '%', modulo(8, 4));
+  printf("7 %c 4 = %d\n", '%', modulo(7, 4));
+  printf("6 %c 4 = %d\n", '%', modulo(6, 4));
+  printf("5 %c 4 = %d\n", '%', modulo(5, 4));
+  printf("is %d power of two? %d\n", 9, isPowerOfTwo(9));
+  printf("is %d power of two? %d\n", 8, isPowerOfTwo(8));
+  printf("is %d power of two? %d\n", 7, isPowerOfTwo(7));
+  for (int i = 0; i <= 16; i++)
+    printf("Nearest power of two of %d is %d\n", i, nearestPowerOfTwo(i));
+  printf("S = %d, turn off last bit in S, S = %d\n", 40, turnOffLastBit(40));
+  printf("S = %d, turn on last zero in S, S = %d\n", 41, turnOnLastZero(41));
+  printf("S = %d, turn off last consectuve bits in S, S = %d\n", 39, turnOffLastConsecutiveBits(39));
+  printf("S = %d, turn on last consecutive zeroes in S, S = %d\n", 36, turnOnLastConsecutiveZeroes(36));
+
+  return 0;
+}
+#+end_src
 
 * read from STDIN
 ** read number
@@ -477,6 +980,386 @@ float dep[110];
 cin >> dep[12]; // read and put the value into slot 12
 #+end_src
 
+* examples
+** reverse single linked list
+
+#+begin_src cpp
+struct Node {
+    Node(int pvalue) : value(pvalue), next(nullptr) {}
+    int value;
+    Node* next;
+};
+ 
+// Iterative version
+Node* ReverseLinkedList(Node* head) {
+    auto cur = head;
+    Node* prev = nullptr;
+   
+    while (cur != nullptr) {
+        auto next = cur->next;
+        cur->next = prev;
+        prev = cur;
+        cur = next;
+    }
+   
+    return prev;
+}
+ 
+// Recursive version
+Node* ReverseLinkedList(Node* prev, Node* cur) {
+    if (cur == nullptr) return prev;
+   
+    Node* head = ReverseLinkedList(cur, cur->next);
+    cur->next = prev;
+   
+    return head;
+}
+#+end_src
+** detect cycle in linked list
+
+#+begin_src cpp
+  // Use two pointers, one pointer moves twice faster than the other one. If a cycle exists, they will meet.
+
+  bool DetectCycle(ListNode *head) {
+   if (head == nullptr) return false;
+       
+      auto runner = head;
+      auto cur = head;
+       
+      while (runner != nullptr) {
+          runner = runner->next;
+          if (runner == cur) return true;
+          if (runner != nullptr) {
+              runner = runner->next;
+              cur = cur->next;
+          }
+      }       
+      return false;
+  }
+#+end_src
+** detect Palindrome string
+
+ #+begin_src cpp
+ bool IsPalindrome(const string& input) {
+     int i = 0;
+     int j = input.size() - 1;
+     while (i < j) {
+         if (input[i] != input[j]) {
+             return false;
+         }
+         ++i; --j;
+     }  
+     return true;
+ }
+ #+end_src
+
+** reverse string
+
+#+begin_src cpp
+void Swap(string& input, int i, int j) {
+    if (i == j) return;
+    assert(i >= 0 && j >= 0);
+    assert(i < input.size() && j < input.size());
+    char tmp = input[i];
+    input[i] = input[j];
+    input[j] = tmp;
+}
+ 
+ 
+void Reverse(string& input) {
+    int i = 0;
+    int j = input.size() - 1;
+   
+    while (i < j) {
+        Swap(input, i, j);
+        ++i; --j;
+    }
+}
+#+end_src
+
+** sqrt
+
+#+begin_src cpp
+double Sqrt(double x) {
+    const double target = 0.000001;
+    double e = 1.0;
+    double cand = x;          // Chosen candidate
+    double re = x;            // Range end (inclusive)
+    double rs = 0;            // Range start (inclusive)
+ 
+    if (x * x == x) return x; // Identity case
+ 
+    while (true) {            // NOTE: consider using maxIterations
+        cand = rs + (re - rs) / 2.0;           
+        e = abs(cand * cand - x);
+ 
+        if (e <= target) {
+            return cand;
+        }
+        else if (cand * cand > x) {
+            re = cand;
+        }
+        else {
+            rs = cand;
+        }
+    }       
+    return cand;
+}
+ 
+Newtons square root method:
+ 
+double Sqrt(double value) {
+   if (value < 0) return double.NaN;
+ 
+   double err = 1e-15;
+   double t = value;
+   while(abs(t - t / value) > err * t) {
+       t = (t + value / t) / 2;
+   }
+   return t;
+}
+#+end_src
+
+** implement pow(x,y) efficiently
+   
+Exponentiating by squaring is a general method for fast computation of large
+positive integer powers of a number. A brief analysis shows that this algorithm
+uses O(log n) squarings and O(log n) multiplications.
+
+You should design your code to also handle ve power.
+
+#+begin_src cpp
+double powhelper(double x, int n) {
+    if (n == 0) return 1;
+ 
+    double tmp = powhelper(x, n / 2);
+ 
+    if (n % 2 == 0)
+        return tmp * tmp;
+    else
+        return (x * tmp * tmp);
+}
+ 
+double pow(double x, int n) {
+    return n < 0 ?
+           1.0 / powhelper(x, abs(n))
+           : powhelper(x, n);
+}
+#+end_src
+
+** check palindrome number
+
+#+begin_src c
+/* It returns 1 when number is palindrome, otherwise returns 0. */
+#define NUMBER_LENGTH 20
+int IsPalindrome_solution1(unsigned int number) {
+  char string[NUMBER_LENGTH];
+  sprintf(string, "%d", number);
+  return IsPalindrome(string);
+}
+
+int IsPalindrome(const char* const string) {
+  int palindrome = 1;
+  if(string != NULL) {
+    int length = strlen(string);
+    int half = length >> 1;
+    int i;
+    for(i = 0; i < half; ++ i) {
+      if(string[i] != string[length - 1 - i]) {
+        palindrome = 0;
+        break;
+      }
+    }
+  }
+  return palindrome
+}
+#+end_src
+** check palindrome number v2
+
+#+begin_src cpp
+/* It returns 1 when number is palindrome, otherwise returns 0. */
+int IsPalindrome_solution2(unsigned int number) {
+  int reversed = 0;
+  int copy = number;
+  while(number != 0) {
+    reversed = reversed * 10 + number % 10;
+    number /= 10;
+  }
+  return (reversed == copy) ? 1 : 0;
+}
+#+end_src
+
+** sum big integers
+#+begin_src cpp
+string Sum(const string& lhs, const string& rhs) {
+    int i = lhs.length() - 1;
+    int j = rhs.length() - 1;
+    int carry = 0;
+    int sum = 0;
+    int unit = 1;
+ 
+    string result;
+    while (i >= 0 && j >= 0) {
+        int value = (carry + (lhs[i--] - '0')
+                    + (rhs[j--] - '0'));
+        carry = value >= 10 ? 1 : 0;
+        value = value % 10;
+ 
+        result = (char)('0' + value) + result;
+    }
+ 
+    while (i >= 0) {
+        int value = (carry + (lhs[i--] - '0'));
+        carry = value >= 10 ? 1 : 0;
+        value = value % 10;
+ 
+        result = (char)('0' + value) + result;
+    }
+ 
+    while (j >= 0) {
+        int value = (carry + (rhs[j--] - '0'));
+        carry = value >= 10 ? 1 : 0;
+        value = value % 10;
+ 
+        result = (char)('0' + value) + result;
+    }
+ 
+    if (carry > 0) {
+        result = (char)('0' + carry) + result;
+    }
+ 
+    return result;
+}
+#+end_src
+
+** multiply big integers
+
+#+begin_src cpp
+string Multiply(string num1, string num2) {
+ 
+    auto getMin = [&]() {
+        if (num1.length() > num2.length()) return num2;
+        else return num1;
+    };
+ 
+    auto getMax = [&]() {
+        if (num1.length() > num2.length()) return num1;
+        else return num2;
+    };
+ 
+    string smin = getMin();
+    string smax = getMax();
+ 
+    string prev;
+    string cur;
+    int unit = 0;
+ 
+    for (int32_t i = smin.length() - 1; i >= 0; --i) {
+        if (prev.empty()) {
+            prev = Multiply(smin[i], smax, unit++);
+        }
+        else {
+            cur = Multiply(smin[i], smax, unit++);
+            prev = Sum(cur, prev);
+        }
+    }
+    return prev;
+}
+
+string Multiply(char n, string s, int unit) {
+    if (n == '0') return "0";
+ 
+    string result;
+    int carry = 0;
+ 
+    for (int32_t i = s.length() - 1; i >= 0; --i) {
+        // Multiply n x m
+        int mul = carry + (s[i] - '0') * (n - '0');
+ 
+        result = (char)('0' + (mul % 10)) + result;
+ 
+        carry = mul / 10;
+    }
+ 
+    if (carry > 0) result = (char)('0' + carry) + result;
+ 
+    // Handling trailing zeroes
+    while (unit > 0) {
+        result.push_back('0');
+        unit--;
+    }
+ 
+    return result;
+}
+#+end_src
+
+** mplement a function to replace each blank in a string with “%20”. 
+For instance, it outputs “We%20are%20happy.” if the input is “We are happy.”.
+
+#+begin_src c
+/*capacity is total capacity of a string, which is longer than its actual length*/
+void ReplaceBlank(char string[], int capacity) {
+  int originalLength, numberOfBlank, newLength;
+  int i, indexOfOriginal, indexOfNew;
+  if(string == NULL || capacity <= 0)
+    return;
+  /*originalLength is the actual length of string*/
+  originalLength = numberOfBlank = i = 0;
+  while(string[i] != '\0') {
+    ++ originalLength;
+    if(string[i] == ' ')
+      ++ numberOfBlank;
+    ++ i;
+  }
+  /*newLength is the length of the replaced string*/
+  newLength = originalLength + numberOfBlank * 2;
+  if(newLength > capacity)
+    return;
+  indexOfOriginal = originalLength;
+  indexOfNew = newLength;
+  while(indexOfOriginal >= 0 && indexOfNew > indexOfOriginal) {
+    if(string[indexOfOriginal] == ' ') {
+      string[indexOfNew --] = '0';
+      string[indexOfNew --] = '2';
+      string[indexOfNew --] = '%';
+    }
+    else {
+      string[indexOfNew --] = string[indexOfOriginal];
+    }
+  -- indexOfOriginal;
+  }
+}
+#+end_src
+
+** array merge
+Given two sorted arrays, denoted as array1 and array2, please merge them into array1 and
+keep the merged array sorted. Suppose there is sufficient vacant memory at the end of array1 to accommodate
+elements of array2.
+
+#+begin_src c 
+// Supposing there is enough memory at the end of array1,
+// in order to accommodate numbers in array2
+void merge(int* array1, int length1, int* array2, int length2) {
+  int index1, index2, indexMerged;
+  if(array1 == NULL || array2 == NULL)
+    return;
+  index1 = length1 - 1;
+  index2 = length2 - 1;
+  indexMerged = length1 + length2 - 1;
+  while(index1 >= 0 && index2 >= 0) {
+    if(array1[index1] >= array2[index2])
+      array1[indexMerged--] = array1[index1--];
+    else
+      array1[indexMerged--] = array2[index2--];
+  }
+  while(index2 >= 0)
+    array1[indexMerged--] = array2[index2--];
+}
+#+end_src
+
+Since only one element in array1 or array2 is copied and moved once in each step, the overall time
+complexity is O(m+n).
+
 * useful resources
 https://cpbook.net/#downloads
 https://github.com/ksaveljev/UVa-online-judge
@@ -486,3 +1369,7 @@ http://dipu-bd.github.io/UVA-Arena/
 https://github.com/search?q=topic%3Aproblem-solving&type=Repositories
 ** professinal cpp book code
 http://www.wrox.com/WileyCDA/WroxTitle/Professional-C-3rd-Edition.productCd-1118858050,descCd-DOWNLOAD.html
+
+
+
+ 
