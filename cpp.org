@@ -209,6 +209,520 @@ int main( ) {
 char string[BUFF_LENGTH];
 sprintf(string, "%d", number);
 #+end_src
+** Testing Whether a String Contains a Valid Number
+#+begin_src cpp
+#include <iostream>
+#include <boost/lexical_cast.hpp>
+using namespace std;
+using boost::lexical_cast;
+using boost::bad_lexical_cast;
+template<typename T>
+bool isValid(const string& num) {
+   bool res = true;
+   try {
+      T tmp = lexical_cast<T>(num);
+   }
+   catch (bad_lexical_cast &e) {
+      res = false;
+   }
+   return(res);
+}
+void test(const string& s) {
+   if (isValid<int>(s))
+      cout << s << " is a valid integer." << endl;
+   else
+      cout << s << " is NOT a valid integer." << endl;
+   if (isValid<double>(s))
+      cout << s << " is a valid double." << endl;
+   else
+      cout << s << " is NOT a valid double." << endl;
+   if (isValid<float>(s))
+      cout << s << " is a valid float." << endl;
+   else
+      cout << s << " is NOT a valid float." << endl;
+}
+int main( ) {
+   test("12345");
+   test("1.23456");
+   test("-1.23456");
+   test(" - 1.23456");
+   test("+1.23456");
+   test("  1.23456  ");
+   test("asdf");
+}
+#+end_src 
+
+Here's the output from this example: 
+
+12345 is a valid integer.
+12345 is a valid double.
+12345 is a valid float.
+1.23456 is NOT a valid integer.
+1.23456 is a valid double.
+1.23456 is a valid float.
+-1.23456 is NOT a valid integer.
+-1.23456 is a valid double.
+-1.23456 is a valid float.
+ - 1.23456 is NOT a valid integer.
+ - 1.23456 is NOT a valid double.
+ - 1.23456 is NOT a valid float.
++1.23456 is NOT a valid integer.
++1.23456 is a valid double.
++1.23456 is a valid float.
+  1.23456   is NOT a valid integer.
+  1.23456   is NOT a valid double.
+  1.23456   is NOT a valid float.
+asdf is NOT a valid integer.
+asdf is NOT a valid double.
+asdf is NOT a valid float.
+
+
+Discussion
+
+The lexical_cast function template converts a value from one type to another. It is declared like this: 
+template<typename Target, typename Source>
+Target lexical_cast(Source arg)
+
+Source is the type of the original variable, and Target is the type of the
+variable being converted to. So, for example, if you want to convert from a
+string to an int, you invoke lexical_cast like this:
+
+int i = lexical_cast<int>(str); // str is a string
+
+lexical_cast does the parsing and attempts the conversion. If the conversion is
+not possible, it throws a bad_lexical_cast exception. In Example 3-5, I only
+want to test for validity and don't need to keep the destination variable
+around, so I return true if no exception is thrown, false otherwise.
+
+You only have to supply the first template argument to lexical_cast because it's
+a function template, which means the compiler can deduce the type of the
+function argument and use that as the second template argument. Explaining this
+distinction is more confusing than illustrating it, so let me use a code
+example. Instead of invoking lexical_cast as in the previous code snippet, you
+could do this:
+
+int i = lexical_cast<int, string>(str);
+
+This means the same thing, but you don't have to supply the string argument because the compiler can see that str is a string and figure out the rest. 
+
+If you are going to write a similar wrapper function to test for validity and
+return true or false, you would do well to write it as a function template. This
+way, you only have to write it once with a parameterized type, and a different
+version will be instantiated each time you use it on a different type.
+** Comparing Floating-Point Numbers with Bounded Accuracy
+Problem
+
+You need to compare floating-point values, but you only want tests for equality,
+greater-than, or less-than to be concerned with a limited number of digits. For
+example, you want 3.33333 and 3.33333333 to show as being equal when comparing
+to a precision of .0001.
+
+Solution
+
+Write your own comparison functions that take a parameter that bounds the
+accuracy of the comparison. Example 3-6 shows the basic technique for such
+comparison functions.
+
+Example 3-6. Comparing floating-point numbers
+
+#+begin_src cpp
+#include <iostream>
+#include <cmath>    // for fabs( )
+using namespace std;
+bool doubleEquals(double left, double right, double epsilon) {
+   return (fabs(left - right) < epsilon);
+}
+bool doubleLess(double left, double right, double epsilon,
+                bool orequal = false) {
+   if (fabs(left - right) < epsilon) {
+      // Within epsilon, so considered equal
+      return (orequal);
+   }
+   return (left < right);
+}
+bool doubleGreater(double left, double right, double epsilon,
+                   bool orequal = false) {
+   if (fabs(left - right) < epsilon) {
+      // Within epsilon, so considered equal
+      return (orequal);
+   }
+   return (left > right);
+}
+int main( ) {
+   double first = 0.33333333;
+   double second = 1.0 / 3.0;
+   cout << first << endl;
+   cout << second << endl;
+    
+   // Straight equalify test. Fails when you wouldn't want it to.
+   // (boolalpha prints booleans as "true" or "false")
+   cout << boolalpha << (first == second) << endl;
+   // New equality. Passes as scientific app probably wants.
+   cout << doubleEquals(first, second, .0001) << endl;
+   // New less-than
+   cout << doubleLess(first, second, .0001) << endl;
+   // New Greater-than
+   cout << doubleGreater(first, second, .0001) << endl;
+   // New less-than-or-equal-to
+   cout << doubleLess(first, second, .0001, true) << endl;
+   // New greater-than-or-equal-to
+   cout << doubleGreater(first, second, .0001, true) << endl;
+}
+#+end_src 
+
+Following is the output from this example: 
+0.333333
+0.333333
+false
+true
+false
+false
+true
+true
+
+
+Discussion
+
+The code in Example 3-6 starts with two values, 0.33333333 and whatever the
+computer figures 1.0 / 3.0 to be. It prints out the two values using the default
+formatting in cout; these two values appear to be the same at 0.333333. However,
+when you compare these two values, they are indeed different. The value of 1.0 /
+3.0 has more significant digits than 0.33333333, and therefore, as far as your
+machine is concerned, the two numbers are not equal. In some applications,
+however, you may want these two numbers to show up as being the same. The way to
+handle this is to write three of your own functions for comparing double values:
+doubleLess, doubleEquals, and doubleGreater, each of which takes two double
+values as parameters. Additionally, the doubleLess and doubleGreater take an
+additional parameter, which, when TRue, causes the functions to behave as
+less-than-or-equal or greater-than-or-equal, respectively. To make these
+functions handle a precision, first consider the doubleEquals function. Instead
+of testing for equality, this function tests whether the difference between the
+two numbers is within a user-specified epsilon. (The example uses .0001 for the
+epsilon.) If so, then the function returns TRue, meaning the values are indeed
+the same. Thus, the values 0.3333, 0.33333, 0.333333, 0.33333333333, and
+0.33333323438 would all show up as being equal. To handle a less-than and
+greater-than operation, first test whether the numbers are equal within the
+range, as you did in the doubleEquals function. If so, then return true if you
+want to include equality in the test, and false if you don't. Otherwise, do a
+straight comparison.
+** Parsing a String Containing a Number in Scientific Notation
+Problem
+
+You have a string containing a number in scientific notation, and you want to store the number's value in a double variable. 
+
+Solution
+
+The most direct way to parse a scientific notation number is by using the C++ library's built-in stringstream class declared in <sstream>, as you can see in Example 3-7. 
+Example 3-7. Parsing a number in scientific notation
+#+begin_src cpp
+#include <iostream>
+#include <sstream>
+#include <string>
+using namespace std;
+double sciToDub(const string& str) {
+   stringstream ss(str);
+   double d = 0;
+   ss >> d;
+   if (ss.fail( )) {
+      string s = "Unable to format ";
+      s += str;
+      s += " as a number!";
+      throw (s);
+   }
+   return (d);
+}
+int main( ) {
+   try {
+      cout << sciToDub("1.234e5") << endl;
+      cout << sciToDub("6.02e-2") << endl;
+      cout << sciToDub("asdf") << endl;
+   }
+   catch (string& e) {
+      cerr << "Whoops: " << e << endl;
+   }
+}
+#+end_src 
+Following is the output from this code: 
+123400
+0.0602
+Whoops: Unable to format asdf as a number!
+
+
+Discussion 
+The stringstream class is, not surprisingly, a string that behaves
+like a stream. It is declared in <sstring>. If you need to parse a string that
+contains a number in scientific notation (see also Recipe 3.2), a stringstream
+will do the job nicely. The standard stream classes already "know" how to parse
+numbers, so don't waste your time reimplementing this logic if you don't have
+to. In Example 3-7, I wrote the simple function sciToDub that takes a string
+parameter and returns the double it contains, if it is valid. Within sciToDub, I
+use the stringstream as follows:
+
+#+begin_src cpp
+stringstream ss(str); // Construct from a string
+double d = 0;
+ss >> d;
+if (ss.fail( )) {
+   string s = "Unable to format ";
+   s += str;
+   s += " as a number!";
+   throw (s);
+}
+return (d);
+#+end_src 
+
+The most important part here is that all you have to do is use the right-shift
+operator (>>) to read from the string stream into a double, just as you would
+read from cin.
+
+Well, that's not all you have to do. If there's a value in the stringstream that
+can't be written to the variable on the right side of the >> operator, the fail
+bit is set on the stream. You can check this bit using the fail member function
+(this is actually a member function of basic_ios, which is a superclass of
+stringstream). Additionally, the variable on the righthand side of the >>
+operator is unchanged if the operation fails.
+
+In the interest of being generic, however, you can avoid having to write
+separate versions of sciToDub for ints, floats, doubles, and whatever else you
+want to convert to by writing a function template. Consider this new version:
+#+begin_src cpp
+template<typename T>
+T strToNum(const string& str) {
+   stringstream ss(str);
+   T tmp;
+   ss >> tmp;
+   if (ss.fail( )) {
+      string s = "Unable to format ";
+      s += str;
+      s += " as a number!";
+      throw (s);
+   }
+     
+   return (tmp);
+}
+#+end_src 
+
+Now, if you want to convert a string to a numeric type, you can do it like this:
+#+begin_src cpp
+double d = strToNum<double>("7.0");
+float f = strToNum<float>("7.0");
+int i = strToNum<int>("7.0");
+#+end_src 
+You can also make the type of character a template parameter, but that's straightforward to do, so I'll leave it as an exercise for you.
+
+** Converting Between Numeric Types
+   
+Problem 
+You have number of one type and you need to convert it to another, such
+as an int to a short or a vice versa, but you want to catch any overflow or
+underflow errors at runtime.
+
+Solution
+
+Use Boost's numeric_cast class template. It performs runtime checks that throw
+an exception of type bad_numeric_cast if you will overflow or underflow the
+variable where you are putting a value. Example 3-8 shows you how to do this.
+Example 3-8. Safe numeric conversions
+#+begin_src cpp
+#include <iostream>
+#include <boost/cast.hpp>
+using namespace std;
+using boost::numeric_cast;
+using boost::bad_numeric_cast;
+int main( ) {
+   // Integer sizes
+   try {
+      int i = 32767;
+      short s = numeric_cast<short>(i);
+      cout << "s = " << s << endl;
+      i++; // Now i is out of range (if sizeof(short) is 2)
+      s = numeric_cast<short>(i);
+   }
+   catch (bad_numeric_cast& e) {
+      cerr << e.what( ) << endl;
+   }
+   try {
+      int i = 300;
+      unsigned int ui = numeric_cast<unsigned int>(i);
+      cout << ui << endl; // Fine
+      i *= -1;
+      ui = numeric_cast<unsigned int>(i); // i is negative!
+   }
+   catch (bad_numeric_cast& e) {
+      cerr << e.what( ) << endl;
+   }
+   try {
+      double d = 3.14;
+      int i = numeric_cast<int>(d);
+      i = numeric_cast<int>(d); // This shaves off the 0.14!
+      cout << i << endl;  // i = 3
+   }
+   catch (bad_numeric_cast& e) {
+      cerr << e.what( ) << endl;
+   }
+}
+#+end_src 
+
+Discussion
+
+You are probably aware of the fact that the basic C++ types have different
+sizes. The C++ standard has strict specifications for the relative size of
+typesan int is always at least as big as a short int--but it does not specify
+the absolute size. What this means is that if you take a long int and try to put
+it in a short, or attempt to put an int in an unsigned int, then you may be
+losing information about the value in the source variable, such as its sign or
+even part of its numeric value.
+
+Just knowing that this causes problems isn't enough. You may have tight space
+requirements and not want to use four bytes for a long when you can get away
+with two for a short (if your platform, in fact, uses these sizes, which are
+common but not guaranteed). Because of your space requirements, you want to try
+to store values in the smallest possible type. If you want to live dangerously
+but want a safety net, use Boost's numeric_cast to catch loss of data at
+runtime.
+
+The syntax of numeric_cast is straightforward. It is a function template, declared like this: 
+#+begin_src cpp
+template<typename Target, typename Source>
+inline Target numeric_cast(Source arg)
+#+end_src 
+
+It is just like lexical_cast if you have already read Recipe 3.1 or Recipe 3.3.
+There are two template parameters, Target and Source, which represent the types
+of the originating and destination values. Because it is a function template,
+the compiler can deduce the type of the Source template argument, so you only
+need to supply Target, like this:
+
+#+begin_src cpp
+int i = 32767;
+short s = numeric_cast<short>(i);
+#+end_src 
+
+short is the template argument for the Target parameter. The compiler figures
+out that Source is an int because i is an int.
+
+In this case, I am cramming an int into a short. On my (Windows XP) system, an
+int is four bytes and a short is two. A short is signed, which means that I have
+15 bits to represent a number with and, therefore, 32,767 is the maximum
+positive value it can hold. The above piece of code goes off without a hitch,
+but when I increment i by one, it goes beyond the range of a short:
+
+#+begin_src cpp
+i++;
+s = numeric_cast<short>(i); // Uh-oh
+#+end_src 
+
+And a bad_numeric_cast exception is thrownyou get the idea. See the rest of
+Example 3-8: numeric_cast also catches underflow if you try to assign a negative
+signed value to an unsigned type.
+
+But numeric_cast doesn't solve all of your problems. If you try to put a
+floating-point value in a nonfloating-point type, you lose everything to the
+right of the decimal, correct? numeric_cast does not help you with this, so
+don't think that it can rescue you from all of your risky endeavors. For
+example, consider this piece of code from Example 3-8:
+#+begin_src cpp
+double d = 3.14;
+int i = numeric_cast<int>(d);  // Ouch
+
+// No exception is thrown here. But it is if you try this: 
+
+double d = -3.14;
+unsigned int ui = numeric_cast<unsigned in>(d);
+
+#+end_src 
+
+Because regardless of you tossing everything to the right of the decimal point out the window, you are losing the negative sign, and that is bad. 
+
+** Getting the Minimum and Maximum Values for a Numeric Type
+
+Problem
+
+You need to know the largest or smallest representable value for your platform for a numeric type, such as an int or double. 
+
+Solution
+
+Use the numeric_limits class template in the <limits> header to get, among other
+things, the largest and smallest possible values for a numeric type (see Example
+3-9). Example 3-9. Getting numeric limits
+#+begin_src cpp
+#include <iostream>
+#include <limits>
+using namespace std;
+template<typename T>
+void showMinMax( ) {
+   cout << "min: " << numeric_limits<T>::min( ) << endl;
+   cout << "max: " << numeric_limits<T>::max( ) << endl;
+   cout << endl;
+}
+int main( ) {
+   cout << "short:" << endl;
+   showMinMax<short>( );
+   cout << "int:" << endl;
+   showMinMax<int>( );
+   cout << "long:" << endl;
+   showMinMax<long>( );
+   cout << "float:" << endl;
+   showMinMax<float>( );
+   cout << "double:" << endl;
+   showMinMax<double>( );
+   cout << "long double:" << endl;
+   showMinMax<long double>( );
+   cout << "unsigned short:" << endl;
+   showMinMax<unsigned short>( );
+   cout << "unsigned int:" << endl;
+   showMinMax<unsigned int>( );
+   cout << "unsigned long:" << endl;
+   showMinMax<unsigned long>( );
+}
+#+end_src 
+
+Here's what I get on Windows XP using Visual C++ 7.1: 
+
+short:
+min: -32768
+max: 32767
+int:
+min: -2147483648
+max: 2147483647
+long:
+min: -2147483648
+max: 2147483647
+float:
+min: 1.17549e-038
+max: 3.40282e+038
+double:
+min: 2.22507e-308
+max: 1.79769e+308
+long double:
+min: 2.22507e-308
+max: 1.79769e+308
+unsigned short:
+min: 0
+max: 65535
+unsigned int:
+min: 0
+max: 4294967295
+unsigned long:
+min: 0
+max: 4294967295
+
+
+Discussion
+
+Example 3-9 shows a simple example for getting the minimum and maximum values
+for native numeric types. The numeric_limits class template has a specialization
+for all of the built-in types, including both numeric and nonnumeric. The
+standard mandates that all of the types I use in Example 3-9 have a
+specialization of numeric_limits, as well as these:
+
+bool
+char
+signed char
+unsigned char
+wchar_t
+
+min and max are static member functions in numeric_limits that return the highest and lowest values for the type parameter you pass in. 
 
 * strings
 ** reverse string
@@ -327,7 +841,7 @@ int main( ) {
        return;
     typename basic_string<T>::iterator p;
     for (p = s.end( ); p != s.begin( ) && f(*--p););
-    if (!f(*p))
+      if (!f(*p))
        p++;
     s.erase(p, s.end( ));
  }
@@ -399,6 +913,378 @@ strin res;
 res = 'c' + res;
 //prepend a number to the end of a string
 res = (char)('0' + 1) + res;
+#+end_src
+** Getting the Length of a String
+
+#+begin_src cpp
+#include <string>
+#include <iostream>
+using namespace std;
+int main( ) {
+   string s = "";
+   string sr = "";
+   sr.reserve(9000);
+   cout << "s.length    = " << s.length( )   << '\n';
+   cout << "s.capacity  = " << s.capacity( ) << '\n';
+   cout << "s.max_size  = " << s.max_size( ) << '\n';
+   cout << "sr.length   = " << sr.length( )   << '\n';
+   cout << "sr.capacity = " << sr.capacity( ) << '\n';
+   cout << "sr.max_size = " << sr.max_size( ) << '\n';
+   for (int i = 0; i < 10000; ++i) {
+      if (s.length( ) == s.capacity( )) {
+         cout << "s reached capacity of " << s.length( )
+              << ", growing...\n";
+      }
+      if (sr.length( ) == sr.capacity( )) {
+         cout << "sr reached capacity of " << sr.length( )
+              << ", growing...\n";
+      }
+      s += 'x';
+      sr += 'x';
+   }
+}
+#+end_src 
+
+With Visual C++ 7.1, my output looks like this: 
+s.length    = 0
+s.capacity  = 15
+s.max_size  = 4294967294
+sr.length   = 0
+sr.capacity = 9007
+sr.max_size = 4294967294
+s reached capacity of 15, growing...
+s reached capacity of 31, growing...
+s reached capacity of 47, growing...
+s reached capacity of 70, growing...
+s reached capacity of 105, growing...
+s reached capacity of 157, growing...
+s reached capacity of 235, growing...
+s reached capacity of 352, growing...
+s reached capacity of 528, growing...
+s reached capacity of 792, growing...
+s reached capacity of 1188, growing...
+s reached capacity of 1782, growing...
+s reached capacity of 2673, growing...
+s reached capacity of 4009, growing...
+s reached capacity of 6013, growing...
+sr reached capacity of 9007, growing...
+s reached capacity of 9019, growing...
+** reverse string
+To reverse a string "in place," without using a temporary string, use the reverse function template in the <algorithm> header: 
+std::reverse(s.begin( ), s.end( ));
+
+reverse works simply enough: it modifies the range you give it such that it is
+in the opposite order that it was originally. It takes linear time. In the event
+that you want to copy the string to another string, but backward, use reverse
+iterators, like this:
+
+std::string s = "Los Angeles";
+std::string rs;
+rs.assign(s.rbegin( ), s.rend( ));
+
+rbegin and rend return reverse iterators. Reverse iterators behave as though
+they are looking at the sequence backward. rbegin returns an iterator that
+points to the last element, and rend returns an iterator that points to one
+before the first; this is exactly opposite of what begin and end do.
+** splitting a string
+#+begin_src cpp
+#include <string>
+#include <vector>
+#include <functional>
+#include <iostream>
+using namespace std;
+void split(const string& s, char c,
+           vector<string>& v) {
+   string::size_type i = 0;
+   string::size_type j = s.find(c);
+   while (j != string::npos) {
+      v.push_back(s.substr(i, j-i));
+      i = ++j;
+      j = s.find(c, j);
+      if (j == string::npos)
+         v.push_back(s.substr(i, s.length( )));
+   }
+}
+int main( ) {
+   vector<string> v;
+   string s = "Account Name|Address 1|Address 2|City";
+   split(s, '|', v);
+   for (int i = 0; i < v.size( ); ++i) {
+      cout << v[i] << '\n';
+   }
+}
+#+end_src 
+
+Making the example above a function template that accepts any kind of character
+is trivial; just parameterize the character type and change references to string
+to basic_string<T>:
+
+#+begin_src cpp
+template<typename T>
+void split(const basic_string<T>& s, T c,
+           vector<basic_string<T> >& v) {
+   basic_string<T>::size_type i = 0;
+   basic_string<T>::size_type j = s.find(c);
+   while (j != basic_string<T>::npos) {
+      v.push_back(s.substr(i, j-i));
+      i = ++j;
+      j = s.find(c, j);
+      if (j == basic_string<T>::npos)
+         v.push_back(s.substr(i, s.length( )));
+   }
+}
+#+end_src
+** splitting string with boost
+   #+begin_src cpp
+#include <iostream>
+#include <string>
+#include <list>
+#include <boost/algorithm/string.hpp>
+using namespace std;
+using namespace boost;
+int main( ) {
+   string s = "one,two,three,four";
+   list<string> results;
+   split(results, s, is_any_of(","));  // Note this is boost::split
+   for (list<string>::const_iterator p = results.begin( );
+        p != results.end( ); ++p) {
+      cout << *p << endl;
+   }
+}
+#+end_src
+
+** Tokenizing a String
+
+Problem
+You need to break a string into pieces using a set of delimiters. 
+
+Use the find_first_of and first_first_not_of member functions on basic_string to
+iterate through the string and alternately locate the next tokens and
+non-tokens. Example 4-12 presents a simple StringTokenizer class that does just
+that.
+
+Example 4-12. A string tokenizer
+#+begin_src cpp
+#include <string>
+#include <iostream>
+using namespace std;
+// String tokenizer class.
+class StringTokenizer {
+public:
+   StringTokenizer(const string& s, const char* delim = NULL) :
+      str_(s), count_(-1), begin_(0), end_(0) {
+      if (!delim)
+         delim_ = " \f\n\r\t\v";  //default to whitespace
+      else
+         delim_ = delim;
+      // Point to the first token
+      begin_ = str_.find_first_not_of(delim_);
+      end_ = str_.find_first_of(delim_, begin_);
+   }
+   size_t countTokens( ) {
+     if (count_ >= 0) // return if we've already counted
+       return(count_);
+     string::size_type n = 0;
+     string::size_type i = 0;
+     for (;;) {
+        // advance to the first token
+        if ((i = str_.find_first_not_of(delim_, i)) == string::npos)
+           break;
+        // advance to the next delimiter
+        i = str_.find_first_of(delim_, i+1);
+        n++;
+        if (i == string::npos)
+          break;
+     }
+     return (count_ = n);
+   }
+   bool hasMoreTokens( ) {return(begin_ != end_);}
+   void nextToken(string& s) {
+     if (begin_ != string::npos && end_ != string::npos) {
+        s = str_.substr(begin_, end_-begin_);
+        begin_ = str_.find_first_not_of(delim_, end_);
+        end_ = str_.find_first_of(delim_, begin_);
+     }
+     else if (begin_ != string::npos && end_ == string::npos)
+     {
+        s = str_.substr(begin_, str_.length( )-begin_);
+        begin_ = str_.find_first_not_of(delim_, end_);
+     }
+   }
+private:
+   StringTokenizer( ) {};
+   string delim_;
+   string str_;
+   int count_;
+   int begin_;
+   int end_;
+};
+int main( ) {
+   string s = " razzle dazzle giddyup ";
+   string tmp;
+   StringTokenizer st(s);
+   cout << "there are " << st.countTokens( ) << " tokens.\n";
+   while (st.hasMoreTokens( )) {
+      st.nextToken(tmp);
+      cout << "token = " << tmp << '\n';
+   }
+}
+#+end_src
+** Joining a Sequence of Strings
+#+begin_src cpp
+#include <string>
+#include <vector>
+#include <iostream>
+using namespace std;
+void join(const vector<string>& v, char c, string& s) {
+   s.clear( );
+   for (vector<string>::const_iterator p = v.begin( );
+        p != v.end( ); ++p) {
+      s += *p;
+      if (p != v.end( ) - 1)
+        s += c;
+   }
+}
+int main( ) {
+   vector<string> v;
+   vector<string> v2;
+   string s;
+   v.push_back(string("fee"));
+   v.push_back(string("fi"));
+   v.push_back(string("foe"));
+   v.push_back(string("fum"));
+   join(v, '/', s);
+   cout << s << '\n';
+}
+#+end_src
+ 
+** Joining C-style strings
+
+#+begin_src cpp
+#include <string>
+#include <iostream>
+const static int MAGIC_NUMBER = 4;
+template<typename T>
+void join(T* arr[], size_t n, T c, std::basic_string<T>& s) {
+   s.clear( );
+   for (int i = 0; i < n; ++i) {
+      if (arr[i] != NULL)
+         s += arr[i];
+      if (i < n-1)
+         s += c;
+   }
+}
+int main( ) {
+   std::wstring ws;
+   wchar_t* arr[MAGIC_NUMBER];
+   arr[0] = L"you";
+   arr[1] = L"ate";
+   arr[2] = L"my";
+   arr[3] = L"breakfast";
+   join(arr, MAGIC_NUMBER, L'/', ws);
+}
+#+end_src
+
+** number to string using std::to_string
+
+#+begin_src cpp
+#include <iostream>
+#include <string>
+ 
+int main() 
+{
+    double f = 23.43;
+    double f2 = 1e-9;
+    double f3 = 1e40;
+    double f4 = 1e-40;
+    double f5 = 123456789;
+    std::string f_str = std::to_string(f);
+    std::string f_str2 = std::to_string(f2); // Note: returns "0.000000"
+    std::string f_str3 = std::to_string(f3); // Note: Does not return "1e+40".
+    std::string f_str4 = std::to_string(f4); // Note: returns "0.000000"
+    std::string f_str5 = std::to_string(f5);
+    std::cout << "std::cout: " << f << '\n'
+              << "to_string: " << f_str  << "\n\n"
+              << "std::cout: " << f2 << '\n'
+              << "to_string: " << f_str2 << "\n\n"
+              << "std::cout: " << f3 << '\n'
+              << "to_string: " << f_str3 << "\n\n"
+              << "std::cout: " << f4 << '\n'
+              << "to_string: " << f_str4 << "\n\n"
+              << "std::cout: " << f5 << '\n'
+              << "to_string: " << f_str5 << '\n';
+}
+#+end_src 
+
+** string uppercase
+*** #1
+#+begin_src cpp
+#include <iostream>
+#include <cctype>
+#include <algorithm>
+using namespace std;
+int main() {
+   cout << "string: ";
+   char s[256];
+   cin.get(s, 256);
+   string str = s;
+
+  for(int i  = 0 ;i < str.size(); ++i)
+        str[i] = toupper(str[i]);
+        
+     cout << str << endl;
+   return 0;
+}
+#+end_src
+*** #2
+
+#+begin_src cpp
+std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+#+end_src
+
+** erase part of a string
+#+begin_src cpp
+#include <iostream>
+#include <algorithm>
+#include <string>
+ 
+int main()
+{
+    std::string s = "This is an example";
+    std::cout << s << '\n';
+ 
+    s.erase(0, 5); // Erase "This "
+    std::cout << s << '\n';
+ 
+    s.erase(std::find(s.begin(), s.end(), ' ')); // Erase ' '
+    std::cout << s << '\n';
+ 
+    s.erase(s.find(' ')); // Trim from ' ' to the end of the string
+    std::cout << s << '\n';
+}
+#+end_src
+
+** remove a character from string
+#+begin_src cpp
+#include <algorithm>
+#include <string>
+#include <iostream>
+#include <cctype>
+ 
+int main()
+{
+    std::string str1 = "Text with some   spaces";
+    str1.erase(std::remove(str1.begin(), str1.end(), ' '),
+               str1.end());
+    std::cout << str1 << '\n';
+ 
+    std::string str2 = "Text\n with\tsome \t  whitespaces\n\n";
+    str2.erase(std::remove_if(str2.begin(), 
+                              str2.end(),
+                              [](char x){return std::isspace(x);}),
+               str2.end());
+    std::cout << str2 << '\n';
+}
 #+end_src
 
 * array
@@ -517,6 +1403,48 @@ std::for_each(vector.begin(), vector.end(), [&](int n){
 for(auto& n : vector)
    sum_of_elements += n;
 #+end_src
+
+** Bounds-checking on vectors
+
+The characters in a basic_string are stored in a buffer that is a contiguous
+chunk of memory with a static size. The buffer a string uses is an arbitrary
+size initially, and as characters are added to the string, the buffer fills up
+until its capacity is reached. When this happens, the buffer grows, sort of.
+Specifically, a new buffer is allocated with a larger size, the characters are
+copied from the old buffer to the new buffer, and the old buffer is deleted.
+
+You can find out the size of the buffer (not the number of characters it
+contains, but its maximum size) with the capacity member function. If you want
+to manually set the capacity to avoid needless buffer copies, use the reserve
+member function and pass it a numeric argument that indicates the desired buffer
+size. There is a maximum size on the possible buffer size though, and you can
+get that by calling max_size. You can use all of these to observe memory growth
+in your standard library implementation.
+
+#+begin_src cpp
+#include <iostream>
+#include <vector>
+#include <exception>
+using namespace std;
+int main( ) {
+   char carr[] = {'a', 'b', 'c', 'd', 'e'};
+   cout << carr[100000] << '\n'; // Whoops, who knows what's going
+                                 // to happen
+   vector<char> v;
+   v.push_back('a');
+   v.push_back('b');
+   v.push_back('c');
+   v.push_back('d');
+   v.push_back('e');
+   try {
+      cout << v.at(10000) << '\n'; // at checks bounds and throws
+   } catch(out_of_range& e) {      // out_of_range if it's invalid
+      cerr << e.what( ) << '\n';
+   }
+}
+#+end_src 
+
+If you catch out_of_range, defined in <stdexcept>, you can deal with invalid indexes in a meaningful way.
 
 * algorithms
 ** algorithms collections
@@ -781,7 +1709,7 @@ int main() {
   // map can also be used like this
   printf("steven's score is %d, grace's score is %d\n",
     mapper["steven"], mapper["grace"]);
-  printf("==================\n");
+    printf("==================\n");
 
   // interesting usage of lower_bound and upper_bound
   // display data between ["f".."m") ('felix' is included, martin' is excluded)
@@ -866,6 +1794,100 @@ int main() {
 }
 
 #+end_src
+** transforming elements in a sequence
+#+begin_src cpp
+#include <iostream>
+#include <istream>
+#include <string>
+#include <list>
+#include <algorithm>
+#include <iterator>
+#include <cctype>
+#include "utils.h" // For printContainer( ): see 7.10
+using namespace std;
+// Convert a string to upper case
+string strToUpper(const string& s) {
+   string tmp;
+   for (string::const_iterator p = s.begin( ); p != s.end( ); ++p)
+      tmp += toupper(*p);
+   return(tmp);
+}
+string strAppend(const string& s1, const string& s2) {
+   return(s1 + s2);
+}
+int main( ) {
+   cout << "Enter a series of strings: ";
+   istream_iterator<string> start(cin);
+   istream_iterator<string> end;
+   list<string> lst(start, end), out;
+   // Use transform with an unary function...
+   transform(lst.begin( ), lst.end( ),
+             back_inserter(out),
+             strToUpper);
+   printContainer(out);
+   cin.clear( );
+   cout << "Enter another series of strings: ";
+   list<string> lst2(++start, end);
+   out.clear( );
+   // ...or a binary function and another input sequence.
+   transform(lst.begin( ), lst.end( ), lst2.begin( ),
+             back_inserter(out),
+             strAppend);
+   printContainer(out);
+}
+
+#+end_src 
+
+Discussion
+
+The obvious function for transforming data is transform. It has two forms. The
+first form takes a sequence, an output iterator, and an unary functor. It
+applies the functor to each element in the sequence and assigns the return value
+to the next element pointed to by the output iterator. The output iterator can
+be another sequence or the beginning of the originating sequence. In this
+respect, transform handles both copy-style or in-place transformations.
+
+#+begin_src cpp
+Here's what the declarations for transform look like: 
+Out transform(In first, In last, Out result, UnFunc f);
+Out transform(In first1, In last1, In first2, In last2,
+              Out result, BinFunc f);
+#+end_src 
+Both versions return an iterator that refers to one past the end of the result
+
+sequence. Using either version is straightforward. To copy strings from one
+sequence to another, but in uppercase, do as I did in Example 7-9:
+
+#+begin_src cpp
+std::transform(lst.begin( ), lst.end( ),
+               std::back_inserter(out), strToUpper);
+#+end_src 
+If you want to modify the originating sequence, just pass in the beginning of
+the sequence as the result iterator:
+
+#+begin_src cpp
+std::transform(lst.begin( ), lst.end( ),
+               lst.begin( ), strToUpper);
+#+end_src 
+Using two sequences and a binary operation works the same way, and you can use
+either one of the input sequences as the output sequence.
+
+If you want to transform elements in place, you might want to avoid the overhead
+of assigning each element to the return value of some function. Or if the
+functor you want to use modifies its source object, you can use for_each
+instead:
+
+#+begin_src cpp
+void strToUpperInPlace(string& s) {
+   for (string::iterator p = s.begin( ); p != s.end( ); ++p)
+      *p = std::toupper(*p);
+}
+// ...
+std::for_each(lst.begin( ), lst.end( ), strToUpperInPlace);
+#+end_src 
+If what you want to do is change the sequence itself and not necessarily change
+each of its elements, see Recipe 7.6, where I describe many of the standard
+algorithms for rearranging the elements in a sequence. #+end_src
 
 * bit manipulation
 #+begin_src cpp
@@ -1359,6 +2381,109 @@ void merge(int* array1, int length1, int* array2, int length2) {
 
 Since only one element in array1 or array2 is copied and moved once in each step, the overall time
 complexity is O(m+n).
+
+** pair Sum to k
+Given an unsorted array of integers that can contain negative and positive
+values, return all pairs that sum to k, where k is also an integer. Can you do
+it better than O(n^2)?
+ 
+Variation 1: write an O(n^2) algorithm to return all triplets that sum to k.
+
+Variation 2: write an O(n^3) algorithm to return all quadruplets that sum to k.
+
+Solution
+
+A list of pairs that sum to k = 1 from the following array [0, -1, 1, 2, 3, -2]
+are given by [-1, 2], [-2,3], and [0,1]. A list of pairs that sum to k = 2 from
+the same array are given by [0,2] and [-1,3]. A list of pairs that sum to k = -2
+from the same array is [-2,0].
+
+By sorting the array into [-2, -1, 0, 1, 2, 3], while it incurs O(n log n) due
+to the cost of sorting, it becomes more obvious how you find the solution. Once
+the array is sorted, an O(n) solution to find all pairs that sum to k can be
+collected by maintaining two cursors i and j that will move in the opposite
+direction. If the sum of pairs at index i and j equals to the target k value,
+updates both i and j indices. Otherwise if the sum is smaller, moves i one
+position to the right, and conversely moves j to the left, until they meet.
+#+begin_src cpp
+int PairSum(
+    const int* inputs,
+    const int length,
+    const int k,
+    vector<Pair>& outputs)
+{
+    if (length == 0) return 0;
+       
+    size_t i = 0;
+    size_t j = length - 1;
+   
+    while (i < j) {
+        if (inputs[i] + inputs[j] == k) {
+            outputs.push_back(make_pair(inputs[i], inputs[j]));
+            i++; --j;
+        }
+        else if (inputs[i] + inputs[j] < k){
+            ++i;
+        }
+        else {
+            --j;
+        }
+    }
+    return outputs.size();
+}
+#+end_src 
+Now, how do you solve finding triplets (a, b, c) that sum to k?
+
+Often, what we need is just a little bit of mind trick a.k.a insight. Finding
+triplets (a, b, c) that sum to k can be formulated as finding pairs (a, b) that
+sum to k – c. Remember a grade school math that allows you to express (a + b +
+c) = k as (a + b) = (c – k)?
+
+It is always good to show that you can write reusable code. Here is your chance
+to shine during the interview. By cleverly formulating the problem this way, not
+only you can simplify your solution and hence helping you from writing an
+unnecessarily much more complex code that is more error prone, but it also
+enables you to write a simpler and more elegant code
+#+begin_src cpp
+int TripletSum(const int* inputs, const int length, const int k)
+{
+    if (length == 0) return 0;
+       
+    size_t i = 0;
+    size_t j = length - 1;
+    int count = 0;
+       
+    for (int i = 0; i < length; ++i) {
+        int value = inputs[i];
+       
+        // (a + b + c) = k can be expressed as
+        // (a + b) = (k - c)
+        const auto target = (k - value);
+       
+        vector<Pair> pairs;
+        if (PairSum(&inputs[i + 1], length - i - 1, target, pairs) > 0) {
+            PrintTriplets(value, pairs);
+            count += pairs.size();
+        }
+    }
+ 
+    return count;
+}
+#+end_src
+
+* useful functions
+** string_tolower & string_toupper
+
+#+begin_src cpp
+void string_tolower(std::string& str)
+{
+    transform(str.begin(), str.end(), str.begin(), ::tolower);
+}
+void string_toupper(std::string& str)
+{
+    transform(str.begin(), str.end(), str.begin(), ::toupper);
+}
+#+end_src
 
 * useful resources
 https://cpbook.net/#downloads
