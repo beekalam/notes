@@ -1197,3 +1197,281 @@ element of a list.
 
 #+end_src 
 
+* loop
+** loop example #1
+ #+begin_src lisp
+ ;; infinite loop
+ (loop
+    (format T "~%Hello world")
+ )
+ #+end_src
+
+** return statement
+A call to *return* will cause an exit from the current block.
+*return* takes an argument which is the value to be passed back.
+
+#+begin_src lisp
+(loop
+   (format % "~%Hello world")
+   (return T)
+)
+#+end_src
+
+** return example #1
+
+#+begin_src lisp
+(setq count 10)
+( loop
+   ( format T "~%Hello world" )
+   ( setq count (dec count) )
+   ( cond
+      ( (zerop count) (return T) )
+      (T       T )
+    )
+)
+#+end_src
+
+* do
+** intro
+the do function provides a neater way of handling the same kind of problem as *loop* tries to solve.
+
+#+begin_src lisp
+( do
+   ( 
+      ( count 10 (dec count) )
+   )
+   ( (zerop count) T )
+   ( format T "~%Hello world" )
+)
+#+end_src
+
+following do there is a first list of three element lists.
+#+begin_src
+( count 10 (dec count) )
+#+end_src
+Its contents are a variable, a starting value for the variable and an action to take on
+the variable after every iteration. 
+
+** example size of a list with *do*
+
+#+begin_src
+(define size(x)
+   ( do
+      (
+      (length 0 (inc length))
+         (part-x (tail part-x))
+       )
+       ( (null part-x) length)
+    )
+)
+;; recursive version
+( defun recursive-size(x)
+   (cond
+       ( (null x) 0)
+       ( T (inc (recursive-size (tail x ) ) ) )
+   )
+)
+#+end_src
+
+* dotimes
+** intro
+*dotimes* allows iteration over the integers from zero to some positive limit.
+
+#+begin_src
+( dotimes
+    (count 10 T)
+    (format T "~%Hello world")
+)
+#+end_src
+
+notice that the limit is *exclusive*. That is, the loop executes for count=0,1,2,...9
+and exits as soon as count is 10 without evaluating the body.
+
+* dolist
+** intro
+*dolist* iterates over the elements of a list. It's easiest to see what's happening with
+an example:
+
+#+begin_src lisp
+( setq list '(a b c))
+( dolist
+   (x list)
+   ( format T "~%~A" x)
+)
+#+end_src
+This generates:
+A
+B
+C
+D
+
+each element of the list is bound to x in turn and the body of the loop
+is evaluated for every instance.
+** example size with dolist
+
+#+begin_src lisp
+;; size returns NIL.It is because there is an optional third argument in the list (e x).
+( defun size (x)
+   ( dolist
+      (e x)    ;;(e x length) returns the length
+      (setq length (inc length) )
+    )
+)
+#+end_src
+
+* Mapping
+** intro
+   There are a number of functions that act in an interactive way on the elements of a list.
+Collectively, they are called the mapping functions. The difference between 
+them lies in the way parts of the argument lists are selected and in what is returned.
+
+** mapcar
+
+#+begin_src lisp
+(setq x '(1 2 3 4))
+(mapcar #'inc x)
+;; you'll get
+(2 3 4 5)
+#+end_src
+
+#+begin_src
+(setq x '(1 2 3 4))
+(setq y '(10 11 12))
+(mapcar #'* x y)
+;;you get:
+(10 22 36)
+#+end_src
+
+** mapcar example
+suppose, for example that we want to flip the bits of a binary number held, as say:
+(1 1 0 0 0 1 1 1)
+
+for one bit that is easy:
+
+#+begin_src
+( defun flip (bit)
+   (cond
+      ( (= bit 1) 0)
+      ( T     1)
+    )
+)
+;; so for the list we have:
+( defun ones-complement (word)
+   (mapcar #'flip word)
+)
+;; and now we can write
+(ones-complement '(1 1 0 0 0 1 1 1) )
+#+end_src
+
+* if
+
+** example #1
+
+#+begin_src lisp
+( setq count 10 )
+( loop
+   ( format T "~%Hello world" )
+   ( setq count (dec count) )
+   ( if (zerop count) (return T) )
+)
+#+end_src
+
+* when
+** example #1
+* flet
+The function *flet* does for functions what let does for variables.
+*flet* allows you to make local function redefinitions which are, of course, much more
+controllable.
+
+#+begin_src lisp
+( defun testflet()
+   ( flet
+      (
+          (
+             1+ (x)
+                 (+ x 10)
+           )
+           (
+               1- (x)
+                  (- x 10)
+            )
+        )
+        (format T "% ~a" (1+ 100) )
+        (format % "~% ~a" (1- 100) )
+    )
+)
+#+end_src
+
+The first argument of flet is a list, each element of which is a function definition.
+This is followed by a body of forms to be evaluated in turn, the value of the final 
+form being returned , as for *let*.
+
+* prog1 to progn
+** intro
+The functions *prog1*, *prog2* and *progn* can handle sequences of functions calls or other forms.
+** example #1
+
+#+begin_src lisp
+(defun testprogn ( x y)
+    (progn
+        (format T "~%X is ~a" x )
+        (format T "%y is ~a" y)
+        (* x y)
+     )
+)
+#+end_src
+
+* Association list
+** intro
+An association list is a list of pairs of entries.The first of a pair is called the key
+and the second is the datum.
+** pairlis
+one way to create such a set of relationships is to use the function *pairlis* like this:
+
+#+begin_src lisp
+(setq passport (pairlis '(name nationality birth-date eye-colour hair-colour height sex) '(smith british sept-9-45 brown black 174 male)))
+#+end_src
+this returns:
+((SEX. MALE) (HEIGHT . 174) (HAIR-COLOUR. BLACK) (EYE-COLOUR. BROWN) (BIRTH-DATE . SEPT-9-45) (NATIONALITY . BRITISH) (NAME  SMITH) ) 
+
+** assoc
+the function *assoc* can be used to extract information from the structure.Its arguments
+are a key and an association list. It returns the first dotted pair it finds with
+the stated key. Thus:
+#+begin_src lisp
+(assoc 'hair-color passport )
+#+end_src
+returns:
+(HAIR-COLOUR . BLACK)
+
+if no matching key is found, *assoc* returns *NIL*.
+
+** rassoc
+Given a datum, rather than a key, rassoc will return the appropriate dotted pair.
+for instance:
+
+#+begin_src lisp
+(rassoc 'brown passport)
+#+end_src
+
+returns:
+(EYE-COLOUR. BROWN)
+
+** acons
+we can add new information to an association list using *acons*, which returns
+the old list with a new head.let's add our passport holder's profession:
+
+#+begin_src lisp
+(setq passport (acons 'profession 'accountant passport))
+#+end_src
+
+we can also use *acons* to alter the current state of an entry in a record.
+Suppose our passport holder were to change nationality by becoming a naturalized
+Australian:
+
+#+begin_src lisp
+(setq passport (acons 'nationality 'australian passport ) )
+#+end_src
+
+Of course, there are now two nationality  entries, but the first will describe
+our friend as Australian and that's the one *assoc* will pick up.

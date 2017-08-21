@@ -4082,11 +4082,9 @@ $ date --set 21:08:00
 
 * useful resources
 * references
-http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
-
-http://unix.stackexchange.com/questions/35369/how-to-cut-by-tab-character
-
-http://unix.stackexchange.com/questions/145978/replace-multiple-spaces-with-one-using-tr-only
+** http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
+** http://unix.stackexchange.com/questions/35369/how-to-cut-by-tab-character
+** http://unix.stackexchange.com/questions/145978/replace-multiple-spaces-with-one-using-tr-only
 
 http://askubuntu.com/questions/499995/change-ip-address-which-is-given-by-tor-using-the-terminal
 
@@ -4104,6 +4102,7 @@ $ hdparm -I /dev/sda
 #Enabled Supported:
 #...
 #+end_src
+
 ** kernel device detection
 plug-and-play hardware, a more dynamic approach was needed, and devfs was created to auto-
 matically detect new hardware and create device files. The requirement to
@@ -4460,7 +4459,346 @@ other ways of writing multi-line commands.
 #+begin_src 
 set word \
        really-long-string-which-does-not-quite-fit-on-previous-line
-#+end_src        
+#+end_src
+** Quoting conventions
+Tcl separates arguments by whitespace (blanks, tabs, etc.). You can pass space
+characters by double quoting an argument. The quotes are not part of the
+argument; they just serve to keep it together. Tcl is similar to the shell in
+this respect.
+
+#+begin_src 
+set string1 "Hello world"
+#+end_src 
+Double quotes prevent “;” from breaking things up.
+
+#+begin_src 
+set string2 "A semicolon ; is in here"
+#+end_src 
+Keeping an argument together is all that double quotes do. Character sequences
+such as $, \t, and \b still behave as before.
+
+#+begin_src 
+set name "Sam"
+set age 17
+set word2 "My name is $name; my age is $age;"
+#+end_src 
+After execution of these three commands, word2 is left with the value "My name is Sam; my age is 17;“.
+
+Notice that in the first command Sam was quoted, while in the second command 17
+was not quoted, even though neither contained blanks. When arguments do not have
+blanks, you do not have to quote them but I often do anyway—they are easier to
+read. However, I do not bother to quote numbers because quoted numbers simply
+look funny. Anyway, numbers never contain whitespace.
+
+You can actually have whitespace in command names and variable names in which
+case you need to quote them too. I will show how to do this later, but I
+recommend you avoid it if possible.
+** Return Values
+
+All commands return values. For example, the pid command returns the process id
+of the current process. To evaluate a command and use its return value as an
+argument or inside an argument, embed the command in brackets. The bracketed
+command is replaced by its return value.
+
+#+begin_src 
+set p "My pid is [pid]."
+#+end_src 
+
+The set command returns its second argument. The following command sets b and a to 0.
+
+#+begin_src 
+set b "[set a 0]"
+#+end_src 
+
+When it comes to deciding what are arguments, brackets are a special case. Tcl
+groups everything between matching brackets, so it is not necessary to quote
+arguments that only have spaces inside brackets. The following are all legal.
+
+#+begin_src 
+set b [set a 0]
+set b "[set a 0]"
+set b "[set a 0]hello world"
+set b [set a 0]hello
+#+end_src 
+
+After execution of this last command, a is set to "0" and b is set to "0hello“.
+
+With only one argument, set returns the value of its first argument.
+
+#+begin_src 
+set c [set b]
+#+end_src 
+
+Calling set with one argument is similar to using the dollar sign. Indeed, the
+previous command can be rewritten as "set c $b“. However they are not always
+interchangeable. Consider the two commands:
+
+#+begin_src 
+set $phello
+set [set p]hello
+#+end_src 
+
+The first returns the value of the variable phello. The second returns the value
+of the variable p concatenated with the string "hello“.
+
+The $ syntax is shorter but does not automatically terminate the end of the
+variable. In the rare cases where the variable just runs right into more
+alphanumeric characters, the one-argument set command in brackets is useful.
+
+The one-argument set command is also useful when entering commands
+interactively. For example, here is what it looks like when I type a command to
+the Tcl interpreter:[8]
+
+#+begin_src 
+tclsh> set p
+12389
+#+end_src 
+After entering "set p“, the return value was printed. When using Tcl
+interactively, you will always see the return value printed. When executing
+commands from a script, the return values are discarded. Inside scripts, use the
+puts command to print to the standard output.
+** puts
+You can print values out with the puts command. In its simplest form, it takes a
+single string argument and prints it followed by a newline.
+
+#+begin_src 
+puts "Hello word!"
+puts "The value of name is $name"
+#+end_src 
+
+** Expressions
+Strings can be treated as expressions having mathematical values. For example,
+when the string "1+1" is treated as an expression, it has the value 2. Tcl does
+not automatically treat strings as expressions, but individual commands can. I
+will demonstrate this in a moment. For now, just remember that expressions are
+not complete commands in themselves.
+
+Expressions are quite similar to those in the C language. The following are all valid expressions:
+#+begin_src 
+1 + 5
+1+5
+1+5.5
+1e10+5.5
+(5%3)*sin(4)
+1 <= 2
+(1 <= 2) || (2 != 3)
+#+end_src 
+
+All of the usual mathematical operators are available including +, -, *, /, and
+% (modulo). Many functions exist such as sin, cos, log, and sqrt. Boolean
+operators include || (or), && (and), and ! (not). The usual comparison operators
+are available (<= (less than or equal), == (equal), != (not equal), etc.). They
+return 0 if the expression is false and 1 if it is true.
+
+Whitespace may be used freely to enhance readability. A number of numeric forms
+are supported including scientific notation as well as octal (any number with a
+leading 0) and hexadecimal (any number with a leading 0x). Functions such as
+floor, ceil, and round convert from floating-point to integer notation.
+
+Precedence and associativity follow C rules closely. For instance, the
+expression "1-2*3" is interpreted as "1-(2*3)" because multiplication is of
+higher precedence than addition. All binary operators at the same level of
+precedence are left-associative. This means, for instance, that the expression
+"1-2-3" is interpreted as "(1-2)-3“. Since Tcl expressions rarely become
+complex, I will omit a lengthy discussion of the numerous levels of precedence,
+and instead note that you can always use parentheses to override a particular
+precedence or associativity.[9] See the Tcl reference material for the complete
+list of operators and their precedences. Variable values may also be used in
+expressions.
+#+begin_src 
+1 + $age
+$argc < 10
+#+end_src 
+
+Return values can be used in expressions using the bracket notation. For example, an expression to compare the current process id to 0 is:
+#+begin_src 
+[pid] == 0
+#+end_src 
+
+If the process id is 0, the expression equals 1; otherwise it equals 0.
+Expressions are not commands by themselves. Rather, certain commands treat their
+arguments as expressions, evaluating them in the process of command execution.
+For example, the while command treats its first argument as an expression. I
+will describe while and similar commands later.
+
+The expr command takes any number of arguments and evaluates them as a single expression and returns the result.
+#+begin_src 
+set x "The answer is 1 + 3"
+set y "The answer is [1 + 3]"
+set z "The answer is [expr 1 + 3]"
+#+end_src 
+
+After evaluation of the first command, x has the value "The answer is 1 + 3“.
+The last command leaves z with the value "The answer is 4“. The middle command
+causes an error. "1 + 3" is not a valid command because 1 is not a command.
+
+Here is a more complicated-looking command (legal this time). It computes a
+result based on the current process id value and the value of the variable mod.
+#+begin_src 
+set x [expr (5 % $mod) + ( 17 == [pid])]
+#+end_src 
+
+** Braces—Deferring Evaluation
+
+Braces are similar to double quotes. Both function as a grouping mechanism; however, braces defer any evaluation of brackets, dollar signs, and backslash sequences. In fact, braces defer everything.
+#+begin_src 
+set var1 "a$b[set c]\r"
+set var2 {a$b[set c]\r}
+#+end_src 
+
+After evaluation of these two commands, var1 contains an "a" followed by the
+values of b and c, terminated by a return character. The variable var2 contains
+the characters "a“, "$“, "b“, "[“, "s“, "e“, "t“, " “, "c“, "]“, "\“, and "r“.
+
+As with double quotes, the braces are not part of the argument they enclose.
+They just serve to group and defer. The primary use of braces is in writing
+control commands such as while loops, for loops, and procedures. These commands
+need to see the strings without having $ substitutions and bracket evaluations
+made.
+
+** while command
+#+begin_src 
+set total 1
+
+while {$count > 0} {
+    set total [expr $total * $count]
+    set count [expr $count−1]
+}
+#+end_src
+
+** incr command
+Many loops use a counter of some sort. Incrementing or decrementing a counter is
+so common that there is a command to simplify it. It is called incr. It modifies
+the variable given as its first argument. With no other argument incr adds one,
+otherwise incr adds the remaining argument. The two commands are equivalent:
+
+#+begin_src 
+set count [expr $count−1]
+incr count −1
+#+end_src 
+
+** for command
+The for command is similar to the while command. The for command has a
+controlling expression and a body. However, before the expression is a “start”
+argument, and after the expression is a “next” argument.
+
+#+begin_src 
+for start expression next {
+    # commands here make up
+    # the body of the for
+}
+#+end_src
+
+Both the start and next arguments are commands. The start argument is executed
+before the first evaluation of the controlling expression. The next argument is
+evaluated immediately after the body of the loop. The code shown earlier to
+compute a factorial can be simplified using the incr command and a for loop as
+follows:
+
+#+begin_src 
+for {set total 1} {$count > 0} {incr count −1} {
+    set total [expr $total * $count]
+}
+#+end_src
+
+Either of the start or next argument can be empty, but you have to leave a
+placeholder. For example, you could express an infinite loop as:
+
+#+begin_src 
+for {} {1} {} {
+    ... some command ...
+}
+#+end_src 
+
+** if command
+
+In its simplest form, the if command takes a controlling expression and a body
+to execute if the expression is nonzero. It looks a lot like a while command,
+but the body is executed at most once.
+
+#+begin_src 
+if {$count < 0} {
+    set total 1
+}
+#+end_src 
+
+If present, an optional else fragment is executed only if the expression
+evaluates to zero. Here is an example:
+
+#+begin_src 
+if {$count < 5} {
+    puts "count is less than five"
+} else {
+    puts "count is not less than five"
+}
+#+end_src 
+
+It is also possible to add more conditions using elseif arguments. Any number of
+elseif arguments may be used.
+
+#+begin_src 
+if {$count < 0} {
+    puts "count is less than zero"
+} elseif {$count > 0} {
+    puts "count is greater than zero"
+} else {
+    puts "count is equal to zero"
+}
+#+end_src
+
+In the while and for commands, the controlling expressions are written with
+braces to defer their evaluation. Their evaluation is deferred because they need
+to be re-evaluated repeatedly. The expression in an if is not re-evaluated and
+so it does not need to be deferred. The braces are still useful to group the
+arguments of the expression together but if the grouping behavior is not needed,
+then the braces can be omitted entirely. For example, the following two commands
+are equivalent:
+
+#+begin_src 
+if $a {incr a}
+if {$a} {incr a}
+#+end_src
+
+The following two commands are not equivalent.
+
+#+begin_src 
+while $a {incr a}
+while {$a} {incr a}
+#+end_src 
+
+It does not hurt to write braces around all expressions; however, if you
+frequently read other people’s code, you must get used to seeing the braces
+omitted in some expressions.
+
+** switch command
+The switch command is similar to the if command but is more specialized. Instead
+of evaluating a mathematical expression, the switch command compares a string to
+a set of patterns. Each pattern is also associated with a body of Tcl commands.
+The first pattern that matches has its associated body evaluated. Here is a
+fragment that sets the variable type depending on the value of count. For
+example, if count is the string big, then type is set to array. If count matches
+none of the choices, the special default body is used.
+
+#+begin_src 
+switch -- $count \
+  1 {
+    set type byte
+} 2 {
+    set type word
+} big {
+    set type array
+} default {
+    puts "$count is not a valid type"
+}
+#+end_src
+
+By default, shell-style pattern matching is used. For example "?" matches any
+single character and "*" matches any string. I will describe the different types
+of pattern matching in more detail later. The "--" immediately after "switch" is
+a placeholder for several flags that can modify the way the switch command
+works. The flags are rarely used so I will not describe them; nevertheless it is
+still a good idea to use the "--“. This will prevent your string from
+inadvertently matching a flag.
 
 ** examples 
 *** setting passwd for 100 users

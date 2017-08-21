@@ -135,6 +135,7 @@ int main( ) {
    }
 }
 #+end_src
+
 ** Converting Numbers to Strings
  #+begin_src cpp
  #include <iostream>
@@ -204,11 +205,13 @@ int main( ) {
  }
 
  #+end_src
+
 ** int to char string using sprintf
 #+begin_src cpp
 char string[BUFF_LENGTH];
 sprintf(string, "%d", number);
 #+end_src
+
 ** Testing Whether a String Contains a Valid Number
 #+begin_src cpp
 #include <iostream>
@@ -722,7 +725,37 @@ signed char
 unsigned char
 wchar_t
 
-min and max are static member functions in numeric_limits that return the highest and lowest values for the type parameter you pass in. 
+min and max are static member functions in numeric_limits that return the highest and lowest values for the type parameter you pass in.
+
+** write binary version of number to ~stdout~
+
+#+begin_src  cpp
+#include <iostream>
+#include <bitset>
+
+int main() {
+    int a = -58, b = a>>3, c = -315;
+
+    std::cout << "a = " << std::bitset<8>(a)  << std::endl;
+    std::cout << "b = " << std::bitset<8>(b)  << std::endl;
+    std::cout << "c = " << std::bitset<16>(c) << std::endl;
+}
+#+end_src 
+
+Prints:
+
+a = 11000110
+b = 11111000
+c = 1111111011000101
+
+#+begin_src cpp
+std::string to_binary(int num)
+{
+    stringstream ss;
+    ss << bitset<8>(num);
+    return ss.str();
+}
+#+end_src
 
 * strings
 ** reverse string
@@ -906,14 +939,16 @@ int res = '8'  - '0';
 //convert number to character
 char res = (char)('0'+ value);
 #+end_src
+
 ** prepepend a character to string
-   use the + operator
+  use the + operator
 #+begin_src cpp
 strin res;
 res = 'c' + res;
 //prepend a number to the end of a string
 res = (char)('0' + 1) + res;
 #+end_src
+
 ** Getting the Length of a String
 
 #+begin_src cpp
@@ -1034,6 +1069,7 @@ void split(const basic_string<T>& s, T c,
    }
 }
 #+end_src
+
 ** splitting string with boost
    #+begin_src cpp
 #include <iostream>
@@ -1130,6 +1166,7 @@ int main( ) {
    }
 }
 #+end_src
+
 ** Joining a Sequence of Strings
 #+begin_src cpp
 #include <string>
@@ -1236,6 +1273,7 @@ int main() {
    return 0;
 }
 #+end_src
+
 *** #2
 
 #+begin_src cpp
@@ -1286,6 +1324,524 @@ int main()
     std::cout << str2 << '\n';
 }
 #+end_src
+
+** Finding things in Strings
+You want to searc a string for something.Maybe it's a single character, another string, or one of (or not of) an unordered
+set of characters.And, for your own reasons, you have to find it in a particular way, such as the first or last of occurrences, or the
+first or last occurrence relative to a particulare index.
+#+begin_src cpp
+#include <string>
+#include <iostream>
+int main( ) {
+   std::string s = "Charles Darwin";
+   std::cout << s.find("ar") << '\n';            // Search from the
+                                                 // beginning
+   std::cout << s.rfind("ar") << '\n';           // Search from the end
+   std::cout << s.find_first_of("swi")           // Find the first of
+             << '\n';                            // any of these chars
+   std::cout << s.find_first_not_of("Charles")   // Find the first
+             << '\n';                            // that's not in this
+                                                 // set
+   std::cout << s.find_last_of("abg") << '\n';   // Find the first of
+                                                 // any of these chars
+                                                 // starting from the
+                                                 // end
+   std::cout << s.find_last_not_of("aDinrw")     // Find the first
+             << '\n';                            // that's not in this
+                                                 // set, starting from
+                                                 // the end
+}
+#+end_src
+
+** counting unique characters
+If you have to write your own algorithm for operating on strings, don't use a
+basic_string like you would a C-style string by using operator[] to get at each
+item. Take advantage of the existing member functions. Each of the find
+functions takes a size_type parameter that indicates the index where the search
+should proceed from. Using the find functions repeatedly, you can advance
+through the string as you see fit. Consider Example 4-16, which counts the
+number of unique characters in a string.
+
+Example 4-16. Counting unique characters
+
+#+begin_src cpp
+#include <string>
+#include <iostream>
+template<typename T>
+int countUnique(const std::basic_string<T>& s) {
+   using std::basic_string;
+   basic_string<T> chars;
+   for (typename basic_string<T>::const_iterator p = s.begin( );
+        p != s.end( ); ++p) {
+     if (chars.find(*p) == basic_string<T>::npos)
+        chars += *p;
+   }
+   return(chars.length( ));
+}
+int main( ) {
+   std::string s = "Abracadabra";
+   std::cout << countUnique(s) << '\n';
+}
+#+end_src
+
+** finding the nth instance of a substring
+Use the find member function to locate successive instances of the substring you
+are looking for. Example 4-17 contains a simple nthSubstr function. Example
+4-17. Locate the nth version of a substring
+#+begin_src cpp
+#include <string>
+#include <iostream>
+using namespace std;
+int nthSubstr(int n, const string& s,
+              const string& p) {
+   string::size_type i = s.find(p);     // Find the first occurrence
+   int j;
+   for (j = 1; j < n && i != string::npos; ++j)
+      i = s.find(p, i+1); // Find the next occurrence
+   if (j == n)
+     return(i);
+   else
+     return(-1);
+}
+int main( ) {
+   string s = "the wind, the sea, the sky, the trees";
+   string p = "the";
+   cout << nthSubstr(1, s, p) << '\n';
+   cout << nthSubstr(2, s, p) << '\n';
+   cout << nthSubstr(5, s, p) << '\n';
+}
+#+end_src
+
+Discussion 
+There are a couple of improvements you can make to nthSubstr as it is
+presented in Example 4-17. First, you can make it generic by making it a
+function template instead of an ordinary function. Second, you can add a
+parameter to account for substrings that may or may not overlap with themselves.
+By "overlap," I mean that the beginning of the string matches part of the end of
+the same string, as in the word "abracadabra," where the last four characters
+are the same as the first four. Example 4-18 demonstrates this.
+
+Example 4-18. An improved version of nthSubstr
+
+#+begin_src cpp
+#include <string>
+#include <iostream>
+using namespace std;
+template<typename T>
+int nthSubstrg(int n, const basic_string<T>& s,
+               const basic_string<T>& p,
+               bool repeats = false) {
+   string::size_type i = s.find(p);
+   string::size_type adv = (repeats) ? 1 : p.length( );
+   int j;
+   for (j = 1; j < n && i != basic_string<T>::npos; ++j)
+      i = s.find(p, i+adv);
+   if (j == n)
+     return(i);
+   else
+     return(-1);
+}
+int main( ) {
+   string s = "AGATGCCATATATATACGATATCCTTA";
+   string p = "ATAT";
+   cout << p << " as non-repeating occurs at "
+        << nthSubstrg(3, s, p) << '\n';
+   cout << p << " as repeating occurs at "
+        << nthSubstrg(3, s, p, true) << '\n';
+}
+#+end_src
+
+The output for the strings in Example 4-18 is as follows: 
+ATAT as non-repeating occurs at 18
+ATAT as repeating occurs at 11
+
+** removing a substring from string 
+
+Use the find, erase, and length member functions of basic_string: 
+
+#+begin_src cpp
+std::string t = "Banana Republic";
+std::string s = "nana";
+std::string::size_type i = t.find(s);
+if (i != std::string::npos)
+   t.erase(i, s.length( ));
+#+end_src
+
+This will erase s.length( ) elements starting at the index where find found the
+first occurrence of the substring.
+
+** Remove all substrings from a string (generic version)
+
+#+begin_src cpp
+#include <string>
+#include <iostream>
+using namespace std;
+template<typename T>
+void removeSubstrs(basic_string<T>& s,
+                   const basic_string<T>& p) {
+   basic_string<T>::size_type n = p.length( );
+   for (basic_string<T>::size_type i = s.find(p);
+        i != basic_string<T>::npos;
+        i = s.find(p))
+      s.erase(i, n);
+}
+int main( ) {
+   string s = "One fish, two fish, red fish, blue fish";
+   string p = "fish";
+   removeSubstrs(s, p);
+   cout << s << '\n';
+}
+#+end_src 
+
+The basic_string member function erase is what does the important work here. In
+<string>, it is overloaded three times. The version I used in Example 4-19
+accepts the index to begin erasing at and the number of characters to erase.
+Another version accepts starting and ending iterator arguments, and there is a
+version that takes a single iterator and erases the element at that location. To
+ensure optimal performance, prefer the first two when you plan to delete
+multiple contiguous elements instead of repeatedly calling s.erase(iter) for
+each element you want to erase. In other words, use member functions that
+operate on ranges instead of single elementsespecially for those member
+functions that modify the contents of the string (or sequence). By doing so, you
+will avoid the extra function calls to erase for each element in the sequence,
+and you will permit the string implementation to more intelligently manage its
+data.
+
+** Converting a String to Lower- or Uppercase
+
+Problem
+
+You have a string that you want to convert to lower- or uppercase. 
+
+Solution
+
+Use the toupper and tolower functions in the <cctype> header to convert
+characters to upper- or lowercase. Example 4-20 shows how to do it using these
+functions. See the discussion for an alternative.
+
+Example 4-20. Converting a string's case
+
+#+begin_src cpp
+#include <iostream>
+#include <string>
+#include <cctype>
+#include <cwctype>
+#include <stdexcept>
+using namespace std;
+void toUpper(basic_string<char>& s) {
+   for (basic_string<char>::iterator p = s.begin( );
+        p != s.end( ); ++p) {
+      *p = toupper(*p); // toupper is for char
+   }
+}
+void toUpper(basic_string<wchar_t>& s) {
+   for (basic_string<wchar_t>::iterator p = s.begin( );
+        p != s.end( ); ++p) {
+      *p = towupper(*p); // towupper is for wchar_t
+   }
+}
+void toLower(basic_string<char>& s) {
+   for (basic_string<char>::iterator p = s.begin( );
+        p != s.end( ); ++p) {
+      *p = tolower(*p);
+   }
+}
+void toLower(basic_string<wchar_t>& s) {
+   for (basic_string<wchar_t>::iterator p = s.begin( );
+        p != s.end( ); ++p) {
+      *p = towlower(*p);
+   }
+}
+int main( ) {
+   string s = "shazam";
+   wstring ws = L"wham";
+   toUpper(s);
+   toUpper(ws);
+   cout << "s =  " << s << endl;
+   wcout << "ws = " << ws << endl;
+   toLower(s);
+   toLower(ws);
+   cout << "s =  " << s << endl;
+   wcout << "ws = " << ws << endl;
+}
+#+end_src 
+
+This produces the following output: 
+
+s =  SHAZAM
+ws = WHAM
+s =  shazam
+ws = wham
+
+
+Discussion
+
+One would think that the standard string class has a member function that
+converts the whole thing to upper- or lowercase, but, in fact, it doesn't. If
+you want to convert a string of characters to upper- or lowercase, you have to
+do it yourself, sort of.
+
+Not surprisingly, there is more than one way to convert a string's case (and
+when I say "string," I mean a sequence of characters, either narrow or wide).
+The simplest way to do it is with using one of the four-character conversion
+functions toupper, towupper, tolower, and towlower. The first form of each of
+these is the narrow character version; the second form (with the extra "w") is
+its wide character equivalent.
+
+Each of these functions converts the case of the character using the current
+global locale's rules for case conversion. Upper- and lowercase depend on the
+characters being used in the current locale; some characters don't have an
+upper- or lowercase version, in which case the functions listed above will
+return the same character you pass in. See Chapter 13 for more information on
+locales. The C++ facilities for dealing with different locales are complicated,
+and I cannot do them justice here.
+
+Doing the actual character conversion is easy. Consider the toUpper function in
+Example 4-20:
+
+#+begin_src  cpp
+void toUpper(basic_string<char>& s) {
+   for (basic_string<char>::iterator p = s.begin( );
+        p != s.end( ); ++p) {
+      *p = toupper(*p);
+   }
+}
+
+The line in bold does the real work. The version for wide characters is nearly identical: 
+void toUpper(basic_string<wchar_t>& s) {
+   for (basic_string<wchar_t>::iterator p = s.begin( );
+        p != s.end( ); ++p) {
+      *p = towupper(*p);
+   }
+}
+#+end_src 
+
+I overloaded toUpper for the different character types because there is no fully
+generic toupper function to convert a character's case (unless you are using
+facets from the <locale> header, which I discuss below). Two simple functions,
+as above, will get the job done.
+
+There is another way to do this though, and the motivating factor for using this
+second approach would be your need to use explicit locales. The following
+versions of toUpper and toLower convert the case of a string, regardless of its
+character type, as long as the named locale (which defaults to the current
+locale) supports case conversion for that locale and character type.
+
+#+begin_src cpp
+template<typename C>
+void toUpper2(basic_string<C>& s, const locale& loc = locale( )) {
+   typename basic_string<C>::iterator p;
+   for (p = s.begin( ); p != s.end( ); ++p) {
+      *p = use_facet<ctype<C> >(loc).toupper(*p);
+   }
+}
+template<typename C>
+void toLower2(basic_string<C>& s, const locale& loc = locale( )) {
+   typename basic_string<C>::iterator p;
+   for (p = s.begin( ); p != s.end( ); ++p) {
+      *p = use_facet<ctype<C> >(loc).tolower(*p);
+   }
+}
+#+end_src 
+
+The lines in bold do the real work. Functionally, they work the same as the upper- and lowercase functions used in Example 4-20, except that they use the internationalization facilities in the <locale> header to do it. See Chapter 13 for a more thorough discussion of locales, facets, and internationalization.
+** doing a case-insensitive string comparison
+
+You have two strings, and you want to know if they are equal, regardless of the
+case of the characters. For example, "cat" is not equal to "dog," but "Cat," for
+your purposes, is equal to "cat," "CAT," or "caT."
+
+Solution
+
+Compare the strings using the equal standard algorithm (defined in <algorithm>),
+and supply your own comparison function that uses the toupper function in
+<cctype> (or towupper in <cwctype> for wide characters) to compare the uppercase
+versions of characters. Example 4-21 offers a generic solution. It also
+demonstrates the use and flexibility of the STL; see the discussion below for a
+full explanation.
+
+Example 4-21. Case-insensitive string comparison
+#+begin_src cpp
+        
+1   #include <string>
+2   #include <iostream>
+3   #include <algorithm>
+4   #include <cctype>
+5   #include <cwctype>
+6    
+7   using namespace std;
+8
+9   inline bool caseInsCharCompareN(char a, char b) {
+10     return(toupper(a) == toupper(b));
+11  }
+12
+13  inline bool caseInsCharCompareW(wchar_t a, wchar_t b) {
+14     return(towupper(a) == towupper(b));
+15  }
+16
+17  bool caseInsCompare(const string& s1, const string& s2) {
+18     return((s1.size( ) == s2.size( )) &&
+19            equal(s1.begin( ), s1.end( ), s2.begin( ), caseInsCharCompareN));
+20  }
+21
+22  bool caseInsCompare(const wstring& s1, const wstring& s2) {
+23     return((s1.size( ) == s2.size( )) &&
+24            equal(s1.begin( ), s1.end( ), s2.begin( ), caseInsCharCompareW));
+25  }
+26
+27  int main( ) {
+28     string s1 = "In the BEGINNING...";
+29     string s2 = "In the beginning...";
+30     wstring ws1 = L"The END";
+31     wstring ws2 = L"the endd";
+32
+33     if (caseInsCompare(s1, s2))
+34        cout << "Equal!\n";
+35
+36     if (caseInsCompare(ws1, ws2))
+37        cout << "Equal!\n";
+38  }
+#+end_src 
+
+Discussion
+
+The critical part of case-insensitive string comparison is the equality test of
+each corresponding pair of characters, so let's discuss that first. Since I am
+using the equal standard algorithm in this approach but I want it to use my
+special comparison criterion, I have to create a standalone function to handle
+my special comparison.
+
+Lines 9-15 of Example 4-21 define the functions that do the character
+comparison, caseInsCharCompareN and caseInsCharCompareW . These use toupper and
+towupper to convert each character to uppercase and then return whether they are
+equal.
+
+Once I have my comparison functions complete, it's time to use a standard
+algorithm to handle applying my comparison functions to arbitrary sequences of
+characters. The caseInsCompare functions defined in lines 17-25 do just that
+using equal. There are two overloads, one for each character type I care about.
+They both do the same thing, but each instantiates the appropriate character
+comparison function for its character type. For this example, I overloaded two
+ordinary functions, but you can achieve the same effect with templates. See the
+sidebar "Should I Use a Template?" for a discussion.
+
+equal compares two sequence ranges for equality. There are two versions: one
+that uses operator==, and another that uses whatever binary predicate (i.e.,
+takes two arguments and returns a bool) function object you supply. In Example
+4-21, caseInsCharCompareN and W are the binary predicate functions.
+
+But that's not all you have to doyou need to compare the sizes, too. Consider equal's declaration: 
+
+#+begin_src cpp
+template<typename InputIterator1, typename InputIterator2,
+         typename BinaryPredicate>
+bool equal(InputIterator1 first1, InputIterator1 last1,
+           InputIterator2 first2, BinaryPredicate pred);
+#+end_src 
+
+Let n be the distance between first1 and last1, or in other words, the length of
+the first range. equal returns true if the first n elements of both sequences
+are equal. That means that if, given two sequences where the first n elements
+are equal, and the second sequence has more than n elements, equal will return
+true. Include a size check in your comparison to avoid this false positive.
+
+You don't need to encapsulate this logic in a function. Your code or your
+client's code can just call the algorithm directly, but it's easier to remember
+and cleaner to write this:
+
+#+begin_src cpp
+if (caseInsCompare(s1, s2)) {
+// they are equal, do something
+
+than this: 
+if ((s1.size( ) == s2.size( )) &&
+    std::equal(s1.begin( ), s1.end( ), s2.begin( ), caseInsCharCompare<char>)) {
+// they are equal, do something
+
+whenever you want to do a case-insensitive string comparison. 
+#+end_src
+
+
+Problem
+You want to find a substring in a string without regard for case. 
+
+Solution
+
+Use the standard algorithms transform and search, defined in <algorithm>, along
+with your own special character comparison functions, similar to the approach
+presented in. Example 4-22 shows how to do this.
+
+Example 4-22. Case-insensitive string search
+
+#+begin_src cpp
+#include <string>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include <cctype>
+using namespace std;
+inline bool caseInsCharCompSingle(char a, char b) {
+   return(toupper(a) == b);
+}
+string::const_iterator caseInsFind(string& s, const string& p) {
+   string tmp;
+   transform(p.begin( ), p.end( ),             // Make the pattern
+             back_inserter(tmp),                 // upper-case
+             toupper);
+   return(search(s.begin( ), s.end( ),         // Return the iter- 
+                 tmp.begin( ), tmp.end( ),     // ator returned by
+                 caseInsCharCompSingle));        // search
+}
+int main( ) {
+   string s = "row, row, row, your boat";
+   string p = "YOUR";
+   string::const_iterator it = caseInsFind(s, p);
+   if (it != s.end( )) {
+      cout << "Found it!\n";
+   }
+}
+#+end_src 
+
+By returning an iterator that refers to the element in the target string where
+the pattern string starts, you ensure ease of compatibility with other standard
+algorithms since most of them accept iterator arguments.
+
+Discussion
+
+Example 4-22 demonstrates the usual mode of operation when working with standard
+algorithms. Create the functions that do the work, then plug them into the most
+appropriate algorithms as function objects. The charInsCharCompSingle function
+does the real work here but, unlike Example 4-21, this character comparison
+function only uppercases the first argument. This is because a little later in
+caseInsFind, I convert the pattern string to all uppercase before using it to
+search to avoid having to uppercase each pattern character multiple times.
+
+Once the comparison function is out of the way, use the TRansform and search
+standard algorithms to do two things. Use transform to uppercase the entire
+pattern (but not the target string). After that, use search with the comparison
+function to find the location of the substring.
+
+Remember that standard algorithms operate on sequences, not just strings. They
+are general algorithms that operate on, primarily but not exclusively, the
+standard containers, but they make no assumptions about the contents of the
+containers. All the standard algorithms care about is that you supply a
+comparison function (or if not, they use the default operators) that somehow
+compares two elements and returns a bool indicating whether the test is true or
+false.
+
+There is one thing I should point out that looks odd in Example 4-22. You can
+see that caseInsCompare returns a const_iterator, as in
+
+#+begin_src cpp
+string::const_iterator caseInsFind(const string& s,
+                                   const string& p)
+#+end_src 
+What if you want to modify the element that the returned iterator points to?
+This is a reasonable request. The reason it is const is because the strings
+being passed into caseInsFind are const, and therefore you can't get a non-const
+iterator to a const string. If you want an iterator you can use to modify the
+string, remove the const from the parameters and change the function declaration
+to return a string::iterator instead.
 
 * array
 ** allocate 2D array dynamically
@@ -1600,6 +2156,7 @@ int main() {
   return 0;
 }
 #+end_src
+
 ** stack queue and dequeue(double ended queue) example
 #+begin_src cpp
 #include <cstdio>
@@ -1659,6 +2216,7 @@ int main() {
   return 0;
 }
 #+end_src
+
 ** map & set example
 #+begin_src cpp
 #include <cstdio>
@@ -1739,6 +2297,7 @@ int main() {
   return 0;
 }
 #+end_src
+
 ** priority queue
 #+begin_src cpp
 #include <cstdio>
@@ -1794,6 +2353,7 @@ int main() {
 }
 
 #+end_src
+
 ** transforming elements in a sequence
 #+begin_src cpp
 #include <iostream>
@@ -1991,11 +2551,12 @@ int main() {
 
 * read from STDIN
 ** read number
-
+   
 #+begin_src c++
 int n, m;
 cin >> n >> m;  //reads a string "6 6" ==> n = 6, m = 6
 #+end_src
+
 ** read a value into array element
 #+begin_src c++
 float dep[110];
@@ -2004,7 +2565,7 @@ cin >> dep[12]; // read and put the value into slot 12
 
 * examples
 ** reverse single linked list
-
+   
 #+begin_src cpp
 struct Node {
     Node(int pvalue) : value(pvalue), next(nullptr) {}
@@ -2037,6 +2598,7 @@ Node* ReverseLinkedList(Node* prev, Node* cur) {
     return head;
 }
 #+end_src
+
 ** detect cycle in linked list
 
 #+begin_src cpp
@@ -2059,6 +2621,7 @@ Node* ReverseLinkedList(Node* prev, Node* cur) {
       return false;
   }
 #+end_src
+
 ** detect Palindrome string
 
  #+begin_src cpp
@@ -2196,6 +2759,7 @@ int IsPalindrome(const char* const string) {
   return palindrome
 }
 #+end_src
+
 ** check palindrome number v2
 
 #+begin_src cpp
@@ -2471,6 +3035,101 @@ int TripletSum(const int* inputs, const int length, const int k)
 }
 #+end_src
 
+* write case-insensitive string class
+
+Write a ci_string class that is identical to the standard std::string class but
+that is case-insensitive in the same way as the commonly provided extension
+stricmp().
+
+The "how can I make a case-insensitive string?" question is so common that it
+probably deserves its own FAQhence this Item.
+
+Here's what we want to achieve:
+
+ci_string s( "AbCdE" ); 
+// case insensitive
+//
+assert( s == "abcde" );
+assert( s == "ABCDE" );
+// still case-preserving, of course
+//
+assert( strcmp( s.c_str(), "AbCdE" ) == 0 );
+assert( strcmp( s.c_str(), "abcde" ) != 0 );
+
+The key here is to understand what a string actually is in Standard C++. If you
+look in your trusty string header, you'll see something like this:
+
+typedef basic_string<char> string; 
+
+So string isn't really a class; it's a typedef of a template. In turn, the
+basic_string<> template is declared as follows, possibly with additional
+implementation-specific template parameters:
+
+template<class charT, 
+         class traits = char_traits<charT>,
+         class Allocator = allocator<charT> >
+class basic_string;
+
+So "string" really means "basic_string<char, char_traits<char>, allocator<char>
+>," possibly with additional defaulted template parameters specific to the
+implementation you're using. We don't need to worry about the allocator part,
+but the key here is the char_traits part, because char_traits defines how
+characters interactand compare!
+
+So let's compare strings. basic_string supplies useful comparison functions that
+let you compare whether one string is equal to another, less than another, and
+so on. These string comparison functions are built on top of character
+comparison functions supplied in the char_traits template. In particular, the
+char_traits template supplies character comparison functions named eq() and lt()
+for equality and less-than comparisons, and compare() and find() functions to
+compare and search sequences of characters.
+
+If we want these to behave differently, all we have to do is provide a different
+char_traits template. Here's the easiest way:
+
+#+begin_src cpp
+struct ci_char_traits : public char_traits<char> 
+              // just inherit all the other functions
+              //  that we don't need to replace
+{
+  static bool eq( char c1, char c2 )
+    { return toupper(c1) == toupper(c2); }
+  static bool lt( char c1, char c2 )
+    { return toupper(c1) <  toupper(c2); }
+  static int compare( const char* s1,
+                      const char* s2,
+                      size_t n )
+    { return memicmp( s1, s2, n ); }
+           // if available on your platform,
+           //  otherwise you can roll your own
+  static const char*
+  find( const char* s, int n, char a )
+  {
+    while( n-- > 0 && toupper(*s) != toupper(a) )
+    {
+        ++s;
+    }
+    return n >= 0 ? s : 0;
+  }
+};
+#+end_src
+And finally, the key that brings it all together:
+typedef basic_string<char, ci_char_traits> ci_string;
+* why postincrement operator is slower than preincrement
+ Postincrement is usually less efficient than preincrement because it has to
+ remember and return its original value. Postincrement for a class T should
+ generally be implemented using the canonical form, as follows:
+
+#+begin_src cpp
+const T T::operator++(int) 
+{
+  T old( *this ); // remember our original value
+  ++*this;        // always implement postincrement
+                  //   in terms of preincrement
+  return old;     // return our original value
+}
+#+end_src
+
 * useful functions
 ** string_tolower & string_toupper
 
@@ -2484,6 +3143,128 @@ void string_toupper(std::string& str)
     transform(str.begin(), str.end(), str.begin(), ::toupper);
 }
 #+end_src
+** replace(string)
+   
+#+begin_src cpp
+/* String replace. Perhaps not the most efficient, but it works */
+void replace(std::string &str,const std::string &from,const std::string &to)
+{
+    if(from.size()==0) return;
+    bool changed = false;
+
+    std::stringstream ss;
+    for(unsigned int i=0;i<str.size();){
+	if(str.substr(i,from.size())==from){
+	    ss << to;
+	    i+=from.size();
+	    changed = true;
+	} else {
+	    ss << str.at(i);
+	    i++;
+	}
+    }
+    if(changed) str = ss.str();			// copy over original
+}
+#+end_src 
+
+** ends_with (string)
+
+#+begin_src cpp
+
+bool ends_with(const std::string &buf,const std::string &with)
+{
+    size_t buflen = buf.size();
+    size_t withlen = with.size();
+    return buflen>withlen && buf.substr(buflen-withlen,withlen)==with;
+}
+
+bool ends_with(const std::wstring &buf,const std::wstring &with)
+{
+    size_t buflen = buf.size();
+    size_t withlen = with.size();
+    return buflen>withlen && buf.substr(buflen-withlen,withlen)==with;
+}
+#+end_src
+
+** ssprintf for cpp
+#+begin_src cpp
+/*
+ * STD String sprintf wrapper for sane CPP formatting
+ */
+std::string ssprintf(const char *fmt,...)
+{
+    char buf[65536];
+    va_list ap;
+    va_start(ap,fmt);
+    vsnprintf(buf,sizeof(buf),fmt,ap);
+    va_end(ap);
+    return std::string(buf);
+}
+
+#+end_src
+
+** number thousand separator
+#+begin_src cpp
+/*
+ * Insert readability commas into an integer without writing a custom locale facet
+ */
+std::string comma_number_string(int64_t input)
+{
+    std::vector<int16_t> tokens;
+    std::stringstream ss;
+    ss << std::setfill('0');
+    int sign = 1;
+
+    if(input < 0) {
+        sign = -1;
+        input *= -1;
+    }
+
+    while(input >= 1000) {
+        tokens.push_back(input % 1000);
+        input /= 1000;
+    }
+
+    ss << (input * sign);
+
+    for(std::vector<int16_t>::const_reverse_iterator it = tokens.rbegin();
+            it != tokens.rend(); it++) {
+        ss << "," << std::setw(3) << *it;
+    }
+
+    return ss.str();
+}
+#+end_src
+
+** die for cpp
+#+begin_src cpp
+static char *debug_prefix = NULL;
+/*
+ * Print a debugging message, given a va_list
+ */
+void print_debug_message(const char *fmt, va_list ap)
+{
+    /* print debug prefix */
+    fprintf(stderr, "%s: ", debug_prefix);
+
+    /* print the var-arg buffer passed to us */
+    vfprintf(stderr, fmt, ap);
+
+    /* add newline */
+    fprintf(stderr, "\n");
+    (void) fflush(stderr);
+}
+
+/* Print a debugging or informatioal message, then exit  */
+void die(const char *fmt, ...) 
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    print_debug_message(fmt, ap);
+    exit(1);
+}
+#+end_src
 
 * useful resources
 https://cpbook.net/#downloads
@@ -2494,7 +3275,3 @@ http://dipu-bd.github.io/UVA-Arena/
 https://github.com/search?q=topic%3Aproblem-solving&type=Repositories
 ** professinal cpp book code
 http://www.wrox.com/WileyCDA/WroxTitle/Professional-C-3rd-Edition.productCd-1118858050,descCd-DOWNLOAD.html
-
-
-
- 
