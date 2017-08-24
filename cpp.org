@@ -1842,6 +1842,298 @@ being passed into caseInsFind are const, and therefore you can't get a non-const
 iterator to a const string. If you want an iterator you can use to modify the
 string, remove the const from the parameters and change the function declaration
 to return a string::iterator instead.
+** doing a case-insensitive string search
+Problem
+You want to find a substring in a string without regard for case. 
+
+Solution
+
+Use the standard algorithms transform and search, defined in <algorithm>, along
+with your own special character comparison functions, similar to the approach
+presented in. Example 4-22 shows how to do this.
+
+Example 4-22. Case-insensitive string search
+#+begin_src cpp
+#include <string>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include <cctype>
+using namespace std;
+inline bool caseInsCharCompSingle(char a, char b) {
+   return(toupper(a) == b);
+}
+string::const_iterator caseInsFind(string& s, const string& p) {
+   string tmp;
+   transform(p.begin( ), p.end( ),             // Make the pattern
+             back_inserter(tmp),                 // upper-case
+             toupper);
+   return(search(s.begin( ), s.end( ),         // Return the iter- 
+                 tmp.begin( ), tmp.end( ),     // ator returned by
+                 caseInsCharCompSingle));        // search
+}
+int main( ) {
+   string s = "row, row, row, your boat";
+   string p = "YOUR";
+   string::const_iterator it = caseInsFind(s, p);
+   if (it != s.end( )) {
+      cout << "Found it!\n";
+   }
+}
+#+end_src 
+
+By returning an iterator that refers to the element in the target string where
+the pattern string starts, you ensure ease of compatibility with other standard
+algorithms since most of them accept iterator arguments.
+
+Discussion
+
+Example 4-22 demonstrates the usual mode of operation when working with standard
+algorithms. Create the functions that do the work, then plug them into the most
+appropriate algorithms as function objects. The charInsCharCompSingle function
+does the real work here but, unlike Example 4-21, this character comparison
+function only uppercases the first argument. This is because a little later in
+caseInsFind, I convert the pattern string to all uppercase before using it to
+search to avoid having to uppercase each pattern character multiple times.
+
+Once the comparison function is out of the way, use the TRansform and search
+standard algorithms to do two things. Use transform to uppercase the entire
+pattern (but not the target string). After that, use search with the comparison
+function to find the location of the substring.
+
+Remember that standard algorithms operate on sequences, not just strings. They
+are general algorithms that operate on, primarily but not exclusively, the
+standard containers, but they make no assumptions about the contents of the
+containers. All the standard algorithms care about is that you supply a
+comparison function (or if not, they use the default operators) that somehow
+compares two elements and returns a bool indicating whether the test is true or
+false.
+
+There is one thing I should point out that looks odd in Example 4-22. You can
+see that caseInsCompare returns a const_iterator, as in
+
+#+begin_src cpp
+string::const_iterator caseInsFind(const string& s,
+                                   const string& p)
+#+end_src 
+
+What if you want to modify the element that the returned iterator points to?
+This is a reasonable request. The reason it is const is because the strings
+being passed into caseInsFind are const, and therefore you can't get a non-const
+iterator to a const string. If you want an iterator you can use to modify the
+string, remove the const from the parameters and change the function declaration
+to return a string::iterator instead.
+
+** Converting Between Tabs and Spaces in a Text File
+
+Problem
+
+You have a text file that contains tabs or spaces, and you want to convert from
+one to the other. For example, you may want to replace all tabs with three
+spaces, or you may want to do just the opposite and replace occurrences of some
+number of spaces with a single tab.
+
+Solution
+
+Regardless of whether you are replacing tabs with spaces or spaces with tabs,
+use the ifstream and ofstream classes in <fstream>. In the first (simpler) case,
+read data in with an input stream, one character at a time, examine it, and if
+it's a tab, write some number of spaces to the output stream. Example 4-23
+demonstrates how to do this.
+
+Example 4-23. Replacing tabs with spaces
+#+begin_src cpp
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+using namespace std;
+int main(int argc, char** argv) {
+   if (argc < 3)
+      return(EXIT_FAILURE);
+   ifstream in(argv[1]);
+   ofstream out(argv[2]);
+   if (!in || !out)
+     return(EXIT_FAILURE);
+   char c;
+   while (in.get(c)) {
+      if (c == '\t')
+         out << "   "; // 3 spaces
+      else
+         out << c;
+   }
+   
+   out.close( );
+   if (out)
+      return(EXIT_SUCCESS);
+   else
+      return(EXIT_FAILURE);
+}
+#+end_src 
+
+If, instead, you need to replace spaces with tabs, see Example 4-24. It contains
+the function spacesToTabs that reads from an input stream, one character at a
+time, looking for three consecutive spaces. When it finds three in a row, it
+writes a tab to the output stream. For all other characters, or for fewer than
+three spaces, whatever is read from the input stream is written to the output
+stream.
+
+Example 4-24. Replacing spaces with tabs
+#+begin_src cpp
+#include <iostream>
+#include <istream>
+#include <ostream>
+#include <fstream>
+#include <cstdlib>
+using namespace std;
+void spacesToTabs(istream& in, ostream& out, int spaceLimit) {
+   int consecSpaces = 0;
+   char c;
+   while (in.get(c)) {
+      if (c != ' ') {
+         if (consecSpaces > 0) {
+            for (int i = 0; i < consecSpaces; i++) {
+               out.put(' ');
+            }
+            consecSpaces = 0;
+         }
+         out.put(c);
+      } else {
+         if (++consecSpaces == spaceLimit) {
+            out.put('\t');
+            consecSpaces = 0;
+         }
+      }
+   }
+}
+int main(int argc, char** argv) {
+   if (argc < 3)
+      return(EXIT_FAILURE);
+   ifstream in(argv[1]);
+   ofstream out(argv[2]);
+   if (!in || !out)
+      return(EXIT_FAILURE);
+   spacesToTabs(in, out, 3);
+   out.close( );
+   if (out)
+      return(EXIT_SUCCESS);
+   else
+      return(EXIT_FAILURE);
+}
+#+end_src 
+
+Discussion
+
+The mechanism for both of these solutions is the same; only the algorithms
+differ. Read characters from an input stream using get, and put them to an
+output stream with put. Put your logic for doing the translation between calls
+to these two functions.
+
+You probably noticed in Example 4-24 that in main I declared in and out to be of
+types ifstream and ofstream, respectively, and that the parameters to
+spacesToTabs are actually istream and ostream. I did this to allow spacesToTabs
+to work on any kind of input or output streams (well, not any kind of streamones
+that inherit from basic_istream or basic_ostream), and not just file streams.
+For example, you may have the text you want to reformat in a string stream
+(istringstream and ostringstream in <sstream>). In that case, do something like
+this:
+
+#+begin_src cpp
+istringstream istr;
+ostringstream ostr;
+// fill up istr with text...
+spacesToTabs(istr, ostr);
+#+end_src 
+
+As with strings, streams are actually class templates that are parameterized on
+the type of character the stream operates on. For example, an ifstream is a
+typedef for basic_ifstream<char>, and a wifstream is a typedef for
+basic_ifstream<wchar_t>. Thus, if you need spacesToTabs from Examples Example
+4-23 or Example 4-24 to work on a stream of any kind of character, you can use
+the class templates instead of the typedefs:
+
+#+begin_src cpp
+template<typename T>
+void spacesToTabs(std::basic_istream<T>& 
+in,
+                  std::basic_ostream<T>& out,
+                  int spaceLimit) { //...
+#+end_src
+
+** Wrapping Lines in a Text File
+
+Problem
+
+You want to "wrap" text at a specific number of characters in a file. For
+example, if you want to wrap text at 72 characters, you would insert a new-line
+character after every 72 characters in the file. If the file contains
+human-readable text, you probably want to avoid splitting words.
+
+Solution
+
+Write a function that uses input and output streams to read in characters with
+istream::get(char), do some bookkeeping, and write out characters with
+ostream::put(char). Example 4-25 shows how to do this for text files that
+contain human-readable text without splitting words.
+
+Example 4-25. Wrapping text
+#+begin_src cpp
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <string>
+#include <cctype>
+#include <functional>
+using namespace std;
+void textWrap(istream& in, ostream& out, size_t width) {
+   string tmp;
+   char cur = '\0';
+   char last = '\0';
+   size_t i = 0;
+   while (in.get(cur)) {
+      if (++i == width) {
+         ltrimws(tmp);                  // ltrim as in Recipe
+         out << '\n' << tmp;            // 4.1
+         i = tmp.length( );
+         tmp.clear( );
+      } else if (isspace(cur) &&   // This is the end of
+                 !isspace(last)) { // a word
+         out << tmp;
+         tmp.clear( );
+      }
+      tmp += cur;
+      last = cur;
+   }
+}
+int main(int argc, char** argv) {
+   if (argc < 3)
+      return(EXIT_FAILURE);
+   int w = 72;
+   ifstream in(argv[1]);
+   ofstream out(argv[2]);
+   if (!in || !out)
+     return(EXIT_FAILURE);
+   if (argc == 4)
+     w = atoi(argv[3]);
+   textWrap(in, out, w);
+   out.close( );
+   if (out)
+      return(EXIT_SUCCESS);
+   else
+      return(EXIT_FAILURE);
+}
+#+end_src 
+
+Discussion
+
+textWrap reads characters, one at a time, from the input stream. Each character
+is appended to a temporary string, tmp, until it reaches the end of a word or
+the maximum line width. If it reaches the end of a word but is not yet at the
+maximum line width, the temporary string is written to the output stream.
+Otherwise, if the maximum line width has been exceeded, a new line is written to
+the output stream, the whitespace at the beginning of the temporary string is
+removed, and the string is written to the output stream. In this way, textWrap
+writes as much as it can to the output stream without exceeding the maximum line
+width. Instead of splitting a word, it bumps the word to the next line.
 
 * array
 ** allocate 2D array dynamically

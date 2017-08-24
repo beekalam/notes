@@ -2,6 +2,491 @@
 #+AUTHOR:  Mohammad Reza Mansouri
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
 #+STARTUP: overview
+* data types
+** OVERFLOW IN char AND UNSIGNED char DATA TYPES
+
+Overflow means you are carrying out an operation such that the value either
+exceeds the maximum value or is less than the minimum value of the data type.
+
+Program
+
+#+begin_src 
+// the program gives maximum and minimum values of data type
+#include <stdio.h>
+main()
+{
+  char i,j ;
+  i = 1;
+  while (i > 0) // A
+  {
+    j = i; // B
+    i++; // C
+  }
+  printf ("the maximum value of char is %d\n",j);
+  printf ("the value of char after overflow is %d\n",i);
+}
+#+end_src
+** char representations
+If you declared C as a character as
+
+char c;
+
+then you can assign A as follows:
+
+#+begin_src c
+c = 'A';
+c = 65;
+c = '\x41';   // Hexadecimal representation
+c = '\101';   // Octal representation
+#+end_src 
+
+You cannot write c = ‘A’ because ‘A’ is interpreted as a string.
+* preprocessor
+** undef
+If you want to nullify the effect of the define directive and specify a new value, then you can use the undef directive.
+#+begin_src c
+#include <stdio.h>
+#define VAL 40;      //A
+#undef VAL           //B
+#define VAL 40       //C
+main()
+{
+    printf ("%d\n", VAL);   //D
+}
+#+end_src
+
+** ifdef
+The ifdef directive makes substitutions based on whether a particular identifier is defined.
+
+Suppose we have three files:
+#+begin_src c
+file1.h
+#define USD 1
+
+file2.h
+#define UKP 1
+
+file3
+#include <stdio.h>
+#include <file1.h>       //A
+#ifdef USD                  // B
+       #define currency_rate 46     //C
+#endif                //D
+
+#ifdef UKP                  // E
+   #define currency_rate 100 //F
+#endif                //G
+main()
+{
+    int rs;
+    rs = 10 * currency_rate;  //H
+    printf ("%d\n", rs);
+}
+#+end_src 
+
+** ifndef
+#ifndef is used to check whether a particular symbol is defined.
+
+Suppose wse have three files:
+
+#+begin_src c
+file1.h
+#define USD 1
+
+file2.h
+#define UKP 1
+
+file3
+#include <stdio.h>
+#include <file1.h>      //A
+
+#ifndef USD                   // B
+       #define currency_rate 100     //C
+#endif                //D
+
+#ifndef UKP                  // E
+   #define currency_rate 46 //F
+#endif                //G
+main()
+{
+    int rs;
+    rs = 10 * currency_rate;  //H
+    printf ("%d\n", rs);
+}
+#+end_src 
+
+** if
+#if allows you to define more generalized conditions. Multiple conditions, which are connected by relational operators such as AND(&&), OR(||), are allowed.
+Suppose we have three files:
+#+begin_src c
+file1.h
+#define USD 1
+
+file2.h
+#define UKP 1
+
+file3
+#include <stdio.h>
+#include <file1.h>                //A
+
+#if ((1>0) &&(defined (USD))      // B
+       #define currency_rate 46                     //C
+#endif                       //D
+
+#if (defined (UKP))                     // E
+   #define currency_rate 100 //F
+#endif                       //G
+main()
+{
+    int rs;
+    rs = 10 * currency_rate; //H
+    printf ("%d\n", rs);
+}
+#+end_src
+
+** ifelif
+
+ifelif allows us to take one action if there are multiple decision points. For
+example, if you want to take the currency rate of 1 if USD and UKP are not
+defined, you can write the following program.
+
+Suppose we have three files:
+#+begin_src c
+file1.h
+#define USD 1
+
+file2.h
+#define UKP 1
+
+file3
+#include <stdio.h>
+#include <file1.h>             //A
+
+#if (defined (USD))                  // B
+     #define currency_rate 46
+#elif (defined (UKP))
+     #define currency_rate 100       //C
+#else
+     # define currency_rate 1        //D
+#endif
+
+main()
+{
+    int rs;
+    rs = 10 * currency_rate;         //H
+    printf ("%d\n", rs);
+}
+#+end_src 
+
+** ERROR DIRECTIVE
+
+The error directive is used to specify an error message for a specific situation. In the following program, the error message is displayed if USD and UKP are not defined.
+Suppose we have three files:
+#+begin_src c
+file1.h
+#define USD 1
+
+file2.h
+#define UKP 1
+
+file3
+#include <stdio.h>
+#include <file1.h>                 //A
+
+#if !defined (USD) || !defined (UKP)     // B
+#error "ERROR: NO_CURRENCY rate is specified." //C
+#endif
+
+main()
+{
+    int rs;
+    rs = 10 * currency_rate;        //D
+    printf ("%d\n", rs);
+}
+#+end_src 
+
+** #line
+
+The #line directive allows you to define arbitrary line numbers for the source
+lines. Normally, the compiler counts lines starting at line number 1; using the
+#line directive, you can specify an arbitrary line number at any point. The
+compiler then uses that line number for subsequent counts.
+
+#+begin_src c
+#include <stdio.h>
+main()
+{
+    printf("A\n");          //A
+
+     #line100               //H
+    printf("B\n");          //B
+    printf("C FILE %s LINE %d\n", __FILE__, __LINE__ );//C
+     #line200               //K
+
+    printf("D\n");          //D
+    printf("E\n");          //E
+}
+#+end_src 
+
+Explanation
+
+The statement H indicates the #line directive.
+The #line number in statement B is taken as 100 and for statement C, it is taken as 101.
+The #line number in statement D is taken as 200 and for statement E, it is taken as 201.
+If you introduce any error in statement B then the compiler will display the error at #line number 100.
+C has provided two special identifiers: __FILE__ and __LINE__, which indicate the file name of the source file and the current line number, respectively.
+
+Point to Remember
+#line is used to indicate line numbers which can be used for debugging.
+
+* printf
+** Program/Example
+The general form of a placeholder is:
+    % flags field-width precision prefix type-identifier.
+** Type-identifiers
+The type-identifiers are as follows:
+  d, i Signed integers
+  o Unsigned integers displayed in octal form.
+  u Unsigned integers in decimal form.
+  x Unsigned integers in hexadecimal form, and the hexadecimal characters a, b, c, d, e, and f printed in lowercase.
+  X Unsigned integer in hexadecimal form, and the hexadecimal characters A, B, C, D, E, and F printed in uppercase.
+  c Any value converted to unsigned char and displayed; c is used mainly for printing characters.
+  s The argument is converted to a character array and is printed; the last null in the string is not printed.
+  f Floating point.
+  e, E Floating point displayed in exponential form. It will have one digit to
+    the left of the decimal point; the number of digits on the right side of the
+    decimal point depends on the required precision.
+
+  g, G The value can be printed in floating point or exponential form. The
+      exponential form is used if the exponent is less than –1 or if the exponent
+      causes more places than required by the specified precision; the decimal point
+      appears only if it is followed by a digit.
+
+  n This indicates to print the number of characters that are printed so far by printf.
+  p It indicates an additional argument pointer to void; the value of the pointer is converted to a sequence of characters.
+
+** Type prefixes
+  h It can appear before type indicators d, i, o, u, x, and X. It indicates that
+    the value to be displayed should be interpreted as short; for example, short
+    integer (hd) and short unsigned integer (hu).
+
+  l It can appear before type-identifiers d, i, o, u, x, and X. It indicates
+    that the value to be displayed should be interpreted as long; for example,
+    long integer (hd) and long unsigned integer (hu).
+
+  l, L Available for type-identifiers e, E, f, g, and G. It indicates that a
+        value should be indicated as long double.
+
+** Field-width
+ 1. *Field-width* indicates the least number of columns that will be allocated to
+    the output. For example, if you write %4d to i and the value of i is 10,
+    then 4 columns are allocated for i and 2 blank are added on left side of
+    value of i. So the output is bb10. Here, b indicates blank. 
+
+ 2. If the value is more than the specified column, field-width is ignored and
+    the number of columns used is equal to the number of columns required by the
+    arguments. So if i is 12345 then 5 columns are used, even if %4d is
+    specified.
+
+ 3. In any circumstance, the output width is not shortened, because of field-width.
+
+ 4. If you specify * instead of field-width then you have to specify additional
+    arguments. For example,
+#+begin_src c
+printf ("%*d\n", 5, 20);     // A
+printf ("%*d\n", 20, 5);     // B
+ #+end_src 
+ In A, 5 is substituted for * and it indicates putting the value 20 in 5 columns.
+ In B, 20 is substituted for * and it indicates putting the value 5 in 20 columns.
+
+** Precision
+ 1. Precision indicates the minimum number of digits printed for type integers d, i, o, u, x, and X. For example,
+#+begin_src c
+i.    printf("%10.4d\n", 35)
+#+end_src 
+
+ 2. Here 10 is the field-width and 4 is the precision, so 10 columns are used
+    for the 4-digit output. To make 35 into 4 digits, two 0s are added to the
+    left side to make it 0035. To print 0035 in 10 columns, blanks are added to
+    make the output bbbbbb0035.
+
+ 3. For floating arguments, precision indicates how many digits are printed
+    after decimal points. If precision is more than the number of digits on the
+    right side of the decimal point, 0s are added to the right side.
+
+ 4. If precision indicates too few digits, then it is ignored and the number of
+    digits are printed as necessary.
+
+** Flags
+ 1. Flag characters are used to give directives for the output. You can use multiple flag characters in any order.
+
+ 2. The flag characters are as follows:
+    — Indicates that output is left justified.
+          printf("%-10.4d\n", 25)
+      It causes the number to be printed as 0025bbbbbb. Thus, blanks are added to the right side.
+      In the absence of a flag, it is printed as bbbbbb0025.
+      + Indicates that i number is printed using a sign character (+ or —).
+        printf("%+d\n", -25);
+        printf("%+d\n", 25);
+      It causes printing as
+      -25
+      +25
+      <space> Indicates a space for positive values so that positive values and negative values are aligned. For example,
+      printf("% d\n", 25);
+      printf("% d", 25);
+      It causes printing in the form of
+      b25
+      25
+      In the first case, blank is displayed.
+
+      − # Indicates that the value should be converted to another form before
+          displaying. For example, for hexadecimal values you can indicate 0X; for the
+          floating data type, # indicates that the decimal point should always be
+          included in the output.
+
+      0 Used with whole and real numbers, 0 causes 0s to be padded to complete
+        the field width. If the precision is specified as 0, then this flag is
+        ignored; if the 0 and – flags are both specified, the 0 flag is ignored.
+* scanf
+** Introduction
+
+The scanf placeholder consists of % at the beginning and a type indicator at the
+end. Apart from that it can have *, a maximum field-width indicator, and a type
+indicator modifier, for example,
+
+    %10.2f,%10d
+
+** Type indicators
+d, i Used for signed integers; the expected argument should be a pointer to int.
+o Used for unsigned int expected's value. It should be an integer in octal form.
+U Unsigned integer in decimal form.
+X, X Unsigned integer in hexadecimal form.
+E, E, f, g, G Floating-point values.
+S Character string. It matches a sequence of non-whitespace characters terminated by an end-of-line or end-of-file character. The additional argument should be a pointer to char and should point to an area that is large enough to hold the input string as well as the NULL terminator.
+C Matches the number of characters according to a specified field-width. If no width is specified then a single character is assumed. The additional argument must be a pointer to char; the area pointed to should be large enough to hold the specified number of characters.
+N Does not read any input but writes the number of characters so far in the target variable.
+Use of *
+The * is used to suppress input. For example, with %*d, if your input consists of 5 values and you want to ignore the middle 3 values, you can write:
+scanf(" %d %*d %*d%*d %d ", &i, &j)
+So, if your input is
+10 20 30 40 50
+it will get the value 10 and j will get the value 50. This is useful when you are getting the input from a file.
+Field-width
+It indicates the maximum number of characters that are read into the variables.
+* array
+** ADDRESS OF EACH ELEMENT IN AN ARRAY
+
+Each element of the array has a memory address. The following program prints an array limit value and an array element address.
+
+#+begin_src c
+#include <stdio.h>
+void printarr(int a[]);
+main()
+{
+    int a[5];
+    for(int i = 0;i<5;i++)
+    {
+        a[i]=i;
+    }
+    printarr(a);
+}
+void printarr(int a[])
+{
+    for(int i = 0;i<5;i++)
+    {
+        printf("value in array %d\n",a[i]);
+    }
+}
+void printdetail(int a[])
+{
+    for(int i = 0;i<5;i++)
+    {
+        printf("value in array %d and address is %16lu\n",a[i],&a[i]);
+\\ A
+    }
+}
+#+end_src 
+
+** ACCESSING AN ARRAY USING POINTERS
+You can access an array element by using a pointer. For example, if an array stores integers, then you can use a pointer to integer to access array elements.
+#+begin_src c
+#include <stdio.h>
+void printarr(int a[]);
+void printdetail(int a[]);
+main()
+{
+    int a[5];
+    for(int i = 0;i<5;i++)
+    {
+        a[i]=i;
+    }
+    printdetail(a);
+}
+void printarr(int a[])
+{
+    for(int i = 0;i<5;i++)
+    {
+        printf("value in array %d\n",a[i]);
+    }
+}
+void printdetail(int a[])
+{
+    for(int i = 0;i<5;i++)
+    {
+        printf("value in array %d and address is %8u\n",a[i],&a[i]);
+    }
+}
+void print_usingptr(int a[]) \\ A
+{
+    int *b;    \\ B
+    b=a;               \\ C
+    for(int i = 0;i<5;i++)
+    {
+        printf("value in array %d and address is %16lu\n",*b,b); \\ D
+        b=b+2; \\E
+    }
+}
+#+end_src
+
+** POINTER ARRAYS
+You can define a pointer array similarly to an array of integers. In the pointer array, the array elements store the pointer that points to integer values.
+#+begin_src c
+#include <stdio.h>
+void printarr(int *a[]);
+void printarr_usingptr(int *a[]);
+int *a[5];
+main()
+{
+
+    int i1=4,i2=3,i3=2,i4=1,i5=0;
+    a[0]=&i1;
+    a[1]=&i2;
+    a[2]=&i3;
+    a[3]=&i4;
+    a[4]=&i5;
+
+    printarr(a);
+    printarr_usingptr(a);
+}
+void printarr(int *a[])
+{
+    printf("Address        Address in array         Value\n");
+    for(int  j=0;j<5;j++)
+    {
+        printf("%16u           %16u                 %d\n",  a[j],(a[j] - a[0]),*a[j]);
+    }
+}
+void printarr_usingptr(int *a[])
+{
+    int j=0;
+    printf("using pointer\n");
+    for( j=0;j<5;j++)
+    {
+        printf("value of elements   %d %16lu %16lu\n",**a,*a,a);
+        a++;
+    }
+}
+#+end_src
 
 * character strings
 ** Character String Literals (String Constants)
@@ -707,8 +1192,7 @@ int main (void)
 ** duplicate string(glibc 6)
 
 #+begin_src c
-char *
-__strdup (const char *s)
+char * __strdup (const char *s)
 {
   size_t len = strlen (s) + 1;
   void *new = malloc (len);
@@ -1692,6 +2176,7 @@ void error_exit(unsigned int error_n) // Print a last error message
   exit(1);
 }
 #+end_src
+
 ** swapf
    
 #+begin_src c
@@ -1719,6 +2204,7 @@ void selection_sortf( float
   }
   }
 #+end_src
+
 ** variable number of arguments
 #+begin_src c
 // the mandatory first argument indicates the number of arguments.
@@ -1734,8 +2220,8 @@ double add( int n, ... )
   return sum;
 }
 #+end_src
-** timestamp
 
+** timestamp
 #+begin_src c
 #include <time.h>
 void timestamp()
@@ -1745,6 +2231,352 @@ void timestamp()
     printf("%s",asctime( localtime(&ltime) ) );
 }
 #+end_src
+
+* algorithms
+** sorting
+*** bubble sort
+#+begin_src c
+#include <stdio.h>
+#define MAX 10
+void swap(int *x,int *y)
+{
+   int temp;
+   temp = *x;
+   *x = *y;
+   *y = temp;
+}
+void bsort(int list[], int n)
+{
+   int i,j;
+   for(i=0;i<(n-1);i++)
+      for(j=0;j<(n-(i+1));j++)
+             if(list[j] > list[j+1])
+                    swap(&list[j],&list[j+1]);
+}
+void readlist(int list[],int n)
+{
+   int i;
+   printf("Enter the elements\n");
+   for(i=0;i<n;i++)
+       scanf("%d",&list[i]);
+}
+
+void printlist(int list[],int n)
+{
+   int i;
+   printf("The elements of the list are: \n");
+   for(i=0;i<n;i++)
+      printf("%d\t",list[i]);
+}
+
+void main()
+{
+   int list[MAX], n;
+   printf("Enter the number of elements in the list max = 10\n");
+   scanf("%d",&n);
+   readlist(list,n);
+   printf("The list before sorting is:\n");
+   printlist(list,n);
+   bsort(list,n);
+   printf("The list after sorting is:\n");
+   printlist(list,n);
+}
+#+end_src
+
+*** quick sort
+
+In the quick sort method, an array a[1],…..,a[n] is sorted by selecting some
+value in the array as a key element. We then swap the first element of the list
+with the key element so that the key will be in the first position. We then
+determine the key's proper place in the list. The proper place for the key is
+one in which all elements to the left of the key are smaller than the key, and
+all elements to the right are larger.
+
+To obtain the key's proper position, we traverse the list in both directions
+using the indices i and j, respectively. We initialize i to that index that is
+one more than the index of the key element. That is, if the list to be sorted
+has the indices running from m to n, the key element is at index m, hence we
+initialize i to (m+1). The index i is incremented until we get an element at the
+ith position that is greater than the key value. Similarly, we initialize j to n
+and go on decrementing j until we get an element with a value less than the
+key's value.
+
+We then check to see whether the values of i and j have crossed each other. If
+not, we interchange the elements at the key (mth)position with the elements at
+the jth position. This brings the key element to the jth position, and we find
+that the elements to its left are less than it, and the elements to its right
+are greater than it. Therefore we can split the list into two sublists. The
+first sublist is composed of elements from the mth position to the (j–1)th
+position, and the second sublist consists of elements from the (j+1)th position
+to the nth position. We then repeat the same procedure on each of the sublists
+separately.
+
+Choice of the key
+We can choose any entry in the list as the key. The choice of the first entry is often a poor choice for the key, since if the list has already been sorted, there will be no element less than the first element selected as the key. So, one of the sublists will be empty. So we choose a key near the center of the list in the hope that our choice will partition the list in such a manner that about half of the elements will end up on one side of the key, and half will end up on the other.
+
+Therefore the function getkeyposition is
+
+#+begin_src c
+int getkeyposition(int i,j)
+{
+   return(( i+j )/ 2);
+}
+#+end_src 
+The choice of the key near the center is also arbitrary, so it is not necessary
+to always divide the list exactly in half. It may also happen that one sublist
+is much larger than the other. So some other method of selecting a key should be
+used. A good way to choose a key is to use a random number generator to choose
+the position of the next key in each activation of quick sort. Therefore, the
+function getkeyposition is:
+
+#+begin_src c
+int getkeyposition(int i,j)
+{
+   return(random number in the range of i to j);
+}
+#+end_src 
+
+#+begin_src c
+#include <stdio.h>
+#define MAX 10
+void swap(int *x,int *y)
+{
+   int temp;
+   temp = *x;
+   *x = *y;
+   *y = temp;
+}
+int getkeyposition(int i,int j )
+{
+   return((i+j) /2);
+}
+void qsort(int list[],int m,int n)
+{
+   int key,i,j,k;
+   if( m < n)
+   {
+      k = getkeyposition(m,n);
+      swap(&list[m],&list[k]);
+      key = list[m];
+      i = m+1;
+      j = n;
+      while(i <= j)
+      {
+         while((i <= n) && (list[i] <= key))
+                i++;
+         while((j >= m) && (list[j] > key))
+                j-;
+         if( i < j)
+                swap(&list[i],&list[j]);
+      }
+      swap(&list[m],&list[j]);
+      qsort(list[],m,j-l);
+      qsort(list[],j+1,n);
+   }
+}
+void readlist(int list[],int n)
+{
+   int i;
+   printf("Enter the elements\n");
+   for(i=0;i<n;i++)
+       scanf("%d",&list[i]);
+}
+void printlist(int list[],int n)
+{
+   int i;
+   printf("The elements of the list are: \n");
+   for(i=0;i<n;i++)
+       printf("%d\t",list[i]);
+}
+
+void main()
+{
+   int list[MAX], n;
+   printf("Enter the number of elements in the list max = 10\n");
+   scanf("%d",&n);
+   readlist(list,n);
+   printf("The list before sorting is:\n");
+   printlist(list,n);
+   qsort(list,0,n-1);
+   printf("\nThe list after sorting is:\n");
+   printlist(list,n);
+}
+#+end_src 
+Example
+Input
+Enter the number of elements in the list, max = 10
+10
+Enter the elements
+7
+99
+23
+11
+65
+43
+23
+21
+21
+77
+Output
+The list before sorting is:
+The elements of the list are:
+7 99 23 11 65 43 23 21 21 77
+The list after sorting is:
+The elements of the list are:
+7 11 21 21 23 23 43 65 77 99
+
+*** merge sort
+This is another sorting technique having the same average-case and worst-case
+time complexities, but requiring an additional list of size n.
+
+The technique that we use is the merging of the two sorted lists of size m and n
+to form a single sorted list of size (m + n). Given a list of size n to be
+sorted, instead of viewing it to be one single list of size n, we start by
+viewing it to be n lists each of size 1, and merge the first list with the
+second list to form a single sorted list of size 2.
+
+Similarly, we merge the third and the fourth lists to form a second single
+sorted list of size 2, and so on. This completes one pass. We then consider the
+first sorted list of size 2 and the second sorted list of size 2, and merge them
+to form a single sorted list of size 4.
+
+Similarly, we merge the third and the fourth sorted lists, each of size 2, to
+form the second single sorted list of size 4, and so on. This completes the
+second pass.
+
+In the third pass, we merge these adjacent sorted lists, each of size 4, to form
+sorted lists of size 8. We continue this process until we finally obtain a
+single sorted list of size n as shown next.
+
+To carry out this task, we require a function to merge the two sorted lists of
+size m and n to form a single sorted list of size (m + n). We also require a
+function to carry out one pass of the list to merge the adjacent sorted lists of
+the specified size. This is because we have to carry out repeated passes of the
+given list.
+
+In the first pass, we merge the adjacent lists of size 1. In the second pass, we
+merge the adjacent lists of size 2, and so on. Therefore, we will call this
+function by varying the size of the lists to be merged.
+
+#+begin_src c
+#include <stdio.h>
+#define MAX 10
+void merge(int list[],int list1[],int k,int m,int n)
+{
+    int i,j;
+   i=k;
+   j = m+1;
+   while( i <= m && j <= n)
+   {
+      if(list[i] <= list[j])
+      {
+             list1[k] = list[i];
+         i++;
+         k++;
+      }
+      else
+      {
+            list1[k] = list[j];
+         j++;
+         k++;
+      }
+   }
+   while(i <= m)
+   {
+         list1[k] = list[i];
+      i++;
+      k++;
+   }
+   while (i <= n )
+   {
+         list1[k] = list[j];
+      j++;
+      k++;
+   }
+}
+
+void mpass( int list[],int list1[],int l,int n)
+{
+   int i;
+   i = 0;
+   while( i <= (n-2*l+1))
+   {
+      merge(list,list1,i,(i+l-1),(i+2*l-1));
+      i = i + 2*l;
+   }
+   if((i+l-1) < n)
+       merge(list,list1,i,(i+l-1),n);
+   else
+       while (i <= n )
+       {
+              list1[i] = list[i];
+              i++;
+       }
+   }
+   void msort(int list[], int n )
+   {
+      int l;
+      int list1[MAX];
+      l =1;
+      while (l <= n )
+      {
+         mpass(list,list1,l,n);
+         l = l*2;
+         mpass(list1,list,l,n);
+         l = l*2;
+      }
+   }
+
+   void readlist(int list[],int n)
+   {
+      int i;
+      printf("Enter the elements\n");
+      for(i=0;i<n;i++)
+          scanf("%d",&list[i]);
+   }
+
+   void printlist(int list[],int n)
+   {
+      int i;
+      printf("The elements of the list are: \n");
+      for(i=0;i<n;i++)
+          printf("%d\t",list[i]);
+   }
+
+void main()
+{
+   int list[MAX], n;
+   printf("Enter the number of elements in the list max = 10\n");
+   scanf("%d",&n);
+   readlist(list,n);
+   printf("The list before sorting is:\n");
+   printlist(list,n);
+   msort(list,n-1);
+   printf("The list after sorting is:\n");
+   printlist(list,n);
+}
+#+end_src 
+Example
+Input
+Enter the number of elements in the list, max = 10
+10
+Enter the elements
+11
+2
+45
+67
+33
+22
+11
+0
+34
+23
+Output
+The list before sorting has the following elements:
+11 2 45 67 33 22 11 0 34 23
+The list after sorting has the following elements:
+0 2 11 11 22 23 33 34 45 67
+
 * libpcap
 ** open the default device 
 
