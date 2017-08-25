@@ -2312,7 +2312,14 @@ to the nth position. We then repeat the same procedure on each of the sublists
 separately.
 
 Choice of the key
-We can choose any entry in the list as the key. The choice of the first entry is often a poor choice for the key, since if the list has already been sorted, there will be no element less than the first element selected as the key. So, one of the sublists will be empty. So we choose a key near the center of the list in the hope that our choice will partition the list in such a manner that about half of the elements will end up on one side of the key, and half will end up on the other.
+
+We can choose any entry in the list as the key. The choice of the first entry is
+often a poor choice for the key, since if the list has already been sorted,
+there will be no element less than the first element selected as the key. So,
+one of the sublists will be empty. So we choose a key near the center of the
+list in the hope that our choice will partition the list in such a manner that
+about half of the elements will end up on one side of the key, and half will end
+up on the other.
 
 Therefore the function getkeyposition is
 
@@ -2576,6 +2583,2922 @@ The list before sorting has the following elements:
 11 2 45 67 33 22 11 0 34 23
 The list after sorting has the following elements:
 0 2 11 11 22 23 33 34 45 67
+
+*** HEAPSORT
+Heapsort is a sorting technique that sorts a contiguous list of length n with
+O(n log2 (n)) comparisons and movement of entries, even in the worst case. Hence
+it achieves the worst-case bounds better than those of quick sort, and for the
+contiguous list, it is better than merge sort, since it needs only a small and
+constant amount of space apart from the list being sorted.
+
+Heapsort proceeds in two phases. First, all the entries in the list are arranged
+to satisfy the heap property, and then the top of the heap is removed and
+another entry is promoted to take its place repeatedly. Therefore, we need a
+function that builds an initial heap to arrange all the entries in the list to
+satisfy the heap property. The function that builds an initial heap uses a
+function that adjusts the ith entry in the list, whose entries at 2i and 2i + 1
+positions already satisfy the heap property in such a manner that the entry at
+the ith position in the list will also satisfy the heap property.
+
+#+begin_src c
+#include <stdio.h>
+#define MAX 10
+void swap(int *x,int *y)
+{
+   int temp;
+   temp = *x;
+   *x = *y;
+   *y = temp;
+}
+
+void adjust( int list[],int i, int n)
+{
+   int j,k,flag;
+   k = list[i];
+   flag = 1;
+   j = 2 * i;
+   while(j <= n && flag)
+   {
+      if(j < n && list[j] < list[j+1])
+      j++;
+      if( k >= list[j])
+               flag =0;
+      else
+      {
+         list[j/2] = list[j];
+         j = j *2;
+      }
+   }
+   list [j/2] = k;
+}
+
+void build_initial_heap( int list[], int n)
+{
+   int i;
+   for(i=(n/2);i>=0;i-)
+       adjust(list,i,n-1);
+}
+
+void heapsort(int list[],int n)
+{
+   int i;
+   build_initial_heap(list,n);
+   for(i=(n-2); i>=0;i-)
+   {
+      swap(&list[0],&list[i+1]);
+      adjust(list,0,i);
+   }
+}
+
+void readlist(int list[],int n)
+{
+   int i;
+   printf("Enter the elements\n");
+   for(i=0;i<n;i++)
+       scanf("%d",&list[i]);
+}
+
+void printlist(int list[],int n)
+{
+   int i;
+   printf("The elements of the list are: \n");
+   for(i=0;i<n;i++)
+       printf("%d\t",list[i]);
+}
+
+void main()
+{
+   int list[MAX], n;
+   printf("Enter the number of elements in the list max = 10\n");
+   scanf("%d",&n);
+   readlist(list,n);
+   printf("The list before sorting is:\n");
+   printlist(list,n);
+   heapsort(list,n);
+   printf("The list after sorting is:\n");
+   printlist(list,n);
+}
+#+end_src 
+
+Example
+
+Input
+Enter the number of elements in the list, max = 10
+10
+Enter the elements
+56
+1
+34
+42
+90
+66
+87
+12
+21
+11
+
+Output
+The list before sorting is:
+The elements of the list are:
+56 1 34 42 90 66 87 12 21 11
+The list after sorting is:
+The elements of the list are:
+1 11 12 21 34 42 56 66 87 90
+** HASHING FUNCTIONS
+Some of the methods of defining a hash function are discussed in the following paragraphs.
+
+- Modular Arithmetic
+In modular arithmetic, first the key is converted to an integer, then it is
+divided by the size of the index range, and the remainder is taken to be the
+hash value. The spread achieved depends very much on the modulus. If the modulus
+is the power of small integers such as 2 or 10, then many keys tend to map into
+the same index, while other indices remain unused. The best choice for the
+modulus is often, but not always, a prime number, which usually has the effect
+of spreading the keys quite uniformly.
+
+ - Truncation
+Truncation ignores part of the key, and uses the remainder directly as the hash
+value (using numeric code to represent non-numeric field data). If the keys, for
+example, are eight-digit numbers and the hash table has 1000 entries, then the
+first, second, and fifth digits from the right side might make the hash value.
+So, 62538194 maps to 394. It is a fast method, but it often fails to distribute
+keys evenly.
+
+ - Folding
+In folding, the identifier is partitioned into several parts, all but the last
+part being of the same length. These parts are then added together to obtain the
+hash value. For example, an eight-digit integer can be divided into groups of
+three, three, and two digits. The groups are then added together, and truncated,
+if necessary, to be in the proper range of indices. So 62538149 maps to 625 +
+381 + 94 = 1100, truncated to 100. Since all information in the key can affect
+the value of the function, folding often achieves a better spread of indices
+than truncation.
+
+ - Mid-square method
+In this method, the identifier is squared (using numeric code to represent non-
+numeric field data), and then the appropriate number of bits from the middle of
+the square are used to get the hash value. Since the middle bits of the square
+usually depend on all the characters in the identifier, it is expected that
+different identifiers will result in different values. The number of middle bits
+that we select depends on table size. Therefore, if r is the number of middle
+bits used to form the hash value, then the table size will be 2r. So when we use
+the mid- square method, the table size should be a power of 2.
+
+#+begin_src c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define SIZE 50
+#define MAX 10
+typedef struct node
+{
+    char symbol[MAX];
+    int value;
+    struct node *next;
+} entry;
+typedef entry *entry_ptr;
+
+int hash_value(char * name)
+{
+    int sum=0;
+    while( *name != '\0')
+    {
+        sum += *name;
+        name++;
+    }
+    return(sum % SIZE);
+}
+void initialize( entry_ptr table[])
+{
+    int i=0;
+    for(i=0; i<SIZE; i++)
+        table[i] = NULL;
+}
+void insert( entry_ptr table[], char *name, int val)
+{
+    int h, flag = 1;
+    entry_ptr temp;
+    h = hash_value(name);
+    temp = table[h];
+    while( temp != NULL && flag )
+    {
+        if( strcmp(temp->symbol,name) == 0)
+        {
+            printf("The symbol %s is already present in the table\n",name);
+                   flag =0;;
+        }
+        temp=temp->next;
+    }
+    if(flag)
+    {
+        temp = (entry_ptr) malloc(sizeof( entry));
+        if(temp == NULL)
+        {
+            printf("ERRRR .......\n");
+            exit(0);
+        }
+        strcpy(temp->symbol,name);
+        temp->value = val;
+        temp->next = table[h];
+        table[h]=temp;
+    }
+}
+void retrieve( entry_ptr table[],char *name)
+{
+    int h,flag =1;
+    entry_ptr temp;
+    h = hash_value(name);
+    temp = table[h];
+    while( temp != NULL && flag)
+    {
+        if( strcmp(temp->symbol,name) == 0)
+        {
+            printf("The symbol %s is present in the table and having value = %d\n",
+                   name,temp->value);
+            flag =0;
+        }
+        temp=temp->next;
+    }
+    if(flag == 1)
+        printf("The symbol %s is not present in the table \n",name);
+}
+void main()
+{
+    entry_ptr table[SIZE];
+    char name[MAX];
+    int value,n;
+    initialize(table);
+    do
+    {
+        do
+        {
+            printf("Enter the symbol and value pair to be inserted\n");
+            scanf("%s %d",name,&value);
+            insert(table,name,value);
+            printf("Enter 1 to continue\n");
+            scanf("%d",&n);
+        }
+        while(n == 1);
+        do
+        {
+            printf("Enter the symbol whose value is to be retrieved\n");
+            scanf("%s",name);
+            retrieve(table,name);
+            printf("Enter 1 to continue\n");
+            scanf("%d",&n);
+        }while( n == 1);
+        printf("Eneter 1 to continue\n");
+        scanf("%d",&n);
+    }while(n == 1);
+}
+#+end_src
+
+** stack
+*** Array Implementation of a Stack
+
+When an array is used to implement a stack, the push and pop operations are
+realized by using the operations available on an array. The limitation of an
+array implementation is that the stack cannot grow and shrink dynamically as per
+the requirement.
+
+Program
+A complete C program to implement a stack using an array appears here:
+
+#+begin_src c
+#include <stdio.h>
+#define MAX 10 /* The maximum size of the stack */
+#include <stdlib.h>
+
+void push(int stack[], int *top, int value)
+{
+   if(*top < MAX )
+   {
+      *top = *top + 1;
+      stack[*top] = value;
+   }
+  else
+  {
+      printf("The stack is full can not push a value\n");
+      exit(0);
+   }
+}
+
+void pop(int stack[], int *top, int * value)
+{
+   if(*top >= 0 )
+   {
+       *value = stack[*top];
+      *top = *top - 1;
+   }
+   else
+   {
+      printf("The stack is empty can not pop a value\n");
+      exit(0);
+   }
+}
+
+void main()
+{
+   int stack[MAX];
+   int top = -1;
+   int n,value;
+   do
+   {
+      do
+      {
+            printf("Enter the element to be pushed\n");
+         scanf("%d",&value);
+         push(stack,&top,value);
+            printf("Enter 1 to continue\n");
+         scanf("%d",&n);
+      } while(n == 1);
+
+      printf("Enter 1 to pop an element\n");
+      scanf("%d",&n);
+      while( n == 1)
+      {
+            pop(stack,&top,&value);
+         printf("The value poped is %d\n",value);
+            printf("Enter 1 to pop an element\n");
+            scanf("%d",&n);
+      }
+      printf("Enter 1 to continue\n");
+      scanf("%d",&n);
+   } while(n == 1);
+}
+#+end_src
+
+Example
+Enter the element to be pushed
+10
+Enter 1 to continue
+1
+Enter the element to be pushed
+20
+Enter 1 to continue
+0
+Enter 1 to pop an element
+1
+The value popped is 20
+Enter 1 to pop an element
+0
+Enter 1 to continue
+1
+Enter the element to be pushed
+40
+Enter 1 to continue
+1
+Enter the element to be pushed
+50
+Enter 1 to continue
+0
+Enter 1 to pop an element
+1
+The value popped is 50
+Enter 1 to pop an element
+1
+The value popped is 40 Enter 1 to pop an element
+1
+The value popped is 10 Enter 1 to pop an element
+0
+Enter 1 to continue
+0
+*** Implementation of a Stack Using Linked Representation
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node
+{
+   int data;
+   struct node *link;
+};
+struct node *push(struct node *p, int value)
+{
+   struct node *temp;
+   temp=(struct node *)malloc(sizeof(struct node));
+       /* creates new node
+       using data value
+       passed as parameter */
+   if(temp==NULL)
+   {
+      printf("No Memory available Error\n");
+      exit(0);
+   }
+   temp->data = value;
+   temp->link = p;
+   p = temp;
+   return(p);
+}
+
+struct node *pop(struct node *p, int *value)
+{
+   struct node *temp;
+   if(p==NULL)
+   {
+      printf(" The stack is empty can not pop Error\n");
+      exit(0);
+   }
+   *value = p->data;
+   temp = p;
+   p = p->link;
+   free(temp);
+   return(p);
+}
+
+void main()
+{
+   struct node *top = NULL;
+   int n,value;
+   do
+   {
+      do
+      {
+            printf("Enter the element to be pushed\n");
+         scanf("%d",&value);
+         top = push(top,value);
+         printf("Enter 1 to continue\n");
+         scanf("%d",&n);
+      } while(n == 1);
+
+      printf("Enter 1 to pop an element\n");
+      scanf("%d",&n);
+      while( n == 1)
+      {
+            top = pop(top,&value);
+         printf("The value poped is %d\n",value);
+            printf("Enter 1 to pop an element\n");
+            scanf("%d",&n);
+      }
+      printf("Enter 1 to continue\n");
+      scanf("%d",&n);
+   } while(n == 1);
+}
+
+#+end_src
+
+*** APPLICATIONS OF STACKS( expression evaluation)
+Introduction
+
+One of the applications of the stack is in expression evaluation. A complex
+assignment statement such as a = b + c*d/e–f may be interpreted in many
+different ways. Therefore, to give a unique meaning, the precedence and
+associativity rules are used. But still it is difficult to evaluate an
+expression by computer in its present form, called the infix notation. In infix
+notation, the binary operator comes in between the operands. A unary operator
+comes before the operand. To get it evaluated, it is first converted to the
+postfix form, where the operator comes after the operands. For example, the
+postfix form for the expression a*(b–c)/d is abc–*d/. A good thing about postfix
+expressions is that they do not require any precedence rules or parentheses for
+unique definition. So, evaluation of a postfix expression is possible using a
+stack-based algorithm.
+
+Program
+Convert an infix expression to prefix form.
+#+begin_src c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define N 80
+
+typedef enum {FALSE, TRUE} bool;
+
+#include "stack.h"
+#include "queue.h"
+
+#define NOPS 7
+
+char operators [] = "()^/*+-";
+int priorities[] = {4,4,3,2,2,1,1};
+char associates[] = " RLLLL";
+
+char t[N]; char *tptr = t; // this is where prefix will be saved.
+int getIndex( char op ) {
+    /*
+     * returns index of op in operators.
+     */
+    int i;
+    for( i=0; i<NOPS; ++i )
+        if( operators[i] == op )
+               return i;
+    return -1;
+}
+int getPriority( char op ) {
+    /*
+     * returns priority of op.
+     */
+    return priorities[ getIndex(op) ];
+}
+
+char getAssociativity( char op ) {
+    /*
+     * returns associativity of op.
+     */
+    return associates[ getIndex(op) ];
+}
+
+void processOp( char op, queue *q, stack *s ) {
+    /*
+     * performs processing of op.
+     */
+    switch(op) {
+       case ')':
+              printf( "\t S pushing )...\n" );
+              sPush( s, op );
+              break;
+       case '(':
+              while( !qEmpty(q) ) {
+                     *tptr++ = qPop(q);
+                     printf( "\tQ popping %c...\n", *(tptr-1) );
+              }
+              while( !sEmpty(s) ) {
+                     char popop = sPop(s);
+                     printf( "\tS popping %c...\n", popop );
+                     if( popop == ')' )
+                            break;
+                     *tptr++ = popop;
+              }
+              break;
+       default: {
+              int priop;    // priority of op.
+              char topop;   // operator on stack top.
+              int pritop;   // priority of topop.
+              char asstop;  // associativity of topop.
+              while( !sEmpty(s) ) {
+                     priop = getPriority(op);
+                     topop = sTop(s);
+                     pritop = getPriority(topop);
+                     asstop = getAssociativity(topop);
+if( pritop < priop || (pritop == priop && asstop == 'L')
+    || topop == ')' ) // IMP.
+                      break;
+                 while( !qEmpty(q) ) {
+                        *tptr++ = qPop(q);
+                 printf( "\tQ popping %c...\n", *(tptr-1) );
+                 }
+                 *tptr++ = sPop(s);
+                 printf( "\tS popping %c...\n", *(tptr-1) );
+         }
+         printf( "\tS pushing %c...\n", op );
+         sPush( s, op );
+         break;
+      }
+   }
+}
+bool isop( char op ) {
+    /*
+     * is op an operator?
+     */
+    return (getIndex(op) != -1);
+}
+
+char *in2pre( char *str ) { /*
+     * returns valid infix expr in str to prefix.
+     */
+    char *sptr;
+    queue q = {NULL};
+    stack s = NULL;
+    char *res = (char *)malloc( N*sizeof(char) );
+    char *resptr = res;
+    tptr = t;
+    for( sptr=str+strlen(str)-1; sptr!=str-1; -sptr ) {
+       printf( "processing %c tptr-t=%d...\n", *sptr, tptr-t );
+       if( isalpha(*sptr) ) // if operand.
+              qPush( &q, *sptr );
+       else if( isop(*sptr) )      // if valid operator.
+              processOp( *sptr, &q, &s );
+       else if( isspace(*sptr) )    // if whitespace.
+              ;
+       else {
+              fprintf( stderr, "ERROR:invalid char %c.\n", *sptr );
+              return "";
+       }
+   }
+   while( !qEmpty(&q) ) {
+       *tptr++ = qPop(&q);
+       printf( "\tQ popping %c...\n", *(tptr-1) );
+   }
+   while( !sEmpty(&s) ) {
+       *tptr++ = sPop(&s);
+       printf( "\tS popping %c...\n", *(tptr-1) );
+   }
+   *tptr = 0;
+   printf( "t=%s.\n", t );
+   for( -tptr; tptr!=t-1; -tptr ) {
+      *resptr++ = *tptr;
+   }
+   *resptr = 0;
+
+   return res;
+}
+
+int main() {
+    char s[N];
+
+    puts( "enter infix freespaces max 80." );
+    gets(s);
+    while(*s) {
+       puts( in2pre(s) );
+       gets(s);
+    }
+
+   return 0;
+}
+#+end_src
+
+** queue
+*** Array Implementation of a queue 
+
+ When an array is used to implement a queue, then the insert and delete
+ operations are realized using the operations available on an array. The
+ limitation of an array implementation is that the queue cannot grow and shrink
+ dynamically as per the requirement.
+
+ Program
+ A complete C program to implement a queue by using an array is shown here:
+
+ #+begin_src c
+ #include <stdio.h>
+ #define MAX 10 /* The maximum size of the queue */
+ #include <stdlib.h>
+
+ void insert(int queue[], int *rear, int value)
+ {
+    if(*rear < MAX-1)
+    {
+       *rear= *rear +1;
+       queue[*rear] = value;
+    }
+    else
+    {
+       printf("The queue is full can not insert a value\n");
+       exit(0);
+    }
+ }
+
+ void delete(int queue[], int *front, int rear, int * value)
+ {
+    if(*front == rear)
+    {
+       printf("The queue is empty can not delete a value\n");
+       exit(0);
+    }
+    *front = *front + 1;
+    *value = queue[*front];
+ }
+
+ void main()
+ {
+    int queue[MAX];
+    int front,rear;
+    int n,value;
+    front=rear=(-1);
+    do
+    {
+       do
+       {
+             printf("Enter the element to be inserted\n");
+          scanf("%d",&value);
+          insert(queue,&rear,value);
+          printf("Enter 1 to continue\n");
+             scanf("%d",&n);
+       } while(n == 1);
+
+       printf("Enter 1 to delete an element\n");
+       scanf("%d",&n);
+       while( n == 1)
+       {
+             delete(queue,&front,rear,&value);
+          printf("The value deleted is %d\n",value);
+             printf("Enter 1 to delete an element\n");
+          scanf("%d",&n);
+       }
+       printf("Enter 1 to continue\n");
+       scanf("%d",&n);
+    } while(n == 1);
+ }
+ #+end_src
+
+ Example
+ Input and Output
+ Enter the element to be inserted
+ 10
+ Enter 1 to continue
+ 1
+ Enter the element to be inserted
+ 20
+ Enter 1 to continue
+ 1
+ Enter the element to be inserted
+ 30
+ Enter 1 to continue
+ 0
+ Enter 1 to delete an element
+ 1
+ The value deleted is 10
+ Enter 1 to delete an element
+ 1
+ The value deleted is 20
+ Enter 1 to delete an element
+ 0
+ Enter 1 to continue
+ 1
+ Enter the element to be inserted
+ 40
+ Enter 1 to continue
+ 1
+ Enter the element to be inserted
+ 50
+ Enter 1 to continue
+ 0
+ Enter 1 to delete an element
+ 1
+ The value deleted is 30
+ Enter 1 to delete an element
+ 1
+ The value deleted is 40
+ Enter 1 to delete an element
+ 0
+ Enter 1 to continue
+ 0
+*** CIRCULAR QUEUES
+Introduction
+
+The problem with the previous implementation is that the insert function gives a
+queue-full signal even if a considerable portion is free. This happens because
+the queue has a tendency to move to the right unless the ‘front’ catches up with
+the ‘rear’ and both are reset to 0 again (in the delete procedure). To overcome
+this problem, the elements of the array are required to shift one position left
+whenever a deletion is made. But this will make the deletion process
+inefficient. Therefore, an efficient way of overcoming this problem is to
+consider the array to be circular
+
+#+begin_src c
+#include <stdio.h>
+#define MAX 10 /* The maximum size of the queue */
+#include <stdlib.h>
+
+void insert(int queue[], int *rear, int front, int value)
+{
+   *rear= (*rear +1) % MAX;
+   if(*rear == front)
+   {
+      printf("The queue is full can not insert a value\n");
+      exit(0);
+   }
+   queue[*rear] = value;
+}
+
+void delete(int queue[], int *front, int rear, int * value)
+{
+   if(*front == rear)
+   {
+      printf("The queue is empty can not delete a value\n");
+      exit(0);
+   }
+   *front = (*front + 1) % MAX;
+   *value = queue[*front];
+}
+
+void main()
+{
+   int queue[MAX];
+   int front,rear;
+   int n,value;
+   front=0; rear=0;
+   do
+   {
+      do
+      {
+            printf("Enter the element to be inserted\n");
+         scanf("%d",&value);
+         insert(queue,&rear,front,value);
+         printf("Enter 1 to continue\n");
+         scanf("%d",&n);
+      } while(n == 1);
+
+   printf("Enter 1 to delete an element\n");
+   scanf("%d",&n);
+   while( n == 1)
+   {
+       delete(queue,&front,rear,&value);
+      printf("The value deleted is %d\n",value);
+       printf("Enter 1 to delete an element\n");
+      scanf("%d",&n);
+   }
+   printf("Enter 1 to continue\n");
+   scanf("%d",&n);
+   } while(n == 1);
+}
+#+end_src
+
+*** IMPLEMENTATION OF A QUEUE USING LINKED REPRESENTATION
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node
+{
+   int data;
+   struct node *link;
+};
+
+void insert(struct node **front, struct node **rear, int value)
+{
+   struct node *temp;
+   temp=(struct node *)malloc(sizeof(struct node));
+       /* creates new node
+       using data value
+       passed as parameter */
+   if(temp==NULL)
+   {
+      printf("No Memory available Error\n");
+      exit(0);
+   }
+   temp->data = value;
+   temp->link=NULL;
+   if(*rear == NULL)
+   {
+      *rear = temp;
+      *front = *rear;
+   }
+   else
+   {
+      (*rear)->link = temp;
+      *rear = temp;
+   }
+}
+
+void delete(struct node **front, struct node **rear, int *value)
+{
+   struct node *temp;
+   if((*front == *rear) && (*rear == NULL))
+   {
+      printf(" The queue is empty cannot delete Error\n");
+      exit(0);
+   }
+   *value = (*front)->data;
+   temp = *front;
+   *front = (*front)->link;
+   if(*rear == temp)
+   *rear = (*rear)->link;
+   free(temp);
+}
+
+void main()
+{
+   struct node *front=NULL,*rear = NULL;
+   int n,value;
+   do
+   {
+      do
+      {
+            printf("Enter the element to be inserted\n");
+         scanf("%d",&value);
+         insert(&front,&rear,value);
+         printf("Enter 1 to continue\n");
+         scanf("%d",&n);
+      } while(n == 1);
+
+      printf("Enter 1 to delete an element\n");
+      scanf("%d",&n);
+      while( n == 1)
+      {
+            delete(&front,&rear,&value);
+            printf("The value deleted is %d\n",value);
+            printf("Enter 1 to delete an element\n");
+            scanf("%d",&n);
+      }
+      printf("Enter 1 to continue\n");
+      scanf("%d",&n);
+   } while(n == 1);
+}
+#+end_src
+
+*** priority queue
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node
+{
+   int data;
+   int priority;
+   struct node *link;
+};
+void insert(struct node **front, struct node **rear, int value, int priority)
+{
+   struct node *temp,*temp1;
+   temp=(struct node *)malloc(sizeof(struct node));
+      /* creates new node using data value
+   passed as parameter */
+   if(temp==NULL)
+   {
+      printf("No Memory available Error\n");
+      exit(0);
+   }
+   temp->data = value;
+   temp->priority = priority;
+   temp->link=NULL;
+   if(*rear == NULL) /* This is the first node */
+   {
+      *rear = temp;
+      *front = *rear;
+   }
+   else
+   {
+      if((*front)->priority < priority)
+             /* the element to be inserted has
+      highest priority hence should
+             be the first element*/
+      {
+            temp->link = *front;
+            *front = temp;
+      }
+      else
+            if( (*rear)->priority > priority)
+                   /* the element to be inserted has
+                   lowest priority hence should
+                   be the last element*/
+            {
+                  (*rear)->link = temp;
+                  *rear = temp;
+            }
+
+      else
+      {
+                  temp1 = *front;
+                  while((temp1->link)->priority >= priority)
+     /* find the position and insert the new element */
+                          temp1=temp1->link;
+             temp->link = temp1->link;
+             temp1->link = temp;
+             }
+}
+void delete(struct node **front, struct node **rear, int *value, int *priority)
+{
+   struct node *temp;
+   if((*front == *rear) && (*rear == NULL))
+   {
+      printf(" The queue is empty cannot delete Error\n");
+      exit(0);
+   }
+   *value = (*front)->data;
+   *priority = (*front)->priority;
+   temp = *front;
+   *front = (*front)->link;
+   if(*rear == temp)
+       *rear = (*rear)->link;
+   free(temp);
+}
+
+void main()
+{
+   struct node *front=NULL,*rear = NULL;
+   int n,value, priority;
+   do
+   {
+   do
+   {
+         printf("Enter the element to be inserted and its priority\n");
+     scanf("%d %d",&value,&priority);
+     insert(&front,&rear,value,priority);
+     printf("Enter 1 to continue\n");
+     scanf("%d",&n);
+   } while(n == 1);
+
+   printf("Enter 1 to delete an element\n");
+   scanf("%d",&n);
+   while( n == 1)
+   {
+         delete(&front,&rear,&value,&priority);
+         printf("The value deleted is %d\ and its priority is %d \n",
+                value,priority);
+         printf("Enter 1 to delete an element\n");
+      scanf("%d",&n);
+    }
+    printf("Enter 1 to delete an element\n");
+    scanf("%d",&n);
+  }  while( n == 1)
+}
+#+end_src
+
+** linked lists
+*** first intro
+**** Introduction
+
+ When dealing with many problems we need a dynamic list, dynamic in the sense
+ that the size requirement need not be known at compile time. Thus, the list may
+ grow or shrink during runtime. A linked list is a data structure that is used to
+ model such a dynamic list of data items, so the study of the linked lists as one
+ of the data structures is important.
+
+**** Concept
+
+ An array is represented in memory using sequential mapping, which has the
+ property that elements are fixed distance apart. But this has the following
+ disadvantage: It makes insertion or deletion at any arbitrary position in an
+ array a costly operation, because this involves the movement of some of the
+ existing elements.
+
+ When we want to represent several lists by using arrays of varying size, either
+ we have to represent each list using a separate array of maximum size or we have
+ to represent each of the lists using one single array. The first one will lead
+ to wastage of storage, and the second will involve a lot of data movement.
+
+ So we have to use an alternative representation to overcome these disadvantages.
+ One alternative is a linked representation. In a linked representation, it is
+ not necessary that the elements be at a fixed distance apart. Instead, we can
+ place elements anywhere in memory, but to make it a part of the same list, an
+ element is required to be linked with a previous element of the list. This can
+ be done by storing the address of the next element in the previous element
+ itself. This requires that every element be capable of holding the data as well
+ as the address of the next element. Thus every element must be a structure with
+ a minimum of two fields, one for holding the data value, which we call a data
+ field, and the other for holding the address of the next element, which we call
+ link field.
+
+ Therefore, a linked list is a list of elements in which the elements of the list
+ can be placed anywhere in memory, and these elements are linked with each other
+ using an explicit link field, that is, by storing the address of the next
+ element in the link field of the previous element.
+**** example
+ #+begin_src c
+ # include <stdio.h>
+ # include <stdlib.h>
+ struct node
+ {
+     int data;
+     struct node *link;
+ };
+ struct node *insert(struct node *p, int n)
+ {
+     struct node *temp;
+     /* if the existing list is empty then insert a new node as the
+ starting node */
+     if(p==NULL)
+     {
+         /* creates new node data value passes as parameter */
+         p=(struct node *)malloc(sizeof(struct node));
+        
+         if(p==NULL)
+         {
+             printf("Error\n");
+             exit(0);
+         }
+         p-> data = n;
+         p-> link = p; /* makes the pointer pointing to itself because it is a circular list*/
+     }
+     else
+     {
+         temp = p;
+         /* traverses the existing list to get the pointer to the last node of it */
+         while (temp-> link != p)
+             temp = temp-> link;
+         temp-> link = (struct node *)malloc(sizeof(struct node)); 
+         /* creates new node using data value passes as parameter and puts its
+              address in the link field of last node of the existing list*/
+         if(temp -> link == NULL)
+         {
+             printf("Error\n");
+             exit(0);
+         }
+         temp = temp-> link;
+         temp-> data = n;
+         temp-> link = p;
+     }
+     return (p);
+ }
+ void printlist ( struct node *p )
+ {
+     struct node *temp;
+     temp = p;
+     printf("The data values in the list are\n");
+     if(p!= NULL)
+     {
+         do
+         {
+             printf("%d\t",temp->data);
+             temp=temp->link;
+         } while (temp!= p);
+     }
+     else
+         printf("The list is empty\n");
+ }
+
+ void main()
+ {
+     int n;
+     int x;
+     struct node *start = NULL ;
+     printf("Enter the nodes to be created \n");
+     scanf("%d",&n);
+     while ( n -- > 0 )
+     {
+         printf( "Enter the data values to be placed in a node\n");
+         scanf("%d",&x);
+         start = insert ( start, x );
+     }
+     printf("The created list is\n");
+     printlist ( start );
+ }
+ #+end_src
+ 
+*** INSERTING A NODE BY USING RECURSIVE PROGRAMS
+
+A linked list is a recursive data structure. A recursive data structure is a
+data structure that has the same form regardless of the size of the data. You
+can easily write recursive programs for such data structures.
+
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node
+{
+    int data;
+    struct node *link;
+};
+struct node *insert(struct node *p, int n)
+{
+    struct node *temp;
+    if(p==NULL)
+    {
+        p=(struct node *)malloc(sizeof(struct node));
+        if(p==NULL)
+        {
+            printf("Error\n");
+            exit(0);
+        }
+        p-> data = n;
+        p-> link = NULL;
+    }
+    else
+        p->link = insert(p->link,n);/* the while loop replaced by
+recursive call */
+    return (p);
+}
+void printlist ( struct node *p )
+{
+    printf("The data values in the list are\n");
+    while (p!= NULL)
+    {
+        printf("%d\t",p-> data);
+        p = p-> link;
+    }
+}
+void main()
+{
+    int n;
+    int x;
+    struct node *start = NULL ;
+    printf("Enter the nodes to be created \n");
+    scanf("%d",&n);
+    while ( n-- > 0 )
+    {
+        printf( "Enter the data values to be placed in a node\n");
+        scanf("%d",&x);
+        start = insert ( start, x );
+    }
+    printf("The created list is\n");
+    printlist ( start );
+}
+
+#+end_src
+
+*** SORTING AND REVERSING A LINKED LIST
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node
+{
+   int data;
+   struct node *link;
+};
+struct node *insert(struct node *p, int n)
+{
+   struct node *temp;
+   if(p==NULL)
+   {
+      p=(struct node *)malloc(sizeof(struct node));
+      if(p==NULL)
+      {
+            printf("Error\n");
+         exit(0);
+      }
+      p-> data = n;
+      p-> link = NULL;
+   }
+   else
+   {
+      temp = p;
+      while (temp-> link!= NULL)
+      temp = temp-> link;
+      temp-> link = (struct node *)malloc(sizeof(struct node));
+      if(temp -> link == NULL)
+      {
+            printf("Error\n");
+         exit(0);
+      }
+       temp = temp-> link;
+       temp-> data = n;
+       temp-> link = null;
+      }
+      return(p);
+}
+
+void printlist ( struct node *p )
+{
+      printf("The data values in the list are\n");
+      while (p!= NULL)
+      {
+            printf("%d\t",p-> data);
+         p = p-> link;
+      }
+}
+
+/* a function to sort reverse list */
+struct node *reverse(struct node *p)
+{
+   struct node *prev, *curr;
+   prev = NULL;
+   curr = p;
+   while (curr != NULL)
+   {
+      p = p-> link;
+      curr-> link = prev;
+      prev = curr;
+      curr = p;
+   }
+   return(prev);
+}
+/* a function to sort a list */
+struct node *sortlist(struct node *p)
+{
+   struct node *temp1,*temp2,*min,*prev,*q;
+   q = NULL;
+   while(p != NULL)
+   {
+         prev = NULL;
+      min = temp1 = p;
+      temp2 = p -> link;
+      while ( temp2 != NULL )
+      {
+              if(min -> data > temp2 -> data)
+         {
+                     min = temp2;
+                     prev = temp1;
+         }
+         temp1 = temp2;
+         temp2 = temp2-> link;
+      }
+      if(prev == NULL)
+             p = min -> link;
+      else
+             prev -> link = min -> link;
+      min -> link = NULL;
+      if( q == NULL)
+      q = min; /* moves the node with lowest data value in the list
+pointed to by p to the list
+   pointed to by q as a first node*/
+         else
+         {
+            temp1 = q;
+            /* traverses the list pointed to by q to get pointer to its
+last node */
+            while( temp1 -> link != NULL)
+                         temp1 = temp1 -> link;
+            temp1 -> link = min; /* moves the node with lowest data value
+in the list pointed to
+   by p to the list pointed to by q at the end of list pointed by
+   q*/
+      }
+   }
+   return (q);
+}
+
+void main()
+{
+      int n;
+      int x;
+      struct node *start = NULL ;
+      printf("Enter the nodes to be created \n");
+      scanf("%d",&n);
+      while ( n- > 0 )
+      {
+              printf( "Enter the data values to be placed in a
+node\n");
+         scanf("%d",&x);
+         start = insert ( start,x);
+      }
+      printf("The created list is\n");
+      printlist ( start );
+      start = sortlist(start);
+      printf("The sorted list is\n");
+      printlist ( start );
+      start = reverse(start);
+      printf("The reversed list is\n");
+      printlist ( start );
+}
+
+#+end_src
+
+*** DELETING THE SPECIFIED NODE IN A SINGLY LINKED LIST
+
+To delete a node, first we determine the node number to be deleted (this is
+based on the assumption that the nodes of the list are numbered serially from 1
+to n). The list is then traversed to get a pointer to the node whose number is
+given, as well as a pointer to a node that appears before the node to be
+deleted. Then the link field of the node that appears before the node to be
+deleted is made to point to the node that appears after the node to be deleted,
+and the node to be deleted is freed. Figures 20.5 and 20.6 show the list before
+and after deletion, respectively.
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node *delet ( struct node *, int );
+int length ( struct node * );
+struct node
+{
+   int data;
+   struct node *link;
+};
+struct node *insert(struct node *p, int n)
+{
+   struct node *temp;
+   if(p==NULL)
+   {
+      p=(struct node *)malloc(sizeof(struct node));
+      if(p==NULL)
+      {
+            printf("Error\n");
+         exit(0);
+      }
+      p-> data = n;
+      p-> link = NULL;
+   }
+   else
+   {
+      temp = p;
+      while (temp-> link != NULL)
+       temp = temp-> link;
+       temp-> link = (struct node *)malloc(sizeof(struct node));
+      if(temp -> link == NULL)
+      {
+            printf("Error\n");
+         exit(0);
+      }
+      temp = temp-> link;
+      temp-> data = n;
+      temp-> link = NULL;
+      }
+      return (p);
+}
+
+void printlist ( struct node *p )
+{
+      printf("The data values in the list are\n");
+      while (p!= NULL)
+      {
+            printf("%d\t",p-> data);
+         p = p-> link;
+      }
+}
+
+void main()
+{
+   int n;
+   int x;
+   struct node *start = NULL;
+   printf("Enter the nodes to be created \n");
+   scanf("%d",&n);
+   while ( n- > 0 )
+   {
+       printf( "Enter the data values to be placed in a node\n");
+      scanf("%d",&x);
+      start = insert ( start, x );
+   }
+   printf(" The list before deletion id\n");
+   printlist ( start );
+   printf("% \n Enter the node no \n");
+   scanf ( " %d",&n);
+   start = delet (start , n );
+   printf(" The list after deletion is\n");
+   printlist ( start );
+}
+
+   /* a function to delete the specified node*/
+struct node *delet ( struct node *p, int node_no )
+{
+
+   struct node *prev, *curr ;
+   int i;
+
+   if (p == NULL )
+   {
+      printf("There is no node to be deleted \n");
+   }
+   else
+   {
+      if ( node_no > length (p))
+      {
+            printf("Error\n");
+      }
+      else
+      {
+            prev = NULL;
+            curr = p;
+            i = 1 ;
+            while ( i < node_no )
+            {
+                  prev = curr;
+                  curr = curr-> link;
+                  i = i+1;
+            }
+            if ( prev == NULL )
+            {
+                  p = curr -> link;
+                  free ( curr );
+            }
+            else
+            {
+               prev -> link = curr -> link ;
+               free ( curr );
+            }
+      }
+   }
+   return(p);
+}
+/* a function to compute the length of a linked list */
+int length ( struct node *p )
+{
+   int count = 0 ;
+   while ( p != NULL )
+   {
+      count++;
+      p = p->link;
+   }
+   return ( count ) ;
+}
+
+#+end_src
+
+*** INSERTING A NODE AFTER THE SPECIFIED NODE IN A SINGLY LINKED LIST
+
+To insert a new node after the specified node, first we get the number of the
+node in an existing list after which the new node is to be inserted. This is
+based on the assumption that the nodes of the list are numbered serially from 1
+to n. The list is then traversed to get a pointer to the node, whose number is
+given. If this pointer is x, then the link field of the new node is made to
+point to the node pointed to by x, and the link field of the node pointed to by
+x is made to point to the new node.
+#+begin_src c
+# include <stdio.h>
+   # include <stdlib.h>
+   int length ( struct node * );
+   struct node
+   {
+      int data;
+      struct node *link;
+   };
+
+   /* a function which appends a new node to an existing list used for
+building a list */
+   struct node *insert(struct node *p, int n)
+   {
+      struct node *temp;
+      if(p==NULL)
+      {
+          p=(struct node *)malloc(sizeof(struct node));
+         if(p==NULL)
+         {
+                 printf("Error\n");
+            exit(0);
+         }
+         p-> data = n;
+         p-> link = NULL;
+      }
+      else
+      {
+         temp = p;
+         while (temp-> link != NULL)
+                temp = temp-> link;
+         temp-> link = (struct node *)malloc(sizeof(struct node));
+        if(temp -> link == NULL)
+         {
+                 printf("Error\n");
+            exit(0);
+         }
+         temp = temp-> link;
+         temp-> data = n;
+         temp-> link= NULL;
+      }
+      return (p);
+   }
+   /* a function which inserts a newly created node after the specified
+node */
+   struct node * newinsert ( struct node *p, int node_no, int value )
+   {
+      struct node *temp, * temp1;
+      int i;
+      if ( node_no <= 0 || node_no > length (p))
+      {
+              printf("Error! the specified node does not exist\n");
+         exit(0);
+      }
+      if ( node_no == 0)
+      {
+         temp = ( struct node * )malloc ( sizeof ( struct node ));
+         if ( temp == NULL )
+         {
+                 printf( " Cannot allocate \n");
+                 exit (0);
+         }
+         temp -> data = value;
+         temp -> link = p;
+         p = temp ;
+   }
+   else
+   {
+       temp = p ;
+      i = 1;
+      while ( i < node_no )
+      {
+            i = i+1;
+            temp = temp-> link ;
+      }
+      temp1 = ( struct node * )malloc ( sizeof(struct node));
+      if ( temp == NULL )
+      {
+            printf ("Cannot allocate \n");
+            exit(0)
+      }
+      temp1 -> data = value ;
+      temp1 -> link = temp -> link;
+      temp -> link = temp1;
+   }
+   return (p);
+   }
+
+   void printlist ( struct node *p )
+   {
+      printf("The data values in the list are\n");
+      while (p!= NULL)
+      {
+         printf("%d\t",p-> data);
+         p = p-> link;
+      }
+   }
+   void main ()
+   {
+      int n;
+      int x;
+      struct node *start = NULL;
+      printf("Enter the nodes to be created \n");
+      scanf("%d",&n);
+      while ( n- > 0 )
+      {
+         printf( "Enter the data values to be placed in a node\n");
+         scanf("%d",&x);
+         start = insert ( start, x );
+      }
+      printf(" The list before deletion is\n");
+      printlist ( start );
+      printf(" \n Enter the node no after which the insertion is to be
+done\n");
+      scanf ( " %d",&n);
+      printf("Enter the value of the node\n");
+      scanf("%d",&x);
+      start = newinsert(start,n,x);
+      printf("The list after insertion is \n");
+      printlist(start);
+   }
+#+end_src
+
+*** INSERTING A NEW NODE IN A SORTED LIST
+
+To insert a new node into an already sorted list, we compare the data value of
+the node to be inserted with the data values of the nodes in the list starting
+from the first node. This is continued until we get a pointer to the node that
+appears immediately before the node in the list whose data value is greater than
+the data value of the node to be inserted.
+
+Here is a complete program to insert an element in a sorted list of elements using the linked list representation so that after insertion, it will remain a sorted list.
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node
+{
+  int data;
+  struct node *link;
+};
+struct node *insert(struct node *, int);
+struct node *sinsert(struct node*, int );
+void printlist ( struct node * );
+struct node *sortlist(struct node *);
+
+struct node *insert(struct node *p, int n)
+{
+   struct node *temp;
+   if(p==NULL)
+   {
+      p=(struct node *)malloc(sizeof(struct node));
+      if(p==NULL)
+      {
+   printf("Error\n");
+           exit(0);
+      }
+      p-> data = n;
+      p-> link = NULL;
+   }
+   else
+   {
+      temp = p;
+      while (temp-> link!= NULL)
+     temp = temp-> link;
+      temp-> link = (struct node *)malloc(sizeof(struct node));
+      if(temp -> link == NULL)
+      {
+   printf("Error\n");
+          exit(0);
+       }
+     temp = temp-> link;
+       temp-> data = n;
+       temp-> link = NULL;
+       }
+      return (p);
+}
+
+void printlist ( struct node *p )
+{
+      printf("The data values in the list are\n");
+      while (p!= NULL)
+      {
+   printf("%d\t",p-> data);
+         p = p-> link;
+      }
+   }
+
+/* a function to sort a list */
+struct node *sortlist(struct node *p)
+{
+   struct node *temp1,*temp2,*min,*prev,*q;
+   q = NULL;
+   while(p != NULL)
+   {
+   prev = NULL;
+      min = temp1 = p;
+      temp2 = p -> link;
+      while ( temp2 != NULL )
+      {
+         if(min -> data > temp2 -> data)
+              {
+         min = temp2;
+                 prev = temp1;
+               }
+               temp1 = temp2;
+               temp2 = temp2-> link;
+            }
+      if(prev == NULL)
+            p = min -> link;
+            else
+            prev -> link = min -> link;
+            min -> link = NULL;
+            if( q == NULL)
+            q = min; /* moves the node with lowest data value in the list
+pointed to by p to the list
+   pointed to by q as a first node*/
+            else
+            {
+               temp1 = q;
+               /* traverses the list pointed to by q to get pointer to its
+last node */
+               while( temp1 -> link != NULL)
+               temp1 = temp1 -> link;
+               temp1 -> link = min; /* moves the node with lowest data value
+in the list pointed to
+   by p to the list pointed to by q at the end of list pointed by
+   q*/
+         }
+      }
+      return (q);
+   }
+
+   /* a function to insert a node with data value n in a sorted list
+pointed to by p*/
+   struct node *sinsert(struct node *p, int n)
+   {
+      struct node *curr, *prev;
+      curr =p;
+      prev = NULL;
+     while(curr ->data < n)
+           {
+                        prev = curr;
+                  curr = curr->link;
+           }
+   if ( prev == NULL) /* the element is to be inserted at the start of
+the list because
+                   it is less than the data value of the first node*/
+       {
+            curr = (struct node *) malloc(sizeof(struct node));
+            if( curr == NULL)
+              {
+                printf("error cannot allocate\n");
+                exit(0);
+              }
+           curr->data = n;
+           curr->link = p;
+           p = curr;
+       }
+       else
+        {
+            curr->data = n;
+            curr->link = prev->link;
+            prev->link = curr;
+        }
+      return(p);
+      }
+
+      void main()
+      {
+         int n;
+         int x;
+         struct node *start = NULL ;
+         printf("Enter the nodes to be created \n");
+         scanf("%d",&n);
+         while ( n-- > 0 )
+         {
+      printf( "Enter the data values to be placed in a node\n");
+            scanf("%d",&x);
+            start = insert ( start,x);
+         }
+         printf("The created list is\n");
+         printlist ( start );
+         start = sortlist(start);
+         printf("The sorted list is\n");
+         printlist ( start );
+         printf("Enter the value to be inserted\n");
+         scanf("%d",&n);
+         start = sinsert(start,n);
+         printf("The list after insertion is\n");
+         printlist ( start );
+   }
+
+#+end_src
+
+*** MERGING OF TWO SORTED LISTS
+
+Merging of two sorted lists involves traversing the given lists and comparing
+the data values stored in the nodes in the process of traversing.
+
+If p and q are the pointers to the sorted lists to be merged, then we compare
+the data value stored in the first node of the list pointed to by p with the
+data value stored in the first node of the list pointed to by q. And, if the
+data value in the first node of the list pointed to by p is less than the data
+value in the first node of the list pointed to by q, make the first node of the
+resultant/merged list to be the first node of the list pointed to by p, and
+advance the pointer p to make it point to the next node in the same list.
+
+If the data value in the first node of the list pointed to by p is greater than
+the data value in the first node of the list pointed to by q, make the first
+node of the resultant/merged list to be the first node of the list pointed to by
+q, and advance the pointer q to make it point to the next node in the same list.
+
+Repeat this procedure until either p or q becomes NULL. When one of the two
+lists becomes empty, append the remaining nodes in the non-empty list to the
+resultant list.
+
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node
+{
+int data;
+struct node *link;
+};
+
+struct node *merge (struct node *, struct node *);
+struct node *insert(struct node *p, int n)
+{
+   struct node *temp;
+   if(p==NULL)
+   {
+      p=(struct node *)malloc(sizeof(struct node));
+      if(p==NULL)
+      {
+   printf("Error\n");
+          exit(0);
+      }
+      p-> data = n;
+      p-> link = NULL;
+   }
+   else
+   {
+      temp = p;
+      while (temp-> link!= NULL)
+      temp = temp-> link;
+      temp-> link = (struct node *)malloc(sizeof(struct node));
+      if(temp -> link == NULL)
+      {
+   printf("Error\n");
+          exit(0);
+      }
+     temp = temp-> link;
+      temp-> data = n;
+      temp-> link = NULL;
+      }
+      return (p);
+   }
+
+   void printlist ( struct node *p )
+   {
+      printf("The data values in the list are\n");
+      while (p!= NULL)
+         {
+      printf("%d\t",p-> data);
+           p = p-> link;
+         }
+   }
+   /* a function to sort a list */
+struct node *sortlist(struct node *p)
+{
+    struct node *temp1,*temp2,*min,*prev,*q;
+   q = NULL;
+   while(p != NULL)
+   {
+   prev = NULL;
+      min = temp1 = p;
+      temp2 = p -> link;
+      while ( temp2 != NULL )
+      {
+   if(min -> data > temp2 -> data)
+        {
+   min = temp2;
+           prev = temp1;
+        }
+        temp1 = temp2;
+        temp2 = temp2-> link;
+      }
+   if(prev == NULL)
+         p = min -> link;
+         else
+         prev -> link = min -> link;
+         min -> link = NULL;
+         if( q == NULL)
+         q = min; /* moves the node with lowest data value in the list
+pointed to by p to the list
+   pointed to by q as a first node*/
+         else
+         {
+            temp1 = q;
+            /* traverses the list pointed to by q to get pointer to its
+last node */
+            while( temp1 -> link != NULL)
+            temp1 = temp1 -> link;
+            temp1 -> link = min; /* moves the node with lowest data value
+in the list pointed to
+   by p to the list pointed to by q at the end of list pointed by
+   q*/
+         }
+      }
+      return (q);
+   }
+
+   void main()
+   {
+      int n;
+      int x;
+      struct node *start1 = NULL ;
+      struct node *start2 = NULL;
+      struct node *start3 = NULL;
+      /* The following code creates and sorts the first list */
+      printf("Enter the number of nodes in the first list \n");
+      scanf("%d",&n);
+      while ( n-- > 0 )
+      {
+   printf( "Enter the data value to be placed in a node\n");
+         scanf("%d",&x);
+         start1 = insert ( start1,x);
+      }
+      printf("The first list is\n");
+      printlist ( start1);
+      start1 = sortlist(start1);
+      printf("The sorted list1 is\n");
+      printlist ( start1 );
+      /* the following creates and sorts the second list*/
+      printf("Enter the number of nodes in the second list \n");
+      scanf("%d",&n);
+      while ( n-- > 0 )
+      {
+         printf( "Enter the data value to be placed in a node\n");
+         scanf("%d",&x);
+         start2 = insert ( start2,x);
+      }
+      printf("The second list is\n");
+      printlist ( start2);
+      start2 = sortlist(start2);
+      printf("The sorted list2 is\n");
+      printlist ( start2 );
+      start3 = merge(start1,start2);
+      printf("The merged list is\n");
+      printlist ( start3);
+   }
+
+   /* A function to merge two sorted lists */
+   struct node *merge (struct node *p, struct node *q)
+   {
+      struct node *r=NULL,*temp;
+      if (p == NULL)
+           r = q;
+      else
+      if(q == NULL)
+           r = p;
+      else
+         {
+            if (p->data < q->data )
+            {
+   r = p;
+   temp = p;
+   p = p->link;
+   temp->link = NULL;
+              }
+             else
+              {
+   r = q;
+   temp =q;
+   q =q->link;
+   temp->link = NULL;
+              }
+              while((p!= NULL) && (q != NULL))
+              {
+                  if (p->data < q->data)
+         {
+         temp->link =p;
+         p = p->link;
+         temp =temp->link;
+         temp->link =NULL;
+         }
+                     else
+         {
+            temp->link =q;
+            q = q->link;
+            temp =temp->link;
+            temp->link =NULL;
+            }
+      }
+         if (p!= NULL)
+                 temp->link = p;
+         if (q != NULL)
+                 temp->link = q;
+        }
+   return( r) ;
+   }
+#+end_src
+
+*** ERASING A LINKED LIST
+Erasing a linked list involves traversing the list starting from the first node,
+freeing the storage allocated to the nodes, and then setting the pointer to the
+list to NULL. If p is a pointer to the start of the list, the actions specified
+through the following code will erase the list:
+
+#+begin_src c
+while(p != NULL)
+   {
+           temp = p;
+           p = p->link;
+           free(t);
+   }
+#+end_src
+
+But a better strategy of erasing a list is to mark all the nodes of the list to
+be erased as free nodes without actually freeing the storage of these nodes.
+That means to maintain this list, a list of free nodes, so that if a new node is
+required it can be obtained from this list of free nodes.
+
+Here is a complete program that erases a list pointed to by p by adding the nodes of a list pointed by p to the free list.
+
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node
+{
+int data;
+struct node *link;
+};
+struct node *insert(struct node *, int);
+void erase(struct node **,struct node **);
+void printlist ( struct node * );
+
+void erase (struct node **p, struct node **free)
+{
+   struct node *temp;
+   temp = *p;
+   while (temp->link != NULL)
+         temp = temp ->link;
+   temp->link = (*free);
+   *free = *p;
+   *p = NULL;
+}
+
+struct node *insert(struct node *p, int n)
+{
+   struct node *temp;
+   if(p==NULL)
+   {
+      p=(struct node *)malloc(sizeof(struct node));
+      if(p==NULL)
+      {
+   printf("Error\n");
+          exit(0);
+      }
+      p-> data = n;
+      p-> link = NULL;
+   }
+   else
+   {
+     temp = p;
+     while (temp-> link!= NULL)
+    temp = temp-> link;
+    temp-> link = (struct node *)malloc(sizeof(struct node));
+    if(temp -> link == NULL)
+    {
+  printf("Error\n");
+         exit(0);
+      }
+    temp = temp-> link;
+      temp-> data = n;
+      temp-> link = NULL;
+      }
+      return (p);
+}
+
+void printlist ( struct node *p )
+{
+      printf("The data values in the list are\n");
+      while (p!= NULL)
+      {
+   printf("%d\t",p-> data);
+         p = p-> link;
+      }
+   }
+
+   void main()
+   {
+         int n;
+         int x;
+         struct node *start = NULL ;
+         struct node *free=NULL;
+
+         /* this code will create a free list for the test purpose*/
+        printf("Enter the number of nodes in the initial free list \n");
+         scanf("%d",&n);
+         while ( n-- > 0 )
+         {
+            printf( "Enter the data values to be placed in a node\n");
+            scanf("%d",&x);
+            free = insert ( free,x);
+         }
+
+            /* this code will create a list to be erased*/
+           printf("Enter the number of nodes in the list to be created for
+erasing \n");
+            scanf("%d",&n);
+            while ( n-- > 0 )
+            {
+               printf( "Enter the data values to be placed in a node\n");
+               scanf("%d",&x);
+               start = insert ( start,x);
+            }
+               printf("The free list islist is:\n");
+               printlist ( free );
+               printf("The list to be erased is:\n");
+               printlist ( start);
+               erase(&start,&free);
+               printf("The free list after adding all the nodes from the list to
+be erased is:\n");
+               printlist ( free );
+   }
+#+end_src
+
+*** POLYNOMIAL REPRESENTATION
+
+One of the problems that a linked list can deal with is manipulation of symbolic
+polynomials. By symbolic, we mean that a polynomial is viewed as a list of
+coefficients and exponents. For example, the polynomial
+
+3x^2+2x+4
+
+can be viewed as list of the following pairs
+
+(3,2),(2,1),(4,0)
+
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct pnode
+   {
+      int exp;
+      double coeff;
+      struct pnode *link;
+   };
+
+struct pnode *insert(struct pnode *, int,double);
+void printlist ( struct pnode * );
+struct pnode *polyadd(struct pnode *, struct pnode *);
+struct pnode *sortlist(struct pnode *);
+
+struct pnode *insert(struct pnode *p, int e,double c)
+{
+   struct pnode *temp;
+   if(p==NULL)
+   {
+      p=(struct pnode *)malloc(sizeof(struct pnode));
+      if(p==NULL)
+      {
+         printf("Error\n");
+         exit(0);
+      }
+      p-> exp = e;
+      p->coeff = c;
+      p-> link = NULL;
+   }
+   else
+   {
+      temp = p;
+      while (temp-> link!= NULL)
+      temp = temp-> link;
+      temp-> link = (struct pnode *)malloc(sizeof(struct pnode));
+      if(temp -> link == NULL)
+      {
+   printf("Error\n");
+         exit(0);
+      }
+    temp = temp-> link;
+      temp-> exp = e;
+      temp->coeff = c;
+      temp-> link = NULL;
+   }
+   return (p);
+}
+
+/* a function to sort a list */
+struct pnode *sortlist(struct pnode *p)
+{
+   struct pnode *temp1,*temp2,*max,*prev,*q;
+   q = NULL;
+   while(p != NULL)
+   {
+      prev = NULL;
+      max = temp1 = p;
+      temp2 = p -> link;
+      while ( temp2 != NULL )
+      {
+         if(max -> exp < temp2 -> exp)
+              {
+         max = temp2;
+                 prev = temp1;
+               }
+               temp1 = temp2;
+               temp2 = temp2-> link;
+            }
+      if(prev == NULL)
+            p = max -> link;
+            else
+            prev -> link = max -> link;
+            max -> link = NULL;
+            if( q == NULL)
+            q = max; /* moves the node with highest data value in the list
+pointed to by p to the list
+   pointed to by q as a first node*/
+         else
+         {
+            temp1 = q;
+            /* traverses the list pointed to by q to get pointer to its
+last node */
+         while( temp1 -> link != NULL)
+         temp1 = temp1 -> link;
+         temp1 -> link = max; /* moves the node with highest data value
+in the list pointed to
+   by p to the list pointed to by q at the end of list pointed by
+   q*/
+
+         }
+      }
+      return (q);
+   }
+   /* A function to add two polynomials */
+   struct pnode *polyadd(struct pnode *p, struct pnode *q)
+   {
+      struct pnode *r = NULL;
+      int e;
+      double c;
+      while((p!=NULL) && (q != NULL))
+               {
+                  if(p->exp > q->exp)
+                   {
+                        r = insert(r,p->exp,p->coeff);
+                        p = p->link;
+                   }
+                   else
+                      if(p->exp < q->exp)
+                    {
+                        r = insert(r,q->exp,q->coeff);
+                        q = q->link;
+                     }
+                     else
+   {
+      c = p->coeff + q->coeff;
+      e = q->exp;
+      r = insert( r, e,c);
+      p = p->link;
+      q = q->link;
+            }
+   while(p != NULL)
+            {
+                  r = insert( r, p->exp,p->coeff);
+                  p = p->link;
+            }
+            while(q!=NULL)
+            {
+                     r = insert( r, q->exp,q->coeff);
+                     q = q->link;
+            }
+   return(r);
+   }
+
+   void printlist ( struct pnode *p )
+   {
+      printf("The polynomial is\n");
+      while (p!= NULL)
+           {
+      printf("%d %lf\t",p-> exp,p->coeff);
+               p = p-> link;
+         }
+   }
+   void main()
+   {
+         int e;
+         int n,i;
+         double c;
+         struct pnode *poly1 = NULL ;
+         struct pnode *poly2=NULL;
+         struct pnode *result;
+         printf("Enter the terms in the polynomial1 \n");
+         scanf("%d",&n);
+         i=1;
+         while ( n-- > 0 )
+         {
+      printf( "Enter the exponent and coefficient of the term number
+%d\n",i);
+               scanf("%d %lf",&e,&c);
+               poly1 = insert ( poly1,e,c);
+         }
+        printf("Enter the terms in the polynomial2 \n");
+         scanf("%d",&n);
+         i=1;
+         while ( n-- > 0 )
+         {
+      printf( "Enter the exponent and coefficient of the term number
+%d\n",i);
+               scanf("%d %lf",&e,&c);
+               poly2 = insert ( poly2,e,c);
+         }
+         poly1 = sortlist(poly1);
+         poly2 = sortlist(poly2);
+         printf("The polynomial 1 is\n");
+         printlist ( poly1 );
+         printf("The polynomial 2 is\n");
+         printlist ( poly2 );
+        result = polyadd(poly1,poly2);
+         printf("The result of addition is\n");
+         printlist ( result );
+   }
+#+end_src
+
+*** REPRESENTATION OF SPARSE MATRICES
+
+The most natural representation is to use two-dimensional array A[m][n] and
+access the element of ith row and jth column as A[i][j]. If a large number of
+elements of the matrix are zero elements, then it is called a sparse matrix.
+
+Representing a sparse matrix by using a two-dimensional array leads to the
+wastage of a substantial amount of space. Therefore, an alternative
+representation must be used for sparse matrices. One such representation is to
+store only non- zero elements along with their row positions and column
+positions. That means representing every non-zero element by using triples (i,
+j, value), where i is a row position and j is a column position, and store these
+triples in a linear list. It is possible to arrange these triples in the
+increasing order of row indices, and for the same row index in the increasing
+order of column indices. Each triple (i,j,value) can be represented by using a
+node having four fields as shown in the following:
+
+#+begin_src c
+Struct snode{
+        Int row,col,val;
+        Struct snode *next;
+        };
+#+end_src
+
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct snode
+   {
+      int row,col,val;
+      struct snode *link;
+   };
+
+struct snode *insert(struct snode *, int,int,int);
+void printlist ( struct snode * );
+struct snode *sadd(struct snode *, struct snode *);
+//struct pnode *sortlist(struct pnode *);
+
+struct snode *insert(struct snode *p, int r,int c,int val)
+{
+   struct snode *temp;
+   if(p==NULL)
+   {
+      p=(struct snode *)malloc(sizeof(struct snode));
+      if(p==NULL)
+      {
+   printf("Error\n");
+          exit(0);
+      }
+      p->row = r;
+      p->col = c;
+      p->val = val;
+      p-> link = NULL;
+   }
+   else
+   {
+      temp = p;
+      while (temp-> link!= NULL)
+     temp = temp-> link;
+      temp-> link = (struct snode *)malloc(sizeof(struct snode));
+      if(temp -> link == NULL)
+      {
+   printf("Error\n");
+          exit(0);
+      }
+     temp = temp-> link;
+      temp-> row = r;
+      temp->col= c;
+      temp->val=val;
+      temp-> link = NULL;
+   }
+   return (p);
+}
+
+/* A function to add two sparse matrices */
+struct snode *sadd(struct snode *p, struct snode *q)
+{
+   struct snode *r = NULL;
+   int val;
+   while((p!=NULL) && (q != NULL))
+            {
+               if(p->row < q->row)
+               {
+                  r = insert(r,p->row,p->col,p->val);
+                  p = p->link;
+               }
+             else
+                if(p->row > q->row)
+                {
+                  r = insert(r,q->row,q->col,q->val);
+                  q = q->link;
+                }
+             else
+   if( p->col < q->col)
+                {
+      r = insert(r,p->row,p->col,p->val);
+                  p = p->link;
+                }
+   else
+            if(p->col > q->col)
+               {
+                  r = insert(r,q->row,q->col,q->val);
+                  q = q->link;
+               }
+             else
+             {
+               val = p->val + q->val;
+               r = insert( r, p->row,p->col,val);
+               p = p->link;
+               q = q->link;
+             }
+     }
+   while(p != NULL)
+            {
+                  r = insert( r, p->row ,p->col,p->val);
+                  p = p->link;
+            }
+            while(q!=NULL)
+            {
+                  r = insert( r, q->row ,q->col,q->val);
+                  q = q->link;
+            }
+   return(r);
+   }
+
+   void printlist ( struct snode *p )
+   {
+      printf("The resultant sparse matrix is\n");
+      while (p!= NULL)
+           {
+      printf("%d %d % d\n",p-> row,p->col,p->val);
+               p = p-> link;
+        }
+   }
+   void main()
+   {
+      int r,n,c,val;
+      struct snode *s1 = NULL ;
+      struct snode *s2=NULL;
+      struct snode *result = NULL;
+      printf("Enter the number of non-zero terms in the sparse matrix1 \n");
+      scanf("%d",&n);
+      printf("Enter the terms in the sparse matrix1 in the increasing
+order of row indices and for the same row index in the increasing order of
+row indices and for the same row index in the increasing order of column
+indices \n");
+                while ( n-- > 0 )
+         {
+      printf( "Enter the row number, column number, and value\n");
+              scanf("%d %d%d",&r,&c,&val);
+              s1 = insert ( s1,r,c,val);
+         }
+   printf("Enter the number of non-zero terms in the sparse matrix1 \n");
+         scanf("%d",&n);
+         printf("Enter the terms in the sparse matrix2 in the increasing
+order of row indices and for the same row index in the increasing order of
+row indices and for the same row index in the increasing order of column
+indices \n");
+         while ( n-- > 0 )
+         {
+      printf( "Enter the row number, column number, and value\n");
+              scanf("%d %d%d",&r,&c,&val);
+              s2 = insert ( s2,r,c,val);
+         }
+         result = sadd(s1,s2);
+         printf("The result of addition is\n");
+         printlist ( result );
+   }
+#+end_src
+
+*** CIRCULAR LINKED LISTS
+#+begin_src c
+# include <stdio.h>
+# include <stdlib.h>
+struct node
+{
+   int data;
+   struct node *link;
+};
+struct node *insert(struct node *p, int n)
+{
+   struct node *temp;
+   /* if the existing list is empty then insert a new node as the
+starting node */
+       if(p==NULL)
+       {
+         p=(struct node *)malloc(sizeof(struct node)); /* creates new
+node data value passes
+   as parameter */
+        if(p==NULL)
+        {
+                 printf("Error\n");
+                 exit(0);
+         }
+         p-> data = n;
+          p-> link = p; /* makes the pointer pointing to itself because it
+is a circular list*/
+      }
+      else
+      {
+         temp = p;
+   /* traverses the existing list to get the pointer to the last node of
+it */
+         while (temp-> link != p)
+                temp = temp-> link;
+         temp-> link = (struct node *)malloc(sizeof(struct node)); /*
+creates new node using
+         data value passes as
+         parameter and puts its
+         address in the link field
+         of last node of the
+         existing list*/
+         if(temp -> link == NULL)
+         {
+                  printf("Error\n");
+         }
+            exit(0);
+            temp = temp-> link;
+            temp-> data = n;
+            temp-> link = p;
+         }
+         return (p);
+   }
+   void printlist ( struct node *p )
+   {
+      struct node *temp;
+      temp = p;
+      printf("The data values in the list are\n");
+      if(p!= NULL)
+      {
+      do
+      {
+                printf(%d\t",temp->data);
+                temp=temp->link;
+      } while (temp!= p)
+   }
+   else
+      printf("The list is empty\n");
+   }
+
+   void main()
+   {
+      int n;
+      int x;
+      struct node *start = NULL ;
+      printf("Enter the nodes to be created \n");
+      scanf("%d",&n);
+      while ( n- > 0 )
+      {
+              printf( "Enter the data values to be placed in a
+node\n");
+         scanf("%d",&x);
+         start = insert ( start, x );
+      }
+      printf("The created list is\n");
+      printlist ( start );
+   }
+
+#+end_src
+
+*** SPLITTING A LIST WITH 2N NODES INTO TWO SEPARATE AND EQUAL LISTS
+
+If the circular linked list has 10 nodes, then the two lists have 5 nodes each.
+The procedure for splitting a circular list with 2n nodes into two equal
+circular lists is given here:
+
+#+begin_src c
+#include <stdio.h>
+#include <stdlib.h>
+struct node
+{
+  int data;
+  struct node *link;
+};
+void split(struct node *p, struct node **q, int n)
+{
+    struct node *temp;
+  int i =1;
+  temp = p;
+        while( i < n)
+
+                          {
+                temp = temp->link;
+                i++;
+                          }
+  *q = temp->link;
+  temp->link = p;
+          temp = *q;
+        while(temp->link != p)
+      temp = temp ->link;
+  temp->link = *q;
+}
+
+   struct node *insert(struct node *p, int n)
+   {
+   struct node *temp;
+   /* if the existing list is empty then insert a new node as the
+starting node */
+   if(p==NULL)
+   {
+      p=(struct node *)malloc(sizeof(struct node)); /* creates new node
+data value passes
+   as parameter */
+
+      if(p==NULL)
+      {
+   printf("Error\n");
+          exit(0);
+      }
+      p-> data = n;
+      p-> link = p; /* makes the pointer point to itself because it is
+a circular list*/
+       }
+       else
+       {
+         temp = p;
+    /* traverses the existing list to get the pointer to the last node of
+it */
+   while (temp-> link != p)
+      temp = temp-> link;
+       temp-> link = (struct node *)malloc(sizeof(struct node)); /*
+creates new node using
+          data value passes as
+            parameter and puts its
+           address in the link field
+           of last node of the
+           existing list*/
+         if(temp -> link == NULL)
+         {
+      printf("Error\n");
+            exit(0);
+         }
+         temp = temp-> link;
+         temp-> data = n;
+         temp-> link = p;
+      }
+      return (p);
+   }
+
+   void printlist ( struct node *p )
+   {
+    struct node *temp;
+     temp = p;
+    printf("The data values in the list are\n");
+      if(p!= NULL)
+             do
+               {
+               printf("%d\t",temp->data);
+               temp=temp->link;
+               } while (temp!= p);
+      else
+            printf("The list is empty\n");
+   }
+
+   void main()
+   {
+         int n,num;
+         int x;
+         struct node *start = NULL ;
+         struct node *start1=NULL;
+         printf("Enter the value of n \n");
+         scanf("%d",&n);
+         num = n;
+         n*=2;
+         /* this will create a circular list with 2n nodes*/
+      while ( n-- > 0 )
+         {
+      printf( "Enter the data values to be placed in a node\n");
+             scanf("%d",&x);
+             start = insert ( start, x );
+         }
+         printf("The created list is\n");
+         printlist ( start );
+         split(start,&start1,num);
+         printf("The first list is:\n");
+         printlist(start);
+         printf("The second list is:\n");
+         printlist(start1);
+   }
+#+end_src
+
+*** MERGING OF TWO CIRCULAR LISTS
+
+You can merge two lists into one list. The following program merges two circular lists.
+
+#+begin_src c
+   # include <stdio.h>
+   # include <stdlib.h>
+   struct node
+   {
+   int data;
+   struct node *link;
+   };
+
+   struct node *insert(struct node *p, int n)
+   {
+   struct node *temp;
+   /* if the existing list is empty then insert a new node as the
+starting node */
+   if(p==NULL)
+   {
+      p=(struct node *)malloc(sizeof(struct node)); /* creates new node
+data value passes
+   as parameter */
+
+        if(p==NULL)
+        {
+     printf("Error\n");
+            exit(0);
+        }
+         p-> data = n;
+         p-> link = p; /* makes the pointer pointing to itself because it
+is a circular list*/
+      }
+      else
+      {
+         temp = p;
+   /* traverses the existing list to get the pointer to the last node of
+it */
+   while (temp-> link != p)
+      temp = temp-> link;
+       temp-> link = (struct node *)malloc(sizeof(struct node)); /*
+creates new node using
+          data value passes as
+            parameter and puts its
+           address in the link field
+           of last node of the
+            existing list*/
+           if(temp -> link == NULL)
+           {
+        printf("Error\n");
+             exit(0);
+           }
+           temp = temp-> link;
+           temp-> data = n;
+           temp-> link = p;
+         }
+         return (p);
+   }
+   void printlist ( struct node *p )
+   {
+    struct node *temp;
+     temp = p;
+    printf("The data values in the list are\n");
+       if(p!= NULL)
+       {
+         do
+               {
+               printf("%d\t",temp->data);
+               temp=temp->link;
+               } while (temp!= p);
+       }
+   else
+         printf("The list is empty\n");
+    }
+   struct node *merge(struct node *p, struct node *q)
+        {
+          struct node *temp=NULL;
+          struct node *r=NULL;
+          r = p;
+          temp = p;
+          while(temp->link != p)
+               temp = temp->link;
+          temp->link = q;
+          temp = q;
+          while( temp->link != q)
+              temp = temp->link;
+          temp->link = r;
+         return(r);
+   }
+
+   void main()
+   {
+         int n;
+         int x;
+         struct node *start1=NULL ;
+         struct node *start2=NULL;
+         struct node *start3=NULL;
+
+        /* this will create the first circular list nodes*/
+         printf("Enter the number of nodes in the first list \n");
+         scanf("%d",&n);
+         while ( n-- > 0 )
+         {
+      printf( "Enter the data value to be placed in a node\n");
+              scanf("%d",&x);
+              start1 = insert ( start1, x );
+         }
+         printf("The first list is\n");
+         printlist ( start1 );
+
+         /* this will create the second circular list nodes*/
+         printf("Enter the number of nodes in the second list \n");
+         scanf("%d",&n);
+         while ( n-- > 0 )
+         {
+      printf( "Enter the data value to be placed in a node\n");
+             scanf("%d",&x);
+             start2 = insert ( start2, x );
+         }
+         printf("The second list is:\n");
+         printlist ( start2 );
+
+         start3 = merge(start1,start2);
+         printf("The resultant list is:\n");
+         printlist(start3);
+   }
+#+end_src 
+
+*** REVERSING THE DIRECTION OF LINKS IN A SINGLY LINKED CIRCULAR LIST
+You can reverse the direction of links in the circular list. If you do so, each link should be reversed.
+
+#+begin_src c
+   # include <stdio.h>
+   # include <stdlib.h>
+   struct node
+   {
+   int data;
+   struct node *link;
+   };
+   /* A function to reverse a singly linked circular list */
+   struct node *reverselist(struct node *p)
+     {
+       struct node *temp;
+       struct node *prev = NULL;
+       struct node *curr;
+       if(p != NULL)
+       {
+       curr = p;
+       temp = curr;
+       while(curr->link != p)
+       {
+         curr = curr->link;
+                 temp ->link = prev;
+                 prev = temp;
+                 temp = curr;
+              }
+      temp ->link = prev;
+      p->link = temp;
+      p= temp;
+      }
+      return(p);
+   }
+
+   struct node *insert(struct node *p, int n)
+   {
+   struct node *temp;
+   /* if the existing list is empty then insert a new node as the
+starting node */
+   if(p==NULL)
+   {
+      p=(struct node *)malloc(sizeof(struct node)); /* creates new node
+      data value passes
+         as parameter */
+
+              if(p==NULL)
+              {
+           printf("Error\n");
+                  exit(0);
+              }
+               p-> data = n;
+               p-> link = p; /* makes the pointer point to itself because it is
+a circular list*/
+        }
+        else
+        {
+          temp = p;
+      /* traverses the existing list to get the pointer to the last node of
+it */
+   while (temp-> link != p)
+       temp = temp-> link;
+         temp-> link = (struct node *)malloc(sizeof(struct node)); /*
+creates new node using
+          data value passes as
+            parameter and puts its
+           address in the link field
+           of last node of the
+           existing list*/
+         if(temp -> link == NULL)
+         {
+      printf("Error\n");
+           exit(0);
+         }
+         temp = temp-> link;
+         temp-> data = n;
+         temp-> link = p;
+        }
+        return (p);
+   }
+   void printlist ( struct node *p )
+   {
+    struct node *temp;
+     temp = p;
+    printf("The data values in the list are\n");
+    if(p!= NULL)
+    {
+       do
+            {
+            printf("%d\t",temp->data);
+            temp=temp->link;
+            } while (temp!= p);
+      }
+   else
+         printf("The list is empty\n");
+   }
+   void main()
+   {
+         int n;
+         int x;
+         struct node *start = NULL ;
+         struct node *start1=NULL;
+         /* this will create at circular list */
+         printf("Enter the number of nodes in the list \n");
+         scanf("%d",&n);
+         while ( n-- > 0 )
+         {
+      printf( "Enter the data value to be placed in a node\n");
+              scanf("%d",&x);
+              start = insert ( start, x );
+         }
+         printf("The list is\n");
+         printlist ( start );
+         start1 = reverselist(start);
+         printf("The reversed list is:\n");
+         printlist(start1);
+   }
+#+end_src
 
 * libpcap
 ** open the default device 
