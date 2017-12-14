@@ -1,0 +1,50 @@
+* strings
+** join array of strings
+
+#+begin_src java
+public class SmashWords {
+  public static String smash(String... words) {
+    return String.join(" ", words);
+  }
+}
+#+end_src
+** concatenate string using =string.format=
+
+#+begin_src java
+public class Hello{
+  public String sayHello(String[] name, String city, String state){
+    return String.format("Hello, %s! Welcome to %s, %s!",String.join(" ", name),city,state);
+  }
+}
+#+end_src
+** check if an object is a string
+
+Try use instanceof , this method will help you with check between many types
+
+#+begin_src java
+if (s instanceof String ){
+  // s is String
+}else if(s instanceof Integer){
+  // s is Integer value
+}
+#+end_src
+
+* Number
+** number to string
+
+#+begin_src java
+Integer.toString(123);
+String.valueOf(num);
+#+end_src
+
+** convert character to numeric value
+
+#+begin_src java
+public class CharProblem {
+  public static int howOld(final String herOld) {
+  
+  return Character.getNumericValue(herOld.charAt(0));
+  }
+}
+#+end_src
+

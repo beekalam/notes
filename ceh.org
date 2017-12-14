@@ -99,6 +99,7 @@ auth            sufficient      pam_unix.so try_first_pass nullok nodelay
 | insubject  | Searches subject lines in posts. This only works in Google Groups.                             |
 | msgid      | Searches within a group for a message ID.                                                      |
 
+
 http://www.googleguide.com
 * whois & DNS
 ** query
@@ -763,6 +764,53 @@ https://www.vanheusden.com/Linux/index.php
 * temp
 If some machines on your network are reachable but others aren't, or connectivity comes and goes,
 ARP problems may be the cause.
+
+* nmap
+** port states
+Nmap categorizes ports into the following states:
+
+ - Open: This indicates that an application is listening for connections on this port.
+
+ - Closed: This indicates that the probes were received but there is no application listening on this port.
+
+ - Filtered: This indicates that the probes were not received and the state
+   could not be established. It also indicates that the probes are being dropped
+   by some kind of filtering.
+
+ - Unfiltered: This indicates that the probes were received but a state could not be established.
+
+ - Open/Filtered: This indicates that the port was filtered or open but Nmap couldn't establish the state.
+
+ - Closed/Filtered: This indicates that the port was filtered or closed but Nmap couldn't establish the state.
+
+** listing open ports on a remote host
+
+#+begin_src shell
+$ nmap scanme.nmap.org
+#+end_src
+
+** using a different dns server
+Nmap begins by converting the hostname to an IPv4 address using DNS. If you wish
+to use a different DNS server, use --dns-servers <serv1[,serv2],...>, or use-n
+if you wish to skip this step, as follows:
+
+#+begin_src shell
+$ nmap --dns-servers 8.8.8.8,8.8.4.4 scanme.nmap.org
+#+end_src
+
+** bypassing nameserver resolution
+
+#+begin_src shell 
+$ nmap -PN scanme.nmap.org
+#+end_src
+
+** bypassing reverse DNS(conversion of IPV4 to domain names)
+Nmap then converts the IPv4 address back to a hostname by using a reverse DNS
+call. Use -n to skip this step as follows:
+
+#+begin_src shell
+$ nmap -n scanme.nmap.org
+#+end_src
 
 * useful resources
 http://ftp.ntua.gr/mirror/technotronic/

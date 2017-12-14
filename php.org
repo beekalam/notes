@@ -7,7 +7,7 @@
 
 * regular expression
 ** Finding the nth Occurrence of a Match
-
+  
 #+begin_src php
 <?php
 $todo = "1. Get Dressed 2. Eat Jelly 3. Squash every week into a day";
@@ -7684,6 +7684,7 @@ foreach(spl_classes() as  $k=>$v){
 }
 ?>
 #+end_src
+
 ** iterators
 *** LimitIterator
 The LimitIterator is one of the easiest SPL iterators to use. It determines where to start
@@ -12518,8 +12519,8 @@ to our router.
   #+end_src
 
 *** named routes
-   
- #+begin_src php
+
+#+begin_src php
  Route::get('session/create', [
  'as'=>'create',
  'use'=>'SessionController@create']);
@@ -12537,6 +12538,7 @@ to our router.
   'use'=>['SessionController@register']
  ])->before('guest');
  #+end_src
+
 ** using sqlite as database
  first make sure sqlite drivers for php is installed
 
@@ -12597,6 +12599,7 @@ expireDate.setTime (expireDate.getTime() - yesterday)
 document.cookie =cookie + "=" + escape("nothing") + ";" + "expires" + "=" + expireDate.toGMTString()
 }
 #+end_src
+
 * Returning HTTP 503 using PHP (maintenance page)
 Returning HTTP 503 using PHP (maintenance page)
 If you need to create an "under maintenance" page in PHP without getting Googlebot to index it, create a PHP script.
@@ -12773,6 +12776,7 @@ function default_ini_path()
     return (realpath($_SERVER['DOCUMENT_ROOT']));
 }
 #+end_src
+
 ** check for valid mcode
 
 #+begin_src php

@@ -4079,8 +4079,6 @@ client.quit();
 $ date --set 1998-11-02 
 $ date --set 21:08:00
 #+end_src
-
-* useful resources
 * references
 ** http://www.folkstalk.com/2012/02/cut-command-in-unix-linux-examples.html
 ** http://unix.stackexchange.com/questions/35369/how-to-cut-by-tab-character
@@ -5086,6 +5084,6 @@ scripts.
  causes the script to wait for the end-of-file in the output of passwd. Similar
  to timeout, eof is another keyword pattern. This final expect effectively waits
  for passwd to complete execution before returning control to the script.
-
 * sublime
+* useful resources
   
