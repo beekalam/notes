@@ -1,4 +1,5 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/main.css" />
+
 * speedtest
 ** http://www.tecmint.com/speedtest-mini-server-to-test-bandwidth-speed/
 ** http://www.brandonchecketts.com/open-source-speedtest
@@ -70,6 +71,7 @@ https://github.com/alphapapa/org-protocol-capture-html
    https://github.com/puikinsh/gentelella
    http://phpflow.com/misc/angular/convert-bootstrap-html-theme-angularjs-template/
    https://colorlib.com/polygon/gentelella/index.html
+   https://github.com/miromannino/Justified-Gallery/
 
 ** ide
    http://brackets.io/
@@ -99,6 +101,7 @@ https://github.com/alphapapa/org-protocol-capture-html
 ** http://www.getfreeebooks.com/
 ** http://www.ebook3000.com/
 ** http://ebookbb.com/
+** https://docstore.mik.ua/orelly/bookshelfs.html
 * prog practice
 ** algorithmic
 write a stack
@@ -169,19 +172,31 @@ http://devdocs.io/lodash~4/
 ** https://open.kattis.com
 ** https://algo.is/solved-problems/
 ** http://acm.timus.ru/
+** http://exercism.io/
+
 * practice programming projects
 ** http://inventwithpython.com/blog/2012/02/20/i-need-practice-programming-49-ideas-for-game-clones-to-code/
+
+* programming projects
+** https://tryenlight.github.io/
+** http://www.mindrot.org/projects/
 
 * network
 ** http://packetlife.net/
 ** https://wiki.wireshark.org/FrontPage
 ** http://sobek.su/Cisco/IOS/
+
+* netflow 
+** netflow generator
+http://www.mindrot.org/projects/softflowd/
+
 * cron
 ** http://crontab-generator.org/
 ** https://crontab.guru
 ** http://www.crontutorials.com/
 ** http://crontab-generator.org/
 ** http://stackoverflow.com/documentation/bash/topics
+
 * monitor
 ** http://www.maadiran.com
 * shiraz
@@ -192,6 +207,7 @@ http://devdocs.io/lodash~4/
    http://hamrahnet.com/
 ** misc
    http://www.gli-shiraz.com/
+   https://pars-mc.com/
 * MOOCS
 ** https://alison.com/learn/programming
 ** http://www.howtogeek.com/117674/the-best-websites-for-free-online-courses-certificates-degrees-and-educational-resources/
@@ -312,3 +328,8 @@ http://mentalhealthdaily.com/2015/04/17/how-to-increase-dopamine-levels/
 ** http://www.buildyourownlisp.com/contents
 * gists
 https://repl.it/@beekalam
+* cheatsheets
+https://bitrot.sh/cheatsheet/13-12-2017-ssh-cheatsheet/
+https://bitrot.sh/cheatsheet/09-12-2017-nmap-cheatsheet/
+https://bitrot.sh/cheatsheet/
+

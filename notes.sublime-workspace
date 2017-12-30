@@ -1,0 +1,1284 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Fixed",
+				"FixedDimensionsBasics"
+			],
+			[
+				"Hel",
+				"HelloWorldApp"
+			],
+			[
+				"persian",
+				"persiansites\t(server.js)"
+			],
+			[
+				"pers",
+				"persian-text\t(layout.jade)"
+			],
+			[
+				"persia",
+				"persian-text"
+			],
+			[
+				"pes",
+				"persian_comment"
+			],
+			[
+				"edit",
+				"edit-persian-comment"
+			],
+			[
+				"persi",
+				"persian_comment"
+			],
+			[
+				"persina",
+				"persian_comment"
+			],
+			[
+				"persin",
+				"persian_comment"
+			],
+			[
+				"modal-bo",
+				"modal-body-content"
+			],
+			[
+				"entr",
+				"entriesChanged"
+			],
+			[
+				"ipv",
+				"ipv4_dst_addr"
+			],
+			[
+				"ipv4",
+				"ipv4_src_addr"
+			],
+			[
+				"conl",
+				"console.log"
+			],
+			[
+				"testfil",
+				"testfilter2"
+			],
+			[
+				"ip",
+				"ipv4_src_addr"
+			],
+			[
+				"cluster",
+				"cluster.worker.id"
+			],
+			[
+				"update",
+				"updatekey"
+			],
+			[
+				"cach",
+				"cache_key"
+			],
+			[
+				"total",
+				"total_bytes"
+			],
+			[
+				"find",
+				"find-all-devs"
+			],
+			[
+				"cstd",
+				"cstdlib\t(1124.cpp)"
+			],
+			[
+				"a",
+				"argc"
+			],
+			[
+				"sessino",
+				"session_start"
+			],
+			[
+				"style",
+				"stylesheet"
+			],
+			[
+				"bas",
+				"base64-encode-decode.htm"
+			],
+			[
+				"base",
+				"base64_decode"
+			],
+			[
+				"selec",
+				"select2"
+			],
+			[
+				"resell",
+				"reseller_names"
+			],
+			[
+				"change",
+				"changepassword"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "javascript.org",
+			"settings":
+			{
+				"buffer_size": 283714,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "ceh.org",
+			"settings":
+			{
+				"buffer_size": 27045,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "network.org",
+			"settings":
+			{
+				"buffer_size": 66010,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "links.org",
+			"settings":
+			{
+				"buffer_size": 11458,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "awesome_links.md",
+			"settings":
+			{
+				"buffer_size": 719,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/C++/C++ Single File.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 92.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"syntaxorg",
+				"Set Syntax: orgmode"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"syntphp",
+				"Set Syntax: PHP"
+			],
+			[
+				"run",
+				"Build With: C++ Single File - Run"
+			],
+			[
+				"gitbranc",
+				"Git: Change Branch"
+			],
+			[
+				"prettif",
+				"HTMLPrettify: Set Prettify Preferences"
+			],
+			[
+				"packagecontrollist",
+				"Package Control: List Packages"
+			],
+			[
+				"package control:list",
+				"Package Control: List Packages"
+			],
+			[
+				"listpackage",
+				"Package Control: List Packages"
+			],
+			[
+				"",
+				"About"
+			]
+		],
+		"width": 485.0
+	},
+	"console":
+	{
+		"height": 114.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": true,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/moh/Documents/notes"
+	],
+	"file_history":
+	[
+		"/tmp/test/AwesomeProject/server.js",
+		"/tmp/test/AwesomeProject/App.js",
+		"/tmp/test/AwesomeProject/App.",
+		"/home/moh/.config/sublime-text-3/Packages/PyV8/linux64-p3/PyV8.py",
+		"/etc/snort/rules/icmp.rules",
+		"/home/moh/src/fara-node/node-netflow/package.json",
+		"/home/moh/src/fara-node/node-netflow/db.sqlite",
+		"/home/moh/src/fara-node/node-netflow/views/layout.jade",
+		"/opt/tor-browser/tor-browser_en-US/Browser/Desktop/youtube-dl/devscripts/check-porn.py",
+		"/opt/tor-browser/tor-browser_en-US/Browser/Desktop/youtube-dl/bin/youtube-dl",
+		"/opt/tor-browser/tor-browser_en-US/Browser/Desktop/youtube-dl/devscripts/fish-completion.py",
+		"/opt/tor-browser/tor-browser_en-US/Browser/Desktop/youtube-dl/youtube-dl",
+		"/tmp/test.cpp",
+		"/home/moh/src/fara-node/node-netflow/archive/expressdump",
+		"/home/moh/src/fara-node/node-netflow/collector.js",
+		"/home/moh/src/fara-node/node-netflow-ui/sequelizetest.js",
+		"/home/moh/src/fara-node/node-netflow-ui/server.js",
+		"/home/moh/src/fara-node/node-netflow/sites_route.txt",
+		"/home/moh/src/fara-node/node-netflow/test2.js",
+		"/home/moh/src/fara-node/node-netflow/filter.js",
+		"/tmp/a.js",
+		"/home/moh/src/fara-node/node-netflow/trash.tmp",
+		"/home/moh/src/fara-node/node-netflow/tmp",
+		"/home/moh/src/fara-node/node-netflow/redis-test2.js",
+		"/home/moh/src/fara-node/node-netflow/redis-test.js",
+		"/home/moh/src/fara-node/node-netflow/cleanOld.js",
+		"/home/moh/src/fara-node/node-netflow/test.js",
+		"/home/moh/src/fara-node/node-netflow/sftp-config.json",
+		"/home/moh/src/node-netflow-ui/views/layout.jade",
+		"/home/moh/src/node-netflow-ui/views/index.jade",
+		"/home/moh/src/node-netflow-ui/server.js",
+		"/home/moh/src/node-netflow/cleanOld.js",
+		"/home/moh/src/node-netflow/package.json",
+		"/tmp/tmp.tmp",
+		"/home/moh/Documents/notes/php.org",
+		"/home/moh/ip_generate.py",
+		"/home/moh/.config/sublime-text-3/Packages/User/SideBarEnhancements/Open With/Side Bar.sublime-menu",
+		"/home/moh/test.lisp",
+		"/tmp/test.py",
+		"/home/moh/src/phpprojects/LimeSurvey/framework/yiilite.php",
+		"/home/moh/src/phpprojects/drupal/core/includes/bootstrap.inc",
+		"/home/moh/Documents/notes/cpp.org",
+		"/home/moh/src/phpprojects/competitve-programming/uva/1-100/227.php",
+		"/home/moh/src/phpprojects/competitve-programming/uva/1-100/227.tst",
+		"/var/www/html/test/lib/whois_domain.class.php",
+		"/var/www/html/test/index.php",
+		"/var/www/html/test/lib/telnet.class.php",
+		"/var/www/html/test/lib/RTG.php",
+		"/var/www/html/test/lib/Socket.class.php",
+		"/var/www/html/test/lib/Http.class.php",
+		"/var/www/html/test/lib/dns/build.php",
+		"/var/www/html/test/lib/dns/parse.php",
+		"/var/www/html/test/lib/dns/record.php",
+		"/var/www/html/test/utils.php",
+		"/var/www/html/test/templates/uuid.htm",
+		"/var/www/html/test/tmp/sessions/sess_melh8cjll20v31npstda1bjtj3",
+		"/var/www/html/test/vendor/bcosca/fatfree/lib/base.php",
+		"/var/www/html/test/vendor/symfony/debug/Debug.php",
+		"/var/www/html/test/vendor/bcosca/fatfree/lib/code.css",
+		"/var/www/html/test/vendor/symfony/debug/ErrorHandler.php",
+		"/var/www/html/test/templates/_links.htm",
+		"/var/www/html/test/templates/home.html",
+		"/var/www/html/test/templates/layout.htm",
+		"/var/www/html/test/templates/_nav.htm",
+		"/var/www/html/test/templates/base64-encode-decode.htm",
+		"/var/www/html/test/templates/_base64_encode_decode.htm",
+		"/var/www/html/test/templates/_nav.php",
+		"/var/www/html/test/templates/_header.htm",
+		"/var/www/html/test/templates/_footer.htm",
+		"/var/www/html/test/Generators.php",
+		"/var/www/html/test/vendor/phpunit/phpunit/src/Framework/Constraint/LogicalNot.php",
+		"/var/www/html/test/composer.json",
+		"/var/www/html/test/.htaccess",
+		"/var/www/html/test/vendor/bin/phpunit",
+		"/var/www/html/xbs-res/ui/views/header.htm",
+		"/var/www/html/xbs-res/ui/views/reseller/package.php",
+		"/var/www/html/xbs-res/app/Controllers/PackageController.php",
+		"/var/www/html/xbs-res/app/Controllers/Generators.php",
+		"/var/www/html/xbs-res/index.php",
+		"/var/www/html/xbs-res/ui/views/footer.htm",
+		"/var/www/html/xbs-res/ui/css/base.css",
+		"/var/www/html/xbs-res/lib/generator.php",
+		"/var/www/html/xbs-res/ui/views/rightmenu.php",
+		"/var/www/html/xbs-res/lib/initmonolog.php",
+		"/var/www/html/xbs-res/ui/views/reseller/createuser.htm",
+		"/var/www/html/xbs-res/app/Controllers/UserController.php",
+		"/var/www/html/xbs-res/app/Controllers/Reseller.php",
+		"/home/moh/Public/Old_xbs_tpls/package/extra_charge.tpl",
+		"/home/moh/Public/Old_xbs_tpls/package/package.tpl",
+		"/var/www/html/xbs-res/lib/apiClient.php",
+		"/var/www/html/xbs-res/sftp-config.json",
+		"/var/www/html/xbs-res/tmp/rightmenu.tmp",
+		"/var/www/html/xbs-res/defines.php",
+		"/var/www/html/xbs-res/.htaccess",
+		"/var/www/html/xbs-res/ui/views/footer.php",
+		"/var/www/html/xbs-res/ui/views/layout.php",
+		"/var/www/html/xbs-res/lib/userView.php",
+		"/var/www/html/xbs-res/ui/views/reseller/userinfo.htm",
+		"/var/www/html/xbs-res/lib/userInfoView.php",
+		"/var/www/html/xbs-res/lib/datatableGrid.php",
+		"/var/www/html/xbs-res/ui/views/reseller/webui.php",
+		"/var/www/html/xbs-res/.gitignore",
+		"/var/www/html/xbs-res/ui/views/layout.htm",
+		"/home/moh/src/splynx/splynx/views/admin/tariffs/custom/form.twig",
+		"/home/moh/src/splynx/splynx/views/admin/tariffs/custom/form.js.twig",
+		"/home/moh/src/splynx/splynx/views/admin/tariffs/custom/form.conf.twig",
+		"/home/moh/src/splynx/splynx/web/js/development/admin.min.js",
+		"/home/moh/src/splynx/splynx/views/admin/profile/show-hide-columns.conf.twig",
+		"/home/moh/src/splynx/splynx/views/admin/profile/show-hide-columns.twig",
+		"/home/moh/src/splynx/splynx/views/admin/tariffs/custom/index.twig",
+		"/home/moh/src/splynx/splynx/views/admin/administration/splynx/new-ticket/index.conf.twig",
+		"/home/moh/src/splynx/splynx/web/js/development/csrf.js",
+		"/home/moh/src/splynx/splynx/web/js/development/auth.min.js",
+		"/home/moh/.config/sublime-text-3/Packages/HTML-CSS-JS Prettify/HTMLPrettify.sublime-settings",
+		"/home/moh/.config/sublime-text-3/Packages/HTML-CSS-JS Prettify/.jsbeautifyrc",
+		"/home/moh/src/splynx/splynx/web/js/development/portal.min.js",
+		"/home/moh/src/splynx/splynx/system/mysql/structure.json",
+		"/home/moh/src/splynx/splynx/system/nodejs/node_modules/uws/src/Epoll.h",
+		"/home/moh/src/splynx/splynx/templates/payment-receipt/18.twig",
+		"/var/www/html/smartadmin1.5.2/DEVELOPER/PHP_version/PHP_HTML_Version/dropzone.php",
+		"/var/www/html/jqgrid/bootstrap/integrations/amdsupport/bower_components/jquery/src/css/hiddenVisibleSelectors.js",
+		"/var/www/html/express-cli/express-styl/node_modules/cluster/examples/cli.js",
+		"/var/www/html/Order.php",
+		"/var/www/html/smartadmin1.5.2/DEVELOPER/AngularJS_version/public/app/components/shortcut/shortcut-directive.js",
+		"/var/www/html/fatfree/fatfree/ui/ux_vendor/assets/pages/jquery.chart-widgets.init.js",
+		"/var/www/html/express-cli/express-styl/node_modules/optimist/example/short.js",
+		"/var/www/html/smartadmin1.5.2/DEVELOPER/COMMON_ASSETS/LESS_FILES/smartadmin/plugin-fd-slider.less",
+		"/var/www/html/XBS_GUI_PHP/modules/user/user_info.php"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			"<project>",
+			"/home/moh/src/splynx/splynx",
+			"/var/www/html/phpapp",
+			"/var/www/html/xbs",
+			"/var/www/html/fatfree/fatfree",
+			"/var/www/html/XBS_GUI_PHP",
+			"/home/moh/src/net-prog/Remmina",
+			"/home/moh/src/net-prog",
+			"/home/moh/src/net-prog/free-radius/freeradius-1.1.8",
+			"/var/www/html",
+			"/home/moh/farahoosh/XBS_GUI/XBS_GUI_PHP",
+			"/home/moh/src/unix-network-programming",
+			"/home/moh/farahoosh/XBS_GUI/XBS_GUI_PHP",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"projects",
+			"books",
+			"onion",
+			"snort",
+			"bootstrap",
+			"79.",
+			"185.",
+			"aria shatel",
+			"nodejs",
+			"nmap",
+			"classtype:bad-unknown;",
+			"classtype:attempted-recon;",
+			"classtype:attempted-recon",
+			"attempted-recon",
+			"\\$EXTERNAL_NET",
+			"\\$HOME_NET",
+			"close",
+			"ip",
+			"rtl",
+			"edit-ip",
+			"2000",
+			"console.log",
+			"crea",
+			"creat",
+			".id",
+			"\");\n",
+			"upload",
+			"filter",
+			"___",
+			"packet",
+			"get",
+			"let",
+			"flows",
+			"filter",
+			"exception",
+			"display",
+			" $",
+			"TELNET_OK",
+			"login",
+			"get",
+			"$debug",
+			"�",
+			"Socket",
+			"�",
+			"�����",
+			"save_path",
+			"</boyd",
+			"<body>\n<nav class=\"navbar navbar-fixed-top navbar-bootsnipp animate\" \nrole=\"navigation\" style=\"z-index: 9999999\">\n  <div class=\"container\">\n    <!-- Brand and toggle get grouped for better mobile display -->\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-2\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <div class=\"animbrand\">\n        <a class=\"navbar-brand animate\" href=\"https://bootsnipp.com\">Bootsnipp</a>\n      </div>\n    </div>\n<!--<script src=\"/js/BSAcpc.js\" async></script>\n<div class=\"bsa-apiads hidden-sm hidden-xs\"></div>\n-->\n    <!-- Collect the nav links, forms, and other content for toggling -->\n    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-2\">\n      <ul class=\"nav navbar-nav navbar-left\">\n    <li>\n          <a href=\"#\" class=\"dropdown-toggle active\" data-toggle=\"dropdown\">Bootstrap <span class=\"caret\"></span>\n        <span style=\"font-size:.5em; position:absolute; top:3px; left:2px\">For</span>\n          </a>\n          <ul class=\"dropdown-menu\" role=\"menu\">\n        <li class=\"dropdown-header\">CSS Frameworks</li>\n            <li class=\"active\"><a href=\"/\" class=\"\">Bootstrap</a></li>\n            <li class=\"\"><a href=\"/foundation\" class=\"\">Foundation</a></li>\n            <li class=\"\"><a href=\"/semanticui\" class=\"\">Semantic UI</a></li>\n            <li class=\"\"><a href=\"/materialize\" class=\"\">Materialize</a></li>\n            <li class=\"\"><a href=\"/purecss\" class=\"\">Pure</a></li>\n            <li class=\"\"><a href=\"/bulma\" class=\"\">Bulma</a></li>\n        <li class=\"dropdown-header\">References</li>\n            <li class=\"\"><a href=\"/cssref\" class=\"\">CSS Reference</a></li>\n<!--            <li class=\"\"><a href=\"/bootstrapref\" class=\"\">Bootstrap Reference</a></li>-->\n      </ul>\n    </li>\n      </ul>\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li class=\"visible-xs\">\n          <form action=\"https://bootsnipp.com/search\" method=\"GET\" role=\"search\">\n            <div class=\"input-group\">\n              <input type=\"text\" class=\"form-control\" name=\"q\" placeholder=\"Search for snippets\">\n              <span class=\"input-group-btn\">\n                <button class=\"btn btn-primary\" type=\"submit\"><span class=\"glyphicon glyphicon-search\"></span></button>\n                <button class=\"btn btn-danger\" type=\"reset\"><span class=\"glyphicon glyphicon-remove\"></span></button>\n              </span>\n            </div>\n          </form>\n        </li>\n<!--        <li class=\"\"><a href=\"https://bootsnipp.com/about\" class=\"animate\">About</a></li>-->\n        <li><a href=\"https://bootsnipp.com/user/snippets/new\" class=\"\">+ New Snippet</a></li>\n        <li>\n          <a href=\"#\" class=\"dropdown-toggle active\" data-toggle=\"dropdown\">Tools <span class=\"caret\"></span></a>\n          <ul class=\"dropdown-menu\" role=\"menu\">\n<!--            <li class=\"\"><a href=\"https://bootsnipp.com/blog\" class=\"animate\">Blog <span class=\"pull-right glyphicon glyphicon-pencil\"></span></a></li>\n            <li class=\"\"><a href=\"https://bootsnipp.com/resources\" class=\"animate\">List of resources <span class=\"pull-right glyphicon glyphicon-align-justify\"></span></a></li>\n            <li><a href=\"http://getbootstrap.com\" target=\"_blank\" class=\"animate\">Download Bootstrap <span class=\"pull-right glyphicon glyphicon-cloud-download\"></span></a></li>\n            <li class=\"dropdown-header\">Bootstrap Templates</li>\n            <li class=\"\"><a href=\"https://bootsnipp.com/templates\" class=\"animate\">Browse Templates <span class=\"pull-right glyphicon glyphicon-shopping-cart\"></span></a></li>\n            <li class=\"dropdown-header\">Builders</li>\n-->\n            <li class=\"\"><a href=\"https://bootsnipp.com/forms\" class=\"\">Form Builder <span class=\"pull-right glyphicon glyphicon-tasks\"></span></a></li>\n            <li class=\"active\"><a href=\"https://bootsnipp.com/buttons\" class=\"\">Button Builder <span class=\"pull-right glyphicon glyphicon-edit\"></span></a></li>\n            <li class=\"active\"><a href=\"https://bootsnipp.com/iconsearch\" class=\"\">Icon Search <span class=\"pull-right glyphicon glyphicon-search\"></span></a></li>\n            <li class=\"dropdown-header\">Dan's Tools</li>\n            <li class=\"\"><a href=\"http://www.cleancss.com/diff-compare-merge/\" class=\"\">Diff / Merge <span class=\"pull-right glyphicon glyphicon-transfer\"></span></a></li>\n            <li class=\"\"><a href=\"http://www.hexcolortool.com/\" class=\"\">Color Picker <span class=\"pull-right glyphicon glyphicon-pencil\"></span></a></li>\n            <li class=\"\"><a href=\"http://www.danstools.com/keyword-tool/\" class=\"\">Keyword Tool <span class=\"pull-right glyphicon glyphicon-list-alt\"></span></a></li>\n            <li class=\"\"><a href=\"http://www.cssfontstack.com/Web-Fonts/\" class=\"\">Web Fonts <span class=\"pull-right glyphicon glyphicon-font\"></span></a></li>\n            <li class=\"\"><a href=\"http://www.htaccessredirect.net/\" class=\"\">.htaccess Generator <span class=\"pull-right glyphicon glyphicon-console\"></span></a></li>\n            <li class=\"\"><a href=\"http://www.favicon-generator.org/\" class=\"\">Favicon Generator <span class=\"pull-right glyphicon glyphicon-picture\"></span></a></li>\n            <li class=\"\"><a href=\"http://www.website-performance.org/\" class=\"\">Site Speed Test <span class=\"pull-right glyphicon glyphicon-dashboard\"></span></a></li>\n\n          </ul>\n        </li>\n        <li class=\"dropdown\">\n          <a href=\"https://bootsnipp.com/snippets\" class=\"dropdown-toggle \" data-toggle=\"dropdown\">Snippets <span class=\"caret\"></span></a>\n          <ul class=\"dropdown-menu\" role=\"menu\">\n            <li class=\"\"><a href=\"https://bootsnipp.com/snippets/featured\" class=\"\">Featured <span class=\"pull-right glyphicon glyphicon-star\"></span></a></li>\n            <li class=\"\"><a href=\"https://bootsnipp.com/tags\" class=\"\">Tags  <span class=\"pull-right glyphicon glyphicon-tags\"></span></a></li>\n            <li class=\"dropdown-header\">By Bootstrap Version</li>\n                          <li><a href=\"https://bootsnipp.com/tags/4.0.0\" class=\"\">4.0.0</a></li>\n                          <li><a href=\"https://bootsnipp.com/tags/3.3.0\" class=\"\">3.3.0</a></li>\n                          <li><a href=\"https://bootsnipp.com/tags/3.2.0\" class=\"\">3.2.0</a></li>\n                          <li><a href=\"https://bootsnipp.com/tags/3.1.0\" class=\"\">3.1.0</a></li>\n                          <li><a href=\"https://bootsnipp.com/tags/3.0.3\" class=\"\">3.0.3</a></li>\n                          <li><a href=\"https://bootsnipp.com/tags/3.0.1\" class=\"\">3.0.1</a></li>\n                          <li><a href=\"https://bootsnipp.com/tags/3.0.0\" class=\"\">3.0.0</a></li>\n                          <li><a href=\"https://bootsnipp.com/tags/2.3.2\" class=\"\">2.3.2</a></li>\n                      </ul>\n        </li>\n        \n                  <li class=\"\"><a href=\"https://bootsnipp.com/register\" class=\"\">Register</a></li>\n          <li id=\"nav-login-btn\" class=\"\"><a href=\"https://bootsnipp.com/login\" class=\"\">Login</a></li>\n        \n        <li class=\"hidden-xs\"><a href=\"#toggle-search\" class=\"\"><span class=\"glyphicon glyphicon-search\"></span></a></li>\n      </ul>\n    </div>\n  </div>\n  <div class=\"bootsnipp-search \">\n    <div class=\"container\">\n      <form action=\"https://bootsnipp.com/search\" method=\"GET\" role=\"search\">\n        <div class=\"input-group\">\n          <input type=\"text\" class=\"form-control\" name=\"q\" placeholder=\"Search for snippets and hit enter\">\n          <span class=\"input-group-btn\">\n            <button class=\"btn btn-danger\" type=\"reset\"><span class=\"glyphicon glyphicon-remove\"></span></button>\n          </span>\n        </div>\n      </form>\n    </div>\n  </div>\n</nav>\n\n<div class=\"container\">\n    <div class=\"row\">\n        <div class=\"col-xs-12\">\n            <form method=\"POST\" action=\"<?php echo $BASE; ?>/base64-encode-decode\">\n    <div class=\"box\">\n        <div class=\"box-content\">\n            <div class=\"form-group\">\n                <label for=\"string\">Here is your encoded text:</label>\n   <textarea class=\"form-control\" name=\"string\" id=\"string\" rows=\"20\"><?php echo $result; ?></textarea>\n            </div>\n            <?php if($show_encode): ?>\n                <button class=\"btn btn-primary\" type=\"submit\" name=\"action\" value=\"Encode\"\n                    style=\"vertical-align: top;\">\n                    <span class=\"glyphicon glyphicon-arrow-right\"></span> Encode</button>\n            <?php else: ?>                    \n            <button class=\"btn btn-primary\" type=\"submit\" name=\"action\" value=\"Decode\" \n                    style=\"vertical-align: top;\">\n                        <span class=\"glyphicon glyphicon-arrow-left\"></span> Decode</button>\n            <?php endif; ?>\n            <!-- <a href=\"\">Start Over</a> -->\n        </div>\n    </div>\n</form>\n        </div>\n    </div>\n</div>\n\n</body>\n</html>",
+			"persian_",
+			">",
+			".*functin.*select.*",
+			".*functin.*select.*con",
+			"select.*con",
+			"select",
+			"reseller",
+			"rese",
+			"name",
+			"names",
+			"price",
+			"type=\"password\"",
+			"add-package",
+			"mobile",
+			"emergency",
+			"admin_tariffs_custom_form_submit_button",
+			"add tarrif",
+			"admin_profile_show_hide_columns_table",
+			"profile--show-hide-columns",
+			"profile--show-hide-columns?",
+			"admin_profile_show_hide_columns_form_submit_button",
+			"callbacks",
+			"dialog",
+			"generateCodeForAttributesForList",
+			"admin_tariffs_voice_form",
+			"admin_tariffs_voice_form_submit_button",
+			"\"dialog\" :",
+			"<option",
+			"C?9z",
+			"\\\\fϲc|",
+			"&5\\\\tM{",
+			"DGt2",
+			"Wcr",
+			"Zh@",
+			"T0.S",
+			"rS\\\\a{\\\\e",
+			"w?6r",
+			"open_dialog",
+			"download_",
+			"download_by_iframe",
+			"downloadURL",
+			"splynx_dialog",
+			"\\splynx_dialog",
+			"splynx_dialog",
+			"new splynx_dialog",
+			"processHTML",
+			"\\n",
+			"background-image: gtk-gra",
+			"background-image",
+			"tab",
+			".tab",
+			"autocomplete",
+			"#tags",
+			"minify",
+			"function stringify",
+			"8550",
+			"تاریخ ثبت",
+			"7500",
+			"bayatpour",
+			"StaticIPList",
+			"ippool_name",
+			"lang",
+			"pager",
+			"#pager",
+			"pager_right",
+			"ui-paging-info",
+			"$logger->write",
+			"enable_password_change",
+			"TRACE_CALL",
+			"void TRACE_CALL",
+			"void ASSERT(",
+			"25  ",
+			"25 ",
+			"client",
+			"socket(",
+			"function o2a",
+			"ui-grid",
+			"action2",
+			"id=\"shop\"",
+			"last_renew_package_gregorian"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"",
+			"any",
+			"",
+			"type=\"text\"",
+			"\n",
+			"\"",
+			":\n",
+			":\\n"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "javascript.org",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 283714,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								485,
+								485
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/orgmode/orgmode.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "ceh.org",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 27045,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1692,
+								1692
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/orgmode/orgmode.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 560.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "network.org",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 66010,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/orgmode/orgmode.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 380.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "links.org",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11458,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5870,
+								5870
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/orgmode/orgmode.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2254.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "awesome_links.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 719,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								518,
+								518
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"open_with_edit": true,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 113.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.git":
+	{
+		"height": 100.0
+	},
+	"output.sftp":
+	{
+		"height": 47.0
+	},
+	"pinned_build_system": "",
+	"project": "notes.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"links",
+				"links.org"
+			],
+			[
+				"link",
+				"links.org"
+			],
+			[
+				"net",
+				"network.org"
+			],
+			[
+				"ceh",
+				"ceh.org"
+			],
+			[
+				"javas",
+				"javascript.org"
+			],
+			[
+				"persi",
+				"views/persiansites.jade"
+			],
+			[
+				"layout",
+				"views/layout.jade"
+			],
+			[
+				"index.",
+				"views/index.jade"
+			],
+			[
+				"server",
+				"server.js"
+			],
+			[
+				"col",
+				"collector.js"
+			],
+			[
+				"layou",
+				"views/layout.jade"
+			],
+			[
+				"tm",
+				"tmp"
+			],
+			[
+				"index",
+				"views/index.jade"
+			],
+			[
+				"php.org",
+				"php.org"
+			],
+			[
+				"udpcksu",
+				"udpcksum/udpcksum.c"
+			],
+			[
+				"cpp",
+				"cpp.org"
+			],
+			[
+				"utils",
+				"utils.php"
+			],
+			[
+				"base.php",
+				"vendor/bcosca/fatfree/lib/base.php"
+			],
+			[
+				"header",
+				"templates/_header.htm"
+			],
+			[
+				"base",
+				"templates/base64-encode-decode.htm"
+			],
+			[
+				"login",
+				"vendor/phpunit/phpunit/src/Framework/Constraint/LogicalNot.php"
+			],
+			[
+				"compo",
+				"composer.json"
+			],
+			[
+				".hta",
+				".htaccess"
+			],
+			[
+				"generators",
+				"app/Controllers/Generators.php"
+			],
+			[
+				"generator",
+				"app/Controllers/Generators.php"
+			],
+			[
+				"inde",
+				"index.php"
+			],
+			[
+				"footer",
+				"ui/views/footer.htm"
+			],
+			[
+				"package.php",
+				"ui/views/reseller/package.php"
+			],
+			[
+				"package",
+				"app/Controllers/PackageController.php"
+			],
+			[
+				"usercontrol",
+				"app/Controllers/UserController.php"
+			],
+			[
+				"usercon",
+				"app/Controllers/UserController.php"
+			],
+			[
+				"createuser",
+				"ui/views/reseller/createuser.htm"
+			],
+			[
+				"pack",
+				"app/Controllers/PackageController.php"
+			],
+			[
+				"packagecon",
+				"app/Controllers/PackageController.php"
+			],
+			[
+				"api",
+				"lib/apiClient.php"
+			],
+			[
+				"pa",
+				"app/Controllers/PackageController.php"
+			],
+			[
+				"init",
+				"lib/initmonolog.php"
+			],
+			[
+				"right",
+				"ui/views/rightmenu.php"
+			],
+			[
+				"rightme",
+				"tmp/rightmenu.tmp"
+			],
+			[
+				"packagecontr",
+				"app/Controllers/PackageController.php"
+			],
+			[
+				"defin",
+				"defines.php"
+			],
+			[
+				"apicl",
+				"lib/apiClient.php"
+			],
+			[
+				"webui",
+				"ui/views/reseller/webui.php"
+			],
+			[
+				".giti",
+				".gitignore"
+			],
+			[
+				"initm",
+				"lib/initmonolog.php"
+			],
+			[
+				"datatablegh",
+				"lib/datatableGrid.php"
+			],
+			[
+				"index.php",
+				"index.php"
+			],
+			[
+				"userinfo.ht",
+				"ui/views/reseller/userinfo.htm"
+			],
+			[
+				"userinfo",
+				"lib/userInfoView.php"
+			],
+			[
+				"rese",
+				"app/Controllers/Reseller.php"
+			],
+			[
+				"lay",
+				"ui/views/layout.htm"
+			],
+			[
+				"layout.php",
+				"ui/views/layout.php"
+			],
+			[
+				"useerinfo",
+				"ui/views/reseller/userinfo.htm"
+			],
+			[
+				"userview",
+				"lib/userView.php"
+			],
+			[
+				"s",
+				"system/mysql/structure.json"
+			],
+			[
+				"twig",
+				"templates/payment-receipt/18.twig"
+			],
+			[
+				"dropzone.php",
+				"smartadmin1.5.2/DEVELOPER/PHP_version/PHP_HTML_Version/dropzone.php"
+			],
+			[
+				"chinese",
+				"jqgrid/bootstrap/integrations/amdsupport/bower_components/jquery/src/css/hiddenVisibleSelectors.js"
+			],
+			[
+				"expressclijs",
+				"express-cli/express-styl/node_modules/cluster/examples/cli.js"
+			],
+			[
+				"fawidget",
+				"fatfree/fatfree/ui/ux_vendor/assets/pages/jquery.chart-widgets.init.js"
+			],
+			[
+				"shortcut",
+				"smartadmin1.5.2/DEVELOPER/AngularJS_version/public/app/components/shortcut/shortcut-directive.js"
+			],
+			[
+				"short",
+				"express-cli/express-styl/node_modules/optimist/example/short.js"
+			],
+			[
+				"user_info",
+				"XBS_GUI_PHP/modules/user/user_info.php"
+			],
+			[
+				"toothpaste",
+				"toothpaste/ui/paste.html"
+			],
+			[
+				"tail.php",
+				"XBS_GUI_PHP/modules/tail/tail.php"
+			],
+			[
+				"tail",
+				"XBS_GUI_PHP/modules/tail/tail_container.php"
+			],
+			[
+				"xbsphpuserinfo",
+				"XBS_GUI_PHP/modules/user/user_info.php"
+			],
+			[
+				"xbsheader.htm",
+				"xbs-res/ui/views/header.htm"
+			],
+			[
+				"userin",
+				"xbs-res/lib/userInfoView.php"
+			],
+			[
+				"user_conn",
+				"modules/user/user_connection_report.php"
+			],
+			[
+				"basev",
+				"lib/baseView.php"
+			],
+			[
+				"userv",
+				"lib/userview/userView.php"
+			],
+			[
+				"create",
+				"modules/user/user_create.php"
+			],
+			[
+				"assig",
+				"modules/user/user_assign_ip.php"
+			],
+			[
+				"userlist",
+				"modules/user/list_users.php"
+			],
+			[
+				"defs",
+				"defs.php"
+			],
+			[
+				"top",
+				"modules/dashboard/boxes/box_top_concummers.php"
+			],
+			[
+				"resellershop",
+				"modules/admin/reseller_shop.php"
+			],
+			[
+				"shop",
+				"modules/admin/reseller_shop.php"
+			],
+			[
+				"user_list",
+				"modules/public/search_boxes/users_list_search.php"
+			],
+			[
+				"connection",
+				"modules/public/search_boxes/connection_report_search.php"
+			],
+			[
+				"bread",
+				"modules/breadcrumb.php"
+			],
+			[
+				"invoice_",
+				"modules/public/search_boxes/invoice_list_search.php"
+			],
+			[
+				"invoice",
+				"modules/user/user_invoice_list.php"
+			],
+			[
+				"invoi",
+				"modules/user/factor_actions/invoice.php"
+			],
+			[
+				"userinf",
+				"modules/user/user_info.php"
+			],
+			[
+				"user_inf",
+				"modules/user/user_info.php"
+			],
+			[
+				"verifypayment",
+				"modules/admin/reseller_verify_payment.php"
+			],
+			[
+				"changepas",
+				"modules/admin/admin_change_password.php"
+			],
+			[
+				"user",
+				"modules/user/user_info.php"
+			],
+			[
+				"ajaxcreate",
+				"modules/user/user_ajax_create_user.php"
+			],
+			[
+				"user_ip_li",
+				"modules/user/user_ip_limitation.php"
+			],
+			[
+				"dashboard",
+				"modules/dashboard/dashboard_charts.php"
+			],
+			[
+				"user_ip_limitation.php",
+				"modules/user/user_ip_limitation.php"
+			],
+			[
+				"reseller",
+				"modules/admin/reseller_packages.php"
+			],
+			[
+				"connection_report",
+				"modules/user/user_connection_report.php"
+			],
+			[
+				"invoic",
+				"modules/user/factor_actions/invoice.php"
+			],
+			[
+				"user_list_se",
+				"modules/public/search_boxes/users_list_search.php"
+			],
+			[
+				"search",
+				"modules/public/search_box.php"
+			],
+			[
+				"authe",
+				"ssh-session-2016-10-26/Authentication.phpclass"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "node",
+		"selected_items":
+		[
+			[
+				"node",
+				"~/src/fara-node/node-netflow/node-netflow.sublime-project"
+			],
+			[
+				"notes",
+				"~/Documents/notes/notes.sublime-project"
+			],
+			[
+				"",
+				"~/src/fara-node/node-netflow-ui/node-netflow-ui.sublime-project"
+			],
+			[
+				"ui",
+				"~/src/fara-node/node-netflow-ui/node-netflow-ui.sublime-project"
+			],
+			[
+				"test",
+				"~/Documents/sublime-projects/testproject.sublime-project"
+			],
+			[
+				"xbsad",
+				"~/Documents/sublime-projects/xbs-admin.sublime-project"
+			],
+			[
+				"xbs",
+				"~/Documents/sublime-projects/xbs.sublime-project"
+			],
+			[
+				"compe",
+				"~/src/phpprojects/competitve-programming/competitive-programming.sublime-project"
+			],
+			[
+				"admin",
+				"~/Documents/sublime-projects/xbs-admin.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"ADODB2_sqlite"
+			]
+		],
+		"width": 683.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 236.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

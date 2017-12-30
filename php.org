@@ -2340,6 +2340,7 @@ $some_array = PREG_GREP('#\S#', ARRAY_MAP('trim', $some_array));
  
 ?>
 #+end_src
+
 ** Unique Array function
 Similar to array_unique(), but implemented manually
 
@@ -10762,6 +10763,7 @@ if (is_resource($proc)) {
     proc_close($proc);
 }
 #+end_src 
+
 ** Communicating Between Related Processes
 #+begin_src php 
 // PHP supports fork/exec/wait but not pipe. However, it does
@@ -10968,6 +10970,7 @@ while (true) {
     }
 }
 #+end_src 
+
 ** Sharing Variables in Different Processes
 #+begin_src php 
 // sharetest - test shared variables across forks

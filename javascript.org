@@ -546,7 +546,7 @@ Array.from({length: 5}, (v, k) => k);
 #+end_src
 
 *** multidimensional array
-
+  
 JavaScript does not have arrays of more than one dimension, but like most C lan-
 guages, it can have arrays of arrays:
 
@@ -1384,6 +1384,16 @@ case of this means it’s better to be under than over.
      return matrix[string1Length][string2Length];
  }
  #+end_src
+** numtolatin 
+#+begin_src javascript 
+function numtolatin(num) { 
+var a=num;
+  for (i=0;i<a.length;i++){ 
+  a=a.replace('۰','0');a=a.replace('۱','1');a=a.replace('۲','2');a=a.replace('۳','3');a=a.replace('۴','4');a=a.replace('۵','5');a=a.replace('۶','6');a=a.replace('۷','7');a=a.replace('۸','8');a=a.replace('۹','9');
+}
+return a;
+}
+#+end_src
 
 * numbers
 ** isNumber
@@ -1965,7 +1975,7 @@ string.replace(/\s{2,}/g,' ')
 
 ** Replacing Patterns with New Strings
 
-#+begin_src javascript 
+#+begin_src javascript
 var searchString = "Now is the time, this is the tame";
 var re = /t\w{2}e/g;
 var replacement = searchString.replace(re, "place");

@@ -557,6 +557,62 @@ $ tcpdump 'tcp[13] & 8 != 0'
 $ tcpdump 'tcp[13] & 4 != 0'
 #+end_src
 
+*** tcpdump filters
+**** ip filters
+#+begin_src shell 
+
+#filter icp records
+$ tcpdump 'ip[9]=1'
+
+#read filter from file
+$ tcpdump -F /tmp/filter
+
+#detect traffic to the Broadcast Address
+#let's define the broadcast address as one with a final octet of 255 or 0.
+$tcpdump 'ip[19] = 0xff or ip[19] = 0x00'
+#or
+$ tcpdump 'ip[19] = 255 or ip[19] = 0'
+
+#pickup broadcast traffic inside  your network
+$ tcpdump 'not src net 192.168 and (ip[19] = 0xff or ip[19] = 0x00)'
+
+#identifying packets with more fragment flag set
+#if you count into the IP header, you will find it in the 6th byte offset. It is the
+#third bit from the left of the high order-bit. Look at Figure 12.3 to see how you might mask all
+#surrounding bits except this one. Your mask needs to be 0010 0000, which is a
+#hexadecimal 0x20. Your filter becomes ip[6] & 0x20 != 0
+$ tcpdump 'ip[6] & 0x20 != 0'
+
+#discover traceroutes
+# The UNIX traceroute works by attempting
+# to send UDP datagrams to high-numbered ports of the destination host.
+# [2:2] examines 2 bytes starting at byte 2 offset.
+$ tcpdump 'udp[2:2] >= 33000 and udp[2:2] < 34000'
+# let's embellish traceroute filter to include the TTL value(it's at 8th byte offset)
+$ tcpdump 'udp[2:2] >= 33000 and udp[2:2] < 34000 and ip[8]=1'
+
+
+#+end_src
+
+**** tcp filter
+
+#+begin_src shell
+#extract records with the SYN flag alone set
+#The TCP flag bits are located at 13th byte offset of the TCP header
+$tcpdump 'tcp[13] & 0xff = 2'
+
+#tcp[13] & 0xff = 0 alternatively tcp[13] = 0 This shows null scans with no flags
+#set. This condition should never occur.
+
+#tcp[13] & 0xff = 3 alternatively tcp[13] = 3 This shows activity where both the
+#SYN and FIN flags are set simultaneously; this is definitely an anomalous condition. 
+
+#tcp[13] & 0xff = 0x10 and tcp[8:4] = 0 This shows activity with the ACK flag set,
+#but with an acknowledgement value of 0. This is usually an anomalous condition
+#because the three-way handshake necessarily consumes a sequence number. 
+
+#+end_src 
+
 * smurf attack
 
 In a Smurf Attack, ICMP ECHO_REQUEST packets are sent to the broadcast address
@@ -811,6 +867,10 @@ call. Use -n to skip this step as follows:
 #+begin_src shell
 $ nmap -n scanme.nmap.org
 #+end_src
+
+* security onion
+** 
+
 
 * useful resources
 http://ftp.ntua.gr/mirror/technotronic/

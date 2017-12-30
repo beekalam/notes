@@ -5086,4 +5086,26 @@ scripts.
  for passwd to complete execution before returning control to the script.
 * sublime
 * useful resources
+* mongodb in a ramdisk
+** create a ramdisk
+
+#+begin_src shell 	
+$ mount -t tmpfs -o size=1000MB /media/ramdisk
+#+end_src 
+
+Change the `/etc/monodb.conf` configurtion
+
+	dbpath=/media/ramdisk
+	nojournal=true
+	noprealloc = true
+
+restart the `MongoDB` service
+
+	$ service mongodb restart
   
+** auto mounting ramdisk at startup
+
+add the following line at the end of fstab(this is for Ubuntu).
+make sure you have created the directory `ramdisk`.
+
+tmpfs	/media/ramdisk	tmpfs rw,size=1000M 0 0

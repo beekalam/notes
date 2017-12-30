@@ -633,3 +633,10 @@ R1# ping 10.1.1.1
 
 #+end_src 
 
+* Mikrotik
+** port mirroring
+
+#+begin_src
+/interface ethernet switch
+set switch1 mirror-source=ether2 mirror-target=ether3
+#+end_src
