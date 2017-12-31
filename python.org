@@ -193,10 +193,13 @@ True
 >>> 1.4142135623730951.is_integer()
 False
 #+end_src
+
 ** convert number to base 2
+
 #+begin_src python
 bin(num)
 #+end_src
+
 ** Fraction calculations
 When we're doing calculations that have exact fraction values, we can use the fractions module.
 #+begin_src python
@@ -408,6 +411,7 @@ delivers to its subscribers dozens of new and interesting Python packages and
 resources every week
 
 * Updating a string with a replacement
+
 #+begin_src python
 >>> post_colon_text = post_colon_text.replace(' ', '_')
 >>> post_colon_text = post_colon_text.replace(',', '_')
@@ -476,8 +480,6 @@ Extract the named groups of characters from the match object:
 >>> match.group('unit')
 'cups'
 #+end_src 
-
-
 
 ** trick  to represent long regular expressions
 A long regular expression can be awkward to read. We have a clever Pythonic
@@ -731,6 +733,7 @@ We'd like to do two transformations:
 #+end_src
 
 * open file with unicode support
+
 #+begin_src python
 >>> with open('some_file.txt', 'w', encoding='utf-8') as output:
 
@@ -745,6 +748,7 @@ We'd like to do two transformations:
 #+end_src 
 
 * manually encode strings to utf-8
+
 #+begin_src python
 >>> string_bytes = 'You drew \U0001F000'.encode('utf-8')
 >>> string_bytes
@@ -752,6 +756,7 @@ b'You drew \xf0\x9f\x80\x80'
 #+end_src 
 
 * remove sublime register message
+
 #+begin_src python
 import sublime
 import sublime_plugin
